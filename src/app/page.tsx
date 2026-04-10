@@ -106,7 +106,7 @@ export default function Home() {
 
           <AnimateIn delay={200}>
             <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-              7 courts. Live scoreboards. Game film every game. Zero excuses.
+              7 courts. 52,000 sq ft. Arizona&apos;s premier basketball facility.
             </p>
           </AnimateIn>
 

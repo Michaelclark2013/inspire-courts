@@ -43,7 +43,7 @@ const DEFAULT_CONTENT: SiteContent = {
           fields: {
             badge: { label: "Badge Text", value: "Est. Gilbert, AZ", type: "text" },
             headline: { label: "Headline", value: "Arizona's Premier Indoor Basketball Facility", type: "text" },
-            subheadline: { label: "Subheadline", value: "7 courts. Live scoreboards. Game film every game. Zero excuses.", type: "text" },
+            subheadline: { label: "Subheadline", value: "7 courts. 52,000 sq ft. Arizona's premier basketball facility.", type: "text" },
             ctaPrimary: { label: "Primary Button", value: "Register for Next Event", type: "text" },
             ctaSecondary: { label: "Secondary Button", value: "Book the Facility", type: "text" },
             backgroundImage: { label: "Background Image URL", value: "https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg", type: "image" },

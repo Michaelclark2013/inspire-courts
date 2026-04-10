@@ -43,7 +43,7 @@ export default function ClubInterestForm() {
       });
       if (res.ok) setSubmitted(true);
     } catch {
-      alert("Something went wrong. Please email mikeyclark.240@gmail.com directly.");
+      alert("Something went wrong. Please email InspireCourts@gmail.com directly.");
     } finally {
       setLoading(false);
     }

@@ -223,10 +223,10 @@ export default function ContactPage() {
                     <div className="flex gap-3 text-text-muted text-sm">
                       <Mail className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
                       <a
-                        href="mailto:mikeyclark.240@gmail.com"
+                        href="mailto:InspireCourts@gmail.com"
                         className="hover:text-red transition-colors"
                       >
-                        mikeyclark.240@gmail.com
+                        InspireCourts@gmail.com
                       </a>
                     </div>
                   </div>

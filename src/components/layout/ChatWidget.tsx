@@ -84,7 +84,7 @@ export default function ChatWidget() {
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, something went wrong. Email us at mikeyclark.240@gmail.com for help.",
+          content: "Sorry, something went wrong. Email us at InspireCourts@gmail.com for help.",
         },
       ]);
     } finally {

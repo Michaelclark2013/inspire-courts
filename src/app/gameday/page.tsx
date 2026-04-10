@@ -79,7 +79,7 @@ const INFO_SECTIONS = [
     icon: HelpCircle,
     title: "Need Help?",
     content:
-      "Email mikeyclark.240@gmail.com or find any staff member in an Inspire Courts shirt.",
+      "Email InspireCourts@gmail.com or find any staff member in an Inspire Courts shirt.",
     highlight: false,
   },
 ];

@@ -9,20 +9,46 @@ FACILITY
 ═══════════════════════════════════════════
 - Name: Inspire Courts AZ
 - Type: Premium indoor sports facility — basketball, volleyball, and futsal
-- The facility is commonly used for basketball, volleyball, and futsal
-- Courts are always available to rent for volleyball and futsal groups
 - Address: 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233
-- Size: 7 full regulation indoor basketball courts
-- Features: Professional hardwood flooring, live digital scoreboards on every court, game film captured for every game, real-time stats tracking
-- Seating: Yes, spectator seating available
+- Size: 52,000 square feet
+- 7 hardwood basketball courts (5 are college regulation with possession arrows)
+- 7 regulation volleyball courts
+- Electronic scoreboards and scorer's table with digital display units on EVERY court
+- Adjustable height glass backboards with NBA rims
+- Color-coded courts
+- Bleachers and benches for spectators
+- Conference room available
+- Hospitality rooms available
+- Shooting gun available
+- Inspire Performance Training on-site
+- Snack shop on-site
 - Climate: Fully air-conditioned year-round — no AZ heat
-- Snack bar: Open all day during events (drinks, snacks, food)
-- Outside food/drink policy: No outside food or drinks allowed EXCEPT sealed water bottles and sealed sports drinks
-- Parking: Available on-site for visitors
+- Parking: Ample parking and easy facility access
 - Wi-Fi: Available throughout the facility
-- Restrooms: Clean, well-maintained
+- Open Gym: Available during all open hours based on court availability
 - Hours: Event days follow the tournament schedule. Facility rental is by appointment.
 - Founder: Mike Clark
+- YouTube facility tour: https://www.youtube.com/watch?v=1pJDZU2I6k4
+
+═══════════════════════════════════════════
+MISSION
+═══════════════════════════════════════════
+Inspire Athletics exists to provide student-athletes with the opportunity to develop their athletic ability at a world class facility in a diverse environment that promotes personal development. We pride ourselves on being the leading basketball complex in Arizona, providing premier coaching to committed athletes. We recognize the demands placed on athletes in sports and are devoted to helping them manage those demands and get the most out of their athletic experience.
+
+═══════════════════════════════════════════
+CAMPSITE / TAILGATING RULES
+═══════════════════════════════════════════
+- Campsites open 1 hour prior to event
+- No alcoholic beverages
+- No charcoal or wood burning grills
+- Only pop-up style tents allowed — no stakes, ropes, or weights
+- Tents cannot be larger than 10' x 10'
+- No tents left overnight (must be removed at end of each day)
+- Tents must come down during storms
+- Inspire Courts is not responsible for damage or theft
+- Inspire Courts reserves the right to require tents to be taken down for visual obstruction, weather, or blocking traffic flow
+- Tents cannot display advertising or logos without prior written approval from Inspire Courts
+- No refunds
 
 ═══════════════════════════════════════════
 TOURNAMENTS (OFF SZN HOOPS)
@@ -34,7 +60,7 @@ TOURNAMENTS (OFF SZN HOOPS)
 - Entry fee: Typically $350 per team
 - Game guarantee: Minimum 3 games per team, most teams play 4-5
 - Every game includes: live scoreboards, game film, stats
-- Registration: Visit the Events page (/events) or email mikeyclark.240@gmail.com
+- Registration: Visit the Events page (/events) or email InspireCourts@gmail.com
 - External registration: Some events use LeagueApps for online registration
 - Schedules: Released 48 hours before the event, sent to the head coach on file via email
 - Brackets & results: Available on the Schedule page (/schedule) during and after events
@@ -47,18 +73,47 @@ GAME DAY INFO
 - Player check-in: Head coaches check in at the front table with a valid photo ID
 - Rosters: Must be submitted before your first game
 - Schedule release: 48 hours before tip-off, emailed to head coach
-- Outside food: NOT allowed. No outside food, beverages, coolers, or ice chests. Snack bar available on-site.
 - First aid: Basic first aid available on-site. For emergencies, call 911.
 - Weather: We're indoors — games happen rain or shine. If cancelled, coaches get email + text.
 - House rules: No hanging on rims. No profanity. Coaches responsible for their bench and fans. Inspire Courts reserves the right to remove anyone.
-- Game film: Captured automatically for every game. Ask staff for details on access.
+- Game film: Captured automatically for every game (recorded, NOT live-streamed). Ask staff for details on access.
+
+═══════════════════════════════════════════
+FOOD & BEVERAGE POLICY (IMPORTANT — BE EXACT)
+═══════════════════════════════════════════
+- WEEKDAYS: Only sports drinks and water are allowed in the court area. Absolutely NO food or gum allowed in the court area.
+- WEEKEND TOURNAMENTS: No coolers or outside food or beverages permitted inside Inspire Courts or directly outside the entrance. Players may bring ONE (1) bottled water and ONE (1) sports drink.
+- Snack bar is open during events.
+
+═══════════════════════════════════════════
+COMPLEX RULES
+═══════════════════════════════════════════
+- Demonstrate good sportsmanship at all times
+- Clean up after yourself and your team
+- Treat the facilities, equipment, and other court users respectfully
+- Be respectful of athletes on neighboring courts
+- Clean team benches following each contest
+- Only suitable court shoes allowed — no dress shoes, sandals, or cleats. Non-marking soles required.
+- No outside food, drinks, or coolers allowed
+- No sunflower seeds or gum
+- No alcohol at the complex including the parking lot
+- No fighting or vulgarities
+- Place all trash and recyclables in appropriate containers
+- All rentals must be cleared by the end of their rental time
+- Children not participating in organized activities must be supervised at all times
+- Inspire reserves the right to remove anyone behaving detrimentally to the facility, workers, owners, or other users
+- Absolutely no club team recruiting will be tolerated
+- No kicking balls or bouncing them off walls
+- No hanging on rims
 
 ═══════════════════════════════════════════
 FACILITY RENTAL
 ═══════════════════════════════════════════
-- Courts available for rent for: leagues, team practices, private tournaments, camps, clinics, corporate events, film sessions, combines
+- Courts available for rent for: leagues, team practices, private tournaments, camps, clinics, corporate events, birthday parties, film sessions, combines
+- Also available for: volleyball leagues/practices, futsal leagues/practices
 - Pricing: $80 per court per hour
-- Contact: email mikeyclark.240@gmail.com or fill out the form at /contact with "Facility Rental" selected
+- Corporate events, birthday parties, and private events: Email InspireCourts@gmail.com for info
+- General rental inquiries: Email InspireCourts@gmail.com or fill out the form at /contact with "Facility Rental" selected
 - Rental page: /facility#rentals
 
 ═══════════════════════════════════════════
@@ -97,14 +152,14 @@ CONTENT & SOCIAL MEDIA
 ═══════════════════════════════════════════
 CONTACT
 ═══════════════════════════════════════════
-- Email: mikeyclark.240@gmail.com (best way to reach us)
+- Email: InspireCourts@gmail.com (best way to reach us)
 - Instagram DMs: @inspirecourtsaz
 - Contact form: /contact page on the website
 - For tournament questions: email or /contact with "Tournament Registration"
 - For rental inquiries: email or /contact with "Facility Rental"
 - For referee applications: /contact with "Referee Application"
 - For sponsorship inquiries: /contact with "Sponsorship Inquiry"
-- Job applications: email mikeyclark.240@gmail.com
+- Job applications: email InspireCourts@gmail.com
 
 ═══════════════════════════════════════════
 WEBSITE PAGES (direct people here)
@@ -123,7 +178,7 @@ COMMON QUESTIONS & ANSWERS
 ═══════════════════════════════════════════
 
 Q: How do I register my team?
-A: Head to our Events page (/events) to see upcoming tournaments, then click Register — or just email mikeyclark.240@gmail.com with your team name, age group, and the event you want to enter!
+A: Head to our Events page (/events) to see upcoming tournaments, then click Register — or just email InspireCourts@gmail.com with your team name, age group, and the event you want to enter!
 
 Q: What age groups do you have?
 A: We run 10U through 17U divisions for both boys and girls.
@@ -135,7 +190,7 @@ Q: Do you film games?
 A: Yes! Every single game is filmed. It's one of the things that makes Inspire Courts special.
 
 Q: Can I rent the facility?
-A: Absolutely! We host leagues, practices, camps, clinics, and private events. Email mikeyclark.240@gmail.com or visit /contact for a quote.
+A: Absolutely! We host leagues, practices, camps, clinics, and private events. Email InspireCourts@gmail.com or visit /contact for a quote.
 
 Q: Where are you located?
 A: 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233. Easy to find!
@@ -153,7 +208,7 @@ Q: How do I become a referee?
 A: Fill out the contact form at /contact and select "Referee Application" — we'll be in touch!
 
 Q: Can I sponsor an event?
-A: We'd love to talk! Fill out the contact form at /contact with "Sponsorship Inquiry" or email mikeyclark.240@gmail.com.
+A: We'd love to talk! Fill out the contact form at /contact with "Sponsorship Inquiry" or email InspireCourts@gmail.com.
 
 ═══════════════════════════════════════════
 LEAD CAPTURE — VERY IMPORTANT
@@ -183,7 +238,7 @@ TONE GUIDELINES
 - It's okay to say "we" when talking about the facility
 - Keep it short — coaches are busy people on their phones
 - Always end with a helpful next step or link
-- If you genuinely don't know something, say "Great question! I'd recommend reaching out to us directly at mikeyclark.240@gmail.com so we can get you the right answer."`;
+- If you genuinely don't know something, say "Great question! I'd recommend reaching out to us directly at InspireCourts@gmail.com so we can get you the right answer."`;
 
 export async function POST(request: Request) {
   try {
@@ -230,7 +285,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ reply });
   } catch {
     return NextResponse.json(
-      { reply: "Oops, something went wrong on my end! Please email us at mikeyclark.240@gmail.com and we'll help you out." },
+      { reply: "Oops, something went wrong on my end! Please email us at InspireCourts@gmail.com and we'll help you out." },
       { status: 200 }
     );
   }
@@ -238,7 +293,7 @@ export async function POST(request: Request) {
 
 function getKeywordResponse(msg: string): string {
   if (msg.includes("register") || msg.includes("sign up") || msg.includes("join")) {
-    return "You can register your team on our Events page! Head to /events to see what's coming up, or email mikeyclark.240@gmail.com with your team name, age group, and the event you're interested in. We'll get you locked in!";
+    return "You can register your team on our Events page! Head to /events to see what's coming up, or email InspireCourts@gmail.com with your team name, age group, and the event you're interested in. We'll get you locked in!";
   }
   if (msg.includes("price") || msg.includes("cost") || msg.includes("fee") || msg.includes("how much") || msg.includes("pay")) {
     return "Tournament entry is typically $350 per team. Spectator admission is $15 at the door (kids under 5 free). Court rentals are $80/court/hour. Want me to grab your info so someone can follow up with exact details?";
@@ -262,19 +317,19 @@ function getKeywordResponse(msg: string): string {
     return "Every single game at Inspire Courts is filmed! Game film is captured for every game during tournaments — it's one of the things that makes us different. Ask staff on game day for access details!";
   }
   if (msg.includes("food") || msg.includes("snack") || msg.includes("drink") || msg.includes("eat") || msg.includes("hungry") || msg.includes("concession")) {
-    return "Our snack bar is open all day during events with drinks, snacks, and food! Please note: no outside food or drinks are allowed — the only exception is sealed water bottles and sealed sports drinks.";
+    return "On weekdays, only sports drinks and water are allowed in the court area — no food or gum. During weekend tournaments, no coolers or outside food/drinks are permitted, but players can bring one bottled water and one sports drink. Our snack shop is open during events! Anything else I can help with?";
   }
   if (msg.includes("contact") || msg.includes("email") || msg.includes("phone") || msg.includes("reach") || msg.includes("talk to")) {
-    return "Best way to reach us is email: mikeyclark.240@gmail.com. You can also DM us on Instagram @inspirecourtsaz or fill out the contact form at /contact. We're quick to respond!";
+    return "Best way to reach us is email: InspireCourts@gmail.com. You can also DM us on Instagram @inspirecourtsaz or fill out the contact form at /contact. We're quick to respond!";
   }
   if (msg.includes("ref") || msg.includes("referee") || msg.includes("officiat")) {
     return "Interested in reffing? Awesome! Fill out the contact form at /contact and select \"Referee Application\" — we'll be in touch!";
   }
   if (msg.includes("sponsor") || msg.includes("partnership") || msg.includes("advertis")) {
-    return "We'd love to talk sponsorships! Fill out the form at /contact with \"Sponsorship Inquiry\" or email mikeyclark.240@gmail.com. We have options for all budgets.";
+    return "We'd love to talk sponsorships! Fill out the form at /contact with \"Sponsorship Inquiry\" or email InspireCourts@gmail.com. We have options for all budgets.";
   }
   if (msg.includes("job") || msg.includes("work") || msg.includes("hire") || msg.includes("employ") || msg.includes("apply")) {
-    return "We're always looking for great people! Email mikeyclark.240@gmail.com with a bit about yourself and what role you're interested in. We hire event staff, scorekeepers, and more!";
+    return "We're always looking for great people! Email InspireCourts@gmail.com with a bit about yourself and what role you're interested in. We hire event staff, scorekeepers, and more!";
   }
   if (msg.includes("volleyball")) {
     return "We host volleyball all the time! Our courts are available for volleyball leagues, practices, and events at $80/court/hour. Want me to connect you with someone to set up a rental?";
@@ -310,10 +365,10 @@ function getKeywordResponse(msg: string): string {
     return "On game day, head coaches check in at the front table with a valid photo ID. Make sure your roster is submitted before your first game. Check /gameday for the full rundown!";
   }
   if (msg.includes("roster") || msg.includes("player list")) {
-    return "Rosters must be submitted before your team's first game. Your head coach handles this at check-in. If you have questions, email mikeyclark.240@gmail.com!";
+    return "Rosters must be submitted before your team's first game. Your head coach handles this at check-in. If you have questions, email InspireCourts@gmail.com!";
   }
   if (msg.includes("cancel") || msg.includes("refund") || msg.includes("rain")) {
-    return "We're indoors, so games happen rain or shine! In the rare case of a cancellation, all registered coaches will be notified by email and text. For refund questions, email mikeyclark.240@gmail.com.";
+    return "We're indoors, so games happen rain or shine! In the rare case of a cancellation, all registered coaches will be notified by email and text. For refund questions, email InspireCourts@gmail.com.";
   }
   if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey") || msg.includes("sup") || msg.includes("what's up") || msg.includes("yo")) {
     return "Hey! Welcome to Inspire Courts AZ! How can I help you today? Whether it's tournaments, facility info, game day questions, or rentals — I've got you!";

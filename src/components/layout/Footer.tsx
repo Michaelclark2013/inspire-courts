@@ -62,8 +62,8 @@ export default function Footer() {
               <div className="space-y-3">
                 <div className="flex gap-3 text-white/60 text-sm">
                   <Mail className="w-4 h-4 text-red flex-shrink-0 mt-0.5" />
-                  <a href="mailto:mikeyclark.240@gmail.com" className="hover:text-white transition-colors">
-                    mikeyclark.240@gmail.com
+                  <a href="mailto:InspireCourts@gmail.com" className="hover:text-white transition-colors">
+                    InspireCourts@gmail.com
                   </a>
                 </div>
                 <div className="flex gap-3 text-white/60 text-sm">
@@ -105,7 +105,7 @@ export default function Footer() {
                   <Camera className="w-5 h-5" />
                 </a>
                 <a
-                  href="mailto:mikeyclark.240@gmail.com"
+                  href="mailto:InspireCourts@gmail.com"
                   className="w-10 h-10 bg-navy-light rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-red transition-all"
                   aria-label="Email"
                 >

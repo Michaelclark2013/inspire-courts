@@ -18,6 +18,7 @@ const QUICK_QUESTIONS = [
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
+  const [hasAutoOpened, setHasAutoOpened] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -32,6 +33,29 @@ export default function ChatWidget() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Auto-open chat with notification sound on first visit
+  useEffect(() => {
+    if (hasAutoOpened) return;
+    const timer = setTimeout(() => {
+      setOpen(true);
+      setHasAutoOpened(true);
+      try {
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.3);
+      } catch {}
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [hasAutoOpened]);
 
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;

@@ -6,6 +6,7 @@ import { Menu, X, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
+  { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/events", label: "Events" },
   { href: "/facility", label: "Facility" },
@@ -14,7 +15,6 @@ const NAV_LINKS = [
   { href: "/training", label: "Training" },
   { href: "/media", label: "Media" },
   { href: "/schedule", label: "Schedule" },
-  { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -28,7 +28,6 @@ const MOBILE_NAV_LINKS = [
   { href: "/training", label: "Training" },
   { href: "/media", label: "Media" },
   { href: "/schedule", label: "Schedule" },
-  { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
 ];
 

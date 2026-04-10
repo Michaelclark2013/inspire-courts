@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Clock, Mail } from "lucide-react";
+import { ArrowRight, Clock, Mail, ExternalLink } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 export const metadata: Metadata = {
   title: "Schedules & Brackets | Inspire Courts AZ",
   description:
-    "View tournament schedules, brackets, and results for Inspire Courts AZ events. Schedules drop 48 hours before tip-off.",
+    "View tournament schedules, brackets, and results for Inspire Courts AZ events via QuickScores. Schedules drop 48 hours before tip-off.",
 };
 
 export default function SchedulePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
@@ -33,51 +33,49 @@ export default function SchedulePage() {
             </h1>
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
               Find your game times, court assignments, and bracket placements.
+              Powered by QuickScores.
             </p>
           </AnimateIn>
         </div>
       </section>
 
-      {/* Current Event */}
-      <section className="py-20 lg:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader
-            eyebrow="Current Event"
-            title="No Active Event Right Now"
-            description="When an event is in progress, schedules and live brackets will appear here."
-          />
-
-          <div className="max-w-3xl mx-auto">
-            <AnimateIn>
-              <div className="bg-off-white border border-light-gray rounded-xl p-8 text-center">
-                <div className="w-14 h-14 bg-red/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Clock className="w-7 h-7 text-red" />
-                </div>
-                <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
-                  Schedules Drop 48 Hours Before Tip-Off
-                </h3>
-                <p className="text-text-muted leading-relaxed mb-6">
-                  Schedules are released 48 hours before the event and sent
-                  directly to the head coach on file via email. Check here or
-                  your inbox before game day.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link
-                    href="/events"
-                    className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
-                  >
-                    See Upcoming Events <ArrowRight className="w-4 h-4" />
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center justify-center gap-2 bg-white border-2 border-navy hover:bg-navy hover:text-white text-navy px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
-                  >
-                    <Mail className="w-4 h-4" /> Contact Us
-                  </Link>
-                </div>
-              </div>
-            </AnimateIn>
+      {/* Schedule Info Bar */}
+      <section className="bg-off-white border-b border-light-gray">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Clock className="w-5 h-5 text-red" />
+              <p className="text-navy text-sm font-semibold">
+                Schedules drop <span className="text-red">48 hours</span> before
+                tip-off and are emailed to head coaches.
+              </p>
+            </div>
+            <a
+              href="https://quickscores.com/inspirecourts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-red hover:text-red-hover text-xs font-bold uppercase tracking-wide transition-colors"
+            >
+              Open in QuickScores <ExternalLink className="w-3.5 h-3.5" />
+            </a>
           </div>
+        </div>
+      </section>
+
+      {/* QuickScores Embed */}
+      <section className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+          <AnimateIn>
+            <div className="bg-white border border-light-gray rounded-2xl overflow-hidden shadow-sm">
+              <iframe
+                src="https://quickscores.com/inspirecourts"
+                title="Inspire Courts Tournament Schedules — QuickScores"
+                className="w-full border-0"
+                style={{ minHeight: "800px" }}
+                loading="lazy"
+              />
+            </div>
+          </AnimateIn>
         </div>
       </section>
 
@@ -126,9 +124,20 @@ export default function SchedulePage() {
             <p className="text-white/70 mb-4">
               Text or email us and we&apos;ll get you sorted.
             </p>
-            <p className="text-red font-semibold">
-              mikeyclark.240@gmail.com
-            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+              >
+                <Mail className="w-4 h-4" /> Contact Us
+              </Link>
+              <Link
+                href="/events"
+                className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/40 hover:bg-white hover:text-navy text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+              >
+                See Upcoming Events <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </AnimateIn>
         </div>
       </section>

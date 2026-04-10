@@ -9,6 +9,9 @@ import {
   Share2,
   Mic,
   CheckCircle2,
+  Heart,
+  PartyPopper,
+  ExternalLink,
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -140,13 +143,13 @@ export default function MediaPage() {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <a
-                href="https://instagram.com/azfinestmixtape"
+                href="https://www.youtube.com/@AZFinestMixtape"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/60 text-white hover:bg-white hover:text-navy px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
               >
-                See Our Work{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                Watch on YouTube{" "}
+                <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
             </div>
           </AnimateIn>
@@ -278,6 +281,87 @@ export default function MediaPage() {
         </div>
       </section>
 
+      {/* Beyond Basketball — Wedding & Event Videography */}
+      <section className="py-20 lg:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <AnimateIn>
+              <div>
+                <span className="inline-block bg-navy/5 text-navy text-xs font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-5 font-[var(--font-chakra)]">
+                  Beyond the Court
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy mb-5 font-[var(--font-chakra)] leading-[0.95]">
+                  We Shoot More Than <span className="text-red">Hoops</span>
+                </h2>
+                <p className="text-text-muted leading-relaxed mb-6">
+                  The same team behind @AZFinestMixtape also produces
+                  professional videography for weddings, quincea&ntilde;eras,
+                  corporate events, and private celebrations. Cinematic quality,
+                  same creative eye.
+                </p>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-red/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Heart className="w-4 h-4 text-red" />
+                    </div>
+                    <span className="text-navy text-sm font-semibold">
+                      Wedding Films & Highlight Reels
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-red/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <PartyPopper className="w-4 h-4 text-red" />
+                    </div>
+                    <span className="text-navy text-sm font-semibold">
+                      Quincea&ntilde;eras, Birthdays & Private Events
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-red/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Video className="w-4 h-4 text-red" />
+                    </div>
+                    <span className="text-navy text-sm font-semibold">
+                      Corporate & Promotional Video
+                    </span>
+                  </div>
+                </div>
+                <Link
+                  href="/contact?type=Event+Videography"
+                  className="group inline-flex items-center justify-center gap-2 bg-navy hover:bg-navy-dark text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
+                >
+                  Inquire About Event Videography{" "}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </AnimateIn>
+            <AnimateIn delay={200}>
+              <div className="relative">
+                <div className="bg-off-white border border-light-gray rounded-2xl p-10 text-center">
+                  <div className="w-20 h-20 bg-gradient-to-br from-red to-red-hover rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <Camera className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2 font-[var(--font-chakra)]">
+                    Same Team. Different Stage.
+                  </h3>
+                  <p className="text-text-muted text-sm leading-relaxed mb-6">
+                    Our videographers bring the same energy and production
+                    quality from courtside to your biggest life moments.
+                  </p>
+                  <a
+                    href="https://instagram.com/azfinestmixtape"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-red hover:text-red-hover text-sm font-bold uppercase tracking-wide transition-colors"
+                  >
+                    See our portfolio on Instagram &rarr;
+                  </a>
+                </div>
+              </div>
+            </AnimateIn>
+          </div>
+        </div>
+      </section>
+
       {/* Instagram CTA */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
         <div
@@ -300,7 +384,7 @@ export default function MediaPage() {
               Follow @AZFinestMixtape for highlights, mixtapes, and the best
               plays from Arizona&apos;s youth basketball scene.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
               <a
                 href="https://instagram.com/azfinestmixtape"
                 target="_blank"
@@ -309,6 +393,15 @@ export default function MediaPage() {
               >
                 @AZFinestMixtape{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+              <a
+                href="https://www.youtube.com/@AZFinestMixtape"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/60 text-white hover:bg-white hover:text-navy px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
+              >
+                YouTube Channel{" "}
+                <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
               <Link
                 href="/contact?type=Media+Services"

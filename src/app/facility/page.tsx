@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Tv, Video, Snowflake, Car, UtensilsCrossed, Trophy } from "lucide-react";
+import { ArrowRight, Tv, Video, Snowflake, UtensilsCrossed, Trophy } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 
 export const metadata: Metadata = {
@@ -26,19 +26,13 @@ const FEATURES = [
     icon: UtensilsCrossed,
     title: "Concessions",
     headline: "Snack Bar & Game-Day Fuel",
-    desc: "Drinks, snacks, and meals available all day. Outside food is allowed. No glass bottles.",
+    desc: "Drinks, snacks, and meals available all day during events. No outside food or beverages permitted.",
   },
   {
     icon: Snowflake,
     title: "Climate",
     headline: "Fully Air-Conditioned",
     desc: "No Arizona heat, no excuses. Our facility is fully climate-controlled year-round. Play in comfort no matter the season.",
-  },
-  {
-    icon: Car,
-    title: "Parking",
-    headline: "FREE Parking — Always",
-    desc: "Free parking for every visitor, every event. No meters, no permits, no cost. If someone asks you to pay, it's not us.",
   },
 ];
 

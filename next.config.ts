@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn1.sportngin.com",
       },
+      {
+        protocol: "https",
+        hostname: "cdn4.sportngin.com",
+      },
     ],
   },
   headers: async () => [

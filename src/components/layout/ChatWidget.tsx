@@ -13,7 +13,7 @@ const QUICK_QUESTIONS = [
   "How do I register my team?",
   "Where are you located?",
   "What are the tournament fees?",
-  "Is parking free?",
+  "What divisions do you offer?",
 ];
 
 export default function ChatWidget() {

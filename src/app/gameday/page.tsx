@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import {
   MapPin,
-  Car,
   Ticket,
   ClipboardCheck,
   Calendar,
@@ -28,13 +27,6 @@ const INFO_SECTIONS = [
     highlight: false,
   },
   {
-    icon: Car,
-    title: "Parking",
-    content:
-      "FREE PARKING — no cost, no meters, no permits. Anyone asking you to pay to park is not affiliated with Inspire Courts.",
-    highlight: true,
-  },
-  {
     icon: Ticket,
     title: "Spectator Admission",
     content:
@@ -59,7 +51,7 @@ const INFO_SECTIONS = [
     icon: UtensilsCrossed,
     title: "Food & Drinks",
     content:
-      "Snack bar is open all day. Outside food is allowed. No glass bottles.",
+      "Snack bar is open all day. No outside food or beverages permitted. No coolers or ice chests.",
     highlight: false,
   },
   {
@@ -80,7 +72,7 @@ const INFO_SECTIONS = [
     icon: ShieldAlert,
     title: "House Rules",
     content:
-      "No hanging on rims. No profanity. Coaches are responsible for their bench and fans. Inspire Courts reserves the right to remove anyone.",
+      "No hanging on rims. No profanity. All children must be supervised by an adult at all times. Not responsible for lost or stolen items. Unattended items will be removed by security. Inspire Courts reserves the right to remove anyone.",
     highlight: false,
   },
   {

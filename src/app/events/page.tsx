@@ -134,12 +134,14 @@ export default function EventsPage() {
                   </div>
 
                   <div className="mt-auto">
-                    <Link
-                      href="/contact?type=Tournament+Registration"
+                    <a
+                      href="https://inspirecourts.leagueapps.com/tournaments"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover text-white py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                     >
                       Register <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </AnimateIn>

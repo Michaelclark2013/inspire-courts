@@ -14,7 +14,7 @@ FACILITY
 - Features: Professional hardwood flooring, live digital scoreboards on every court, game film captured for every game, real-time stats tracking
 - Climate: Fully air-conditioned year-round — no AZ heat
 - Snack bar: Open all day during events (drinks, snacks, food)
-- Parking: 100% FREE. Always. No meters, no permits, no cost ever. If someone asks you to pay to park, they are NOT affiliated with Inspire Courts.
+- Parking: Available on-site for visitors.
 - Wi-Fi: Available throughout the facility
 - Restrooms: Clean, well-maintained
 - Hours: Event days follow the tournament schedule. Facility rental is by appointment.
@@ -43,7 +43,7 @@ GAME DAY INFO
 - Player check-in: Head coaches check in at the front table with a valid photo ID
 - Rosters: Must be submitted before your first game
 - Schedule release: 48 hours before tip-off, emailed to head coach
-- Outside food: Allowed. No glass bottles.
+- Outside food: NOT allowed. No outside food, beverages, coolers, or ice chests. Snack bar available on-site.
 - First aid: Basic first aid available on-site. For emergencies, call 911.
 - Weather: We're indoors — games happen rain or shine. If cancelled, coaches get email + text.
 - House rules: No hanging on rims. No profanity. Coaches responsible for their bench and fans. Inspire Courts reserves the right to remove anyone.
@@ -83,7 +83,7 @@ WEBSITE PAGES (direct people here)
 - Events: /events (upcoming tournaments, registration)
 - Facility: /facility (courts, amenities, rental info)
 - Schedule: /schedule (game schedules, brackets, results)
-- Game Day: /gameday (everything for game day — parking, check-in, rules)
+- Game Day: /gameday (everything for game day — check-in, rules)
 - Gallery: /gallery (photos and videos)
 - Contact: /contact (form, email, location, hours)
 
@@ -98,7 +98,7 @@ Q: What age groups do you have?
 A: We run 10U through 17U divisions for both boys and girls.
 
 Q: How much does it cost?
-A: Tournament entry is typically $350–$500 per team depending on the event. Spectator admission is $15 at the door (kids under 5 free). Parking is always free!
+A: Tournament entry is typically $350–$500 per team depending on the event. Spectator admission is $15 at the door (kids under 5 free).
 
 Q: Do you film games?
 A: Yes! Every single game is filmed. It's one of the things that makes Inspire Courts special.
@@ -107,13 +107,13 @@ Q: Can I rent the facility?
 A: Absolutely! We host leagues, practices, camps, clinics, and private events. Email mikeyclark.240@gmail.com or visit /contact for a quote.
 
 Q: Where are you located?
-A: 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233. Easy to find, and parking is always free!
+A: 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233. Easy to find!
 
 Q: When do schedules come out?
 A: 48 hours before the event. They're emailed directly to the head coach on file and posted on the Schedule page.
 
 Q: Is there food?
-A: Yes — our snack bar is open all day during events. You can also bring outside food (no glass bottles).
+A: Yes — our snack bar is open all day during events with drinks, snacks, and food. Please note: no outside food or beverages are permitted.
 
 Q: Do you have volleyball?
 A: We're expanding into volleyball! Stay tuned by following @inspirecourtsaz on Instagram.
@@ -192,13 +192,13 @@ function getKeywordResponse(msg: string): string {
     return "You can register your team on our Events page! Head to /events to see what's coming up, or email mikeyclark.240@gmail.com with your team name, age group, and the event you're interested in. We'll get you locked in!";
   }
   if (msg.includes("price") || msg.includes("cost") || msg.includes("fee") || msg.includes("how much") || msg.includes("pay")) {
-    return "Tournament entry is typically $350–$500 per team depending on the event. Spectator admission is $15 at the door (kids under 5 free). And parking is always 100% FREE! For facility rental pricing, email us at mikeyclark.240@gmail.com.";
+    return "Tournament entry is typically $350–$500 per team depending on the event. Spectator admission is $15 at the door (kids under 5 free). For facility rental pricing, email us at mikeyclark.240@gmail.com.";
   }
   if (msg.includes("location") || msg.includes("address") || msg.includes("where") || msg.includes("direction") || msg.includes("find you")) {
-    return "We're at 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233. Easy to find and parking is always free! Check out our Game Day page (/gameday) for the full rundown on getting here.";
+    return "We're at 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233. Easy to find! Check out our About page (/about) for the full rundown on getting here.";
   }
   if (msg.includes("parking") || msg.includes("park")) {
-    return "Parking is 100% FREE — always! No meters, no permits, no cost ever. If someone asks you to pay to park, they're not with us. Just show up and park!";
+    return "Parking is available on-site for all visitors. Check out our About page (/about) for more game day details!";
   }
   if (msg.includes("schedule") || msg.includes("bracket") || msg.includes("game time") || msg.includes("when do we play")) {
     return "Schedules drop 48 hours before each event and get emailed directly to the head coach on file. You can also check our Schedule page (/schedule) once they're posted!";
@@ -213,7 +213,7 @@ function getKeywordResponse(msg: string): string {
     return "Every single game at Inspire Courts is filmed! Game film is captured for every game during tournaments — it's one of the things that makes us different. Ask staff on game day for access details!";
   }
   if (msg.includes("food") || msg.includes("snack") || msg.includes("drink") || msg.includes("eat") || msg.includes("hungry") || msg.includes("concession")) {
-    return "Our snack bar is open all day during events with drinks, snacks, and food! You can also bring outside food if you want — just no glass bottles.";
+    return "Our snack bar is open all day during events with drinks, snacks, and food! Please note: no outside food or beverages are permitted inside the facility.";
   }
   if (msg.includes("contact") || msg.includes("email") || msg.includes("phone") || msg.includes("reach") || msg.includes("talk to")) {
     return "Best way to reach us is email: mikeyclark.240@gmail.com. You can also DM us on Instagram @inspirecourtsaz or fill out the contact form at /contact. We're quick to respond!";

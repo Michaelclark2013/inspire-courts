@@ -1,0 +1,105 @@
+"use client";
+
+import { useState, FormEvent } from "react";
+
+interface EmailSignupProps {
+  variant?: "dark" | "light";
+}
+
+export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  const isDark = variant === "dark";
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        setStatus("error");
+        setMessage(data.error || "Something went wrong. Try again.");
+        return;
+      }
+
+      setStatus("success");
+      setMessage("You're in. Watch your inbox.");
+      setEmail("");
+
+      // Track GA event
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("event", "newsletter_subscribe", {
+          event_category: "engagement",
+          event_label: "email_signup",
+        });
+      }
+    } catch {
+      setStatus("error");
+      setMessage("Something went wrong. Try again.");
+    }
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto text-center">
+      <h2
+        className={`text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight font-[var(--font-chakra)] mb-4 ${
+          isDark ? "text-white" : "text-navy"
+        }`}
+      >
+        Stay in the Loop
+      </h2>
+      <p
+        className={`text-lg leading-relaxed mb-8 max-w-xl mx-auto ${
+          isDark ? "text-white/70" : "text-text-muted"
+        }`}
+      >
+        Get tournament announcements, schedule drops, and Inspire Courts updates.
+      </p>
+
+      {status === "success" ? (
+        <div className="bg-green-50 border border-green-200 text-green-800 rounded-full px-6 py-4 font-semibold text-sm">
+          {message}
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 justify-center">
+          <input
+            type="email"
+            required
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (status === "error") setStatus("idle");
+            }}
+            className={`flex-1 max-w-md px-6 py-4 rounded-full text-sm outline-none transition-all ${
+              isDark
+                ? "bg-white/10 border-2 border-white/20 text-white placeholder:text-white/40 focus:border-red"
+                : "bg-white border-2 border-light-gray text-navy placeholder:text-text-muted/50 focus:border-red shadow-sm"
+            }`}
+          />
+          <button
+            type="submit"
+            disabled={status === "loading"}
+            className="bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_20px_rgba(204,0,0,0.3)] font-[var(--font-chakra)] disabled:opacity-60 disabled:hover:scale-100"
+          >
+            {status === "loading" ? "Subscribing..." : "Subscribe"}
+          </button>
+        </form>
+      )}
+
+      {status === "error" && (
+        <p className="mt-3 text-red text-sm font-medium">{message}</p>
+      )}
+    </div>
+  );
+}

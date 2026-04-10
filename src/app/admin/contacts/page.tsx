@@ -6,7 +6,7 @@ import StatusBadge from "@/components/dashboard/StatusBadge";
 
 export default async function ContactsPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   const contacts = [
     { name: "Sarah J.", email: "sarah@example.com", phone: "(480) 555-0201", type: "Tournament Registration", status: "New", date: "Apr 15, 2025" },

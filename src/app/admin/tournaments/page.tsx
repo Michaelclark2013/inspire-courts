@@ -6,7 +6,7 @@ import StatusBadge from "@/components/dashboard/StatusBadge";
 
 export default async function TournamentsPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   const tournaments = [
     { name: "OFF SZN Session 1", date: "May 2025", sport: "Basketball", status: "Registration Open", teams: 16, fee: "$400", revenue: "$6,400", net: "$4,200" },

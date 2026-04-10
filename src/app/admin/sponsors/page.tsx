@@ -6,7 +6,7 @@ import StatusBadge from "@/components/dashboard/StatusBadge";
 
 export default async function SponsorsPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   const sponsors = [
     { company: "AZ Sports Nutrition", contact: "Jake M.", status: "Active", tier: "Gold", amount: "$2,500", event: "All Events", startDate: "Jan 2025" },

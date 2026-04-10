@@ -13,7 +13,7 @@ import KPICard from "@/components/dashboard/KPICard";
 
 export default async function AdminOverview() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   // Placeholder KPIs — will be replaced with live Notion data
   const kpis = [

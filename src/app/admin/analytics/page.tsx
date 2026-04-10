@@ -6,7 +6,7 @@ import KPICard from "@/components/dashboard/KPICard";
 
 export default async function AnalyticsPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 

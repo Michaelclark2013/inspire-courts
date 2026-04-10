@@ -7,7 +7,7 @@ import DataTable from "@/components/dashboard/DataTable";
 
 export default async function RevenuePage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   const kpis = [
     { title: "Total In", value: "$20,800", icon: TrendingUp, trend: "+$6,400 this month", trendUp: true },

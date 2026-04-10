@@ -16,7 +16,7 @@ const QUICK_LINKS = [
 
 export default async function LinksPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   return (
     <div className="p-6 lg:p-8">

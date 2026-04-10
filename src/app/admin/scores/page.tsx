@@ -5,7 +5,7 @@ import DataTable from "@/components/dashboard/DataTable";
 
 export default async function ScoresPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   const scores = [
     { gameId: "RR-001", tournament: "Red Rock Invitational", division: "15U Boys", home: "AZ Scorpions", away: "Mesa Heat", score: "52-48", court: "Court 1", date: "Apr 12, 2025" },

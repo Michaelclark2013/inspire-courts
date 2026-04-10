@@ -71,6 +71,12 @@ export default function Header() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
+            <Link
+              href="/admin"
+              className="flex items-center gap-2 border border-white/30 hover:border-white/60 text-white px-4 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all hover:scale-[1.03]"
+            >
+              Admin
+            </Link>
             <a
               href="https://inspirecourts.leagueapps.com/tournaments"
               target="_blank"
@@ -110,12 +116,19 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          <Link
+            href="/admin"
+            onClick={() => setOpen(false)}
+            className="flex items-center justify-center gap-2 mt-4 border border-white/30 text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+          >
+            Admin
+          </Link>
           <a
             href="https://inspirecourts.leagueapps.com/tournaments"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
-            className="flex items-center justify-center gap-2 mt-4 bg-red hover:bg-red-hover text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+            className="flex items-center justify-center gap-2 mt-2 bg-red hover:bg-red-hover text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
           >
             Register Now <ArrowRight className="w-4 h-4" />
           </a>

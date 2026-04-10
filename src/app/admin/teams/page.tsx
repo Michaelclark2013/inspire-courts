@@ -6,7 +6,7 @@ import StatusBadge from "@/components/dashboard/StatusBadge";
 
 export default async function TeamsPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   // Placeholder data — will be replaced with Notion API data
   const teams = [

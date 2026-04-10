@@ -5,7 +5,7 @@ import DataTable from "@/components/dashboard/DataTable";
 
 export default async function StaffPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   const staff = [
     { name: "James P.", role: "Court Manager", shifts: 12, totalPay: "$960", lastShift: "Apr 12, 2025" },

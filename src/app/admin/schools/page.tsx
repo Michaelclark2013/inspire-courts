@@ -5,7 +5,7 @@ import DataTable from "@/components/dashboard/DataTable";
 
 export default async function SchoolsPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  // Auth temporarily disabled
 
   const schools = [
     { school: "Gilbert High School", city: "Gilbert", state: "AZ", classification: "6A", headCoach: "Mike S.", status: "Active", programs: "Varsity, JV" },

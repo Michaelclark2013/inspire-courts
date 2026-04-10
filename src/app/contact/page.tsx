@@ -6,6 +6,8 @@ import AnimateIn from "@/components/ui/AnimateIn";
 
 const INQUIRY_TYPES = [
   "Tournament Registration",
+  "Club Interest - Player",
+  "Club Interest - Coach",
   "Facility Rental",
   "Sponsorship Inquiry",
   "Referee Application",

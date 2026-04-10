@@ -9,7 +9,6 @@ const QUICK_LINKS = [
   { href: "/training", label: "Training" },
   { href: "/media", label: "Media" },
   { href: "/schedule", label: "Schedules" },
-  { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
 ];
 

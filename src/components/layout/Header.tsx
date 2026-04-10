@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/events", label: "Events" },
+  { href: "/events", label: "Tournaments" },
   { href: "/facility", label: "Facility" },
   { href: "/facility#rentals", label: "Rentals" },
   { href: "/prep", label: "Prep" },
@@ -22,7 +22,7 @@ const NAV_LINKS = [
 const MOBILE_NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/events", label: "Events" },
+  { href: "/events", label: "Tournaments" },
   { href: "/facility", label: "Facility" },
   { href: "/facility#rentals", label: "Court Rentals" },
   { href: "/prep", label: "Inspire Prep" },

@@ -10,10 +10,10 @@ interface Message {
 }
 
 const QUICK_QUESTIONS = [
+  "How much to rent a court?",
   "How do I register my team?",
-  "Where are you located?",
-  "What are the tournament fees?",
-  "What divisions do you offer?",
+  "Tell me about training",
+  "How do I join Team Inspire?",
 ];
 
 export default function ChatWidget() {
@@ -23,7 +23,7 @@ export default function ChatWidget() {
     {
       role: "assistant",
       content:
-        "Hey! I'm the Inspire Courts assistant. Ask me anything about tournaments, the facility, game day info, or rentals. How can I help?",
+        "What's up! 👋 Welcome to Inspire Courts — Arizona's top indoor basketball facility. 7 courts, game film, live scoreboards. What can I help you with today?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -113,8 +113,10 @@ export default function ChatWidget() {
           className={cn(
             "fixed z-[100] bg-white border border-light-gray rounded-xl shadow-2xl flex flex-col",
             "bottom-36 right-4 w-[calc(100vw-2rem)] max-w-[380px] h-[500px]",
-            "lg:bottom-24 lg:right-6"
+            "lg:bottom-24 lg:right-6",
+            "animate-[slideUp_0.3s_ease-out]"
           )}
+          style={{ animationFillMode: "forwards" }}
         >
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-light-gray bg-navy rounded-t-xl">

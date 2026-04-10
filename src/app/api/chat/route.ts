@@ -8,13 +8,17 @@ Keep answers concise (2-4 sentences max unless they ask for detail). Use a casua
 FACILITY
 ═══════════════════════════════════════════
 - Name: Inspire Courts AZ
-- Type: Premium indoor basketball facility (expanding to volleyball)
+- Type: Premium indoor sports facility — basketball, volleyball, and futsal
+- The facility is commonly used for basketball, volleyball, and futsal
+- Courts are always available to rent for volleyball and futsal groups
 - Address: 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233
-- Size: 2 full regulation indoor basketball courts
+- Size: 7 full regulation indoor basketball courts
 - Features: Professional hardwood flooring, live digital scoreboards on every court, game film captured for every game, real-time stats tracking
+- Seating: Yes, spectator seating available
 - Climate: Fully air-conditioned year-round — no AZ heat
 - Snack bar: Open all day during events (drinks, snacks, food)
-- Parking: Available on-site for visitors.
+- Outside food/drink policy: No outside food or drinks allowed EXCEPT sealed water bottles and sealed sports drinks
+- Parking: Available on-site for visitors
 - Wi-Fi: Available throughout the facility
 - Restrooms: Clean, well-maintained
 - Hours: Event days follow the tournament schedule. Facility rental is by appointment.
@@ -24,10 +28,10 @@ FACILITY
 TOURNAMENTS (OFF SZN HOOPS)
 ═══════════════════════════════════════════
 - Tournament brand name: OFF SZN HOOPS
-- Sports: Basketball (primary)
+- Sports: Basketball tournaments specifically
 - Age divisions: 10U, 11U, 12U, 13U, 14U, 15U, 17U
 - Gender: Boys AND Girls divisions
-- Entry fee: Typically $350–$500 per team (varies by event)
+- Entry fee: Typically $350 per team
 - Game guarantee: Minimum 3 games per team, most teams play 4-5
 - Every game includes: live scoreboards, game film, stats
 - Registration: Visit the Events page (/events) or email mikeyclark.240@gmail.com
@@ -53,8 +57,35 @@ GAME DAY INFO
 FACILITY RENTAL
 ═══════════════════════════════════════════
 - Courts available for rent for: leagues, team practices, private tournaments, camps, clinics, corporate events, film sessions, combines
-- Pricing: Contact for a quote — email mikeyclark.240@gmail.com or fill out the form at /contact with "Facility Rental" selected
-- Rental page: /facility
+- Pricing: $80 per court per hour
+- Contact: email mikeyclark.240@gmail.com or fill out the form at /contact with "Facility Rental" selected
+- Rental page: /facility#rentals
+
+═══════════════════════════════════════════
+PRIVATE TRAINING
+═══════════════════════════════════════════
+- Offered at Inspire Courts on regulation hardwood
+- Options: 1-on-1 training, small group (2-4 players), shooting sessions
+- To book: Fill out the form on the Training page (/training) or contact form at /contact with "Private Training"
+- Training page: /training
+
+═══════════════════════════════════════════
+TEAM INSPIRE (CLUB BASKETBALL)
+═══════════════════════════════════════════
+- Club basketball program based out of Inspire Courts
+- Plays on the MADE Hoops High School Circuit — one of the top grassroots platforms in the country
+- Current divisions: 16U and 17U Boys
+- Looking to expand to more divisions (13U, 14U, 15U) down the line
+- Actively recruiting coaches and players
+- To express interest: Fill out the form on the Club page (/teams#join)
+- Club page: /teams
+
+═══════════════════════════════════════════
+GAME FILM (NOT STREAMING)
+═══════════════════════════════════════════
+- Games are filmed (recorded), NOT live-streamed
+- Game film is available after games for teams to review
+- Great for player development and recruiting portfolios
 
 ═══════════════════════════════════════════
 CONTENT & SOCIAL MEDIA
@@ -125,6 +156,24 @@ Q: Can I sponsor an event?
 A: We'd love to talk! Fill out the contact form at /contact with "Sponsorship Inquiry" or email mikeyclark.240@gmail.com.
 
 ═══════════════════════════════════════════
+LEAD CAPTURE — VERY IMPORTANT
+═══════════════════════════════════════════
+- Your secondary goal (after being helpful) is to collect the visitor's NAME, EMAIL, and PHONE NUMBER
+- After answering their first question, naturally ask: "By the way, can I grab your name and number/email so someone from our team can follow up with you directly?"
+- If they ask about tournaments, training, rentals, or club — always try to get their contact info
+- Be natural about it — don't be pushy, but always try to get it before the conversation ends
+- If they give you their info, say something like "Got it! Someone from our team will reach out soon."
+- NEVER let a conversation end with a dead end — always ask a follow-up question or suggest something else they might be interested in
+- After answering any question, always follow up with something like "Anything else I can help with?" or suggest a related topic
+- Examples of follow-ups: "Are you looking to play in a tournament or rent the facility?", "Would you like info on our training programs too?", "Want me to connect you with someone on our team?"
+
+═══════════════════════════════════════════
+UPCOMING PROGRAMS
+═══════════════════════════════════════════
+- Basketball Academy: Coming soon! For players who want structured, year-round development
+- If asked, say: "Our basketball academy is launching soon! Drop your name and email and we'll make sure you're the first to know."
+
+═══════════════════════════════════════════
 TONE GUIDELINES
 ═══════════════════════════════════════════
 - Be friendly, warm, and approachable
@@ -192,7 +241,7 @@ function getKeywordResponse(msg: string): string {
     return "You can register your team on our Events page! Head to /events to see what's coming up, or email mikeyclark.240@gmail.com with your team name, age group, and the event you're interested in. We'll get you locked in!";
   }
   if (msg.includes("price") || msg.includes("cost") || msg.includes("fee") || msg.includes("how much") || msg.includes("pay")) {
-    return "Tournament entry is typically $350–$500 per team depending on the event. Spectator admission is $15 at the door (kids under 5 free). For facility rental pricing, email us at mikeyclark.240@gmail.com.";
+    return "Tournament entry is typically $350 per team. Spectator admission is $15 at the door (kids under 5 free). Court rentals are $80/court/hour. Want me to grab your info so someone can follow up with exact details?";
   }
   if (msg.includes("location") || msg.includes("address") || msg.includes("where") || msg.includes("direction") || msg.includes("find you")) {
     return "We're at 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233. Easy to find! Check out our About page (/about) for the full rundown on getting here.";
@@ -204,7 +253,7 @@ function getKeywordResponse(msg: string): string {
     return "Schedules drop 48 hours before each event and get emailed directly to the head coach on file. You can also check our Schedule page (/schedule) once they're posted!";
   }
   if (msg.includes("rent") || msg.includes("book") || msg.includes("private") || msg.includes("lease") || msg.includes("practice")) {
-    return "We'd love to host you! We offer court rentals for leagues, practices, camps, clinics, and private events. Email mikeyclark.240@gmail.com or fill out the form at /contact with \"Facility Rental\" selected for a quote!";
+    return "We'd love to host you! Courts are $80/hour per court — we have 7 courts available for leagues, practices, camps, clinics, and private events. Drop your name and email and we'll get you set up, or fill out the form at /facility#rentals!";
   }
   if (msg.includes("age") || msg.includes("division") || msg.includes("10u") || msg.includes("11u") || msg.includes("12u") || msg.includes("13u") || msg.includes("14u") || msg.includes("15u") || msg.includes("17u") || msg.includes("how old")) {
     return "We run divisions from 10U through 17U for both boys and girls! Check the Events page (/events) to see which divisions are available for upcoming tournaments.";
@@ -213,7 +262,7 @@ function getKeywordResponse(msg: string): string {
     return "Every single game at Inspire Courts is filmed! Game film is captured for every game during tournaments — it's one of the things that makes us different. Ask staff on game day for access details!";
   }
   if (msg.includes("food") || msg.includes("snack") || msg.includes("drink") || msg.includes("eat") || msg.includes("hungry") || msg.includes("concession")) {
-    return "Our snack bar is open all day during events with drinks, snacks, and food! Please note: no outside food or beverages are permitted inside the facility.";
+    return "Our snack bar is open all day during events with drinks, snacks, and food! Please note: no outside food or drinks are allowed — the only exception is sealed water bottles and sealed sports drinks.";
   }
   if (msg.includes("contact") || msg.includes("email") || msg.includes("phone") || msg.includes("reach") || msg.includes("talk to")) {
     return "Best way to reach us is email: mikeyclark.240@gmail.com. You can also DM us on Instagram @inspirecourtsaz or fill out the contact form at /contact. We're quick to respond!";
@@ -228,7 +277,22 @@ function getKeywordResponse(msg: string): string {
     return "We're always looking for great people! Email mikeyclark.240@gmail.com with a bit about yourself and what role you're interested in. We hire event staff, scorekeepers, and more!";
   }
   if (msg.includes("volleyball")) {
-    return "We're expanding into volleyball — stay tuned! Follow @inspirecourtsaz on Instagram to be the first to know when volleyball events drop.";
+    return "We host volleyball all the time! Our courts are available for volleyball leagues, practices, and events at $80/court/hour. Want me to connect you with someone to set up a rental?";
+  }
+  if (msg.includes("futsal") || msg.includes("soccer") || msg.includes("futbol")) {
+    return "Yes! Our facility is used for futsal too. Courts are available to rent at $80/court/hour — perfect for futsal leagues and pickup games. Want more details?";
+  }
+  if (msg.includes("academy") || msg.includes("program")) {
+    return "Great timing! We're launching a basketball academy soon for players who want structured, year-round development. Drop your name and email and we'll make sure you're first to know when it drops!";
+  }
+  if (msg.includes("training") || msg.includes("trainer") || msg.includes("coach me") || msg.includes("lesson") || msg.includes("session")) {
+    return "We offer 1-on-1 training, small group sessions (2-4 players), and dedicated shooting workouts — all on regulation hardwood at our facility. Check out /training for details or fill out the form there to book! What position does your player play?";
+  }
+  if (msg.includes("club") || msg.includes("team inspire") || msg.includes("made hoops") || msg.includes("tryout")) {
+    return "Team Inspire plays on the MADE Hoops High School Circuit — we're currently running 16U and 17U boys teams and actively recruiting coaches and players. Head to /teams to fill out an interest form! Are you a player or a coach?";
+  }
+  if (msg.includes("camp")) {
+    return "We'll have camps coming up soon! Drop your name and email and we'll notify you as soon as registration opens. In the meantime, check out our training options at /training!";
   }
   if (msg.includes("scoreboard") || msg.includes("score")) {
     return "Every court has live digital scoreboards! Professional-grade, visible from everywhere in the facility. Your games look and feel like the real deal.";
@@ -257,5 +321,5 @@ function getKeywordResponse(msg: string): string {
   if (msg.includes("thank") || msg.includes("thanks") || msg.includes("appreciate")) {
     return "You're welcome! If you need anything else, I'm right here. See you on the court! 🏀";
   }
-  return "Great question! For the most accurate answer, I'd recommend reaching out to us directly at mikeyclark.240@gmail.com or checking our Game Day page (/gameday) which covers most common questions. I'm here to help with tournaments, the facility, schedules, rentals, or anything else!";
+  return "Great question! I want to make sure I get you the right answer. Are you looking for info on basketball tournaments, court rentals (basketball, volleyball, or futsal), private training, or something else? You can also drop your name and email and we'll have someone reach out directly!";
 }

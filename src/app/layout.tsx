@@ -24,11 +24,11 @@ const chakra = Chakra_Petch({
 export const metadata: Metadata = {
   title: "Inspire Courts AZ | Indoor Basketball Facility & Tournaments in Gilbert, Arizona",
   description:
-    "Arizona's premier indoor basketball facility. 2 courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.",
+    "Arizona's premier indoor basketball facility. 7 courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.",
   openGraph: {
     title: "Inspire Courts AZ | Indoor Basketball Facility & Tournaments",
     description:
-      "Arizona's premier indoor basketball facility. 2 courts, live scoreboards, game film every game.",
+      "Arizona's premier indoor basketball facility. 7 courts, live scoreboards, game film every game.",
     url: "https://inspirecourtsaz.com",
     siteName: "Inspire Courts AZ",
     locale: "en_US",

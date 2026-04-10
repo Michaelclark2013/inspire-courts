@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 
 export const metadata: Metadata = {
   title: "Private Basketball Training in Gilbert, AZ | Inspire Courts",
@@ -232,7 +233,8 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      <div className="h-16 lg:hidden" />
+      <QuickContactBar subject="Private Training" label="Train with us?" />
+      <div className="h-28 lg:h-0 lg:hidden" />
     </>
   );
 }

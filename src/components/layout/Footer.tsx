@@ -30,7 +30,7 @@ export default function Footer() {
                 </span>
               </div>
               <p className="text-white/60 text-sm leading-relaxed">
-                Arizona&apos;s premier indoor basketball facility. 2 courts. Live
+                Arizona&apos;s premier indoor basketball facility. 7 courts. Live
                 scoreboards. Game film every game.
               </p>
             </div>

@@ -65,7 +65,7 @@ const WHY_INSPIRE = [
   {
     icon: MapPin,
     title: "Home Court Advantage",
-    desc: "Train and play at Inspire Courts — our own 2-court indoor facility with live scoreboards, game film, and a pro environment.",
+    desc: "Train and play at Inspire Courts — our own 7-court indoor facility with live scoreboards, game film, and a pro environment.",
   },
   {
     icon: Star,

@@ -21,7 +21,7 @@ import EmailSignup from "@/components/ui/EmailSignup";
 const FACILITY_FEATURES = [
   {
     icon: Trophy,
-    title: "2 Indoor Courts",
+    title: "7 Indoor Courts",
     desc: "Regulation hardwood floors, professional dimensions, adjustable hoops for all age groups.",
   },
   {
@@ -106,7 +106,7 @@ export default function Home() {
 
           <AnimateIn delay={200}>
             <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-              2 courts. Live scoreboards. Game film every game. Zero excuses.
+              7 courts. Live scoreboards. Game film every game. Zero excuses.
             </p>
           </AnimateIn>
 
@@ -295,7 +295,7 @@ export default function Home() {
                     leagues, practices, camps, clinics, and private events.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-10">
-                    {["2 Courts", "Game Film", "Scoreboards", "Rentals"].map(
+                    {["7 Courts", "Game Film", "Scoreboards", "Rentals"].map(
                       (tag) => (
                         <span
                           key={tag}

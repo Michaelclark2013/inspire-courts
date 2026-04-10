@@ -43,7 +43,7 @@ const DEFAULT_CONTENT: SiteContent = {
           fields: {
             badge: { label: "Badge Text", value: "Est. Gilbert, AZ", type: "text" },
             headline: { label: "Headline", value: "Arizona's Premier Indoor Basketball Facility", type: "text" },
-            subheadline: { label: "Subheadline", value: "2 courts. Live scoreboards. Game film every game. Zero excuses.", type: "text" },
+            subheadline: { label: "Subheadline", value: "7 courts. Live scoreboards. Game film every game. Zero excuses.", type: "text" },
             ctaPrimary: { label: "Primary Button", value: "Register for Next Event", type: "text" },
             ctaSecondary: { label: "Secondary Button", value: "Book the Facility", type: "text" },
             backgroundImage: { label: "Background Image URL", value: "https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg", type: "image" },
@@ -200,7 +200,7 @@ const DEFAULT_CONTENT: SiteContent = {
             label: "Features",
             itemFields: ["eyebrow", "title", "description"],
             items: [
-              { eyebrow: "Courts", title: "2 Regulation Indoor Courts", description: "Professional-grade hardwood flooring, regulation dimensions, and adjustable hoops for all age groups. Built for real competition." },
+              { eyebrow: "Courts", title: "7 Regulation Indoor Courts", description: "Professional-grade hardwood flooring, regulation dimensions, and adjustable hoops for all age groups. Built for real competition." },
               { eyebrow: "Technology", title: "Digital Scoreboards & Game Film", description: "Live digital scoreboards visible from every angle. Game film captured for every game." },
               { eyebrow: "Concessions", title: "Snack Bar & Game-Day Fuel", description: "Drinks, snacks, and meals available all day. No outside food or beverages permitted." },
               { eyebrow: "Climate", title: "Fully Air-Conditioned", description: "No Arizona heat, no excuses. Fully climate-controlled year-round." },

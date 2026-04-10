@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Tv, Video, Snowflake, UtensilsCrossed, Trophy } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 
 export const metadata: Metadata = {
   title: "Indoor Basketball Court Rental in Gilbert, AZ | Inspire Courts",
@@ -13,7 +14,7 @@ const FEATURES = [
   {
     icon: Trophy,
     title: "Courts",
-    headline: "2 Regulation Indoor Courts",
+    headline: "7 Regulation Indoor Courts",
     desc: "Professional-grade hardwood flooring, regulation dimensions, and adjustable hoops for all age groups. Built for real competition.",
   },
   {
@@ -122,7 +123,7 @@ export default function FacilityPage() {
       </section>
 
       {/* Rental CTA */}
-      <section className="py-20 lg:py-28 bg-off-white">
+      <section id="rentals" className="py-20 lg:py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-navy rounded-xl p-8 lg:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -168,7 +169,8 @@ export default function FacilityPage() {
         </div>
       </section>
 
-      <div className="h-16 lg:hidden" />
+      <QuickContactBar subject="Facility Rental" label="Book the court?" />
+      <div className="h-28 lg:h-0 lg:hidden" />
     </>
   );
 }

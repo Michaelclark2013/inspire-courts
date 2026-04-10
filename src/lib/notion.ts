@@ -19,6 +19,7 @@ export const DB = {
   staffShifts: "1b5e44b41acb41ddaa0b1396e355762f",
   refShifts: "d9287d85d2d44af196b9f18cc236c429",
   schools: "188d40a41a88467b9e9a256af6b3ba98",
+  chatLeads: process.env.CHAT_LEADS_DB_ID || "",
 } as const;
 
 // Generic query function using fetch (compatible with all Notion SDK versions)
@@ -173,6 +174,74 @@ export async function getRefShifts() {
   return queryDatabase(DB.refShifts);
 }
 
+// ── Create a page in any Notion database ──
+
+export async function createNotionPage(
+  databaseId: string,
+  properties: Record<string, unknown>
+) {
+  try {
+    const apiKey = process.env.NOTION_API_KEY;
+    if (!apiKey || !databaseId) {
+      console.log("Notion not configured, skipping page creation");
+      return null;
+    }
+
+    const response = await fetch("https://api.notion.com/v1/pages", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        parent: { database_id: databaseId },
+        properties,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(`Notion page creation failed: ${response.status}`);
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Notion page creation error:", error);
+    return null;
+  }
+}
+
+// ── Save a chat lead to Notion ──
+
+export async function saveChatLead(data: {
+  name?: string;
+  email?: string;
+  phone?: string;
+  interest?: string;
+  urgency?: string;
+  summary?: string;
+  transcript?: string;
+  source?: string;
+}) {
+  if (!DB.chatLeads) return null;
+
+  const properties: Record<string, unknown> = {
+    Name: { title: [{ text: { content: data.name || "Unknown Visitor" } }] },
+    Summary: { rich_text: [{ text: { content: (data.summary || "").slice(0, 2000) } }] },
+    "Chat Transcript": { rich_text: [{ text: { content: (data.transcript || "").slice(0, 2000) } }] },
+    Source: { select: { name: data.source || "Chat Widget" } },
+    Status: { select: { name: "New" } },
+  };
+
+  if (data.email) properties.Email = { email: data.email };
+  if (data.phone) properties.Phone = { phone_number: data.phone };
+  if (data.interest) properties.Interest = { select: { name: data.interest } };
+  if (data.urgency) properties.Urgency = { select: { name: data.urgency } };
+
+  return createNotionPage(DB.chatLeads, properties);
+}
+
 // ── Contact form submission ──
 
 export async function createContactSubmission(data: {
@@ -182,8 +251,25 @@ export async function createContactSubmission(data: {
   inquiryType: string;
   message: string;
 }) {
-  // For contact submissions, we'll create a page in a dedicated database
-  // For now this returns success — wire up when Contact Submissions DB is created
-  console.log("Contact submission:", data);
-  return { success: true };
+  // Save to chat leads DB with Source="Contact Form"
+  const interestMap: Record<string, string> = {
+    "Tournament Registration": "Tournament",
+    "Club Interest - Player": "Club",
+    "Club Interest - Coach": "Club",
+    "Facility Rental": "Rental",
+    "Sponsorship Inquiry": "General",
+    "Referee Application": "General",
+    "General Question": "General",
+    Other: "General",
+  };
+
+  return saveChatLead({
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    interest: interestMap[data.inquiryType] || "General",
+    urgency: "Warm",
+    summary: `${data.inquiryType}: ${data.message.slice(0, 200)}`,
+    source: "Contact Form",
+  });
 }

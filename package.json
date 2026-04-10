@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@notionhq/client": "^5.17.0",
+    "@types/nodemailer": "^8.0.0",
     "bcryptjs": "^3.0.3",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.8.0",
     "next": "16.2.3",
     "next-auth": "^4.24.13",
+    "nodemailer": "^7.0.13",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.72.1"

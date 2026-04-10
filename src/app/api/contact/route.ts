@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { createContactSubmission } from "@/lib/notion";
+import { sendLeadEmail } from "@/lib/notify";
 
 export async function POST(request: Request) {
   try {
@@ -12,19 +14,32 @@ export async function POST(request: Request) {
       );
     }
 
-    // Attempt Notion submission if API key is configured
-    if (process.env.NOTION_API_KEY) {
-      try {
-        const { Client } = await import("@notionhq/client");
-        const notion = new Client({ auth: process.env.NOTION_API_KEY });
+    // Save to Notion (fire-and-forget)
+    createContactSubmission({ name, email, phone, inquiryType, message }).catch(
+      (err) => console.error("Failed to save contact submission:", err)
+    );
 
-        // Create page in contact submissions database if one exists
-        // For now, log the submission
-        console.log("Contact form submission:", { name, email, phone, inquiryType, message });
-      } catch (e) {
-        console.error("Notion submission failed:", e);
-      }
-    }
+    // Email notification to owner (fire-and-forget)
+    const interestMap: Record<string, string> = {
+      "Tournament Registration": "Tournament",
+      "Club Interest - Player": "Club",
+      "Club Interest - Coach": "Club",
+      "Facility Rental": "Rental",
+      "Sponsorship Inquiry": "General",
+      "Referee Application": "General",
+      "General Question": "General",
+      Other: "General",
+    };
+
+    sendLeadEmail({
+      name,
+      email,
+      phone,
+      interest: interestMap[inquiryType] || "General",
+      urgency: "Warm",
+      summary: `${inquiryType}: ${message.slice(0, 300)}`,
+      source: "Contact Form",
+    }).catch((err) => console.error("Failed to send contact notification:", err));
 
     return NextResponse.json({ success: true });
   } catch {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,46 +16,76 @@ const QUICK_QUESTIONS = [
   "How do I join Team Inspire?",
 ];
 
+const INITIAL_MESSAGE: Message = {
+  role: "assistant",
+  content:
+    "What's up! 👋 Welcome to Inspire Courts — Arizona's top indoor basketball facility. 7 courts, 52,000 sq ft, game film every game. What can I help you with today?",
+};
+
+const SESSION_KEY = "inspire-chat-messages";
+const SESSION_ID_KEY = "inspire-chat-session-id";
+
+function getSessionId(): string {
+  if (typeof window === "undefined") return "server";
+  let id = sessionStorage.getItem(SESSION_ID_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    sessionStorage.setItem(SESSION_ID_KEY, id);
+  }
+  return id;
+}
+
+function loadMessages(): Message[] {
+  if (typeof window === "undefined") return [INITIAL_MESSAGE];
+  try {
+    const stored = sessionStorage.getItem(SESSION_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return [INITIAL_MESSAGE];
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content:
-        "What's up! 👋 Welcome to Inspire Courts — Arizona's top indoor basketball facility. 7 courts, game film, live scoreboards. What can I help you with today?",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>(() => loadMessages());
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Persist messages to sessionStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(messages));
+    }
+  }, [messages]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Auto-open chat with notification sound on first visit
+  // Auto-open chat on first visit (no sound — just a pulse animation on the button)
   useEffect(() => {
     if (hasAutoOpened) return;
     const timer = setTimeout(() => {
       setOpen(true);
       setHasAutoOpened(true);
-      try {
-        const ctx = new AudioContext();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.setValueAtTime(880, ctx.currentTime);
-        osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.3);
-      } catch {}
     }, 1500);
     return () => clearTimeout(timer);
   }, [hasAutoOpened]);
+
+  // Track unread messages when panel is closed
+  const handleNewAssistantMessage = useCallback(() => {
+    if (!open) setUnreadCount((c) => c + 1);
+  }, [open]);
+
+  // Clear unread when opening
+  useEffect(() => {
+    if (open) setUnreadCount(0);
+  }, [open]);
 
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;
@@ -72,6 +102,7 @@ export default function ChatWidget() {
         body: JSON.stringify({
           message: text.trim(),
           history: messages.filter((m) => m.role !== "assistant" || messages.indexOf(m) > 0),
+          sessionId: getSessionId(),
         }),
       });
       const data = await res.json();
@@ -79,6 +110,7 @@ export default function ChatWidget() {
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
+      handleNewAssistantMessage();
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -94,17 +126,23 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* Chat button */}
+      {/* Chat button with pulse animation and unread badge */}
       <button
         onClick={() => setOpen(!open)}
         className={cn(
           "fixed z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all",
           "bg-red hover:bg-red-hover text-white",
-          "bottom-20 right-4 lg:bottom-6 lg:right-6"
+          "bottom-20 right-4 lg:bottom-6 lg:right-6",
+          !hasAutoOpened && "animate-[pulse_2s_ease-in-out_infinite]"
         )}
         aria-label="Open chat"
       >
         {open ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
+        {unreadCount > 0 && !open && (
+          <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+            {unreadCount}
+          </span>
+        )}
       </button>
 
       {/* Chat panel */}
@@ -149,7 +187,11 @@ export default function ChatWidget() {
             ))}
             {loading && (
               <div className="bg-white border border-light-gray rounded-xl px-3.5 py-2.5 text-sm text-text-muted max-w-[85%] shadow-sm">
-                <span className="animate-pulse">Typing...</span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-text-muted/60 rounded-full animate-[bounce_1.4s_infinite_0ms]" />
+                  <span className="w-1.5 h-1.5 bg-text-muted/60 rounded-full animate-[bounce_1.4s_infinite_200ms]" />
+                  <span className="w-1.5 h-1.5 bg-text-muted/60 rounded-full animate-[bounce_1.4s_infinite_400ms]" />
+                </span>
               </div>
             )}
             <div ref={bottomRef} />

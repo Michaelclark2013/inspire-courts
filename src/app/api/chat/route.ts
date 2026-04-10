@@ -1,4 +1,46 @@
 import { NextResponse } from "next/server";
+import { getUpcomingEvents, getProperty, saveChatLead } from "@/lib/notion";
+import { sendLeadEmail, type LeadData } from "@/lib/notify";
+
+// ── In-memory caches ──
+let cachedEvents: string | null = null;
+let eventsCacheTime = 0;
+const EVENTS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// Dedup: track sessions that already triggered a notification
+const notifiedSessions = new Map<string, number>();
+const NOTIFY_COOLDOWN = 10 * 60 * 1000; // 10 minutes
+
+async function getEventContext(): Promise<string> {
+  const now = Date.now();
+  if (cachedEvents && now - eventsCacheTime < EVENTS_CACHE_TTL) {
+    return cachedEvents;
+  }
+
+  try {
+    const events = await getUpcomingEvents();
+    if (!events || events.length === 0) {
+      cachedEvents = "No upcoming events currently listed. Direct visitors to /events or email InspireCourts@gmail.com for the latest schedule.";
+    } else {
+      const eventList = events
+        .map((e: any) => {
+          const name = getProperty(e, "Name") || getProperty(e, "Event Name") || "Unnamed Event";
+          const date = getProperty(e, "Date") || getProperty(e, "Event Date") || "TBD";
+          const status = getProperty(e, "Status") || "TBD";
+          const divisions = getProperty(e, "Divisions") || getProperty(e, "Age Groups") || "";
+          return `- ${name} | Date: ${date} | Status: ${status}${divisions ? ` | Divisions: ${divisions}` : ""}`;
+        })
+        .join("\n");
+      cachedEvents = `Current upcoming events:\n${eventList}`;
+    }
+    eventsCacheTime = now;
+  } catch {
+    cachedEvents = "Unable to load events right now. Direct visitors to /events for the latest.";
+    eventsCacheTime = now;
+  }
+
+  return cachedEvents;
+}
 
 const BUSINESS_CONTEXT = `You are the Inspire Courts AZ virtual assistant — a friendly, helpful guide for anyone visiting the website. Your job is to answer any question a customer might have and point them to the right place. You're warm, knowledgeable, and sound like someone who actually works at the facility — not a robot.
 
@@ -211,16 +253,29 @@ Q: Can I sponsor an event?
 A: We'd love to talk! Fill out the contact form at /contact with "Sponsorship Inquiry" or email InspireCourts@gmail.com.
 
 ═══════════════════════════════════════════
-LEAD CAPTURE — VERY IMPORTANT
+LEAD CAPTURE — CRITICAL INSTRUCTIONS
 ═══════════════════════════════════════════
-- Your secondary goal (after being helpful) is to collect the visitor's NAME, EMAIL, and PHONE NUMBER
-- After answering their first question, naturally ask: "By the way, can I grab your name and number/email so someone from our team can follow up with you directly?"
-- If they ask about tournaments, training, rentals, or club — always try to get their contact info
-- Be natural about it — don't be pushy, but always try to get it before the conversation ends
-- If they give you their info, say something like "Got it! Someone from our team will reach out soon."
-- NEVER let a conversation end with a dead end — always ask a follow-up question or suggest something else they might be interested in
-- After answering any question, always follow up with something like "Anything else I can help with?" or suggest a related topic
-- Examples of follow-ups: "Are you looking to play in a tournament or rent the facility?", "Would you like info on our training programs too?", "Want me to connect you with someone on our team?"
+Your secondary goal (after being helpful) is to collect the visitor's NAME, EMAIL, and optionally PHONE NUMBER so the team can follow up.
+
+Strategy:
+- After answering their first real question, naturally work in: "By the way, can I grab your name and email so someone from our team can follow up with you directly?"
+- If they ask about tournaments, training, rentals, or club — always try to get contact info
+- Be natural — don't be pushy. One ask per conversation is enough.
+- If they give you their info, say "Got it! Someone from our team will reach out soon."
+- NEVER let a conversation end with a dead end — always ask a follow-up or suggest something else
+
+IMPORTANT — LEAD DATA EXTRACTION:
+When a visitor shares their name, email, or phone number in any message, you MUST include a hidden data block at the VERY END of your response in this exact format:
+
+<lead_data>{"name":"their name","email":"their@email.com","phone":"their phone","interest":"Tournament|Rental|Training|Club|General","urgency":"Hot|Warm|Cold","summary":"one-line summary of what they need"}</lead_data>
+
+Rules for the lead_data block:
+- Include it ONLY when the user provides at least a name + email, or a name + phone
+- "interest" should match what they're asking about (Tournament, Rental, Training, Club, or General)
+- "urgency": Hot = ready to book/register now, Warm = exploring options, Cold = just browsing/asking general questions
+- "summary": Brief description of their need (e.g., "Looking to rent 3 courts for volleyball league on Saturdays")
+- Omit fields that weren't provided (e.g., if no phone, leave it out)
+- The lead_data block will be stripped from the response before showing to the user — they will never see it
 
 ═══════════════════════════════════════════
 UPCOMING PROGRAMS
@@ -238,11 +293,20 @@ TONE GUIDELINES
 - It's okay to say "we" when talking about the facility
 - Keep it short — coaches are busy people on their phones
 - Always end with a helpful next step or link
-- If you genuinely don't know something, say "Great question! I'd recommend reaching out to us directly at InspireCourts@gmail.com so we can get you the right answer."`;
+- If you genuinely don't know something, say "Great question! I'd recommend reaching out to us directly at InspireCourts@gmail.com so we can get you the right answer."
+
+═══════════════════════════════════════════
+CONVERSATION INTELLIGENCE
+═══════════════════════════════════════════
+- Pay attention to context clues: if someone mentions "my son" or "my daughter", they're a parent — adjust tone accordingly
+- If someone mentions a specific age (e.g., "my 13 year old"), reference the right division (13U)
+- If someone seems ready to book/register, make it as easy as possible — give them the direct link or email
+- If someone is comparing facilities, highlight what makes Inspire unique: 52K sq ft, 7 courts, game film every game, electronic scoreboards, air conditioning
+- If someone asks something you have live event data for (see LIVE DATA section), use the real event names and dates — don't give generic answers`;
 
 export async function POST(request: Request) {
   try {
-    const { message, history } = await request.json();
+    const { message, history, sessionId } = await request.json();
 
     if (!message) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -250,13 +314,25 @@ export async function POST(request: Request) {
 
     // Use Claude if API key is available
     if (process.env.ANTHROPIC_API_KEY) {
+      // Build conversation history (last 20 messages)
       const messages = [
-        ...(history || []).slice(-10).map((h: { role: string; content: string }) => ({
+        ...(history || []).slice(-20).map((h: { role: string; content: string }) => ({
           role: h.role,
           content: h.content,
         })),
         { role: "user", content: message },
       ];
+
+      // Fetch live event data to inject into system prompt
+      const eventContext = await getEventContext();
+      const systemPrompt = `${BUSINESS_CONTEXT}
+
+═══════════════════════════════════════════
+LIVE DATA — UPCOMING EVENTS (from database)
+═══════════════════════════════════════════
+${eventContext}
+
+Use this real event data when visitors ask about upcoming tournaments or events. Give specific event names and dates when available.`;
 
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -267,15 +343,66 @@ export async function POST(request: Request) {
         },
         body: JSON.stringify({
           model: "claude-haiku-4-5-20251001",
-          max_tokens: 400,
-          system: BUSINESS_CONTEXT,
+          max_tokens: 600,
+          system: systemPrompt,
           messages,
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        const reply = data.content?.[0]?.text || "Sorry, I couldn't process that. Please try again!";
+        let reply = data.content?.[0]?.text || "Sorry, I couldn't process that. Please try again!";
+
+        // Extract lead data if present
+        const leadMatch = reply.match(/<lead_data>([\s\S]*?)<\/lead_data>/);
+        if (leadMatch) {
+          // Strip lead data from visible reply
+          reply = reply.replace(/<lead_data>[\s\S]*?<\/lead_data>/, "").trim();
+
+          try {
+            const leadData: LeadData = JSON.parse(leadMatch[1]);
+
+            // Build transcript from last few messages
+            const recentMessages = (history || []).slice(-5);
+            recentMessages.push({ role: "user", content: message });
+            const transcript = recentMessages
+              .map((m: { role: string; content: string }) =>
+                `${m.role === "user" ? "Visitor" : "Bot"}: ${m.content}`
+              )
+              .join("\n");
+
+            leadData.transcript = transcript;
+            leadData.source = "Chat Widget";
+
+            // Check dedup — don't re-notify for same session within cooldown
+            const sid = sessionId || "unknown";
+            const lastNotified = notifiedSessions.get(sid) || 0;
+            const shouldNotify = Date.now() - lastNotified > NOTIFY_COOLDOWN;
+
+            // Fire-and-forget: save to Notion + send email
+            saveChatLead(leadData).catch((err) =>
+              console.error("Failed to save chat lead:", err)
+            );
+
+            if (shouldNotify) {
+              notifiedSessions.set(sid, Date.now());
+              sendLeadEmail(leadData).catch((err) =>
+                console.error("Failed to send lead email:", err)
+              );
+            }
+
+            // Clean up old sessions from dedup map (prevent memory leak)
+            if (notifiedSessions.size > 1000) {
+              const cutoff = Date.now() - NOTIFY_COOLDOWN * 2;
+              for (const [key, time] of notifiedSessions) {
+                if (time < cutoff) notifiedSessions.delete(key);
+              }
+            }
+          } catch (parseErr) {
+            console.error("Failed to parse lead data:", parseErr);
+          }
+        }
+
         return NextResponse.json({ reply });
       }
     }
@@ -294,9 +421,9 @@ export async function POST(request: Request) {
 // Smart pattern matching with scoring — matches the best response, not just the first keyword
 interface Pattern {
   keywords: string[];
-  mustMatch?: number; // minimum keywords to match (default 1)
+  mustMatch?: number;
   response: string;
-  score?: number; // priority boost
+  score?: number;
 }
 
 const PATTERNS: Pattern[] = [
@@ -413,7 +540,6 @@ const PATTERNS: Pattern[] = [
 ];
 
 function getKeywordResponse(msg: string): string {
-  // Score each pattern based on how many keywords match
   let bestMatch: { response: string; matchCount: number } | null = null;
 
   for (const pattern of PATTERNS) {
@@ -430,7 +556,6 @@ function getKeywordResponse(msg: string): string {
 
   if (bestMatch) return bestMatch.response;
 
-  // Smart fallback — try to understand intent from common phrases
   if (msg.length < 5) {
     return "Hey! I'm here to help with anything Inspire Courts — tournaments, court rentals (basketball, volleyball, futsal), private training, our club team, or facility info. What are you looking for?";
   }

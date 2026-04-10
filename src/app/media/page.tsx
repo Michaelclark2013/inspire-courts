@@ -1,0 +1,328 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Video,
+  Camera,
+  Film,
+  Scissors,
+  Share2,
+  Mic,
+  CheckCircle2,
+} from "lucide-react";
+import AnimateIn from "@/components/ui/AnimateIn";
+import SectionHeader from "@/components/ui/SectionHeader";
+
+export const metadata: Metadata = {
+  title: "Basketball Media Services | Highlights, Film & Content | Inspire Courts",
+  description:
+    "Professional basketball media services — game film, highlight reels, mixtapes, player profiles, and social media content. Powered by @AZFinestMixtape.",
+};
+
+const SERVICES = [
+  {
+    icon: Video,
+    title: "Game Film",
+    desc: "Full-game recordings of every game at Inspire Courts. Multi-angle coverage, clean audio, and delivered within 48 hours.",
+    included: true,
+  },
+  {
+    icon: Film,
+    title: "Highlight Reels",
+    desc: "Custom highlight packages for individual players. Perfect for recruiting profiles, social media, and college coaches.",
+    included: false,
+  },
+  {
+    icon: Camera,
+    title: "Event Photography",
+    desc: "Professional game-day photography for tournaments and events. Action shots, team photos, and social media assets.",
+    included: false,
+  },
+  {
+    icon: Scissors,
+    title: "Mixtapes",
+    desc: "Full mixtape edits with music, effects, and professional post-production. Showcasing your best plays in cinematic style.",
+    included: false,
+  },
+  {
+    icon: Share2,
+    title: "Social Media Content",
+    desc: "Short-form content optimized for Instagram, TikTok, and YouTube. Reels, stories, and posts that get engagement.",
+    included: false,
+  },
+  {
+    icon: Mic,
+    title: "Player Profiles",
+    desc: "Interview-style player profile videos. Stats, highlights, and a personal story — everything a coach needs to see.",
+    included: false,
+  },
+];
+
+const PACKAGES = [
+  {
+    name: "Game Film",
+    tagline: "Included with every tournament",
+    features: [
+      "Full-game recording",
+      "Both courts covered",
+      "Delivered within 48 hours",
+      "Digital download link",
+    ],
+    cta: "Included Free",
+    highlighted: false,
+    free: true,
+  },
+  {
+    name: "Player Highlight",
+    tagline: "Stand out to college coaches",
+    features: [
+      "Custom highlight reel (3-5 min)",
+      "Professional editing & music",
+      "Multiple game clips compiled",
+      "Recruiting-ready format",
+      "Digital download + shareable link",
+    ],
+    cta: "Get a Quote",
+    highlighted: true,
+    free: false,
+  },
+  {
+    name: "Full Mixtape",
+    tagline: "The ultimate showcase",
+    features: [
+      "Cinematic mixtape edit",
+      "Professional color grading",
+      "Custom music & effects",
+      "Player interview segment",
+      "Social media cuts included",
+      "YouTube-ready format",
+    ],
+    cta: "Get a Quote",
+    highlighted: false,
+    free: false,
+  },
+];
+
+export default function MediaPage() {
+  return (
+    <>
+      {/* Hero */}
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage:
+              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(204,0,0,0.15),transparent_60%)]" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+          <AnimateIn>
+            <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-6 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
+              @AZFinestMixtape
+            </span>
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg leading-[0.9]">
+              Media
+              <br />
+              <span className="text-red">Services</span>
+            </h1>
+            <p className="text-white/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
+              Professional basketball media — game film, highlights, mixtapes,
+              and content that gets your player seen.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact?type=Media+Services"
+                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+              >
+                Get a Quote{" "}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <a
+                href="https://instagram.com/azfinestmixtape"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/60 text-white hover:bg-white hover:text-navy px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
+              >
+                See Our Work{" "}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
+          </AnimateIn>
+        </div>
+      </section>
+
+      {/* Services Grid */}
+      <section className="py-20 lg:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            eyebrow="What We Offer"
+            title="Media Services"
+            description="From basic game film to full cinematic mixtapes — we cover every level of basketball content."
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {SERVICES.map((service, i) => (
+              <AnimateIn key={service.title} delay={i * 80}>
+                <div className="group relative bg-white border border-light-gray rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  {service.included && (
+                    <span className="inline-block bg-green-50 text-green-700 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4 border border-green-200">
+                      Included Free
+                    </span>
+                  )}
+                  <div className="w-14 h-14 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-5 shadow-md">
+                    <service.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-navy font-[var(--font-chakra)] font-bold text-lg uppercase tracking-tight mb-3">
+                    {service.title}
+                  </h3>
+                  <p className="text-text-muted text-sm leading-relaxed">
+                    {service.desc}
+                  </p>
+                </div>
+              </AnimateIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Packages */}
+      <section className="py-20 lg:py-28 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            eyebrow="Packages"
+            title="Choose Your Package"
+            description="Every tournament at Inspire Courts includes free game film. Need more? We've got you."
+          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PACKAGES.map((pkg, i) => (
+              <AnimateIn key={pkg.name} delay={i * 100}>
+                <div
+                  className={`relative rounded-2xl p-8 h-full flex flex-col overflow-hidden ${
+                    pkg.highlighted
+                      ? "bg-navy text-white"
+                      : "bg-white border border-light-gray"
+                  }`}
+                >
+                  {pkg.highlighted && (
+                    <>
+                      <div
+                        className="absolute inset-0 opacity-10 bg-cover bg-center"
+                        style={{
+                          backgroundImage:
+                            "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy/95 to-navy-dark" />
+                      <span className="relative z-10 inline-block self-start bg-red text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4 font-[var(--font-chakra)]">
+                        Most Popular
+                      </span>
+                    </>
+                  )}
+                  <div className="relative z-10 flex flex-col h-full">
+                    <h3
+                      className={`font-[var(--font-chakra)] font-bold text-xl uppercase tracking-tight mb-1 ${
+                        pkg.highlighted ? "text-white" : "text-navy"
+                      }`}
+                    >
+                      {pkg.name}
+                    </h3>
+                    <p
+                      className={`text-sm mb-6 ${
+                        pkg.highlighted ? "text-white/60" : "text-text-muted"
+                      }`}
+                    >
+                      {pkg.tagline}
+                    </p>
+                    <ul className="space-y-2.5 mb-8 flex-1">
+                      {pkg.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2">
+                          <CheckCircle2
+                            className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
+                              pkg.highlighted ? "text-red" : "text-green-600"
+                            }`}
+                          />
+                          <span
+                            className={`text-sm ${
+                              pkg.highlighted ? "text-white/80" : "text-text-muted"
+                            }`}
+                          >
+                            {f}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {pkg.free ? (
+                      <div className="bg-green-50 text-green-700 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide text-center font-[var(--font-chakra)] border border-green-200">
+                        Included with Tournaments
+                      </div>
+                    ) : (
+                      <Link
+                        href="/contact?type=Media+Services"
+                        className={`group inline-flex items-center justify-center gap-2 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all font-[var(--font-chakra)] ${
+                          pkg.highlighted
+                            ? "bg-red hover:bg-red-hover text-white"
+                            : "bg-navy hover:bg-navy-dark text-white"
+                        }`}
+                      >
+                        {pkg.cta}{" "}
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </AnimateIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Instagram CTA */}
+      <section className="relative py-24 lg:py-32 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage:
+              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-navy/95 to-navy/85" />
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <AnimateIn>
+            <div className="w-16 h-16 bg-red/20 rounded-xl flex items-center justify-center mx-auto mb-6 border border-red/30">
+              <Camera className="w-8 h-8 text-red" />
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
+              See Our <span className="text-red">Work</span>
+            </h2>
+            <p className="text-white/70 text-lg mb-10 max-w-xl mx-auto">
+              Follow @AZFinestMixtape for highlights, mixtapes, and the best
+              plays from Arizona&apos;s youth basketball scene.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="https://instagram.com/azfinestmixtape"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+              >
+                @AZFinestMixtape{" "}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+              <Link
+                href="/contact?type=Media+Services"
+                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/60 text-white hover:bg-white hover:text-navy px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
+              >
+                Request Media Services{" "}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </AnimateIn>
+        </div>
+      </section>
+
+      <div className="h-16 lg:hidden" />
+    </>
+  );
+}

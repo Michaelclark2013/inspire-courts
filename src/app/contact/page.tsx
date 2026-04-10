@@ -1,0 +1,281 @@
+"use client";
+
+import { useState } from "react";
+import { MapPin, Mail, Camera, ArrowRight, Check } from "lucide-react";
+import AnimateIn from "@/components/ui/AnimateIn";
+
+const INQUIRY_TYPES = [
+  "Tournament Registration",
+  "Facility Rental",
+  "Sponsorship Inquiry",
+  "Referee Application",
+  "General Question",
+  "Other",
+];
+
+export default function ContactPage() {
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      inquiryType: formData.get("inquiryType") as string,
+      message: formData.get("message") as string,
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      }
+    } catch {
+      alert("Something went wrong. Please try again or email us directly.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <>
+      {/* Hero */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage:
+              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+          <AnimateIn>
+            <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
+              Get in Touch
+            </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg">
+              Contact
+            </h1>
+            <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
+              Questions about events, rentals, or anything else? We&apos;ll get
+              back to you fast.
+            </p>
+          </AnimateIn>
+        </div>
+      </section>
+
+      {/* Form + Info */}
+      <section className="py-20 lg:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+            {/* Form */}
+            <div className="lg:col-span-3">
+              <AnimateIn>
+                {submitted ? (
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+                    <Check className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                    <h3 className="text-navy font-bold text-xl uppercase tracking-tight mb-2 font-[var(--font-chakra)]">
+                      Message Sent
+                    </h3>
+                    <p className="text-text-muted">
+                      We&apos;ll get back to you within 24 hours.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label
+                          htmlFor="name"
+                          className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
+                        >
+                          Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          required
+                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+                          placeholder="Your name"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="email"
+                          className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
+                        >
+                          Email *
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          required
+                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+                          placeholder="you@example.com"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label
+                          htmlFor="phone"
+                          className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
+                        >
+                          Phone
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+                          placeholder="(480) 555-1234"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="inquiryType"
+                          className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
+                        >
+                          Inquiry Type
+                        </label>
+                        <select
+                          id="inquiryType"
+                          name="inquiryType"
+                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors"
+                        >
+                          {INQUIRY_TYPES.map((type) => (
+                            <option key={type} value={type}>
+                              {type}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="message"
+                        className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
+                      >
+                        Message *
+                      </label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows={5}
+                        required
+                        className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50 resize-vertical"
+                        placeholder="Tell us what you need..."
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="inline-flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+                    >
+                      {loading ? "Sending..." : "Send Message"}{" "}
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </form>
+                )}
+              </AnimateIn>
+            </div>
+
+            {/* Info Sidebar */}
+            <div className="lg:col-span-2">
+              <AnimateIn delay={200}>
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
+                      Location
+                    </h3>
+                    <div className="flex gap-3 text-text-muted text-sm">
+                      <MapPin className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p>1090 N Fiesta Blvd</p>
+                        <p>Ste 101 & 102</p>
+                        <p>Gilbert, AZ 85233</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
+                      Email
+                    </h3>
+                    <div className="flex gap-3 text-text-muted text-sm">
+                      <Mail className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <a
+                        href="mailto:mikeyclark.240@gmail.com"
+                        className="hover:text-red transition-colors"
+                      >
+                        mikeyclark.240@gmail.com
+                      </a>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
+                      Social
+                    </h3>
+                    <div className="flex gap-3 text-text-muted text-sm">
+                      <Camera className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <a
+                        href="https://instagram.com/inspirecourtsaz"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-red transition-colors"
+                      >
+                        @inspirecourtsaz
+                      </a>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
+                      Hours
+                    </h3>
+                    <div className="text-text-muted text-sm space-y-1">
+                      <p>Event days: per schedule</p>
+                      <p>Facility rental: by appointment</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-off-white border border-light-gray rounded-xl overflow-hidden aspect-[4/3]">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3331.1!2d-111.7897!3d33.3528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDIxJzEwLjEiTiAxMTHCsDQ3JzIyLjkiVw!5e0!3m2!1sen!2sus!4v1234567890"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Inspire Courts AZ Location"
+                    />
+                  </div>
+                </div>
+              </AnimateIn>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="h-16 lg:hidden" />
+    </>
+  );
+}

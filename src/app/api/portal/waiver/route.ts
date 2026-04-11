@@ -5,6 +5,9 @@ import {
   appendSheetRow,
   isGoogleConfigured,
   SHEETS,
+  DRIVE_FOLDERS,
+  findOrCreateDriveFolder,
+  createDriveDoc,
 } from "@/lib/google-sheets";
 
 // POST /api/portal/waiver — submit a player waiver
@@ -65,6 +68,59 @@ export async function POST(request: NextRequest) {
         { error: "Failed to save waiver. Please try again." },
         { status: 500 }
       );
+    }
+
+    // Also save waiver as a Google Doc in Drive, organized by event
+    const eventFolder = eventName || "General";
+    const waiversFolderId = await findOrCreateDriveFolder(
+      DRIVE_FOLDERS.waivers,
+      "Waivers"
+    );
+
+    if (waiversFolderId) {
+      const eventFolderId = await findOrCreateDriveFolder(
+        waiversFolderId,
+        eventFolder
+      );
+
+      if (eventFolderId) {
+        const docTitle = `Waiver — ${playerName} (${timestamp})`;
+        const docContent = [
+          `INSPIRE COURTS AZ — PARTICIPATION WAIVER`,
+          `═══════════════════════════════════════`,
+          ``,
+          `Event: ${eventName || "N/A"}`,
+          `Date: ${timestamp}`,
+          ``,
+          `PLAYER INFORMATION`,
+          `──────────────────`,
+          `Player Name: ${playerName}`,
+          ``,
+          `PARENT / GUARDIAN`,
+          `──────────────────`,
+          `Name: ${parentName}`,
+          `Email: ${parentEmail}`,
+          `Phone: ${parentPhone || "N/A"}`,
+          ``,
+          `EMERGENCY CONTACT`,
+          `──────────────────`,
+          `Name: ${emergencyContact || "N/A"}`,
+          `Phone: ${emergencyPhone || "N/A"}`,
+          ``,
+          `MEDICAL`,
+          `──────────────────`,
+          `Known Allergies: ${allergies || "None"}`,
+          ``,
+          `WAIVER AGREEMENT`,
+          `──────────────────`,
+          `I, the undersigned parent/guardian, hereby grant permission for the above-named player to participate in activities at Inspire Courts AZ. I understand that participation in basketball and athletic activities involves inherent risks. I agree to hold harmless Inspire Courts AZ, its staff, and affiliates from any claims arising from participation. I confirm that the player is in good physical condition and fit to participate.`,
+          ``,
+          `Agreed and submitted by: ${submittedBy || session.user.name || "Unknown"}`,
+          `Submitted at: ${timestamp}`,
+        ].join("\n");
+
+        await createDriveDoc(eventFolderId, docTitle, docContent);
+      }
     }
   }
 

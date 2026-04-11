@@ -32,6 +32,7 @@ async function getAccessToken(): Promise<string | null> {
     scope: [
       "https://www.googleapis.com/auth/spreadsheets",
       "https://www.googleapis.com/auth/drive",
+      "https://www.googleapis.com/auth/documents",
     ].join(" "),
     aud: "https://oauth2.googleapis.com/token",
     exp: now + 3600,
@@ -183,6 +184,7 @@ export interface DriveFile {
 export const DRIVE_FOLDERS = {
   root: "14qiv0ravjnqrjZGBIfnb3R7WaXvOU4EV",
   responses: "1xFZx8-duZW5uPg6nU9syl54Xq31Z3ssT",
+  waivers: "14qiv0ravjnqrjZGBIfnb3R7WaXvOU4EV", // Waivers folder — subfolders per event created inside
 } as const;
 
 export const MIME_LABELS: Record<string, string> = {
@@ -261,6 +263,123 @@ export async function appendSheetRow(
 }
 
 // ── Google Drive API ──────────────────────────────────────────────────────────
+
+/** Find a subfolder by name inside a parent folder, or create it */
+export async function findOrCreateDriveFolder(
+  parentFolderId: string,
+  folderName: string
+): Promise<string | null> {
+  const token = await getAccessToken();
+  if (!token) return null;
+
+  try {
+    // Search for existing folder
+    const searchParams = new URLSearchParams({
+      q: `'${parentFolderId}' in parents and name = '${folderName.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+      fields: "files(id,name)",
+      pageSize: "1",
+    });
+
+    const searchRes = await fetch(
+      `https://www.googleapis.com/drive/v3/files?${searchParams}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (searchRes.ok) {
+      const data = await searchRes.json();
+      if (data.files?.length > 0) return data.files[0].id;
+    }
+
+    // Create folder if not found
+    const createRes = await fetch("https://www.googleapis.com/drive/v3/files", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: folderName,
+        mimeType: "application/vnd.google-apps.folder",
+        parents: [parentFolderId],
+      }),
+    });
+
+    if (!createRes.ok) {
+      console.error(`Drive folder create failed: ${createRes.status}`);
+      return null;
+    }
+
+    const created = await createRes.json();
+    return created.id;
+  } catch (err) {
+    console.error("Drive folder error:", err);
+    return null;
+  }
+}
+
+/** Create a Google Doc in a specific Drive folder */
+export async function createDriveDoc(
+  folderId: string,
+  title: string,
+  content: string
+): Promise<string | null> {
+  const token = await getAccessToken();
+  if (!token) return null;
+
+  try {
+    // Create a Google Doc
+    const createRes = await fetch("https://www.googleapis.com/drive/v3/files", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: title,
+        mimeType: "application/vnd.google-apps.document",
+        parents: [folderId],
+      }),
+    });
+
+    if (!createRes.ok) {
+      console.error(`Drive doc create failed: ${createRes.status}`);
+      return null;
+    }
+
+    const doc = await createRes.json();
+
+    // Update the doc content via Google Docs API
+    const updateRes = await fetch(
+      `https://docs.googleapis.com/v1/documents/${doc.id}:batchUpdate`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          requests: [
+            {
+              insertText: {
+                location: { index: 1 },
+                text: content,
+              },
+            },
+          ],
+        }),
+      }
+    );
+
+    if (!updateRes.ok) {
+      console.error(`Doc content update failed: ${updateRes.status}`);
+    }
+
+    return doc.id;
+  } catch (err) {
+    console.error("Drive doc create error:", err);
+    return null;
+  }
+}
 
 export async function listDriveFolder(folderId: string): Promise<DriveFile[]> {
   const token = await getAccessToken();

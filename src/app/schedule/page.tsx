@@ -97,10 +97,10 @@ export default function SchedulePage() {
           </p>
           <div className="max-w-3xl mx-auto space-y-3">
             {[
-              { name: "Red Rock Invitational", date: "April 2025" },
-              { name: "OFF SZN Session 4", date: "March 2025" },
-              { name: "Presidents Day Classic", date: "February 2025" },
-              { name: "MLK Weekend Shootout", date: "January 2025" },
+              { name: "OFF SZN Session 1", date: "April 2026" },
+              { name: "Red Rock Invitational", date: "March 2026" },
+              { name: "Presidents Day Classic", date: "February 2026" },
+              { name: "MLK Weekend Shootout", date: "January 2026" },
             ].map((event, i) => (
               <AnimateIn key={i} delay={i * 50}>
                 <div className="bg-white border border-light-gray rounded-xl p-5 flex items-center justify-between shadow-sm">

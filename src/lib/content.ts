@@ -53,7 +53,7 @@ const DEFAULT_CONTENT: SiteContent = {
         {
           name: "Event Bar",
           fields: {
-            text: { label: "Event Text", value: "Next Event: OFF SZN Session 1 — May 2025", type: "text" },
+            text: { label: "Event Text", value: "OFF SZN HOOPS — Tournaments Running Year-Round", type: "text" },
             buttonText: { label: "Button Text", value: "Register Now", type: "text" },
           },
         },
@@ -81,7 +81,7 @@ const DEFAULT_CONTENT: SiteContent = {
             label: "Features",
             itemFields: ["title", "description"],
             items: [
-              { title: "2 Indoor Courts", description: "Regulation hardwood floors, professional dimensions, adjustable hoops for all age groups." },
+              { title: "7 Indoor Courts", description: "Regulation hardwood floors, professional dimensions, adjustable hoops for all age groups." },
               { title: "Live Scoreboards", description: "Digital scoreboards visible from every seat. Real-time scores, period tracking, shot clocks." },
               { title: "Game Film", description: "Every game filmed, every play captured. Teams get footage to review and improve." },
               { title: "Stats & Analytics", description: "Real-time stats tracking for every game. Points, rebounds, assists — all on record." },
@@ -175,9 +175,9 @@ const DEFAULT_CONTENT: SiteContent = {
             label: "Events",
             itemFields: ["name", "date", "fee", "divisions", "spotsLeft", "maxTeams"],
             items: [
-              { name: "OFF SZN Session 1", date: "May 2025", fee: "$400", divisions: "10U,11U,12U,13U,14U,15U,17U", spotsLeft: "8", maxTeams: "24" },
-              { name: "Hoopalooza Heroes", date: "June 2025", fee: "$400", divisions: "10U,12U,14U,17U", spotsLeft: "12", maxTeams: "20" },
-              { name: "Memorial Day Heroes", date: "May 2025", fee: "$450", divisions: "11U,12U,13U,14U,15U,17U", spotsLeft: "5", maxTeams: "24" },
+              { name: "OFF SZN Session 1", date: "Coming Soon", fee: "$350", divisions: "10U,11U,12U,13U,14U,15U,17U", spotsLeft: "—", maxTeams: "24" },
+              { name: "Hoopalooza Heroes", date: "Coming Soon", fee: "$400", divisions: "10U,12U,14U,17U", spotsLeft: "—", maxTeams: "20" },
+              { name: "Memorial Day Heroes", date: "Coming Soon", fee: "$450", divisions: "11U,12U,13U,14U,15U,17U", spotsLeft: "—", maxTeams: "24" },
             ],
           },
         },

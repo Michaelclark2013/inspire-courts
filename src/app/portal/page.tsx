@@ -7,6 +7,14 @@ import {
   Users,
   Calendar,
   Radio,
+  FileCheck,
+  UserCheck,
+  CreditCard,
+  ChevronRight,
+  CheckCircle2,
+  Circle,
+  ArrowRight,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -21,84 +29,278 @@ type LiveGame = {
   division: string | null;
 };
 
+type RegistrationStep = {
+  label: string;
+  description: string;
+  href: string;
+  done: boolean;
+  icon: typeof FileCheck;
+};
+
 export default function PortalDashboard() {
   const { data: session } = useSession();
   const [liveGames, setLiveGames] = useState<LiveGame[]>([]);
+  const [rosterCount, setRosterCount] = useState<number | null>(null);
+  const [waiverSubmitted, setWaiverSubmitted] = useState(false);
+
+  const role = session?.user?.role;
+  const name = session?.user?.name?.split(" ")[0] || "there";
+  const liveNow = liveGames.filter((g) => g.status === "live");
 
   useEffect(() => {
     fetch("/api/scores/live")
       .then((r) => r.json())
       .then(setLiveGames)
       .catch(() => {});
-  }, []);
 
-  const role = session?.user?.role;
-  const name = session?.user?.name || "there";
-  const liveNow = liveGames.filter((g) => g.status === "live");
+    // Check roster count for coaches
+    if (role === "coach") {
+      fetch("/api/portal/roster")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.players) setRosterCount(data.players.length);
+        })
+        .catch(() => {});
+    }
+  }, [role]);
+
+  // Coach registration steps
+  const registrationSteps: RegistrationStep[] = role === "coach" ? [
+    {
+      label: "Submit Waiver",
+      description: "Required for all players before game day",
+      href: "/portal/waiver",
+      done: waiverSubmitted,
+      icon: FileCheck,
+    },
+    {
+      label: "Upload Roster",
+      description: "Add all players to your team",
+      href: "/portal/roster",
+      done: (rosterCount ?? 0) >= 1,
+      icon: Users,
+    },
+    {
+      label: "Team Check-In",
+      description: "Check in your players on game day",
+      href: "/portal/checkin",
+      done: false,
+      icon: UserCheck,
+    },
+    {
+      label: "Confirm Payment",
+      description: "Contact admin to confirm tournament entry",
+      href: "/portal/profile",
+      done: false,
+      icon: CreditCard,
+    },
+  ] : [];
+
+  const completedSteps = registrationSteps.filter((s) => s.done).length;
+  const totalSteps = registrationSteps.length;
+  const progressPercent = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+
+  const greeting = new Date().getHours() < 12
+    ? "Good morning"
+    : new Date().getHours() < 17
+    ? "Good afternoon"
+    : "Good evening";
 
   return (
-    <div className="p-6 lg:p-8">
-      {/* Welcome */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
-          Welcome back, {name}
-        </h1>
-        <p className="text-text-secondary text-sm mt-1">
-          {role === "coach" ? "Coach Portal" : "Parent Portal"} — Inspire Courts AZ
+    <div className="p-5 lg:p-8 max-w-5xl">
+      {/* Header */}
+      <div className="mb-6">
+        <p className="text-text-secondary text-xs uppercase tracking-widest mb-1">
+          {role === "coach" ? "Coach Portal" : role === "parent" ? "Parent Portal" : "Portal"}
         </p>
+        <h1 className="text-white text-xl lg:text-2xl font-bold font-heading">
+          {greeting}, {name}
+        </h1>
       </div>
 
-      {/* Quick cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
-        {role === "coach" && (
-          <QuickCard
-            href="/portal/roster"
-            icon={<Users className="w-5 h-5" />}
-            title="My Roster"
-            desc="View and manage your team roster"
-          />
-        )}
-        <QuickCard
-          href="/portal/schedule"
-          icon={<Calendar className="w-5 h-5" />}
-          title="Schedule"
-          desc="Upcoming games and events"
-        />
-        <QuickCard
-          href="/portal/scores"
-          icon={<Trophy className="w-5 h-5" />}
-          title="Game Results"
-          desc="View scores and standings"
-        />
-      </div>
-
-      {/* Live games ticker */}
+      {/* Live Games Banner */}
       {liveNow.length > 0 && (
-        <div className="bg-card border border-emerald-500/20 rounded-xl p-5">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="mb-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 lg:p-5">
+          <div className="flex items-center gap-2 mb-3">
             <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
-            <h2 className="text-white font-bold text-sm uppercase tracking-wider">
+            <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">
               Live Now
-            </h2>
+            </span>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {liveNow.map((game) => (
               <div
                 key={game.id}
-                className="flex items-center justify-between bg-navy/50 rounded-lg px-4 py-3"
+                className="flex items-center justify-between bg-navy/40 rounded-xl px-4 py-3"
               >
-                <div className="flex items-center gap-3 text-sm">
-                  <span className="text-white font-semibold">{game.homeTeam}</span>
-                  <span className="text-white font-bold tabular-nums">{game.homeScore}</span>
-                  <span className="text-white/30">—</span>
-                  <span className="text-white font-bold tabular-nums">{game.awayScore}</span>
-                  <span className="text-white font-semibold">{game.awayTeam}</span>
+                <div className="flex items-center gap-3 text-sm min-w-0">
+                  <span className="text-white font-semibold truncate">{game.homeTeam}</span>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-white font-bold text-lg tabular-nums">{game.homeScore}</span>
+                    <span className="text-white/20 text-xs">vs</span>
+                    <span className="text-white font-bold text-lg tabular-nums">{game.awayScore}</span>
+                  </div>
+                  <span className="text-white font-semibold truncate">{game.awayTeam}</span>
                 </div>
                 {game.quarter && (
-                  <span className="text-emerald-400 text-xs font-bold">Q{game.quarter}</span>
+                  <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                    Q{game.quarter}
+                  </span>
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Coach Registration Progress */}
+      {role === "coach" && (
+        <div className="mb-6 bg-gradient-to-br from-bg-secondary to-bg-secondary/60 border border-white/[0.06] rounded-2xl p-5 lg:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
+                <Zap className="w-4 h-4 text-red" />
+              </div>
+              <div>
+                <h2 className="text-white font-bold text-sm">Event Registration</h2>
+                <p className="text-text-secondary text-xs">
+                  {completedSteps === totalSteps
+                    ? "All set! You're fully registered."
+                    : `${completedSteps} of ${totalSteps} steps complete`}
+                </p>
+              </div>
+            </div>
+            <span className="text-white font-bold text-lg tabular-nums">{progressPercent}%</span>
+          </div>
+
+          {/* Progress bar */}
+          <div className="w-full h-2 bg-white/[0.06] rounded-full mb-5 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-700 ease-out"
+              style={{
+                width: `${progressPercent}%`,
+                background: progressPercent === 100
+                  ? "linear-gradient(90deg, #22C55E, #16A34A)"
+                  : "linear-gradient(90deg, #CC0000, #E31B23)",
+              }}
+            />
+          </div>
+
+          {/* Steps */}
+          <div className="space-y-2">
+            {registrationSteps.map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <Link
+                  key={i}
+                  href={step.href}
+                  className={`flex items-center gap-3 p-3 rounded-xl transition-all group ${
+                    step.done
+                      ? "bg-emerald-500/[0.06] hover:bg-emerald-500/10"
+                      : "bg-white/[0.03] hover:bg-white/[0.06]"
+                  }`}
+                >
+                  {step.done ? (
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  ) : (
+                    <Circle className="w-5 h-5 text-white/20 flex-shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-semibold ${step.done ? "text-emerald-400" : "text-white"}`}>
+                      {step.label}
+                    </p>
+                    <p className="text-text-secondary text-xs truncate">{step.description}</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/40 transition-colors flex-shrink-0" />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 mb-6">
+        {role === "coach" && (
+          <ActionCard
+            href="/portal/roster"
+            icon={Users}
+            title="My Roster"
+            desc={rosterCount !== null ? `${rosterCount} player${rosterCount !== 1 ? "s" : ""}` : "Manage your team"}
+            color="cyan"
+          />
+        )}
+        <ActionCard
+          href="/portal/schedule"
+          icon={Calendar}
+          title="Schedule"
+          desc="Games & events"
+          color="blue"
+        />
+        <ActionCard
+          href="/portal/scores"
+          icon={Trophy}
+          title="Scores"
+          desc="Results & standings"
+          color="amber"
+        />
+        {role === "coach" && (
+          <ActionCard
+            href="/portal/waiver"
+            icon={FileCheck}
+            title="Waivers"
+            desc="Submit player waivers"
+            color="emerald"
+          />
+        )}
+        {role === "parent" && (
+          <ActionCard
+            href="/portal/waiver"
+            icon={FileCheck}
+            title="Waivers"
+            desc="Submit player waivers"
+            color="emerald"
+          />
+        )}
+      </div>
+
+      {/* Recent Games */}
+      {liveGames.filter((g) => g.status === "final").length > 0 && (
+        <div className="bg-bg-secondary/60 border border-white/[0.06] rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 flex items-center justify-between">
+            <h2 className="text-white font-bold text-sm">Recent Results</h2>
+            <Link href="/portal/scores" className="text-red text-xs font-semibold hover:text-red-hover transition-colors flex items-center gap-1">
+              View All <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="divide-y divide-white/[0.04]">
+            {liveGames
+              .filter((g) => g.status === "final")
+              .slice(0, 5)
+              .map((game) => (
+                <div key={game.id} className="px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0 text-sm">
+                    <span className={`font-semibold truncate ${game.homeScore > game.awayScore ? "text-white" : "text-white/50"}`}>
+                      {game.homeTeam}
+                    </span>
+                    <div className="flex items-center gap-1.5 flex-shrink-0 tabular-nums">
+                      <span className={`font-bold ${game.homeScore > game.awayScore ? "text-white" : "text-white/50"}`}>
+                        {game.homeScore}
+                      </span>
+                      <span className="text-white/15">-</span>
+                      <span className={`font-bold ${game.awayScore > game.homeScore ? "text-white" : "text-white/50"}`}>
+                        {game.awayScore}
+                      </span>
+                    </div>
+                    <span className={`font-semibold truncate ${game.awayScore > game.homeScore ? "text-white" : "text-white/50"}`}>
+                      {game.awayTeam}
+                    </span>
+                  </div>
+                  {game.division && (
+                    <span className="text-text-secondary text-[10px] font-semibold uppercase">{game.division}</span>
+                  )}
+                </div>
+              ))}
           </div>
         </div>
       )}
@@ -106,29 +308,43 @@ export default function PortalDashboard() {
   );
 }
 
-function QuickCard({
+const COLOR_MAP = {
+  cyan: { bg: "bg-cyan-500/[0.08]", border: "border-cyan-500/20 hover:border-cyan-500/30", icon: "text-cyan-400", count: "text-cyan-400" },
+  blue: { bg: "bg-blue-500/[0.08]", border: "border-blue-500/20 hover:border-blue-500/30", icon: "text-blue-400", count: "text-blue-400" },
+  amber: { bg: "bg-amber-500/[0.08]", border: "border-amber-500/20 hover:border-amber-500/30", icon: "text-amber-400", count: "text-amber-400" },
+  emerald: { bg: "bg-emerald-500/[0.08]", border: "border-emerald-500/20 hover:border-emerald-500/30", icon: "text-emerald-400", count: "text-emerald-400" },
+  red: { bg: "bg-red/[0.08]", border: "border-red/20 hover:border-red/30", icon: "text-red", count: "text-red" },
+};
+
+function ActionCard({
   href,
-  icon,
+  icon: Icon,
   title,
   desc,
+  color,
 }: {
   href: string;
-  icon: React.ReactNode;
+  icon: typeof Users;
   title: string;
   desc: string;
+  color: keyof typeof COLOR_MAP;
 }) {
+  const c = COLOR_MAP[color];
   return (
     <Link
       href={href}
-      className="bg-card border border-white/10 hover:border-white/20 rounded-xl p-5 transition-all group"
+      className={`${c.bg} border ${c.border} rounded-2xl p-4 transition-all group`}
     >
-      <div className="text-red mb-3 group-hover:scale-110 transition-transform inline-block">
-        {icon}
+      <div className="flex items-center gap-3">
+        <div className={`w-10 h-10 rounded-xl ${c.bg} flex items-center justify-center`}>
+          <Icon className={`w-5 h-5 ${c.icon}`} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-white font-semibold text-sm">{title}</h3>
+          <p className="text-text-secondary text-xs">{desc}</p>
+        </div>
+        <ChevronRight className="w-4 h-4 text-white/15 group-hover:text-white/30 transition-colors" />
       </div>
-      <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-1">
-        {title}
-      </h3>
-      <p className="text-text-secondary text-xs">{desc}</p>
     </Link>
   );
 }

@@ -13,6 +13,14 @@ async function getAccessToken(): Promise<string | null> {
   // Normalize escaped newlines (common in env vars)
   const privateKey = rawKey.replace(/\\n/g, "\n");
 
+  // Reject placeholder / obviously-invalid keys before trying to use them
+  if (
+    privateKey.includes("YOUR_KEY_HERE") ||
+    !privateKey.includes("BEGIN PRIVATE KEY")
+  ) {
+    return null;
+  }
+
   // Return cached token if still valid (with 60s buffer)
   if (cachedToken && Date.now() < cachedToken.expiresAt) {
     return cachedToken.token;
@@ -36,9 +44,16 @@ async function getAccessToken(): Promise<string | null> {
   const payloadB64 = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const signingInput = `${headerB64}.${payloadB64}`;
 
-  const sign = crypto.createSign("RSA-SHA256");
-  sign.update(signingInput);
-  const signature = sign.sign(privateKey, "base64url");
+  let signature: string;
+  try {
+    const sign = crypto.createSign("RSA-SHA256");
+    sign.update(signingInput);
+    signature = sign.sign(privateKey, "base64url");
+  } catch {
+    // Invalid key format — not yet configured
+    return null;
+  }
+
   const jwt = `${signingInput}.${signature}`;
 
   try {
@@ -130,8 +145,12 @@ export function getCol(
 }
 
 export function isGoogleConfigured(): boolean {
+  const key = process.env.GOOGLE_PRIVATE_KEY ?? "";
   return !!(
-    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY
+    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL &&
+    key &&
+    !key.includes("YOUR_KEY_HERE") &&
+    key.includes("BEGIN PRIVATE KEY")
   );
 }
 

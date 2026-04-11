@@ -18,6 +18,13 @@
   --color-success: #22C55E;
   --color-warning: #EAB308;
   --color-danger: #EF4444;
+  /* ── Admin Dark Theme ── */
+  --color-bg: #0B1D3A;
+  --color-bg-secondary: #132B52;
+  --color-accent: #CC0000;
+  --color-accent-hover: #E31B23;
+  --color-text-secondary: #8B95B1;
+
   --font-heading: var(--font-chakra);
   --font-body: var(--font-work-sans);
 }

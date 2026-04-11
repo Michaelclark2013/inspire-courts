@@ -135,7 +135,7 @@ export default function Home() {
         {/* Subtle red glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.15),transparent_60%)]" />
 
-        <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-8 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
               Est. Gilbert, AZ
@@ -194,7 +194,7 @@ export default function Home() {
 
       {/* ── EVENT CALLOUT BAR ── */}
       <section className="bg-red py-5 shadow-[0_4px_20px_rgba(204,0,0,0.3)]">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-white">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -219,7 +219,7 @@ export default function Home() {
 
       {/* ── WHY INSPIRE COURTS (3 value props) ── */}
       <section className="py-16 bg-navy">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="sr-only">Why Inspire Courts</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y divide-white/10 md:divide-y-0 md:divide-x md:divide-white/10">
             {WHY_INSPIRE.map((item, i) => (
@@ -245,7 +245,7 @@ export default function Home() {
 
       {/* ── FACILITY FEATURES ── */}
       <section className="py-20 lg:py-32 bg-white">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="The Facility"
             title="Built for Competitors"
@@ -307,7 +307,7 @@ export default function Home() {
 
       {/* ── DUAL BRAND CARDS ── */}
       <section className="py-20 lg:py-32 bg-off-white">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="The Brands"
             title="Two Brands. One Mission."
@@ -408,7 +408,7 @@ export default function Home() {
       {/* ── STATS BAR ── */}
       <section className="relative py-24 lg:py-32 bg-navy overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(204,0,0,0.1),transparent_60%)]" />
-        <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16">
             {[
               { num: "500+", label: "Teams Hosted" },
@@ -434,7 +434,7 @@ export default function Home() {
 
       {/* ── LOCATION + CTA ── */}
       <section className="py-20 lg:py-32 bg-white">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimateIn>
               <div className="rounded-2xl overflow-hidden shadow-lg border border-light-gray aspect-[4/3]">
@@ -513,7 +513,7 @@ export default function Home() {
           style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(204,0,0,0.08),transparent_60%)]" />
-        <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimateIn>
             <EmailSignup variant="dark" />
           </AnimateIn>

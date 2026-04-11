@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { FACILITY_EMAIL, SOCIAL_LINKS } from "@/lib/constants";
+import { FACILITY_EMAIL } from "@/lib/constants";
 import { getPageContent, getField, getList } from "@/lib/content";
 import Link from "next/link";
-import RegisterLink from "@/components/ui/RegisterLink";
 import Image from "next/image";
 import {
   ArrowRight,
@@ -133,13 +132,13 @@ export default function Home() {
 
           <AnimateIn delay={300}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <RegisterLink
-                href={SOCIAL_LINKS.leagueapps}
+              <Link
+                href="/tournaments"
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
               >
                 {page ? getField(page, "Hero", "ctaPrimary") : "Register for Next Event"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </RegisterLink>
+              </Link>
               <Link
                 href="/facility"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
@@ -173,13 +172,13 @@ export default function Home() {
                 {page ? getField(page, "Event Bar", "text") : "OFF SZN HOOPS — Tournaments Running Year-Round"}
               </span>
             </div>
-            <RegisterLink
-              href={SOCIAL_LINKS.leagueapps}
+            <Link
+              href="/tournaments"
               className="group flex items-center gap-2 bg-white text-red px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide hover:bg-off-white transition-colors font-[var(--font-chakra)]"
             >
               {page ? getField(page, "Event Bar", "buttonText") : "Register Now"}{" "}
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </RegisterLink>
+            </Link>
           </div>
         </div>
       </section>
@@ -486,13 +485,13 @@ export default function Home() {
               {page ? getField(page, "Final CTA", "description") : "Register your team for the next OFF SZN HOOPS tournament. Spots fill fast."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <RegisterLink
-                href={SOCIAL_LINKS.leagueapps}
+              <Link
+                href="/tournaments"
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
               >
                 {page ? getField(page, "Final CTA", "ctaPrimary") : "Register Now"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </RegisterLink>
+              </Link>
               <Link
                 href="/contact"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"

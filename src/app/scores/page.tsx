@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import LiveScoreboard from "@/components/scores/LiveScoreboard";
 import StandingsTable from "@/components/scores/StandingsTable";
 import TournamentsList from "@/components/scores/TournamentsList";
@@ -55,6 +57,28 @@ export default function ScoresPage() {
               </h2>
             </div>
             <StandingsTable />
+          </div>
+        </div>
+      </section>
+
+      {/* Registration CTA */}
+      <section className="px-4 pb-16">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-r from-red/20 to-red/5 border border-red/20 rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 className="text-white font-bold text-lg font-heading uppercase tracking-tight">
+                Want to Compete?
+              </h3>
+              <p className="text-white/60 text-sm">
+                Register your team for the next tournament.
+              </p>
+            </div>
+            <Link
+              href="/tournaments"
+              className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
+            >
+              Browse Tournaments <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>

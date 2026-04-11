@@ -104,7 +104,7 @@ export default function StandingsTable() {
   return (
     <div className="overflow-x-auto">
       {divisions.length > 0 && (
-        <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2">
+        <div className="px-4 py-3 border-b border-white/10 flex flex-wrap items-center gap-2">
           <span className="text-white/40 text-xs font-semibold uppercase tracking-wider">Division:</span>
           <button
             onClick={() => handleDivisionChange("")}

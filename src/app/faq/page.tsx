@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FACILITY_EMAIL, SOCIAL_LINKS } from "@/lib/constants";
+import { FACILITY_EMAIL } from "@/lib/constants";
 import Link from "next/link";
 import { trackConversion } from "@/lib/analytics";
 import { ChevronDown, ArrowRight, Calendar, HelpCircle } from "lucide-react";
@@ -15,19 +15,19 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "How do I register for a tournament?",
-        a: "Visit our LeagueApps page at inspirecourts.leagueapps.com/tournaments. Select your event, choose your division, complete the registration form with your team name and coach contact info, and submit payment. You'll receive a confirmation email once registered.",
+        a: "Visit our Tournaments page at inspirecourtsaz.com/tournaments. Select your event, choose your division, complete the registration form with your team name and coach contact info, and submit payment. You'll receive a confirmation once registered.",
       },
       {
         q: "How do I register a team?",
-        a: "Coaches register on behalf of their team. Go to our LeagueApps page, select the tournament, pick your age/gender division, fill in your team and coach details, and pay the entry fee. Registration is not complete until payment is received.",
+        a: "Coaches register on behalf of their team. Go to our Tournaments page, select the tournament, pick your age/gender division, fill in your team and coach details, and pay the entry fee. Registration is not complete until payment is received.",
       },
       {
         q: "What age group divisions do you offer?",
-        a: "We run divisions from 10U through 17U, for both boys and girls. Division availability varies by event — check the specific tournament listing on LeagueApps for available divisions. If you don't see your division, contact us and we may be able to accommodate.",
+        a: "We run divisions from 10U through 17U, for both boys and girls. Division availability varies by event — check the specific tournament listing on our Tournaments page for available divisions. If you don't see your division, contact us and we may be able to accommodate.",
       },
       {
         q: "What payment methods do you accept?",
-        a: "Tournament registrations are processed online through LeagueApps and accept all major credit and debit cards. For in-person purchases (admission, concessions, facility rentals), we accept both cash and card.",
+        a: "Tournament registrations are processed online through our website and accept all major credit and debit cards via Square. For in-person purchases (admission, concessions, facility rentals), we accept both cash and card.",
       },
     ],
   },
@@ -202,15 +202,13 @@ export default function FAQPage() {
               >
                 Contact Us <ArrowRight className="w-4 h-4" />
               </Link>
-              <a
-                href={SOCIAL_LINKS.leagueapps}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/tournaments"
                 onClick={() => trackConversion("register_click")}
                 className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/40 hover:bg-white hover:text-navy text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
                 Register Now <ArrowRight className="w-4 h-4" />
-              </a>
+              </Link>
             </div>
           </AnimateIn>
         </div>

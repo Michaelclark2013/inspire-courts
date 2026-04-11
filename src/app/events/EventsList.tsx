@@ -6,7 +6,7 @@ import {
 } from "@/lib/notion";
 import EventsHub, { type EventData, type PastEventData } from "./EventsHub";
 
-const REGISTER_URL = SOCIAL_LINKS.leagueapps;
+const REGISTER_URL = "/tournaments";
 
 export default async function EventsList() {
   const [upcomingEvents, pastEvents] = await Promise.all([

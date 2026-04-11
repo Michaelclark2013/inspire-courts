@@ -202,8 +202,8 @@ TOURNAMENTS (OFF SZN HOOPS)
 - Entry fee: Typically $350 per team
 - Game guarantee: Minimum 3 games per team, most teams play 4-5
 - Every game includes: live scoreboards, game film, stats
-- Registration: Visit the Events page (/events) or email ${FACILITY_EMAIL}
-- External registration: Some events use LeagueApps for online registration
+- Registration: Visit the Tournaments page (/tournaments) to register and pay online, or email ${FACILITY_EMAIL}
+- Online registration with Square payments available for all tournaments
 - Schedules: Released 48 hours before the event, sent to the head coach on file via email
 - Brackets & results: Available on the Schedule page (/schedule) during and after events
 - Tournaments run year-round

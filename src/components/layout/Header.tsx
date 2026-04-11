@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Menu, X, ArrowRight, Calendar, ChevronDown, LogIn, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SOCIAL_LINKS } from "@/lib/constants";
 import { trackConversion } from "@/lib/analytics";
 
 const PRIMARY_NAV = [
   { href: "/", label: "Home" },
   { href: "/events", label: "Events" },
+  { href: "/tournaments", label: "Tournaments" },
   { href: "/scores", label: "Scores" },
   { href: "/facility", label: "Facility" },
   { href: "/contact", label: "Contact" },
@@ -216,15 +216,13 @@ export default function Header() {
             >
               <Calendar className="w-4 h-4" /> Book
             </Link>
-            <a
-              href={SOCIAL_LINKS.leagueapps}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/tournaments"
               onClick={() => trackConversion("register_click")}
               className="flex items-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-7 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
               Register Now <ArrowRight className="w-4 h-4" />
-            </a>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -284,15 +282,13 @@ export default function Header() {
             >
               <Calendar className="w-4 h-4" /> Book Facility
             </Link>
-            <a
-              href={SOCIAL_LINKS.leagueapps}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/tournaments"
               onClick={() => { setOpen(false); trackConversion("register_click"); }}
               className="flex items-center justify-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
             >
               Register Now <ArrowRight className="w-4 h-4" />
-            </a>
+            </Link>
             <Link
               href={dashboardHref}
               onClick={() => setOpen(false)}

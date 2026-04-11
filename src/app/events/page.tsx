@@ -1,9 +1,7 @@
 import { Suspense } from "react";
-import { SOCIAL_LINKS, FACILITY_EMAIL } from "@/lib/constants";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import RegisterLink from "@/components/ui/RegisterLink";
 import {
   ArrowRight,
   Trophy,
@@ -22,7 +20,7 @@ export const metadata: Metadata = {
   },
 };
 
-const REGISTER_URL = SOCIAL_LINKS.leagueapps;
+const REGISTER_URL = "/tournaments";
 
 /* ─── Loading Skeleton ─── */
 function EventsListSkeleton() {
@@ -109,16 +107,16 @@ function NoNotionFallback() {
             </h3>
             <p className="text-text-muted text-sm mb-6 leading-relaxed">
               New basketball tournaments are announced regularly. Follow us on
-              Instagram or register on LeagueApps to be the first to know when
+              Instagram or check our tournaments page to be the first to know when
               registration opens.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <RegisterLink
+              <Link
                 href={REGISTER_URL}
                 className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
                 Register Now <ArrowRight className="w-4 h-4" />
-              </RegisterLink>
+              </Link>
               <a
                 href="https://instagram.com/inspirecourts"
                 target="_blank"
@@ -174,12 +172,12 @@ export default function EventsPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <RegisterLink
+                <Link
                   href={REGISTER_URL}
                   className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg shadow-red/30"
                 >
                   Register Your Team <ArrowRight className="w-4 h-4" />
-                </RegisterLink>
+                </Link>
                 <Link
                   href="/contact?type=Tournament+Registration"
                   className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/30 hover:bg-white hover:text-navy text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"

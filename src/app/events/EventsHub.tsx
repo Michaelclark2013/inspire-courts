@@ -27,7 +27,7 @@ import {
   ClipboardList,
   Info,
 } from "lucide-react";
-import RegisterLink from "@/components/ui/RegisterLink";
+// RegisterLink removed — registerUrl is now internal (/tournaments)
 import QuickScoresEmbed from "@/components/ui/QuickScoresEmbed";
 
 /* ─── Types ─── */
@@ -432,12 +432,12 @@ export default function EventsHub({
                         {/* CTA */}
                         <div className="mt-auto flex gap-2">
                           {event.status === "Registration Open" ? (
-                            <RegisterLink
+                            <Link
                               href={registerUrl}
                               className="flex-1 flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.02] shadow-md shadow-red/20"
                             >
                               Register Now <ArrowRight className="w-4 h-4" />
-                            </RegisterLink>
+                            </Link>
                           ) : event.status === "In Progress" && event.bracketLink ? (
                             <a
                               href={event.bracketLink}
@@ -455,12 +455,12 @@ export default function EventsHub({
                               Registration Closed
                             </button>
                           ) : (
-                            <RegisterLink
+                            <Link
                               href={registerUrl}
                               className="flex-1 flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                             >
                               Register <ArrowRight className="w-4 h-4" />
-                            </RegisterLink>
+                            </Link>
                           )}
                         </div>
                       </div>
@@ -495,15 +495,15 @@ export default function EventsHub({
                   </h3>
                   <p className="text-text-muted text-sm mb-6 leading-relaxed max-w-md mx-auto">
                     New tournaments are announced regularly. Follow us on Instagram
-                    or check LeagueApps to be first to know when registration opens.
+                    or check our tournaments page to be first to know when registration opens.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <RegisterLink
+                    <Link
                       href={registerUrl}
                       className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                     >
-                      Register on LeagueApps <ArrowRight className="w-4 h-4" />
-                    </RegisterLink>
+                      Browse Tournaments <ArrowRight className="w-4 h-4" />
+                    </Link>
                     <a
                       href={`https://instagram.com/${instagramHandle.replace("@", "")}`}
                       target="_blank"

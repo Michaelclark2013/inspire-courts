@@ -10,6 +10,8 @@ import {
 import KPICard from "@/components/dashboard/KPICard";
 import DashboardCharts from "@/components/admin/DashboardCharts";
 import DashboardAlerts from "@/components/admin/DashboardAlerts";
+import DashboardDBStats from "@/components/admin/DashboardDBStats";
+import DashboardLeads from "@/components/admin/DashboardLeads";
 import {
   fetchSheetWithHeaders,
   getCol,
@@ -190,15 +192,23 @@ export default async function AdminDashboard() {
         </p>
       </div>
 
-      {/* KPI Grid */}
+      {/* Tournament & Registration Overview (DB-powered) */}
+      <DashboardDBStats />
+
+      {/* Alerts + Quick Actions */}
+      <DashboardAlerts />
+
+      {/* Google Sheets KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {kpis.map((kpi) => (
           <KPICard key={kpi.title} {...kpi} />
         ))}
       </div>
 
-      {/* Alerts + Quick Actions */}
-      <DashboardAlerts />
+      {/* Leads Pipeline */}
+      <div className="mb-8">
+        <DashboardLeads />
+      </div>
 
       {/* Charts row */}
       <DashboardCharts

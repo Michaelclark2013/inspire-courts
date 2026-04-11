@@ -127,7 +127,7 @@ export default function PublicTournamentPage() {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-4 text-text-secondary text-sm">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-secondary text-sm">
             <span>{FORMAT_LABELS[data.format] || data.format}</span>
             <span>
               {new Date(data.startDate + "T00:00:00").toLocaleDateString("en-US", {

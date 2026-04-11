@@ -42,10 +42,8 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-red rounded-full flex items-center justify-center border-2 border-white">
-                <span className="text-white font-bold text-sm font-[var(--font-chakra)]">IC</span>
-              </div>
+            <div className="flex items-center gap-2.5">
+              <img src="/images/inspire-red-logo.svg" alt="Inspire Athletics" className="w-10 h-10 object-contain" />
               <div className="hidden sm:block">
                 <span className="font-[var(--font-chakra)] font-bold text-white text-lg uppercase tracking-wide">
                   Inspire Courts

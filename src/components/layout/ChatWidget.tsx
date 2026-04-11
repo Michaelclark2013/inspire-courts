@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { MessageCircle, X, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -154,6 +155,9 @@ function getFollowUpSuggestions(lastBotMessage: string): string[] {
 }
 
 export default function ChatWidget() {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin") || pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password";
+
   const [open, setOpen] = useState(false);
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
   const [messages, setMessages] = useState<Message[]>(() => loadMessages());
@@ -256,6 +260,9 @@ export default function ChatWidget() {
       setLoading(false);
     }
   }
+
+  // Don't show chatbot on admin, login, or password reset pages
+  if (isAdmin) return null;
 
   return (
     <>

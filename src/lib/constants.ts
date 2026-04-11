@@ -13,6 +13,9 @@ export const FACILITY_ADDRESS = {
 
 export const FACILITY_EMAIL = "InspireCourts@gmail.com";
 
+// TODO: Replace with actual phone number
+export const FACILITY_PHONE = "(480) 000-0000";
+
 // ─── Social / External Links ─────────────────────────────────────────────────
 
 export const SOCIAL_LINKS = {

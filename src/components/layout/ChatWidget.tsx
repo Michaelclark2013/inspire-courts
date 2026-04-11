@@ -167,7 +167,6 @@ const DEFAULT_CONTEXT = PAGE_CONTEXT["/"];
 
 function getPageContext(pathname: string | null) {
   if (!pathname) return DEFAULT_CONTEXT;
-  // Exact match first, then prefix match (e.g. /events/123 → /events)
   if (PAGE_CONTEXT[pathname]) return PAGE_CONTEXT[pathname];
   const segment = "/" + (pathname.split("/")[1] || "");
   return PAGE_CONTEXT[segment] || DEFAULT_CONTEXT;
@@ -206,31 +205,24 @@ function loadMessages(pathname: string | null): Message[] {
 }
 
 // ── Rich text renderer ──
-// Converts plain text with \n, URLs, and basic markdown into JSX
 function RichText({ text }: { text: string }) {
   const elements = useMemo(() => {
-    // Split into paragraphs by double newlines
     const paragraphs = text.split(/\n{2,}/);
 
     return paragraphs.map((para, pIdx) => {
-      // Split paragraph into lines
       const lines = para.split("\n");
 
       const lineElements = lines.map((line, lIdx) => {
-        // Parse line into segments: text and links
         const segments: React.ReactNode[] = [];
         const urlRegex = /(https?:\/\/[^\s),]+)/g;
         let lastIndex = 0;
         let match;
 
         while ((match = urlRegex.exec(line)) !== null) {
-          // Text before the URL
           if (match.index > lastIndex) {
             segments.push(line.slice(lastIndex, match.index));
           }
-          // The URL itself — make it a clickable link
           const url = match[1];
-          // Show a friendly label for known URLs
           let label = url;
           if (url.includes("youtube.com") || url.includes("youtu.be")) label = "Watch Tour →";
           else if (url.includes("instagram.com")) label = "View Profile →";
@@ -242,7 +234,7 @@ function RichText({ text }: { text: string }) {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-red underline underline-offset-2 hover:text-red-hover break-all"
+              className="text-red underline underline-offset-2 hover:text-red-hover break-all font-medium"
             >
               {label}
             </a>
@@ -250,12 +242,10 @@ function RichText({ text }: { text: string }) {
           lastIndex = match.index + match[0].length;
         }
 
-        // Remaining text after last URL
         if (lastIndex < line.length) {
           segments.push(line.slice(lastIndex));
         }
 
-        // If line is empty, skip
         if (segments.length === 0) return null;
 
         return (
@@ -303,7 +293,7 @@ function getFollowUpSuggestions(lastBotMessage: string): string[] {
     return ["How do I register?", "Where are you located?", "What age groups?"];
   }
   if (msg.includes("welcome") || msg.includes("what can i help")) {
-    return []; // Don't show follow-ups on the initial greeting
+    return [];
   }
 
   return ["Tell me about events", "How much to rent?", "Contact info"];
@@ -342,13 +332,13 @@ export default function ChatWidget() {
     }
   }, [open]);
 
-  // Auto-open chat on first visit
+  // Auto-open chat on first visit (less aggressive — 2.5s delay)
   useEffect(() => {
     if (hasAutoOpened) return;
     const timer = setTimeout(() => {
       setOpen(true);
       setHasAutoOpened(true);
-    }, 1500);
+    }, 2500);
     return () => clearTimeout(timer);
   }, [hasAutoOpened]);
 
@@ -369,9 +359,7 @@ export default function ChatWidget() {
     return getFollowUpSuggestions(lastBotMsg.content);
   }, [messages]);
 
-  // Show quick questions only on initial state (1 message = just the greeting)
   const showQuickQuestions = messages.length <= 1 && !loading;
-  // Show follow-up suggestions after the first real exchange
   const showFollowUps = !showQuickQuestions && followUpSuggestions.length > 0 && !loading;
 
   async function sendMessage(text: string) {
@@ -384,10 +372,9 @@ export default function ChatWidget() {
     setLoading(true);
 
     try {
-      // Send full conversation history (excluding initial greeting)
       const history = updatedMessages
-        .slice(1) // skip initial greeting
-        .slice(-20) // last 20 messages
+        .slice(1)
+        .slice(-20)
         .map((m) => ({ role: m.role, content: m.content }));
 
       const res = await fetch("/api/chat", {
@@ -395,7 +382,7 @@ export default function ChatWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: text.trim(),
-          history: history.slice(0, -1), // don't include the message we just sent (it's in `message`)
+          history: history.slice(0, -1),
           sessionId: getSessionId(),
           pathname: pathname || "/",
         }),
@@ -419,94 +406,116 @@ export default function ChatWidget() {
     }
   }
 
-  // Don't show chatbot on admin, login, or password reset pages
   if (isAdmin) return null;
 
   return (
     <>
-      {/* Chat button with pulse animation and unread badge */}
+      {/* ── Toggle Button ── */}
       <button
         onClick={() => { if (!open) trackConversion("chat_open"); setOpen(!open); }}
         className={cn(
-          "fixed z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all",
+          "fixed z-[100] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300",
           "bg-red hover:bg-red-hover text-white",
+          "shadow-xl shadow-red/25 hover:shadow-red/40",
           "bottom-6 right-4 lg:right-6",
+          "hover:scale-105 active:scale-95",
           !hasAutoOpened && "animate-[pulse_2s_ease-in-out_infinite]"
         )}
-        aria-label="Open chat"
+        aria-label={open ? "Close chat" : "Open chat"}
       >
-        {open ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
+        <MessageCircle className={cn("w-6 h-6 transition-all duration-200", open && "scale-0 opacity-0 absolute")} />
+        <X className={cn("w-6 h-6 transition-all duration-200", !open && "scale-0 opacity-0 absolute")} />
         {unreadCount > 0 && !open && (
-          <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-white text-red text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
             {unreadCount}
           </span>
         )}
       </button>
 
-      {/* Chat panel */}
+      {/* ── Chat Panel ── */}
       {open && (
         <div
           className={cn(
-            "fixed z-[100] bg-white border border-light-gray rounded-xl shadow-2xl flex flex-col",
+            "fixed z-[100] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden",
+            "border border-light-gray/60",
             "bottom-24 right-4 w-[calc(100vw-2rem)] max-w-[400px]",
-            "h-[min(340px,calc(100vh-8rem))] lg:h-[min(560px,calc(100vh-12rem))]",
+            "h-[min(420px,calc(100vh-10rem))] lg:h-[min(600px,calc(100vh-10rem))]",
             "lg:bottom-24 lg:right-6",
-            "animate-[slideUp_0.3s_ease-out]"
+            "animate-[slideUp_0.3s_ease-out_forwards]"
           )}
-          style={{ animationFillMode: "forwards" }}
         >
-          {/* Header */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-light-gray bg-navy rounded-t-xl">
-            <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={32} height={32} className="object-contain" />
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-bold font-[var(--font-chakra)]">Inspire Assistant</p>
-              <p className="text-green-400 text-xs">Your personal guide — online now</p>
+          {/* ── Header ── */}
+          <div className="flex items-center gap-3 px-4 py-3.5 bg-gradient-to-r from-navy to-navy-light">
+            <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+              <Image src="/images/inspire-athletics-logo.png" alt="" width={24} height={24} className="object-contain" />
             </div>
-            <button onClick={() => setOpen(false)} className="text-white/60 hover:text-white">
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-bold font-[var(--font-chakra)] leading-tight">Inspire Assistant</p>
+              <p className="text-white/60 text-xs flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                Online now
+              </p>
+            </div>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-off-white">
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "max-w-[88%] rounded-xl px-3.5 py-2.5 text-sm leading-relaxed",
-                  msg.role === "user"
-                    ? "ml-auto bg-red text-white"
-                    : "bg-white border border-light-gray text-text-muted shadow-sm"
-                )}
-              >
-                {msg.role === "assistant" ? (
-                  <RichText text={msg.content} />
-                ) : (
-                  msg.content
-                )}
-              </div>
-            ))}
+          {/* ── Messages ── */}
+          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5 bg-off-white/50">
+            {messages.map((msg, i) => {
+              const isUser = msg.role === "user";
+              const isFirstInGroup = i === 0 || messages[i - 1].role !== msg.role;
+
+              return (
+                <div key={i} className={cn("flex gap-2", isUser && "justify-end")}>
+                  {/* Assistant avatar — first message in a group only */}
+                  {!isUser && isFirstInGroup && (
+                    <div className="w-6 h-6 rounded-full bg-navy flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Image src="/images/inspire-athletics-logo.png" alt="" width={14} height={14} className="object-contain" />
+                    </div>
+                  )}
+                  {!isUser && !isFirstInGroup && <div className="w-6 flex-shrink-0" />}
+
+                  <div
+                    className={cn(
+                      "max-w-[85%] px-3.5 py-2.5 text-sm leading-relaxed",
+                      isUser
+                        ? "bg-red text-white rounded-2xl rounded-br-md shadow-sm"
+                        : "bg-white text-text-muted rounded-2xl rounded-bl-md shadow-[0_1px_3px_rgba(0,0,0,0.06)] border border-light-gray/40"
+                    )}
+                  >
+                    {msg.role === "assistant" ? <RichText text={msg.content} /> : msg.content}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Loading indicator */}
             {loading && (
-              <div className="bg-white border border-light-gray rounded-xl px-3.5 py-2.5 text-sm text-text-muted max-w-[85%] shadow-sm">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-navy/40 rounded-full animate-[bounce_1.4s_infinite_0ms]" />
-                  <span className="w-2 h-2 bg-navy/40 rounded-full animate-[bounce_1.4s_infinite_200ms]" />
-                  <span className="w-2 h-2 bg-navy/40 rounded-full animate-[bounce_1.4s_infinite_400ms]" />
-                </span>
+              <div className="flex gap-2">
+                <div className="w-6 h-6 rounded-full bg-navy flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Image src="/images/inspire-athletics-logo.png" alt="" width={14} height={14} className="object-contain" />
+                </div>
+                <div className="bg-white border border-light-gray/40 rounded-2xl rounded-bl-md px-4 py-3 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+                  <span className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 bg-navy/30 rounded-full animate-pulse" />
+                    <span className="w-1.5 h-1.5 bg-navy/30 rounded-full animate-pulse [animation-delay:150ms]" />
+                    <span className="w-1.5 h-1.5 bg-navy/30 rounded-full animate-pulse [animation-delay:300ms]" />
+                  </span>
+                </div>
               </div>
             )}
             <div ref={bottomRef} />
           </div>
 
-          {/* Quick questions (initial state) */}
+          {/* ── Quick Questions (initial state) ── */}
           {showQuickQuestions && (
-            <div className="px-3 pb-2 bg-off-white">
-              <div className="flex flex-wrap gap-1.5 max-h-[60px] overflow-y-auto lg:max-h-none">
+            <div className="px-4 pb-2 pt-1 bg-off-white/50 border-t border-light-gray/30">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted/50 font-semibold mb-1.5">Quick questions</p>
+              <div className="flex flex-wrap gap-1.5">
                 {pageCtx.quickQuestions.map((q) => (
                   <button
                     key={q}
                     onClick={() => sendMessage(q)}
-                    className="text-[11px] lg:text-xs bg-white border border-light-gray text-text-muted hover:text-navy hover:border-red/50 px-2 py-1 lg:px-2.5 lg:py-1.5 rounded-full transition-colors"
+                    className="text-xs bg-white border border-light-gray/80 text-text-muted hover:bg-navy/5 hover:border-navy/20 hover:text-navy px-3 py-1.5 rounded-full transition-colors"
                   >
                     {q}
                   </button>
@@ -515,15 +524,16 @@ export default function ChatWidget() {
             </div>
           )}
 
-          {/* Contextual follow-up suggestions (after bot responds) */}
+          {/* ── Follow-up Suggestions ── */}
           {showFollowUps && (
-            <div className="px-3 pb-2 bg-off-white">
-              <div className="flex flex-wrap gap-1.5 max-h-[60px] overflow-y-auto lg:max-h-none">
+            <div className="px-4 pb-2 pt-1 bg-off-white/50 border-t border-light-gray/30">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted/50 font-semibold mb-1.5">Related</p>
+              <div className="flex flex-wrap gap-1.5">
                 {followUpSuggestions.map((q) => (
                   <button
                     key={q}
                     onClick={() => sendMessage(q)}
-                    className="text-[11px] lg:text-xs bg-red/5 border border-red/20 text-red hover:bg-red/10 hover:border-red/40 px-2 py-1 lg:px-2.5 lg:py-1.5 rounded-full transition-colors"
+                    className="text-xs bg-red/5 border border-red/15 text-red hover:bg-red/10 hover:border-red/30 px-3 py-1.5 rounded-full transition-colors"
                   >
                     {q}
                   </button>
@@ -532,8 +542,8 @@ export default function ChatWidget() {
             </div>
           )}
 
-          {/* Input */}
-          <div className="p-3 border-t border-light-gray bg-white rounded-b-xl">
+          {/* ── Input ── */}
+          <div className="px-4 py-3 border-t border-light-gray/40 bg-white">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -546,17 +556,18 @@ export default function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask me anything about Inspire Courts..."
-                className="flex-1 bg-off-white border border-light-gray rounded-full px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+                placeholder="Ask anything..."
+                className="flex-1 bg-off-white border border-light-gray/60 rounded-full px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-2 focus:ring-red/15 transition-all placeholder:text-text-muted/40"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
-                className="bg-red hover:bg-red-hover disabled:opacity-50 text-white px-3 py-2.5 rounded-full transition-colors"
+                className="bg-red hover:bg-red-hover disabled:opacity-30 text-white px-3.5 py-3 rounded-xl transition-all"
               >
                 <Send className="w-4 h-4" />
               </button>
             </form>
+            <p className="text-[10px] text-text-muted/30 text-center mt-1.5">Powered by Inspire Courts</p>
           </div>
         </div>
       )}

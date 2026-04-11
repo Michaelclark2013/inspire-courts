@@ -61,9 +61,8 @@ export async function POST(request: Request) {
         auth: { user: gmailUser, pass: gmailPass },
       });
 
-      const baseUrl = process.env.NEXTAUTH_URL || process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000";
+      const baseUrl = process.env.NEXTAUTH_URL
+        || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
       const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
       await transporter.sendMail({

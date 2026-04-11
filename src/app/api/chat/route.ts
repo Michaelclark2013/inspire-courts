@@ -610,7 +610,7 @@ ${pagePrompt}`;
         success: false,
         reply: `Oops, something went wrong on my end! Please email us at ${FACILITY_EMAIL} and we'll help you out.`,
       },
-      { status: 200 }
+      { status: 500 }
     );
   }
 }

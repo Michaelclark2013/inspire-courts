@@ -100,7 +100,7 @@ export function AdminBarChart({
         />
         <Tooltip
           contentStyle={tooltipStyle}
-          formatter={(v: number) => [fmt(v), "Value"]}
+          formatter={(v) => [fmt(Number(v)), "Value"]}
           cursor={{ fill: "rgba(255,255,255,0.05)" }}
         />
         <Bar dataKey="value" radius={[3, 3, 0, 0]}>
@@ -161,7 +161,7 @@ export function AdminDonutChart({
         </Pie>
         <Tooltip
           contentStyle={tooltipStyle}
-          formatter={(v: number) => [fmt(v), ""]}
+          formatter={(v) => [fmt(Number(v)), ""]}
         />
         <Legend
           formatter={(value) => (

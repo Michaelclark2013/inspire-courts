@@ -11,8 +11,6 @@ import {
   Trophy,
   DollarSign,
   UserCheck,
-  Handshake,
-  GraduationCap,
   ClipboardList,
   MessageSquare,
   ExternalLink,
@@ -21,22 +19,38 @@ import {
   X,
   FileEdit,
   BarChart3,
+  TrendingUp,
+  FolderOpen,
+  Handshake,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/content", label: "Content Editor", icon: FileEdit },
-  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/admin/teams", label: "Teams & Pipeline", icon: Users },
-  { href: "/admin/tournaments", label: "Tournaments", icon: Trophy },
-  { href: "/admin/revenue", label: "Revenue", icon: DollarSign },
-  { href: "/admin/staff", label: "Staff & Refs", icon: UserCheck },
-  { href: "/admin/sponsors", label: "Sponsorships", icon: Handshake },
-  { href: "/admin/schools", label: "Schools", icon: GraduationCap },
-  { href: "/admin/scores", label: "Game Scores", icon: ClipboardList },
-  { href: "/admin/contacts", label: "Leads", icon: MessageSquare },
-  { href: "/admin/links", label: "Quick Links", icon: ExternalLink },
+const NAV_SECTIONS = [
+  {
+    label: "Operations",
+    items: [
+      { href: "/admin", label: "Overview", icon: LayoutDashboard },
+      { href: "/admin/teams", label: "Teams", icon: Users },
+      { href: "/admin/scores", label: "Game Scores", icon: ClipboardList },
+      { href: "/admin/players", label: "Players", icon: UserCheck },
+      { href: "/admin/staff", label: "Staff & Refs", icon: UserCheck },
+      { href: "/admin/revenue", label: "Revenue", icon: DollarSign },
+      { href: "/admin/prospects", label: "Prospects", icon: TrendingUp },
+    ],
+  },
+  {
+    label: "Resources",
+    items: [
+      { href: "/admin/files", label: "Files & Drive", icon: FolderOpen },
+      { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+      { href: "/admin/contacts", label: "Leads", icon: MessageSquare },
+      { href: "/admin/tournaments", label: "Tournaments", icon: Trophy },
+      { href: "/admin/sponsors", label: "Sponsorships", icon: Handshake },
+      { href: "/admin/schools", label: "Schools", icon: GraduationCap },
+      { href: "/admin/content", label: "Content Editor", icon: FileEdit },
+    ],
+  },
 ];
 
 export default function AdminSidebar() {
@@ -72,8 +86,18 @@ export default function AdminSidebar() {
       >
         {/* Logo */}
         <div className="px-5 py-5 border-b border-border">
-          <Link href="/admin" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-            <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={36} height={36} className="object-contain" />
+          <Link
+            href="/admin"
+            className="flex items-center gap-3"
+            onClick={() => setOpen(false)}
+          >
+            <Image
+              src="/images/inspire-athletics-logo.png"
+              alt="Inspire Courts"
+              width={36}
+              height={36}
+              className="object-contain"
+            />
             <div>
               <span className="text-white font-bold text-sm uppercase tracking-tight block">
                 Inspire Courts
@@ -86,26 +110,38 @@ export default function AdminSidebar() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
-          {NAV_ITEMS.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors",
-                  active
-                    ? "bg-accent/10 text-accent"
-                    : "text-text-secondary hover:text-white hover:bg-bg"
-                )}
-              >
-                <item.icon className="w-4 h-4 flex-shrink-0" />
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
+          {NAV_SECTIONS.map((section) => (
+            <div key={section.label}>
+              <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                {section.label}
+              </p>
+              <div className="space-y-0.5">
+                {section.items.map((item) => {
+                  const active =
+                    item.href === "/admin"
+                      ? pathname === "/admin"
+                      : pathname.startsWith(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors",
+                        active
+                          ? "bg-accent/10 text-accent"
+                          : "text-text-secondary hover:text-white hover:bg-bg"
+                      )}
+                    >
+                      <item.icon className="w-4 h-4 flex-shrink-0" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         {/* Bottom */}

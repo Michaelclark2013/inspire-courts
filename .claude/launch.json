@@ -3,10 +3,9 @@
   "configurations": [
     {
       "name": "inspire-courts",
-      "runtimeExecutable": "/bin/bash",
-      "runtimeArgs": ["/tmp/start-inspire.sh"],
-      "port": 3000,
-      "autoPort": false
+      "runtimeExecutable": "/Users/michaelclark/.nvm/versions/node/v20.20.2/bin/node",
+      "runtimeArgs": ["/Users/michaelclark/inspire-courts/node_modules/.bin/next", "dev", "--port", "3001"],
+      "port": 3001
     }
   ]
 }

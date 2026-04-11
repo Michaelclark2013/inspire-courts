@@ -4,7 +4,7 @@ import {
   tournamentRegistrations,
   tournamentTeams,
 } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { verifyWebhookSignature } from "@/lib/square";
 
 // POST /api/webhooks/square — Square payment webhook
@@ -81,18 +81,24 @@ export async function POST(request: NextRequest) {
       })
       .where(eq(tournamentRegistrations.id, reg.id));
 
-    // Auto-add team to tournament
+    // Auto-add team to tournament (idempotent — skip if already exists)
     const existingTeams = await db
       .select()
       .from(tournamentTeams)
       .where(eq(tournamentTeams.tournamentId, reg.tournamentId));
 
-    await db.insert(tournamentTeams).values({
-      tournamentId: reg.tournamentId,
-      teamName: reg.teamName,
-      division: reg.division || null,
-      seed: existingTeams.length + 1,
-    });
+    const alreadyAdded = existingTeams.some(
+      (t) => t.teamName === reg.teamName && t.division === (reg.division || null)
+    );
+
+    if (!alreadyAdded) {
+      await db.insert(tournamentTeams).values({
+        tournamentId: reg.tournamentId,
+        teamName: reg.teamName,
+        division: reg.division || null,
+        seed: existingTeams.length + 1,
+      });
+    }
   }
 
   return NextResponse.json({ ok: true });

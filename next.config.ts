@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const ContentSecurityPolicy = [
   "default-src 'self'",
   // Next.js requires unsafe-inline for its runtime scripts and style injection
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   // Images: self, data URIs, blob, and the SportNgin CDN used for court photos
   "img-src 'self' data: blob: https://cdn.sportngin.com https://cdn1.sportngin.com https://cdn4.sportngin.com https://*.instagram.com",

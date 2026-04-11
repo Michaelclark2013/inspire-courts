@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 
 // ── Users ───────────────────────────────────────────────────────────────────
 
@@ -65,7 +65,10 @@ export const games = sqliteTable("games", {
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => [
+  index("games_status_idx").on(table.status),
+  index("games_scheduled_time_idx").on(table.scheduledTime),
+]);
 
 // ── Password Reset Tokens ───────────────────────────────────────────────────
 
@@ -133,7 +136,10 @@ export const tournaments = sqliteTable("tournaments", {
   updatedAt: text("updated_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => [
+  index("tournaments_status_idx").on(table.status),
+  index("tournaments_start_date_idx").on(table.startDate),
+]);
 
 // ── Tournament Teams ────────────────────────────────────────────────────────
 
@@ -151,7 +157,10 @@ export const tournamentTeams = sqliteTable("tournament_teams", {
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => [
+  index("tournament_teams_tournament_idx").on(table.tournamentId),
+  index("tournament_teams_unique_idx").on(table.tournamentId, table.teamName, table.division),
+]);
 
 // ── Tournament Games (bracket links) ────────────────────────────────────────
 
@@ -209,7 +218,11 @@ export const tournamentRegistrations = sqliteTable("tournament_registrations", {
   updatedAt: text("updated_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => [
+  index("registrations_tournament_idx").on(table.tournamentId),
+  index("registrations_order_idx").on(table.squareOrderId),
+  index("registrations_payment_status_idx").on(table.paymentStatus),
+]);
 
 // ── Check-Ins ───────────────────────────────────────────────────────────────
 

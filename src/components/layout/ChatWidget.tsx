@@ -103,7 +103,7 @@ const PAGE_CONTEXT: Record<
   },
   "/media": {
     greeting:
-      "Hey! I'm your Inspire Courts assistant 🏀 Our media team does some incredible work — game film for every game, player highlights, mixtapes, and social exposure. What are you interested in?",
+      "Hey! I'm your Inspire Courts assistant 🏀 Our media team does some incredible work — game film available at tournaments, player highlights, mixtapes, and social exposure. What are you interested in?",
     quickQuestions: [
       "How does game film work?",
       "How do I get my highlights?",
@@ -151,7 +151,7 @@ const PAGE_CONTEXT: Record<
   },
   "/": {
     greeting:
-      "What's up! 👋 I'm your personal Inspire Courts assistant. Welcome to Arizona's premier indoor basketball & volleyball facility — 52,000 sq ft, 7 courts, game film every game. I'm here to help with whatever you need. What can I do for you?",
+      "What's up! 👋 I'm your personal Inspire Courts assistant. Welcome to Arizona's premier indoor basketball & volleyball facility — 52,000 sq ft, 7 courts, game film available at tournaments. I'm here to help with whatever you need. What can I do for you?",
     quickQuestions: [
       "How much to rent a court?",
       "How do I register my team?",

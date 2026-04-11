@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import {
   appendSheetRow,
   isGoogleConfigured,
+  sanitizeSheetRow,
   SHEETS,
   DRIVE_FOLDERS,
   findOrCreateDriveFolder,
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
     // Columns: Timestamp | Player Name | Parent Name | Parent Email | Parent Phone |
     //          Emergency Contact | Emergency Phone | Allergies | Event | Submitted By | Type
     const success = await appendSheetRow(SHEETS.playerCheckIn, "A:K", [
-      [
+      sanitizeSheetRow([
         timestamp,
         playerName,
         parentName,
@@ -59,8 +60,8 @@ export async function POST(request: NextRequest) {
         allergies || "None",
         eventName || "",
         submittedBy || session.user.name || "",
-        "WAIVER", // Tag to identify waiver submissions vs regular check-ins
-      ],
+        "WAIVER",
+      ]),
     ]);
 
     if (!success) {

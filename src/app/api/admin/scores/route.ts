@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { games, gameScores } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -8,7 +9,7 @@ import { eq, desc } from "drizzle-orm";
 // GET /api/admin/scores — list all games with latest scores
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "admin") {
+  if (!session || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -39,7 +40,7 @@ export async function GET() {
 // POST /api/admin/scores — create a game
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "admin") {
+  if (!session || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/admin/scores — update a game score
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "admin") {
+  if (!session || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -86,11 +87,18 @@ export async function PUT(request: NextRequest) {
 
   // Update game status
   if (status) {
+    const validStatuses = ["scheduled", "live", "final"];
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    }
     await db.update(games).set({ status }).where(eq(games.id, gameId));
   }
 
   // Insert new score entry
   if (homeScore !== undefined && awayScore !== undefined) {
+    if (typeof homeScore !== "number" || typeof awayScore !== "number" || homeScore < 0 || awayScore < 0) {
+      return NextResponse.json({ error: "Scores must be non-negative numbers" }, { status: 400 });
+    }
     const userId = session.user.id ? Number(session.user.id) : null;
     await db.insert(gameScores).values({
       gameId,

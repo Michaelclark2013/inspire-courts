@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FACILITY_EMAIL, SOCIAL_LINKS } from "@/lib/constants";
 import Link from "next/link";
+import { trackConversion } from "@/lib/analytics";
 import { ChevronDown, ArrowRight, Calendar, HelpCircle } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
@@ -43,7 +44,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Do you have volleyball courts?",
-        a: "Yes! Inspire Courts has 7 regulation volleyball courts available to rent at $80/hour per court. We host volleyball leagues, practices, tournaments, and private events. Use the same booking form at inspirecourtsaz.com/book or select 'Volleyball' as your sport.",
+        a: "Yes! Inspire Courts has 7 regulation volleyball courts available for rent. We host volleyball leagues, practices, tournaments, and private events. Contact us for pricing or use the booking form at inspirecourtsaz.com/book and select 'Volleyball' as your sport.",
       },
       {
         q: "What sports can I rent courts for?",
@@ -65,7 +66,7 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "What should I bring on game day?",
-        a: "Players: your team jersey/uniform, non-marking court shoes, and water (1 water bottle + 1 sports drink are OK to bring in). Coaches: a valid photo ID for check-in — your roster must be submitted before your first game. Spectators: $15 admission at the door (kids under 5 free). Cash and card accepted.",
+        a: "Players: your team jersey/uniform, non-marking court shoes, and water (1 water bottle + 1 sports drink are OK to bring in). Coaches: a valid photo ID for check-in — your roster must be submitted before your first game. Spectators: admission at the door — cash and card accepted. Kids under 5 free.",
       },
       {
         q: "Where do I park?",
@@ -82,7 +83,7 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "What training programs do you offer?",
-        a: "We offer private 1-on-1 training sessions, small group workouts, and skills clinics for basketball and volleyball. Basketball training covers shooting mechanics, ball handling, footwork, athleticism, and game IQ. Volleyball training covers serving, passing, setting, attacking, and positioning — all on regulation courts. Sessions are held at Inspire Courts by appointment.",
+        a: "We offer private 1-on-1 training sessions, small group workouts, and shooting sessions for basketball. Training covers shooting mechanics, ball handling, footwork, athleticism, and game IQ. Sessions are held at Inspire Courts by appointment.",
       },
       {
         q: "How do I book a training session?",
@@ -92,8 +93,9 @@ const FAQ_CATEGORIES = [
   },
 ];
 
-function AccordionItem({ q, a }: { q: string; a: string }) {
+function AccordionItem({ q, a, id }: { q: string; a: string; id: string }) {
   const [open, setOpen] = useState(false);
+  const answerId = `faq-answer-${id}`;
 
   return (
     <div className="border border-light-gray rounded-xl overflow-hidden">
@@ -101,6 +103,7 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left bg-white hover:bg-off-white transition-colors"
         aria-expanded={open}
+        aria-controls={answerId}
       >
         <span className="text-navy font-semibold text-sm leading-snug pr-2">
           {q}
@@ -113,9 +116,11 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
         />
       </button>
       <div
+        id={answerId}
+        role="region"
         className={cn(
           "overflow-hidden transition-all duration-300",
-          open ? "max-h-96" : "max-h-0"
+          open ? "max-h-[1000px]" : "max-h-0"
         )}
       >
         <p className="px-6 pb-5 pt-2 text-text-muted text-sm leading-relaxed border-t border-light-gray bg-off-white">
@@ -135,7 +140,7 @@ export default function FAQPage() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+              "url('/images/courts-bg.jpg')",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
@@ -168,8 +173,8 @@ export default function FAQPage() {
                   {cat.category}
                 </h2>
                 <div className="space-y-3">
-                  {cat.items.map((item) => (
-                    <AccordionItem key={item.q} q={item.q} a={item.a} />
+                  {cat.items.map((item, i) => (
+                    <AccordionItem key={item.q} q={item.q} a={item.a} id={`${ci}-${i}`} />
                   ))}
                 </div>
               </div>
@@ -201,6 +206,7 @@ export default function FAQPage() {
                 href={SOCIAL_LINKS.leagueapps}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackConversion("register_click")}
                 className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/40 hover:bg-white hover:text-navy text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
                 Register Now <ArrowRight className="w-4 h-4" />

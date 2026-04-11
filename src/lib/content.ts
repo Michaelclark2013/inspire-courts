@@ -47,7 +47,7 @@ const DEFAULT_CONTENT: SiteContent = {
             subheadline: { label: "Subheadline", value: "7 courts. 52,000 sq ft. Basketball & volleyball. Built for competitors.", type: "text" },
             ctaPrimary: { label: "Primary Button", value: "Register for Next Event", type: "text" },
             ctaSecondary: { label: "Secondary Button", value: "Book the Facility", type: "text" },
-            backgroundImage: { label: "Background Image URL", value: "https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg", type: "image" },
+            backgroundImage: { label: "Background Image URL", value: "/images/courts-bg.jpg", type: "image" },
           },
         },
         {
@@ -64,7 +64,7 @@ const DEFAULT_CONTENT: SiteContent = {
             label: "Value Propositions",
             itemFields: ["title", "description"],
             items: [
-              { title: "Pro-Level Setup", description: "College-quality courts, scoreboards, and game film — not a rec gym." },
+              { title: "Pro-Level Setup", description: "College-quality courts and a pro-level environment — not a rec gym." },
               { title: "Year-Round Action", description: "Tournaments, leagues, and open runs every month. Never an off season." },
               { title: "Real Competition", description: "500+ teams hosted. The best youth players in Arizona compete here." },
             ],
@@ -82,9 +82,8 @@ const DEFAULT_CONTENT: SiteContent = {
             itemFields: ["title", "description"],
             items: [
               { title: "7 Indoor Courts", description: "Regulation hardwood floors, professional dimensions, adjustable hoops for all age groups." },
-              { title: "Live Scoreboards", description: "Digital scoreboards visible from every seat. Real-time scores, period tracking, shot clocks." },
-              { title: "Game Film", description: "Every game filmed, every play captured. Teams get footage to review and improve." },
-              { title: "Stats & Analytics", description: "Real-time stats tracking for every game. Points, rebounds, assists — all on record." },
+              { title: "Climate Controlled", description: "Fully air-conditioned, 52,000 sq ft facility. No Arizona heat — play in comfort year-round." },
+              { title: "Game Film", description: "Professional game film available as a paid add-on at tournaments. Review footage and improve." },
               { title: "Snack Bar", description: "Drinks, snacks, and game-day fuel available all day. No outside food or beverages permitted." },
             ],
           },
@@ -106,8 +105,8 @@ const DEFAULT_CONTENT: SiteContent = {
             stat2Label: { label: "Stat 2 Label", value: "Tournaments", type: "text" },
             stat3Value: { label: "Stat 3 Value", value: "5,000+", type: "text" },
             stat3Label: { label: "Stat 3 Label", value: "Players", type: "text" },
-            stat4Value: { label: "Stat 4 Value", value: "100%", type: "text" },
-            stat4Label: { label: "Stat 4 Label", value: "Game Film Coverage", type: "text" },
+            stat4Value: { label: "Stat 4 Value", value: "52K", type: "text" },
+            stat4Label: { label: "Stat 4 Label", value: "Sq Ft Facility", type: "text" },
           },
         },
         {
@@ -146,9 +145,9 @@ const DEFAULT_CONTENT: SiteContent = {
           fields: {
             eyebrow: { label: "Eyebrow", value: "Why We Exist", type: "text" },
             headline: { label: "Headline", value: "Built for Competitors", type: "text" },
-            paragraph1: { label: "Paragraph 1", value: "Inspire Courts is climate-controlled, professionally equipped, and built for competitors. 7 regulation indoor courts for basketball and volleyball, with live digital scoreboards, game film for every game, and a setup that rivals college-level facilities.", type: "textarea" },
+            paragraph1: { label: "Paragraph 1", value: "Inspire Courts is climate-controlled, professionally equipped, and built for competitors. 7 regulation indoor courts for basketball and volleyball, with game film available at tournaments and a setup that rivals college-level facilities.", type: "textarea" },
             paragraph2: { label: "Paragraph 2", value: "We saw what youth sports looked like in Arizona — rec gyms with broken rims, outdoor tournaments in 115-degree heat, and zero game footage. We built the opposite.", type: "textarea" },
-            paragraph3: { label: "Paragraph 3", value: "Every team that walks through our doors gets the same experience: professional courts, real scoreboards, and film they can use to get better. That's the standard.", type: "textarea" },
+            paragraph3: { label: "Paragraph 3", value: "Every team that walks through our doors gets the same experience: professional courts and a setup built to help them get better. That's the standard.", type: "textarea" },
             mission: { label: "Mission Statement", value: "Elevate youth basketball and volleyball in Arizona — one court, one game, one player at a time.", type: "text" },
           },
         },
@@ -162,7 +161,7 @@ const DEFAULT_CONTENT: SiteContent = {
           fields: {
             badge: { label: "Badge", value: "Compete. Get Ranked. Get Seen.", type: "text" },
             headline: { label: "Headline", value: "Events & Register", type: "text" },
-            description: { label: "Description", value: "Youth basketball tournaments in Gilbert, AZ. 10U through 17U divisions, boys and girls. 3+ game guarantee, game film, live scoreboards.", type: "textarea" },
+            description: { label: "Description", value: "Youth basketball tournaments in Gilbert, AZ. 10U through 17U divisions, boys and girls. 3+ game guarantee, game film available.", type: "textarea" },
           },
         },
         {
@@ -202,7 +201,7 @@ const DEFAULT_CONTENT: SiteContent = {
             itemFields: ["eyebrow", "title", "description"],
             items: [
               { eyebrow: "Courts", title: "7 Regulation Indoor Courts", description: "Professional-grade hardwood flooring, regulation dimensions, and adjustable hoops for all age groups. Built for real competition." },
-              { eyebrow: "Technology", title: "Digital Scoreboards & Game Film", description: "Live digital scoreboards visible from every angle. Game film captured for every game." },
+              { eyebrow: "Technology", title: "Game Film Available", description: "Professional game film available as a paid service at tournaments. Teams can purchase footage to review, improve, and build recruiting portfolios." },
               { eyebrow: "Concessions", title: "Snack Bar & Game-Day Fuel", description: "Drinks, snacks, and meals available all day. No outside food or beverages permitted." },
               { eyebrow: "Climate", title: "Fully Air-Conditioned", description: "No Arizona heat, no excuses. Fully climate-controlled year-round." },
             ],
@@ -279,7 +278,7 @@ const DEFAULT_CONTENT: SiteContent = {
           fields: {
             badge: { label: "Badge", value: "Get Better", type: "text" },
             headline: { label: "Headline", value: "Private Training", type: "text" },
-            description: { label: "Description", value: "1-on-1 and small group basketball and volleyball training at a pro-level facility. Every session is designed to make you better.", type: "textarea" },
+            description: { label: "Description", value: "1-on-1 and small group basketball training at a pro-level facility. Every session is designed to make you better.", type: "textarea" },
           },
         },
         {
@@ -315,7 +314,7 @@ const DEFAULT_CONTENT: SiteContent = {
             label: "Media Services",
             itemFields: ["title", "description"],
             items: [
-              { title: "Game Film", description: "Full-game recordings of every game at Inspire Courts. Multi-angle coverage, clean audio, delivered within 48 hours." },
+              { title: "Game Film", description: "Full-game recordings available at tournaments. Multi-angle coverage, clean audio, delivered within 48 hours. Paid service." },
               { title: "Highlight Reels", description: "Custom highlight packages for individual players. Perfect for recruiting profiles and social media." },
               { title: "Event Photography", description: "Professional game-day photography for tournaments and events." },
               { title: "Mixtapes", description: "Full mixtape edits with music, effects, and professional post-production." },
@@ -361,7 +360,7 @@ const DEFAULT_CONTENT: SiteContent = {
           name: "Info",
           fields: {
             location: { label: "Location", value: "1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233", type: "text" },
-            admission: { label: "Admission", value: "$15 at the door. Kids under 5 are free. Cash and card accepted.", type: "text" },
+            admission: { label: "Admission", value: "Admission at the door — cash and card accepted. Kids under 5 free.", type: "text" },
             checkin: { label: "Check-In", value: "Head coaches check in at the front table with a valid ID.", type: "text" },
             schedule: { label: "Schedule", value: "Schedules drop 48 hours before tip-off.", type: "text" },
             food: { label: "Food", value: "Snack bar is open all day. No outside food or beverages permitted.", type: "text" },
@@ -407,7 +406,7 @@ const DEFAULT_CONTENT: SiteContent = {
             email: { label: "Email", value: FACILITY_EMAIL, type: "text" },
             address: { label: "Address", value: "1090 N Fiesta Blvd, Ste 101 & 102", type: "text" },
             city: { label: "City", value: "Gilbert, AZ 85233", type: "text" },
-            instagram: { label: "Instagram", value: "@inspirecourtsaz", type: "text" },
+            instagram: { label: "Instagram", value: "@inspirecourts", type: "text" },
           },
         },
       ],

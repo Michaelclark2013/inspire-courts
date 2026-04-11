@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Video,
@@ -29,8 +30,8 @@ const SERVICES = [
   {
     icon: Video,
     title: "Game Film",
-    desc: "Full-game recordings of every game at Inspire Courts. Multi-angle coverage, clean audio, and delivered within 48 hours.",
-    included: true,
+    desc: "Full-game recordings available at tournaments. Multi-angle coverage, clean audio, and delivered within 48 hours. Paid service.",
+    included: false,
   },
   {
     icon: Film,
@@ -67,16 +68,16 @@ const SERVICES = [
 const PACKAGES = [
   {
     name: "Game Film",
-    tagline: "Included with every tournament",
+    tagline: "Available at tournaments",
     features: [
       "Full-game recording",
       "Both courts covered",
       "Delivered within 48 hours",
       "Digital download link",
     ],
-    cta: "Included Free",
+    cta: "Get a Quote",
     highlighted: false,
-    free: true,
+    free: false,
   },
   {
     name: "Player Highlight",
@@ -114,13 +115,7 @@ export default function MediaPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
-          }}
-        />
+        <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(204,0,0,0.15),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
@@ -160,7 +155,7 @@ export default function MediaPage() {
       </section>
 
       {/* Services Grid */}
-      <section className="py-20 lg:py-28 bg-white">
+      <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="What We Offer"
@@ -194,12 +189,12 @@ export default function MediaPage() {
       </section>
 
       {/* Packages */}
-      <section className="py-20 lg:py-28 bg-off-white">
+      <section className="py-14 lg:py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Packages"
             title="Choose Your Package"
-            description="Every tournament at Inspire Courts includes free game film. Need more? We've got you."
+            description="Professional game film and media packages available at tournaments and events."
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {PACKAGES.map((pkg, i) => (
@@ -217,7 +212,7 @@ export default function MediaPage() {
                         className="absolute inset-0 opacity-10 bg-cover bg-center"
                         style={{
                           backgroundImage:
-                            "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+                            "url('/images/courts-bg-texture.jpg')",
                         }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy/95 to-navy-dark" />
@@ -285,7 +280,7 @@ export default function MediaPage() {
       </section>
 
       {/* Beyond Basketball — Wedding & Event Videography */}
-      <section className="py-20 lg:py-28 bg-white">
+      <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimateIn>
@@ -366,12 +361,12 @@ export default function MediaPage() {
       </section>
 
       {/* Instagram CTA */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
+      <section className="relative py-16 lg:py-32 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+              "url('/images/courts-bg-texture.jpg')",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/95 to-navy/85" />

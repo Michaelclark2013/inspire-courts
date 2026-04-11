@@ -11,31 +11,31 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   const { pathname } = request.nextUrl;
 
+  const isApiRoute = pathname.startsWith("/api/");
+  const unauthorizedResponse = () =>
+    isApiRoute
+      ? NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      : NextResponse.redirect(new URL("/login", request.url));
+
   // Admin routes: require admin-level role
-  if (pathname.startsWith("/admin")) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
+    if (!token) return unauthorizedResponse();
     if (!ADMIN_ROLES.includes(token.role as string)) {
-      // Coach/parent → send to portal
-      if (PORTAL_ROLES.includes(token.role as string)) {
+      if (!isApiRoute && PORTAL_ROLES.includes(token.role as string)) {
         return NextResponse.redirect(new URL("/portal", request.url));
       }
-      return NextResponse.redirect(new URL("/login", request.url));
+      return unauthorizedResponse();
     }
   }
 
   // Portal routes: require portal-level role
-  if (pathname.startsWith("/portal")) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  if (pathname.startsWith("/portal") || pathname.startsWith("/api/portal")) {
+    if (!token) return unauthorizedResponse();
     if (!PORTAL_ROLES.includes(token.role as string)) {
-      // Staff/ref/front_desk → send to admin
-      if (ADMIN_ROLES.includes(token.role as string)) {
+      if (!isApiRoute && ADMIN_ROLES.includes(token.role as string)) {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
-      return NextResponse.redirect(new URL("/login", request.url));
+      return unauthorizedResponse();
     }
   }
 
@@ -43,5 +43,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/portal/:path*"],
+  matcher: ["/admin/:path*", "/portal/:path*", "/api/admin/:path*", "/api/portal/:path*"],
 };

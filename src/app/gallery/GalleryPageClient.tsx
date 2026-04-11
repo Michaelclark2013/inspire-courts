@@ -13,7 +13,7 @@ const GALLERY_ITEMS = [
   { id: 2, category: "Facility", color: "from-navy/20 to-navy/5", label: "Inspire Courts AZ indoor basketball and volleyball courts" },
   { id: 3, category: "Highlights", color: "from-green-500/20 to-green-500/5", label: "Player highlight reel from AZFinestMixtape" },
   { id: 4, category: "Tournaments", color: "from-purple-500/20 to-purple-500/5", label: "OFF SZN HOOPS tournament game action" },
-  { id: 5, category: "Facility", color: "from-red/20 to-red/5", label: "Live digital scoreboards at Inspire Courts AZ" },
+  { id: 5, category: "Facility", color: "from-red/20 to-red/5", label: "Game film setup at Inspire Courts AZ" },
   { id: 6, category: "Highlights", color: "from-red-500/20 to-red-500/5", label: "Youth basketball highlights in Gilbert, AZ" },
   { id: 7, category: "Tournaments", color: "from-yellow-500/20 to-yellow-500/5", label: "Youth basketball tournament in Gilbert, AZ" },
   { id: 8, category: "Facility", color: "from-teal-500/20 to-teal-500/5", label: "Regulation hardwood courts at Inspire Courts" },
@@ -37,7 +37,7 @@ export default function GalleryPageClient() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+              "url('/images/courts-bg.jpg')",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />

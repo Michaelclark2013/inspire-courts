@@ -13,14 +13,13 @@ export const FACILITY_ADDRESS = {
 
 export const FACILITY_EMAIL = "InspireCourts@gmail.com";
 
-// TODO: Replace with actual phone number
-export const FACILITY_PHONE = "(480) 000-0000";
+export const FACILITY_PHONE = "(480) 221-7218";
 
 // ─── Social / External Links ─────────────────────────────────────────────────
 
 export const SOCIAL_LINKS = {
-  instagram: "https://instagram.com/inspirecourtsaz",
-  instagramHandle: "@inspirecourtsaz",
+  instagram: "https://instagram.com/inspirecourts",
+  instagramHandle: "@inspirecourts",
   instagramMixtape: "https://instagram.com/azfinestmixtape",
   instagramMixtapeHandle: "@azfinestmixtape",
   youtube: "https://www.youtube.com/watch?v=1pJDZU2I6k4",
@@ -41,12 +40,11 @@ export const BRAND_COLORS = {
 export const SITE_NAME = "Inspire Courts AZ";
 export const SITE_URL = "https://inspirecourtsaz.com";
 export const SITE_DESCRIPTION =
-  "Arizona's premier indoor basketball & volleyball facility. 7 courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.";
+  "Arizona's premier indoor basketball & volleyball facility. 7 courts, game film available at tournaments. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.";
 
 // ─── Assets ──────────────────────────────────────────────────────────────────
 
-export const HERO_BG_IMAGE =
-  "https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg";
+export const HERO_BG_IMAGE = "/images/courts-bg.jpg";
 
 // ─── Inquiry Types (contact form) ────────────────────────────────────────────
 

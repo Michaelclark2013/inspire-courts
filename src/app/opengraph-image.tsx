@@ -137,7 +137,7 @@ export default async function Image() {
               justifyContent: "center",
             }}
           >
-            {["7 Courts", "Live Scoreboards", "Game Film Every Game", "Gilbert, AZ"].map(
+            {["7 Courts", "52,000 Sq Ft", "Game Film Available", "Gilbert, AZ"].map(
               (label) => (
                 <div
                   key={label}

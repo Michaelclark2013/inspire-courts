@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   GraduationCap,
@@ -9,6 +10,8 @@ import {
   BookOpen,
   Shield,
   Target,
+  Dumbbell,
+  Star,
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -35,8 +38,8 @@ const PROGRAM_HIGHLIGHTS = [
   },
   {
     icon: Video,
-    title: "Full Game Film",
-    desc: "Every practice and game filmed. Film review sessions with coaches to accelerate player development.",
+    title: "Game Film",
+    desc: "Game film available at tournaments. Film review sessions with coaches to accelerate player development.",
   },
   {
     icon: Users,
@@ -51,8 +54,17 @@ const PROGRAM_HIGHLIGHTS = [
   {
     icon: Shield,
     title: "Pro-Level Facility",
-    desc: "Train at Inspire Courts — regulation courts, live scoreboards, and a facility that prepares you for the next level.",
+    desc: "Train at Inspire Courts — regulation courts and a facility that prepares you for the next level.",
   },
+];
+
+const PROGRAM_INCLUDES = [
+  "Daily skill development & team training",
+  "Competitive game schedule & showcases",
+  "Game film available & film review sessions",
+  "Academic support & college prep",
+  "Strength & conditioning program",
+  "Recruiting guidance & exposure events",
 ];
 
 export default function PrepPage() {
@@ -60,13 +72,7 @@ export default function PrepPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
-          }}
-        />
+        <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
@@ -103,8 +109,8 @@ export default function PrepPage() {
         </div>
       </section>
 
-      {/* What is Inspire Prep */}
-      <section className="py-20 lg:py-28 bg-white">
+      {/* What is Inspire Prep — improved desktop two-column */}
+      <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <AnimateIn>
@@ -112,10 +118,12 @@ export default function PrepPage() {
                 <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-4 font-[var(--font-chakra)]">
                   The Program
                 </p>
-                <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy mb-6 font-[var(--font-chakra)]">
-                  More Than Basketball
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy mb-6 font-[var(--font-chakra)] leading-[0.95]">
+                  More Than
+                  <br />
+                  Basketball
                 </h2>
-                <div className="space-y-4 text-text-muted leading-relaxed">
+                <div className="space-y-4 text-text-muted leading-relaxed lg:text-lg">
                   <p>
                     Inspire Prep is a basketball-focused prep program based out of
                     Inspire Courts in Gilbert, AZ. We combine elite-level training
@@ -140,8 +148,7 @@ export default function PrepPage() {
                 <div
                   className="absolute inset-0 opacity-10 bg-cover bg-center"
                   style={{
-                    backgroundImage:
-                      "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+                    backgroundImage: "url('/images/courts-bg-texture.jpg')",
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy/95 to-navy-dark" />
@@ -150,22 +157,15 @@ export default function PrepPage() {
                     <div className="w-12 h-12 bg-red rounded-xl flex items-center justify-center">
                       <Target className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="font-bold text-lg uppercase tracking-tight font-[var(--font-chakra)]">
+                    <h3 className="font-bold text-lg lg:text-xl uppercase tracking-tight font-[var(--font-chakra)]">
                       Program Includes
                     </h3>
                   </div>
-                  <ul className="space-y-3">
-                    {[
-                      "Daily skill development & team training",
-                      "Competitive game schedule & showcases",
-                      "Full game film & film review sessions",
-                      "Academic support & college prep",
-                      "Strength & conditioning program",
-                      "Recruiting guidance & exposure events",
-                    ].map((item) => (
+                  <ul className="space-y-3.5">
+                    {PROGRAM_INCLUDES.map((item) => (
                       <li key={item} className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-red rounded-full flex-shrink-0 mt-2" />
-                        <span className="text-white/80 text-sm">{item}</span>
+                        <span className="text-white/80 text-sm lg:text-base">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -176,27 +176,84 @@ export default function PrepPage() {
         </div>
       </section>
 
-      {/* Program Highlights */}
-      <section className="py-20 lg:py-28 bg-off-white">
+      {/* Program Highlights — featured card + grid layout for desktop */}
+      <section className="py-14 lg:py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Why Inspire Prep"
             title="Built for the Next Level"
             description="Everything a student-athlete needs to develop, compete, and earn their opportunity."
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PROGRAM_HIGHLIGHTS.map((item, i) => (
-              <AnimateIn key={item.title} delay={i * 80}>
-                <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="w-14 h-14 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-5 shadow-md">
-                    <item.icon className="w-6 h-6 text-white" />
+
+          {/* Desktop: featured top row + bottom grid */}
+          <div className="space-y-6 lg:space-y-8">
+            {/* Top row: 2 featured cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+              {PROGRAM_HIGHLIGHTS.slice(0, 2).map((item, i) => (
+                <AnimateIn key={item.title} delay={i * 80}>
+                  <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="flex items-start gap-5 lg:gap-6">
+                      <div className="w-16 h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                        <item.icon className="w-7 h-7 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg lg:text-xl uppercase tracking-tight mb-2">
+                          {item.title}
+                        </h3>
+                        <p className="text-text-muted text-sm lg:text-base leading-relaxed">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg uppercase tracking-tight mb-3">
-                    {item.title}
-                  </h3>
-                  <p className="text-text-muted text-sm leading-relaxed">
-                    {item.desc}
+                </AnimateIn>
+              ))}
+            </div>
+
+            {/* Bottom row: 4 cards in a grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {PROGRAM_HIGHLIGHTS.slice(2).map((item, i) => (
+                <AnimateIn key={item.title} delay={(i + 2) * 80}>
+                  <div className="group relative bg-white border border-light-gray rounded-2xl p-6 lg:p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="w-12 h-12 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-4 shadow-md">
+                      <item.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-base lg:text-lg uppercase tracking-tight mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-text-muted text-sm leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                </AnimateIn>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The Difference — stats/values bar */}
+      <section className="py-12 lg:py-16 bg-navy">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
+            {[
+              { icon: Dumbbell, label: "Daily Training", value: "Year-Round" },
+              { icon: Trophy, label: "Tournaments", value: "Regional & National" },
+              { icon: GraduationCap, label: "Academics", value: "Built In" },
+              { icon: Star, label: "Facility", value: "52K Sq Ft" },
+            ].map((stat) => (
+              <AnimateIn key={stat.label}>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-red/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <stat.icon className="w-6 h-6 text-red" />
+                  </div>
+                  <p className="text-white font-bold text-lg lg:text-xl font-[var(--font-chakra)] uppercase tracking-tight">
+                    {stat.value}
+                  </p>
+                  <p className="text-white/50 text-xs uppercase tracking-wider mt-1">
+                    {stat.label}
                   </p>
                 </div>
               </AnimateIn>
@@ -206,32 +263,57 @@ export default function PrepPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
+      <section className="relative py-16 lg:py-32 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+            backgroundImage: "url('/images/courts-bg-texture.jpg')",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/95 to-navy/85" />
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <AnimateIn>
-            <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
-              Join <span className="text-red">Inspire Prep</span>
-            </h2>
-            <p className="text-white/70 text-lg mb-10 max-w-xl mx-auto">
-              Spots are limited. Contact us to learn about tryouts, enrollment,
-              and what Inspire Prep can do for your student-athlete.
-            </p>
-            <Link
-              href="/contact?type=Inspire+Prep"
-              className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
-            >
-              Apply Now{" "}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </AnimateIn>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-20 items-center">
+            <AnimateIn>
+              <div>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
+                  Join <span className="text-red">Inspire Prep</span>
+                </h2>
+                <p className="text-white/70 text-lg mb-8 max-w-xl leading-relaxed">
+                  Spots are limited. Contact us to learn about tryouts, enrollment,
+                  and what Inspire Prep can do for your student-athlete.
+                </p>
+                <Link
+                  href="/contact?type=Inspire+Prep"
+                  className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
+                >
+                  Apply Now{" "}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </AnimateIn>
+            <AnimateIn delay={200}>
+              <div className="hidden lg:block bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 lg:p-10">
+                <h3 className="text-white font-bold text-lg uppercase tracking-tight font-[var(--font-chakra)] mb-5">
+                  What to Expect
+                </h3>
+                <div className="space-y-4">
+                  {[
+                    "Professional coaching staff with college & pro experience",
+                    "Full competitive schedule with national exposure",
+                    "Academic accountability and college placement support",
+                    "Training at Arizona's premier indoor facility",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-3">
+                      <div className="w-5 h-5 bg-red/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <div className="w-2 h-2 bg-red rounded-full" />
+                      </div>
+                      <span className="text-white/80 text-sm leading-relaxed">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </AnimateIn>
+          </div>
         </div>
       </section>
 

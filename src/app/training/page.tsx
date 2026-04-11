@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Target,
@@ -16,9 +17,9 @@ import QuickContactBar from "@/components/ui/QuickContactBar";
 import { getPageContent, getField, getList } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Private Basketball & Volleyball Training in Gilbert, AZ | Inspire Courts AZ",
+  title: "Private Basketball Training in Gilbert, AZ | Inspire Courts AZ",
   description:
-    "1-on-1 and small group basketball and volleyball training at Inspire Courts AZ. Skill development, shooting, ball handling, and sport-specific work for all ages.",
+    "1-on-1 and small group basketball training at Inspire Courts AZ. Skill development, shooting, ball handling, and sport-specific work for all ages.",
   alternates: {
     canonical: "https://inspirecourtsaz.com/training",
   },
@@ -41,12 +42,6 @@ const TRAINING_OPTIONS = [
     title: "Shooting Sessions",
     desc: "Dedicated shooting workouts focused on form, footwork, consistency, and game-speed shooting off screens and catches.",
     features: ["Form correction", "Game-speed reps", "Catch & shoot / off-dribble"],
-    highlighted: false,
-  },
-  {
-    title: "Volleyball Training",
-    desc: "Sport-specific volleyball sessions covering serving, passing, setting, attacking, and defensive positioning on regulation courts.",
-    features: ["Individual & small group", "All skill levels", "Regulation courts"],
     highlighted: false,
   },
 ];
@@ -78,13 +73,7 @@ export default function TrainingPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
-          }}
-        />
+        <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
@@ -96,7 +85,7 @@ export default function TrainingPage() {
               {page ? getField(page, "Hero", "headline") : "Private Training"}
             </h1>
             <p className="text-white/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-              {page ? getField(page, "Hero", "description") : "1-on-1 and small group basketball and volleyball training at a pro-level facility. Every session is designed to make you better."}
+              {page ? getField(page, "Hero", "description") : "1-on-1 and small group basketball training at a pro-level facility. Every session is designed to make you better."}
             </p>
             <Link
               href="/contact?type=Private+Training"
@@ -110,7 +99,7 @@ export default function TrainingPage() {
       </section>
 
       {/* Training Options */}
-      <section className="py-20 lg:py-28 bg-white">
+      <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Programs"
@@ -133,7 +122,7 @@ export default function TrainingPage() {
                         className="absolute inset-0 opacity-10 bg-cover bg-center"
                         style={{
                           backgroundImage:
-                            "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+                            "url('/images/courts-bg-texture.jpg')",
                         }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy/95 to-navy-dark" />
@@ -195,7 +184,7 @@ export default function TrainingPage() {
       </section>
 
       {/* Skills We Develop */}
-      <section className="py-20 lg:py-28 bg-off-white">
+      <section className="py-14 lg:py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Development"
@@ -224,12 +213,12 @@ export default function TrainingPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
+      <section className="relative py-16 lg:py-32 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+              "url('/images/courts-bg-texture.jpg')",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/95 to-navy/85" />

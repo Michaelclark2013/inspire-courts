@@ -2,13 +2,13 @@ import { Suspense } from "react";
 import { SOCIAL_LINKS } from "@/lib/constants";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
+import RegisterLink from "@/components/ui/RegisterLink";
 import {
   ArrowRight,
   Clock,
   ExternalLink,
   Film,
-  Monitor,
-  BarChart3,
   Snowflake,
   UtensilsCrossed,
   Trophy,
@@ -28,7 +28,7 @@ import EventsList from "./EventsList";
 export const metadata: Metadata = {
   title: "Basketball Tournaments | Inspire Courts AZ — Gilbert, AZ",
   description:
-    "Youth basketball tournaments in Gilbert, AZ at Inspire Courts AZ. 10U–17U boys & girls divisions. 3+ game guarantee, game film every game, live scoreboards. Register your team now.",
+    "Youth basketball tournaments in Gilbert, AZ at Inspire Courts AZ. 10U–17U boys & girls divisions. 3+ game guarantee, game film available. Register your team now.",
   alternates: {
     canonical: "https://inspirecourtsaz.com/events",
   },
@@ -38,15 +38,13 @@ const REGISTER_URL = SOCIAL_LINKS.leagueapps;
 
 const INCLUDED_FEATURES = [
   { icon: Trophy, label: "3+ Game Guarantee" },
-  { icon: Film, label: "Game Film Every Game" },
-  { icon: Monitor, label: "Live Scoreboards" },
-  { icon: BarChart3, label: "Electronic Stats" },
+  { icon: Film, label: "Game Film Available" },
   { icon: Snowflake, label: "Air Conditioned" },
   { icon: UtensilsCrossed, label: "Snack Bar Open" },
 ];
 
 const GAME_DAY_INFO = [
-  { icon: Ticket, label: "Admission", detail: "$15 at door — kids under 5 free. Cash & card." },
+  { icon: Ticket, label: "Admission", detail: "Admission at the door — cash and card accepted. Kids under 5 free." },
   { icon: UserCheck, label: "Check-In", detail: "Head coach checks in with valid photo ID. Roster required before first game." },
   { icon: UtensilsCrossed, label: "Food & Drinks", detail: "Snack bar open all day. No outside food, coolers, or beverages. Players: 1 water + 1 sports drink OK." },
   { icon: Footprints, label: "Court Shoes", detail: "Non-marking soles only. No dress shoes, sandals, or cleats." },
@@ -56,7 +54,7 @@ const GAME_DAY_INFO = [
 
 function EventsListSkeleton() {
   return (
-    <section className="py-20 lg:py-28 bg-white">
+    <section className="py-14 lg:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <div className="h-4 w-24 bg-light-gray rounded-full mx-auto mb-3 animate-pulse" />
@@ -93,10 +91,7 @@ export default function EventsPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
-        />
+        <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
@@ -112,17 +107,15 @@ export default function EventsPage() {
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed mb-8">
               Competitive basketball tournaments for youth players in the East
               Valley. Age-bracket divisions from 10U through 17U, boys and
-              girls. Every team gets 3+ games, game film, live scoreboards, and
-              electronic stats. Volleyball tournaments also available.
+              girls. Every team gets 3+ games. Game film available for
+              purchase. Volleyball tournaments also available.
             </p>
-            <a
+            <RegisterLink
               href={REGISTER_URL}
-              target="_blank"
-              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg shadow-red/30"
             >
               Register Now <ArrowRight className="w-4 h-4" />
-            </a>
+            </RegisterLink>
           </AnimateIn>
         </div>
       </section>
@@ -133,7 +126,7 @@ export default function EventsPage() {
           <EventsList />
         </Suspense>
       ) : (
-        <section className="py-20 lg:py-28 bg-white">
+        <section className="py-14 lg:py-28 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader
               eyebrow="Upcoming"
@@ -152,21 +145,19 @@ export default function EventsPage() {
                   when registration opens.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <a
+                  <RegisterLink
                     href={REGISTER_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                   >
                     Register Now <ArrowRight className="w-4 h-4" />
-                  </a>
+                  </RegisterLink>
                   <a
-                    href="https://instagram.com/inspirecourtsaz"
+                    href="https://instagram.com/inspirecourts"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 border-2 border-navy/20 hover:border-navy/40 text-navy px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                   >
-                    @inspirecourtsaz
+                    @inspirecourts
                   </a>
                 </div>
               </div>
@@ -178,7 +169,7 @@ export default function EventsPage() {
       {/* What's Included */}
       <section className="py-12 bg-navy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {INCLUDED_FEATURES.map((feature, i) => (
               <AnimateIn key={i} delay={i * 50}>
                 <div className="text-center">
@@ -194,7 +185,7 @@ export default function EventsPage() {
       </section>
 
       {/* Schedules & Brackets */}
-      <section className="py-20 lg:py-28 bg-white">
+      <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Game Time"
@@ -238,7 +229,7 @@ export default function EventsPage() {
       </section>
 
       {/* Game Day Info */}
-      <section className="py-20 lg:py-28 bg-off-white">
+      <section className="py-14 lg:py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Be Ready"
@@ -295,14 +286,12 @@ export default function EventsPage() {
               >
                 Contact Us <ArrowRight className="w-4 h-4" />
               </Link>
-              <a
+              <RegisterLink
                 href={REGISTER_URL}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/40 hover:bg-white hover:text-navy text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
                 Register Now <ArrowRight className="w-4 h-4" />
-              </a>
+              </RegisterLink>
             </div>
           </AnimateIn>
         </div>

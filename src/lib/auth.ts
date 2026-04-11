@@ -76,8 +76,8 @@ export const authOptions: NextAuthOptions = {
               };
             }
           }
-        } catch {
-          // DB not configured yet — fall through silently
+        } catch (err) {
+          console.error("DB auth error:", err);
         }
 
         return null;
@@ -91,7 +91,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.email = user.email;
         token.name = user.name;
-        token.role = user.role || "admin";
+        token.role = user.role || "parent";
         token.userId = user.id;
       }
       return token;

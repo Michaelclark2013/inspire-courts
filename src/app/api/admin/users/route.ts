@@ -99,7 +99,17 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Missing user id" }, { status: 400 });
   }
 
-  await db.delete(users).where(eq(users.id, Number(id)));
+  const numId = Number(id);
+  if (isNaN(numId)) {
+    return NextResponse.json({ error: "Invalid user id" }, { status: 400 });
+  }
+
+  // Prevent admin from deleting themselves
+  if (String(numId) === String(session.user.id)) {
+    return NextResponse.json({ error: "Cannot delete your own account" }, { status: 400 });
+  }
+
+  await db.delete(users).where(eq(users.id, numId));
 
   return NextResponse.json({ success: true });
 }

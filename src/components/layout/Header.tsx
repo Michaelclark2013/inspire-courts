@@ -10,6 +10,7 @@ import { trackConversion } from "@/lib/analytics";
 const PRIMARY_NAV = [
   { href: "/", label: "Home" },
   { href: "/events", label: "Events" },
+  { href: "/scores", label: "Scores" },
   { href: "/facility", label: "Facility" },
   { href: "/contact", label: "Contact" },
 ];
@@ -54,7 +55,7 @@ function DropdownMenu({
         onClick={() => setOpen((v) => !v)}
         onMouseEnter={() => setOpen(true)}
         className={cn(
-          "px-2.5 py-2 min-h-[44px] inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-sm",
+          "px-3.5 py-2 min-h-[44px] inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-sm",
           open ? "text-white" : "text-white/80 hover:text-white"
         )}
         aria-expanded={open}
@@ -63,7 +64,7 @@ function DropdownMenu({
         {label}
         <ChevronDown
           className={cn(
-            "w-3.5 h-3.5 transition-transform duration-200",
+            "w-4 h-4 transition-transform duration-200",
             open && "rotate-180"
           )}
         />
@@ -72,7 +73,7 @@ function DropdownMenu({
       <div
         onMouseLeave={() => setOpen(false)}
         className={cn(
-          "absolute top-full left-1/2 -translate-x-1/2 mt-1 min-w-[180px] bg-navy-dark border border-white/10 rounded-xl shadow-2xl overflow-hidden transition-all duration-200 origin-top",
+          "absolute top-full left-1/2 -translate-x-1/2 mt-1 min-w-[200px] bg-navy-dark border border-white/10 rounded-xl shadow-2xl overflow-hidden transition-all duration-200 origin-top",
           open
             ? "opacity-100 scale-100 pointer-events-auto"
             : "opacity-0 scale-95 pointer-events-none"
@@ -84,7 +85,7 @@ function DropdownMenu({
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="block px-4 py-2.5 text-[12px] font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+              className="block px-5 py-3 text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
             >
               {item.label}
             </Link>
@@ -157,16 +158,16 @@ export default function Header() {
         Skip to main content
       </a>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 lg:h-24">
+        <div className="flex items-center justify-between h-20 lg:h-[72px]">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 flex-shrink-0">
             <div className="flex items-center gap-3">
-              <img src="/images/inspire-athletics-logo.png" alt="Inspire Courts" className="h-16 lg:h-20 w-auto object-contain drop-shadow-lg" />
+              <img src="/images/inspire-athletics-logo.png" alt="Inspire Courts" className="h-14 lg:h-16 w-auto object-contain drop-shadow-lg" />
               <div className="hidden sm:block">
-                <span className="font-[var(--font-chakra)] font-bold text-white text-lg uppercase tracking-wide">
+                <span className="font-[var(--font-chakra)] font-bold text-white text-xl uppercase tracking-wide">
                   Inspire Courts
                 </span>
-                <span className="text-white/80 text-[10px] block -mt-0.5 uppercase tracking-[0.2em] font-semibold">
+                <span className="text-white/80 text-[11px] block -mt-0.5 uppercase tracking-[0.2em] font-semibold">
                   Gilbert, Arizona
                 </span>
               </div>
@@ -174,12 +175,12 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-0.5">
+          <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-1">
             {PRIMARY_NAV.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-2.5 py-2 min-h-[44px] inline-flex items-center text-[12px] font-semibold uppercase tracking-wide text-white/80 hover:text-white transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-sm"
+                className="px-3.5 py-2 min-h-[44px] inline-flex items-center text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-sm"
               >
                 {link.label}
               </Link>
@@ -193,18 +194,18 @@ export default function Header() {
             <Link
               href="/book"
               onClick={() => trackConversion("book_cta_click")}
-              className="flex items-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+              className="flex items-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-6 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
-              <Calendar className="w-3.5 h-3.5" /> Book
+              <Calendar className="w-4 h-4" /> Book
             </Link>
             <a
               href={SOCIAL_LINKS.leagueapps}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => trackConversion("register_click")}
-              className="flex items-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+              className="flex items-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-7 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
-              Register Now <ArrowRight className="w-3.5 h-3.5" />
+              Register Now <ArrowRight className="w-4 h-4" />
             </a>
           </div>
 

@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { FACILITY_EMAIL, SOCIAL_LINKS } from "@/lib/constants";
 import { getPageContent, getField, getList } from "@/lib/content";
 import Link from "next/link";
+import RegisterLink from "@/components/ui/RegisterLink";
 import Image from "next/image";
 import {
   ArrowRight,
   Tv,
   Video,
-  BarChart3,
   UtensilsCrossed,
   Trophy,
   MapPin,
@@ -18,14 +18,15 @@ import {
   CheckCircle2,
   Wifi,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
-import EmailSignup from "@/components/ui/EmailSignup";
+const EmailSignup = dynamic(() => import("@/components/ui/EmailSignup"));
 
 export const metadata: Metadata = {
   title: "Inspire Courts AZ | Indoor Basketball & Volleyball Facility in Gilbert, Arizona",
   description:
-    "Arizona's premier indoor basketball & volleyball facility. 7 courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.",
+    "Arizona's premier indoor basketball & volleyball facility. 7 courts, game film available at tournaments. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.",
   alternates: {
     canonical: "https://inspirecourtsaz.com",
   },
@@ -37,7 +38,7 @@ const localBusinessSchema = {
   "@id": "https://inspirecourtsaz.com",
   name: "Inspire Courts AZ",
   description:
-    "Arizona's premier indoor basketball & volleyball facility. 7 regulation courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS youth basketball tournaments.",
+    "Arizona's premier indoor basketball & volleyball facility. 7 regulation courts, game film available at tournaments. Home of OFF SZN HOOPS youth basketball tournaments.",
   url: "https://inspirecourtsaz.com",
   email: FACILITY_EMAIL,
   address: {
@@ -54,34 +55,31 @@ const localBusinessSchema = {
     longitude: -111.7897,
   },
   sameAs: [
-    "https://www.instagram.com/inspirecourtsaz",
+    "https://www.instagram.com/inspirecourts",
     "https://www.youtube.com/@AZFinestMixtape",
   ],
   sport: ["Basketball", "Volleyball"],
   amenityFeature: [
     { "@type": "LocationFeatureSpecification", name: "Indoor Courts", value: true },
     { "@type": "LocationFeatureSpecification", name: "Air Conditioning", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Digital Scoreboards", value: true },
     { "@type": "LocationFeatureSpecification", name: "Game Film", value: true },
     { "@type": "LocationFeatureSpecification", name: "Snack Bar", value: true },
   ],
 };
 
-const FEATURE_ICONS = [Trophy, Tv, Video, BarChart3, UtensilsCrossed, Wifi];
+const FEATURE_ICONS = [Trophy, Video, UtensilsCrossed, Wifi];
 
 const FALLBACK_FEATURES = [
   { title: "7 Indoor Courts", desc: "Regulation hardwood floors, professional dimensions, adjustable hoops for all age groups." },
-  { title: "Live Scoreboards", desc: "Digital scoreboards visible from every seat. Real-time scores, period tracking, shot clocks." },
-  { title: "Game Film", desc: "Every game filmed, every play captured. Teams get footage to review and improve." },
-  { title: "Stats & Analytics", desc: "Real-time stats tracking for every game. Points, rebounds, assists — all on record." },
+  { title: "Game Film", desc: "Professional game film available as a paid add-on at tournaments. Review footage and improve." },
   { title: "Snack Bar", desc: "Drinks, snacks, and game-day fuel available all day. No outside food or beverages permitted." },
-  { title: "Climate Controlled", desc: "Fully air-conditioned year-round. No Arizona heat, no excuses. Play in comfort every game." },
+  { title: "Climate Controlled", desc: "Fully air-conditioned, 52,000 sq ft facility. No Arizona heat — play in comfort year-round." },
 ];
 
 const VALUE_PROP_ICONS = [Shield, Zap, Users];
 
 const FALLBACK_VALUE_PROPS = [
-  { title: "Pro-Level Setup", desc: "College-quality courts, scoreboards, and game film — not a rec gym." },
+  { title: "Pro-Level Setup", desc: "College-quality courts and a pro-level environment — not a rec gym." },
   { title: "Year-Round Action", desc: "Tournaments, leagues, and open runs every month. Never an off season." },
   { title: "Real Competition", desc: "500+ teams hosted. The best youth players in Arizona compete here." },
 ];
@@ -99,34 +97,33 @@ export default function Home() {
       />
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+      <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center justify-center overflow-hidden">
+        <Image
+          src="/images/hero-bg.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/80 via-navy/60 to-navy" />
         {/* Subtle red glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.15),transparent_60%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <AnimateIn>
-            <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-8 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
-              {page ? getField(page, "Hero", "badge") : "Est. Gilbert, AZ"}
-            </span>
-          </AnimateIn>
+          <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-8 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
+            {page ? getField(page, "Hero", "badge") : "Est. Gilbert, AZ"}
+          </span>
 
-          <AnimateIn delay={100}>
-            <h1 className="heading-hero font-bold uppercase tracking-tight text-white leading-[0.9] mb-8 font-[var(--font-chakra)] drop-shadow-[2px_4px_16px_rgba(0,0,0,0.5)]">
-              Arizona&apos;s Premier
-              <br />
-              <span className="text-red drop-shadow-[0_0_30px_rgba(204,0,0,0.3)]">
-                Basketball &amp; Volleyball
-              </span>
-              <br />
-              Facility
-            </h1>
-            {/* CMS headline available at: getField(page, "Hero", "headline") */}
-          </AnimateIn>
+          <h1 className="heading-hero font-bold uppercase tracking-tight text-white leading-[0.9] mb-8 font-[var(--font-chakra)] drop-shadow-[2px_4px_16px_rgba(0,0,0,0.5)]">
+            Arizona&apos;s Premier
+            <br />
+            <span className="text-red drop-shadow-[0_0_30px_rgba(204,0,0,0.3)]">
+              Basketball &amp; Volleyball
+            </span>
+            <br />
+            Facility
+          </h1>
 
           <AnimateIn delay={200}>
             <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
@@ -136,15 +133,13 @@ export default function Home() {
 
           <AnimateIn delay={300}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <RegisterLink
                 href={SOCIAL_LINKS.leagueapps}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
               >
                 {page ? getField(page, "Hero", "ctaPrimary") : "Register for Next Event"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </RegisterLink>
               <Link
                 href="/facility"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
@@ -178,15 +173,13 @@ export default function Home() {
                 {page ? getField(page, "Event Bar", "text") : "OFF SZN HOOPS — Tournaments Running Year-Round"}
               </span>
             </div>
-            <a
+            <RegisterLink
               href={SOCIAL_LINKS.leagueapps}
-              target="_blank"
-              rel="noopener noreferrer"
               className="group flex items-center gap-2 bg-white text-red px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide hover:bg-off-white transition-colors font-[var(--font-chakra)]"
             >
               {page ? getField(page, "Event Bar", "buttonText") : "Register Now"}{" "}
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </RegisterLink>
           </div>
         </div>
       </section>
@@ -223,7 +216,7 @@ export default function Home() {
       </section>
 
       {/* ── FACILITY FEATURES ── */}
-      <section className="py-20 lg:py-32 bg-white">
+      <section className="py-14 lg:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow={page ? getField(page, "Facility Features", "eyebrow") : "The Facility"}
@@ -259,8 +252,8 @@ export default function Home() {
 
       {/* ── PARALLAX MISSION ── */}
       <section
-        className="relative py-32 lg:py-44 bg-scroll md:bg-fixed bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+        className="relative py-20 lg:py-44 bg-scroll md:bg-fixed bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/hero-bg-texture.jpg')" }}
       >
         <div className="absolute inset-0 bg-navy/85" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(204,0,0,0.1),transparent_70%)]" />
@@ -270,10 +263,10 @@ export default function Home() {
               Our Mission
             </span>
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
-              {page ? getField(page, "Mission Section", "headline") : "Two Brands. One Mission."}
+              {page ? getField(page, "Mission Section", "headline") : "Elevating Youth Sports in Arizona"}
             </h2>
             <p className="text-white/75 text-lg lg:text-xl leading-relaxed mb-10 max-w-2xl mx-auto">
-              {page ? getField(page, "Mission Section", "description") : "Inspire Courts is the home base. OFF SZN HOOPS is the tournament series. Together, we're elevating youth sports in Arizona."}
+              {page ? getField(page, "Mission Section", "description") : "We built something Arizona was missing — a facility where young athletes train, compete, and grow in a pro-level environment year-round."}
             </p>
             <Link
               href="/about"
@@ -287,7 +280,7 @@ export default function Home() {
       </section>
 
       {/* ── DUAL BRAND CARDS ── */}
-      <section className="py-20 lg:py-32 bg-off-white">
+      <section className="py-14 lg:py-32 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="The Brands"
@@ -301,7 +294,7 @@ export default function Home() {
                 {/* Background pattern */}
                 <div
                   className="absolute inset-0 opacity-[0.07] bg-cover bg-center"
-                  style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+                  style={{ backgroundImage: "url('/images/hero-bg-texture.jpg')" }}
                 />
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="mb-8">
@@ -315,12 +308,12 @@ export default function Home() {
                   </h3>
                   <p className="text-white/75 leading-relaxed mb-8 flex-1 text-base">
                     The home base. 7 regulation indoor courts — basketball and
-                    volleyball — with live scoreboards, game film, and a
-                    pro-level setup. Available for leagues, practices, camps,
+                    volleyball — with a pro-level setup and game film available
+                    at tournaments. Available for leagues, practices, camps,
                     clinics, and private events.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-10">
-                    {["7 Courts", "Game Film", "Scoreboards", "Rentals"].map(
+                    {["7 Courts", "Game Film", "Rentals"].map(
                       (tag) => (
                         <span
                           key={tag}
@@ -386,35 +379,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── STATS BAR ── */}
-      <section className="relative py-24 lg:py-32 bg-navy overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(204,0,0,0.1),transparent_60%)]" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16">
-            {[
-              { num: page ? getField(page, "Stats", "stat1Value") : "500+", label: page ? getField(page, "Stats", "stat1Label") : "Teams Hosted" },
-              { num: page ? getField(page, "Stats", "stat2Value") : "30+", label: page ? getField(page, "Stats", "stat2Label") : "Tournaments" },
-              { num: page ? getField(page, "Stats", "stat3Value") : "5,000+", label: page ? getField(page, "Stats", "stat3Label") : "Players" },
-              { num: page ? getField(page, "Stats", "stat4Value") : "100%", label: page ? getField(page, "Stats", "stat4Label") : "Game Film Coverage" },
-            ].map((stat, i) => (
-              <AnimateIn key={stat.label} delay={i * 100}>
-                <div className="text-center">
-                  <div className="stats-number font-bold text-red font-[var(--font-chakra)] leading-none drop-shadow-[0_0_30px_rgba(204,0,0,0.25)]">
-                    {stat.num}
-                  </div>
-                  <div className="text-xs md:text-sm text-white/80 uppercase tracking-[0.2em] mt-4 font-semibold font-[var(--font-chakra)]">
-                    {stat.label}
-                  </div>
-                </div>
-              </AnimateIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
 
       {/* ── LOCATION + CTA ── */}
-      <section className="py-20 lg:py-32 bg-white">
+      <section className="py-14 lg:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimateIn>
@@ -462,12 +429,12 @@ export default function Home() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a
-                    href="https://instagram.com/inspirecourtsaz"
+                    href="https://instagram.com/inspirecourts"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group inline-flex items-center justify-center gap-2 bg-navy hover:bg-navy-dark text-white px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all font-[var(--font-chakra)] shadow-md"
                   >
-                    @inspirecourtsaz{" "}
+                    @inspirecourts{" "}
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </a>
                   <a
@@ -487,10 +454,10 @@ export default function Home() {
       </section>
 
       {/* ── EMAIL SIGNUP ── */}
-      <section className="relative py-20 lg:py-28 bg-navy overflow-hidden">
+      <section className="relative py-14 lg:py-28 bg-navy overflow-hidden">
         <div
           className="absolute inset-0 opacity-[0.05] bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+          style={{ backgroundImage: "url('/images/hero-bg-texture.jpg')" }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(204,0,0,0.08),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -501,10 +468,10 @@ export default function Home() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
+      <section className="relative py-16 lg:py-32 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+          style={{ backgroundImage: "url('/images/hero-bg-texture.jpg')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/95 to-navy/85" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,_rgba(204,0,0,0.15),transparent_60%)]" />
@@ -519,15 +486,13 @@ export default function Home() {
               {page ? getField(page, "Final CTA", "description") : "Register your team for the next OFF SZN HOOPS tournament. Spots fill fast."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <RegisterLink
                 href={SOCIAL_LINKS.leagueapps}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
               >
                 {page ? getField(page, "Final CTA", "ctaPrimary") : "Register Now"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </RegisterLink>
               <Link
                 href="/contact"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"

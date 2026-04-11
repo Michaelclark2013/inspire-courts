@@ -15,13 +15,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const role = session.user.role as string;
+  if (!["admin", "staff", "ref"].includes(role)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   if (!isGoogleConfigured()) {
     return NextResponse.json({ shifts: [] });
   }
 
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type") || "staff";
-  const name = searchParams.get("name") || session.user.name || "";
+  // Non-admin users can only view their own history
+  const name = role === "admin"
+    ? (searchParams.get("name") || session.user.name || "")
+    : (session.user.name || "");
 
   const sheetId = type === "ref" ? SHEETS.refCheckOut : SHEETS.staffCheckOut;
   const { rows } = await fetchSheetWithHeaders(sheetId);

@@ -14,6 +14,7 @@ import {
   UtensilsCrossed,
   ShieldAlert,
 } from "lucide-react";
+import Image from "next/image";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { getPageContent, getField } from "@/lib/content";
@@ -65,12 +66,13 @@ export default function AboutPage() {
 
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
-          }}
+        <Image
+          src="/images/courts-bg.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
@@ -89,7 +91,7 @@ export default function AboutPage() {
       </section>
 
       {/* Origin */}
-      <section className="py-20 lg:py-28 bg-white">
+      <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <AnimateIn>
@@ -102,13 +104,13 @@ export default function AboutPage() {
                 </h2>
                 <div className="space-y-4 text-text-muted leading-relaxed">
                   <p>
-                    {page ? getField(page, "Origin", "paragraph1") : "Inspire Courts is climate-controlled, professionally equipped, and built for competitors. 7 regulation indoor courts for basketball and volleyball, with live digital scoreboards, game film for every game, and a setup that rivals college-level facilities."}
+                    {page ? getField(page, "Origin", "paragraph1") : "Inspire Courts is climate-controlled, professionally equipped, and built for competitors. 7 regulation indoor courts for basketball and volleyball, with game film available at tournaments and a setup that rivals college-level facilities."}
                   </p>
                   <p>
                     {page ? getField(page, "Origin", "paragraph2") : "We saw what youth sports looked like in Arizona — rec gyms with broken rims, outdoor tournaments in 115-degree heat, and zero game footage. We built the opposite."}
                   </p>
                   <p>
-                    {page ? getField(page, "Origin", "paragraph3") : "Every team that walks through our doors gets the same experience: professional courts, real scoreboards, and film they can use to get better. That's the standard."}
+                    {page ? getField(page, "Origin", "paragraph3") : "Every team that walks through our doors gets the same experience: professional courts and a setup built to help them get better. That's the standard."}
                   </p>
                 </div>
               </div>
@@ -154,7 +156,7 @@ export default function AboutPage() {
       </section>
 
       {/* Three Brands */}
-      <section className="py-20 lg:py-28 bg-off-white">
+      <section className="py-14 lg:py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="The Brands"
@@ -172,7 +174,7 @@ export default function AboutPage() {
                 </h3>
                 <p className="text-text-muted text-sm leading-relaxed">
                   The facility. 7 regulation courts for basketball and
-                  volleyball, live scoreboards, game film, and a pro-level
+                  volleyball, game film available at tournaments, and a pro-level
                   setup. Available for rentals, leagues, practices, and private
                   events.
                 </p>
@@ -212,7 +214,7 @@ export default function AboutPage() {
       </section>
 
       {/* Game Day Info */}
-      <section className="py-20 lg:py-28 bg-white">
+      <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Game Day"
@@ -229,7 +231,7 @@ export default function AboutPage() {
               {
                 icon: Ticket,
                 title: "Spectator Admission",
-                text: "$15 at the door. Kids under 5 free. Cash and card accepted.",
+                text: "Admission at the door — cash and card accepted. Kids under 5 free.",
               },
               {
                 icon: ClipboardCheck,

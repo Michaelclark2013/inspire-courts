@@ -57,6 +57,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${workSans.variable} ${chakra.variable} h-full antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://maps.google.com" />
+      </head>
       <body className="min-h-full flex flex-col">
         <SessionProvider>
           <Header />

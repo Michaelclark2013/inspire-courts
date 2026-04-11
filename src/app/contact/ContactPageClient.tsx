@@ -66,7 +66,7 @@ export default function ContactPageClient() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+              "url('/images/courts-bg.jpg')",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
@@ -255,12 +255,12 @@ export default function ContactPageClient() {
                     <div className="flex gap-3 text-text-muted text-sm">
                       <Camera className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
                       <a
-                        href="https://instagram.com/inspirecourtsaz"
+                        href="https://instagram.com/inspirecourts"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:text-red transition-colors"
                       >
-                        @inspirecourtsaz
+                        @inspirecourts
                       </a>
                     </div>
                   </div>

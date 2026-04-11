@@ -4,13 +4,15 @@ import { authOptions } from "@/lib/auth";
 import {
   appendSheetRow,
   isGoogleConfigured,
+  sanitizeSheetRow,
   SHEETS,
 } from "@/lib/google-sheets";
 
 // POST /api/admin/checkin — check in a player
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "admin") {
+  const allowedRoles = ["admin", "front_desk", "staff"];
+  if (!session || !allowedRoles.includes(session.user.role as string)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -36,7 +38,7 @@ export async function POST(request: NextRequest) {
   });
 
   const success = await appendSheetRow(SHEETS.playerCheckIn, "A:D", [
-    [timestamp, playerName, teamName || "", division || ""],
+    sanitizeSheetRow([timestamp, playerName, teamName || "", division || ""]),
   ]);
 
   if (!success) {

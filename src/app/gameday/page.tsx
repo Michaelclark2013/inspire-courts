@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { FACILITY_EMAIL } from "@/lib/constants";
 import Link from "next/link";
+import Image from "next/image";
 import { getPageContent, getField } from "@/lib/content";
 import {
   MapPin,
@@ -39,7 +40,7 @@ const INFO_SECTIONS = [
     icon: Ticket,
     title: "Spectator Admission",
     content:
-      "$15 at the door. Kids under 5 are free. Cash and card accepted.",
+      "Admission at the door — cash and card accepted. Kids under 5 free.",
     highlight: false,
   },
   {
@@ -100,13 +101,7 @@ export default function GameDayPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
-          }}
-        />
+        <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
@@ -124,7 +119,7 @@ export default function GameDayPage() {
       </section>
 
       {/* Info Cards */}
-      <section className="py-20 lg:py-28 bg-white">
+      <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           {INFO_SECTIONS.map((section, i) => (
             <AnimateIn key={section.title} delay={i * 60}>

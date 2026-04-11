@@ -8,6 +8,7 @@ export default function ProfilePage() {
   const { data: session } = useSession();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -37,12 +38,13 @@ export default function ProfilePage() {
       body: JSON.stringify({
         name,
         phone,
-        ...(newPassword ? { newPassword } : {}),
+        ...(newPassword ? { currentPassword, newPassword } : {}),
       }),
     });
 
     if (res.ok) {
       setSaved(true);
+      setCurrentPassword("");
       setNewPassword("");
       setTimeout(() => setSaved(false), 3000);
     } else {
@@ -136,6 +138,19 @@ export default function ProfilePage() {
             </div>
             <div>
               <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Current Password {newPassword && <span className="text-red">*</span>}
+              </label>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                required={!!newPassword}
+                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+                placeholder="Required to change password"
+              />
+            </div>
+            <div>
+              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 New Password (leave blank to keep current)
               </label>
               <input
@@ -144,7 +159,7 @@ export default function ProfilePage() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
                 placeholder="New password"
-                minLength={6}
+                minLength={8}
               />
             </div>
             <button

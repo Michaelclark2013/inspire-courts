@@ -8,6 +8,31 @@ interface AnimateInProps {
   delay?: number;
 }
 
+// Singleton IntersectionObserver shared across all AnimateIn instances
+const callbacks = new Map<Element, () => void>();
+let sharedObserver: IntersectionObserver | null = null;
+
+function getObserver(): IntersectionObserver {
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const cb = callbacks.get(entry.target);
+            if (cb) {
+              cb();
+              callbacks.delete(entry.target);
+              sharedObserver!.unobserve(entry.target);
+            }
+          }
+        }
+      },
+      { threshold: 0.1 }
+    );
+  }
+  return sharedObserver;
+}
+
 export default function AnimateIn({ children, className = "", delay = 0 }: AnimateInProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -23,17 +48,15 @@ export default function AnimateIn({ children, className = "", delay = 0 }: Anima
 
     const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.1 }
-    );
+
+    const observer = getObserver();
+    callbacks.set(el, () => setVisible(true));
     observer.observe(el);
-    return () => observer.disconnect();
+
+    return () => {
+      callbacks.delete(el);
+      observer.unobserve(el);
+    };
   }, []);
 
   // Opacity-only animation (no translateY) prevents Cumulative Layout Shift

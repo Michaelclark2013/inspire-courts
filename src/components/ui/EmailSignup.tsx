@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { trackConversion } from "@/lib/analytics";
 
 interface EmailSignupProps {
   variant?: "dark" | "light";
@@ -35,14 +36,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
       setStatus("success");
       setMessage("You're in. Watch your inbox.");
       setEmail("");
-
-      // Track GA event
-      if (typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("event", "newsletter_subscribe", {
-          event_category: "engagement",
-          event_label: "email_signup",
-        });
-      }
+      trackConversion("newsletter_signup");
     } catch {
       setStatus("error");
       setMessage("Something went wrong. Try again.");

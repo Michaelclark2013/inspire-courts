@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Trophy,
@@ -25,17 +26,6 @@ export const metadata: Metadata = {
   },
 };
 
-const CURRENT_DIVISIONS = [
-  { division: "16U", gender: "Boys", status: "Active" },
-  { division: "17U", gender: "Boys", status: "Active" },
-];
-
-const FUTURE_DIVISIONS = [
-  { division: "13U", label: "Coming Soon" },
-  { division: "14U", label: "Coming Soon" },
-  { division: "15U", label: "Coming Soon" },
-];
-
 const WHAT_YOU_GET = [
   {
     icon: Trophy,
@@ -50,7 +40,7 @@ const WHAT_YOU_GET = [
   {
     icon: Video,
     title: "Game Film",
-    desc: "Every tournament game filmed at Inspire Courts. Build your recruiting portfolio with professional-quality footage.",
+    desc: "Game film available for purchase at tournaments. Build your recruiting portfolio with professional-quality footage.",
   },
   {
     icon: Target,
@@ -68,7 +58,7 @@ const WHY_INSPIRE = [
   {
     icon: MapPin,
     title: "Home Court Advantage",
-    desc: "Train and play at Inspire Courts — our own 7-court indoor facility with live scoreboards, game film, and a pro environment.",
+    desc: "Train and play at Inspire Courts — our own 7-court indoor facility with game film available and a pro environment.",
   },
   {
     icon: Star,
@@ -82,13 +72,7 @@ export default function TeamsPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
-          }}
-        />
+        <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
@@ -127,74 +111,91 @@ export default function TeamsPage() {
         </div>
       </section>
 
-      {/* Current Divisions */}
-      <section className="py-16 bg-navy">
+      {/* Divisions — redesigned for desktop impact */}
+      <section className="py-16 lg:py-24 bg-navy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-2 font-[var(--font-chakra)]">
-              2026 Season
-            </p>
-            <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight text-white font-[var(--font-chakra)]">
-              Active Divisions
-            </h2>
-          </div>
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
-            {CURRENT_DIVISIONS.map((ag) => (
-              <AnimateIn key={ag.division}>
-                <div className="bg-red/20 border-2 border-red/40 rounded-xl px-8 py-5 text-center min-w-[140px]">
-                  <div className="text-3xl font-bold text-red font-[var(--font-chakra)]">
-                    {ag.division}
-                  </div>
-                  <div className="text-white/80 text-sm mt-1 font-semibold">{ag.gender}</div>
-                  <div className="text-green-400 text-xs mt-2 font-bold uppercase tracking-wider">
-                    {ag.status}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-12 lg:gap-20 items-center">
+            {/* Left: text + future divisions */}
+            <AnimateIn>
+              <div>
+                <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-3 font-[var(--font-chakra)]">
+                  2026 Season
+                </p>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white font-[var(--font-chakra)] mb-4 leading-[0.95]">
+                  Active Divisions
+                </h2>
+                <p className="text-white/60 max-w-lg mb-8 leading-relaxed">
+                  Team Inspire is building something special. We&apos;re starting with two competitive age groups and growing from there.
+                </p>
+                <div>
+                  <p className="text-white/40 text-xs uppercase tracking-[0.2em] font-bold mb-3">
+                    Expanding Soon
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {["13U", "14U", "15U"].map((d) => (
+                      <div key={d} className="bg-white/5 border border-white/10 rounded-lg px-5 py-2.5 text-center">
+                        <span className="text-lg font-bold text-white/40 font-[var(--font-chakra)]">{d}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </AnimateIn>
-            ))}
-          </div>
-          <div className="text-center mb-4">
-            <p className="text-white/40 text-xs uppercase tracking-[0.2em] font-bold">
-              Expanding Soon
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3">
-            {FUTURE_DIVISIONS.map((ag) => (
-              <AnimateIn key={ag.division}>
-                <div className="bg-white/5 border border-white/10 rounded-xl px-6 py-4 text-center min-w-[120px] opacity-60">
-                  <div className="text-2xl font-bold text-white/50 font-[var(--font-chakra)]">
-                    {ag.division}
+              </div>
+            </AnimateIn>
+
+            {/* Right: active division cards — big and bold */}
+            <AnimateIn delay={150}>
+              <div className="flex flex-row lg:flex-col gap-4 justify-center">
+                {[
+                  { division: "16U", gender: "Boys" },
+                  { division: "17U", gender: "Boys" },
+                ].map((ag) => (
+                  <div
+                    key={ag.division}
+                    className="relative bg-gradient-to-br from-red/20 to-red/5 border-2 border-red/40 rounded-2xl px-10 py-8 lg:px-14 lg:py-10 text-center min-w-[160px] lg:min-w-[220px] overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-red/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+                    <div className="relative z-10">
+                      <div className="text-5xl lg:text-6xl font-bold text-red font-[var(--font-chakra)] mb-1">
+                        {ag.division}
+                      </div>
+                      <div className="text-white/80 text-sm font-semibold uppercase tracking-wide">
+                        {ag.gender}
+                      </div>
+                      <div className="inline-flex items-center gap-1.5 mt-3 bg-green-500/20 text-green-400 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                        <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                        Active
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-white/30 text-xs mt-1">{ag.label}</div>
-                </div>
-              </AnimateIn>
-            ))}
+                ))}
+              </div>
+            </AnimateIn>
           </div>
         </div>
       </section>
 
-      {/* What You Get */}
-      <section className="py-20 lg:py-28 bg-white">
+      {/* What You Get — improved desktop layout */}
+      <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="The Program"
             title="What You Get"
             description="Team Inspire is built around making players better and giving them every opportunity to compete at the highest level."
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             {WHAT_YOU_GET.map((item, i) => (
               <AnimateIn key={item.title} delay={i * 80}>
-                <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="flex items-start gap-5">
-                    <div className="w-14 h-14 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                      <item.icon className="w-6 h-6 text-white" />
+                  <div className="flex items-start gap-5 lg:gap-6">
+                    <div className="w-14 h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                      <item.icon className="w-6 h-6 lg:w-7 lg:h-7 text-white" />
                     </div>
-                    <div>
-                      <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg uppercase tracking-tight mb-2">
+                    <div className="flex-1">
+                      <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg lg:text-xl uppercase tracking-tight mb-2">
                         {item.title}
                       </h3>
-                      <p className="text-text-muted text-sm leading-relaxed">
+                      <p className="text-text-muted text-sm lg:text-base leading-relaxed">
                         {item.desc}
                       </p>
                     </div>
@@ -206,59 +207,116 @@ export default function TeamsPage() {
         </div>
       </section>
 
-      {/* Why Team Inspire */}
+      {/* Why Team Inspire — side-by-side on desktop */}
       <section
-        className="relative py-28 lg:py-36 bg-scroll md:bg-fixed bg-cover bg-center"
+        className="relative py-20 lg:py-36 bg-scroll md:bg-fixed bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
+          backgroundImage: "url('/images/courts-bg-texture.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-navy/85" />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimateIn>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white mb-4 font-[var(--font-chakra)] leading-[0.95]">
-                Why Team Inspire
-              </h2>
-              <p className="text-white/80 max-w-2xl mx-auto">
-                This isn&apos;t rec ball. We compete on a national stage and develop players who are serious about the game.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-              {WHY_INSPIRE.map((item) => (
-                <div key={item.title} className="text-center">
-                  <div className="w-16 h-16 bg-red/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <item.icon className="w-8 h-8 text-red" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-20 items-center">
+            {/* Left: heading */}
+            <AnimateIn>
+              <div>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white mb-4 font-[var(--font-chakra)] leading-[0.95]">
+                  Why Team
+                  <br />
+                  <span className="text-red">Inspire</span>
+                </h2>
+                <p className="text-white/70 max-w-md leading-relaxed mb-8">
+                  This isn&apos;t rec ball. We compete on a national stage and develop players who are serious about the game.
+                </p>
+                <a
+                  href="#join"
+                  className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-white transition-colors font-[var(--font-chakra)]"
+                >
+                  Join the Team
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
+            </AnimateIn>
+
+            {/* Right: feature cards stacked */}
+            <AnimateIn delay={150}>
+              <div className="space-y-5">
+                {WHY_INSPIRE.map((item) => (
+                  <div key={item.title} className="flex items-start gap-5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 lg:p-8">
+                    <div className="w-14 h-14 bg-red/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-7 h-7 text-red" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-bold text-base lg:text-lg uppercase tracking-wide font-[var(--font-chakra)] mb-1.5">
+                        {item.title}
+                      </h3>
+                      <p className="text-white/70 text-sm lg:text-base leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="text-white font-bold text-sm uppercase tracking-wide font-[var(--font-chakra)] mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-white/80 text-sm leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </AnimateIn>
+                ))}
+              </div>
+            </AnimateIn>
+          </div>
         </div>
       </section>
 
-      {/* Interest Form */}
+      {/* Interest Form — two-column on desktop */}
       <section id="join" className="py-20 lg:py-28 bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
-              Now Recruiting
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)]">
-              Join Team Inspire
-            </h2>
-            <p className="text-text-muted max-w-xl mx-auto">
-              We&apos;re looking for competitive coaches and players for our 16U and 17U MADE Hoops teams. Fill out the form below and we&apos;ll be in touch.
-            </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-20 items-start">
+            {/* Left: info panel */}
+            <AnimateIn>
+              <div className="lg:sticky lg:top-32">
+                <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                  Now Recruiting
+                </span>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)] leading-[0.95]">
+                  Join Team
+                  <br />
+                  Inspire
+                </h2>
+                <p className="text-text-muted max-w-md mb-8 leading-relaxed">
+                  We&apos;re looking for competitive coaches and players for our 16U and 17U MADE Hoops teams. Fill out the form and we&apos;ll be in touch.
+                </p>
+                <div className="space-y-4 text-sm">
+                  <div className="flex items-center gap-3 text-navy">
+                    <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-red" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">MADE Hoops High School Circuit</p>
+                      <p className="text-text-muted text-xs">Top grassroots platform in the country</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-navy">
+                    <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-red" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Based at Inspire Courts</p>
+                      <p className="text-text-muted text-xs">7 courts, game film, pro environment</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-navy">
+                    <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
+                      <Flame className="w-5 h-5 text-red" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">16U & 17U Boys</p>
+                      <p className="text-text-muted text-xs">Expanding to 13U–15U soon</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </AnimateIn>
+
+            {/* Right: form */}
+            <AnimateIn delay={150}>
+              <ClubInterestForm />
+            </AnimateIn>
           </div>
-          <ClubInterestForm />
         </div>
       </section>
 

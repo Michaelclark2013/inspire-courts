@@ -198,6 +198,23 @@ export const MIME_LABELS: Record<string, string> = {
   "application/pdf": "PDF",
 };
 
+// ── Sheet Injection Protection ───────────────────────────────────────────────
+
+/** Sanitize a value before writing to Google Sheets to prevent formula injection */
+export function sanitizeSheetValue(value: string): string {
+  if (!value) return value;
+  // Prefix with single-quote if cell starts with a formula character
+  if (/^[=+\-@\t\r]/.test(value)) {
+    return `'${value}`;
+  }
+  return value;
+}
+
+/** Sanitize an entire row of values */
+export function sanitizeSheetRow(row: string[]): string[] {
+  return row.map(sanitizeSheetValue);
+}
+
 // ── Sheet Write Operations ───────────────────────────────────────────────────
 
 /** Update a specific range in a sheet */
@@ -264,18 +281,28 @@ export async function appendSheetRow(
 
 // ── Google Drive API ──────────────────────────────────────────────────────────
 
+/** Sanitize a string for use as a Drive folder name */
+function sanitizeFolderName(name: string): string {
+  // Remove characters that are problematic in Drive folder names
+  return name.replace(/[/\\<>:"|?*\x00-\x1f]/g, "").slice(0, 200).trim() || "Unnamed";
+}
+
 /** Find a subfolder by name inside a parent folder, or create it */
 export async function findOrCreateDriveFolder(
   parentFolderId: string,
   folderName: string
 ): Promise<string | null> {
+  // Validate folder ID format
+  if (!/^[a-zA-Z0-9_-]+$/.test(parentFolderId)) return null;
+
+  const safeName = sanitizeFolderName(folderName);
   const token = await getAccessToken();
   if (!token) return null;
 
   try {
     // Search for existing folder
     const searchParams = new URLSearchParams({
-      q: `'${parentFolderId}' in parents and name = '${folderName.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+      q: `'${parentFolderId}' in parents and name = '${safeName.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
       fields: "files(id,name)",
       pageSize: "1",
     });
@@ -298,7 +325,7 @@ export async function findOrCreateDriveFolder(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: folderName,
+        name: safeName,
         mimeType: "application/vnd.google-apps.folder",
         parents: [parentFolderId],
       }),
@@ -382,6 +409,7 @@ export async function createDriveDoc(
 }
 
 export async function listDriveFolder(folderId: string): Promise<DriveFile[]> {
+  if (!/^[a-zA-Z0-9_-]+$/.test(folderId)) return [];
   const token = await getAccessToken();
   if (!token) return [];
 

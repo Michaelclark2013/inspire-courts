@@ -97,8 +97,8 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-11 h-11 bg-navy-light rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-red transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-navy"
-                  aria-label="Follow @inspirecourtsaz on Instagram"
-                  title="@inspirecourtsaz on Instagram"
+                  aria-label="Follow @inspirecourts on Instagram"
+                  title="@inspirecourts on Instagram"
                 >
                   <Camera className="w-5 h-5" />
                 </a>

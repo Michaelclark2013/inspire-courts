@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import RegisterLink from "@/components/ui/RegisterLink";
 import {
   ArrowRight,
   Calendar,
@@ -25,31 +26,40 @@ export default async function EventsList() {
   ]);
 
   const upcoming = upcomingEvents.map((e: any) => {
-    const divisions = getProperty(e, "Divisions") || getProperty(e, "Age Groups") || "";
-    const fee = getProperty(e, "Registration Fee") || getProperty(e, "Fee") || getProperty(e, "Entry Fee") || "";
-    const date = getProperty(e, "Date") || getProperty(e, "Event Date") || "";
-    const teams = getProperty(e, "Teams Registered") || getProperty(e, "Teams") || 0;
-    const maxTeams = getProperty(e, "Max Teams") || getProperty(e, "Capacity") || "";
+    const divisions = getProperty(e, "Divisions") || "";
+    const fee = getProperty(e, "Entry Fee") || "";
+    const date = getProperty(e, "Event Date") || "";
+    const teams = getProperty(e, "Team Count") || 0;
+    const maxTeams = getProperty(e, "Max Teams") || "";
     const status = getProperty(e, "Status") || "";
+    const brand = getProperty(e, "Brand") || "OFF SZN HOOPS";
+    const sport = getProperty(e, "Sport") || "Basketball";
+    const bracketLink = getProperty(e, "Bracket Link") || "";
+    const regDeadline = getProperty(e, "Registration Deadline") || "";
 
     return {
-      name: getProperty(e, "Name") || getProperty(e, "Event Name") || "Upcoming Event",
+      name: getProperty(e, "Tournament Name") || "Upcoming Event",
       date: date ? new Date(date).toLocaleDateString("en-US", { month: "long", year: "numeric", day: "numeric" }) : "TBD",
       divisions: Array.isArray(divisions) ? divisions : (divisions ? divisions.split(",").map((d: string) => d.trim()) : []),
       fee: fee ? (typeof fee === "number" ? `$${fee}` : fee) : "",
       teams: Number(teams) || 0,
       maxTeams: maxTeams ? Number(maxTeams) : null,
       status,
+      brand,
+      sport,
+      bracketLink,
+      regDeadline: regDeadline ? new Date(regDeadline).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "",
     };
   });
 
   const past = pastEvents.slice(0, 6).map((e: any) => {
-    const date = getProperty(e, "Date") || getProperty(e, "Event Date") || "";
-    const teams = getProperty(e, "Teams Registered") || getProperty(e, "Teams") || 0;
+    const date = getProperty(e, "Event Date") || "";
+    const teams = getProperty(e, "Team Count") || 0;
     return {
-      name: getProperty(e, "Name") || getProperty(e, "Event Name") || "Past Event",
+      name: getProperty(e, "Tournament Name") || "Past Event",
       date: date ? new Date(date).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "",
       teams: Number(teams) || 0,
+      brand: getProperty(e, "Brand") || "",
     };
   });
 
@@ -71,10 +81,15 @@ export default async function EventsList() {
                   <div className="bg-white border border-light-gray rounded-xl p-6 flex flex-col h-full hover:shadow-lg transition-shadow shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                       <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                        OFF SZN HOOPS
+                        {event.brand}
                       </span>
                       {event.status && (
-                        <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${event.status === "Registration Open" ? "bg-green-500/10 text-green-600" : "bg-yellow-500/10 text-yellow-600"}`}>
+                        <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                          event.status === "Registration Open" ? "bg-green-500/10 text-green-600" :
+                          event.status === "In Progress" ? "bg-blue-500/10 text-blue-600" :
+                          event.status === "Registration Closed" ? "bg-orange-500/10 text-orange-600" :
+                          "bg-yellow-500/10 text-yellow-600"
+                        }`}>
                           {event.status}
                         </span>
                       )}
@@ -121,14 +136,12 @@ export default async function EventsList() {
                     )}
 
                     <div className="mt-auto">
-                      <a
+                      <RegisterLink
                         href={REGISTER_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                       >
                         Register <ArrowRight className="w-4 h-4" />
-                      </a>
+                      </RegisterLink>
                     </div>
                   </div>
                 </AnimateIn>
@@ -147,21 +160,19 @@ export default async function EventsList() {
                   when registration opens.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <a
+                  <RegisterLink
                     href={REGISTER_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                   >
                     Register on LeagueApps <ArrowRight className="w-4 h-4" />
-                  </a>
+                  </RegisterLink>
                   <a
-                    href="https://instagram.com/inspirecourtsaz"
+                    href="https://instagram.com/inspirecourts"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 border-2 border-navy/20 hover:border-navy/40 text-navy px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                   >
-                    @inspirecourtsaz
+                    @inspirecourts
                   </a>
                 </div>
               </div>

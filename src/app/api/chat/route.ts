@@ -447,7 +447,7 @@ PRIVACY:
 - NEVER share the owner's personal phone number, home address, or private email
 - NEVER discuss internal revenue, profit, staff salaries, or business financials
 - NEVER share other customers' information, team details, or personal data
-- The only contact info to share is: ${FACILITY_EMAIL} and @inspirecourtsaz on Instagram
+- The only contact info to share is: ${FACILITY_EMAIL} and @inspirecourts on Instagram
 - NEVER disclose admin credentials, API keys, database details, or any technical infrastructure
 
 CONTENT BOUNDARIES:

@@ -1,16 +1,15 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import AdminSidebar from "@/components/layout/AdminSidebar";
+import PortalSidebar from "@/components/portal/PortalSidebar";
 import SessionProvider from "@/components/layout/SessionProvider";
-import { isAdminRole } from "@/lib/permissions";
 
 export const metadata = {
-  title: "Admin Dashboard | Inspire Courts AZ",
+  title: "Portal | Inspire Courts AZ",
   robots: "noindex, nofollow",
 };
 
-export default async function AdminLayout({
+export default async function PortalLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -19,14 +18,14 @@ export default async function AdminLayout({
   if (!session) {
     redirect("/login");
   }
-  if (!isAdminRole(session.user.role)) {
-    redirect("/portal");
+  if (!["admin", "coach", "parent"].includes(session.user.role || "")) {
+    redirect("/login");
   }
 
   return (
     <SessionProvider>
       <div className="min-h-screen bg-bg flex">
-        <AdminSidebar />
+        <PortalSidebar />
         <div className="flex-1 min-w-0">{children}</div>
       </div>
     </SessionProvider>

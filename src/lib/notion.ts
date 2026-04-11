@@ -112,8 +112,10 @@ export function getProperty(page: any, name: string): any {
 export async function getUpcomingEvents() {
   return queryDatabase(DB.tournaments, {
     or: [
-      { property: "Status", status: { equals: "Registration Open" } },
-      { property: "Status", status: { equals: "Planning" } },
+      { property: "Status", select: { equals: "Registration Open" } },
+      { property: "Status", select: { equals: "Planning" } },
+      { property: "Status", select: { equals: "Registration Closed" } },
+      { property: "Status", select: { equals: "In Progress" } },
     ],
   });
 }
@@ -121,7 +123,7 @@ export async function getUpcomingEvents() {
 export async function getPastEvents() {
   return queryDatabase(DB.tournaments, {
     property: "Status",
-    status: { equals: "Completed" },
+    select: { equals: "Complete" },
   });
 }
 
@@ -219,6 +221,38 @@ export async function createNotionPage(
     return await response.json();
   } catch (error) {
     console.error("Notion page creation error:", error);
+    return null;
+  }
+}
+
+// ── Update an existing Notion page ──
+
+export async function updateNotionPage(
+  pageId: string,
+  properties: Record<string, unknown>
+) {
+  try {
+    const apiKey = process.env.NOTION_API_KEY;
+    if (!apiKey || !pageId) return null;
+
+    const response = await fetch(`https://api.notion.com/v1/pages/${pageId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ properties }),
+    });
+
+    if (!response.ok) {
+      console.error(`Notion page update failed: ${response.status}`);
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Notion page update error:", error);
     return null;
   }
 }

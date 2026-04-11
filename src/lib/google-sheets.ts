@@ -30,8 +30,8 @@ async function getAccessToken(): Promise<string | null> {
   const payload = {
     iss: email,
     scope: [
-      "https://www.googleapis.com/auth/spreadsheets.readonly",
-      "https://www.googleapis.com/auth/drive.readonly",
+      "https://www.googleapis.com/auth/spreadsheets",
+      "https://www.googleapis.com/auth/drive",
     ].join(" "),
     aud: "https://oauth2.googleapis.com/token",
     exp: now + 3600,
@@ -195,6 +195,72 @@ export const MIME_LABELS: Record<string, string> = {
   "image/png": "Image",
   "application/pdf": "PDF",
 };
+
+// ── Sheet Write Operations ───────────────────────────────────────────────────
+
+/** Update a specific range in a sheet */
+export async function updateSheetRow(
+  spreadsheetId: string,
+  range: string,
+  values: string[][]
+): Promise<boolean> {
+  const token = await getAccessToken();
+  if (!token) return false;
+
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`;
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ values }),
+    });
+
+    if (!res.ok) {
+      console.error(`Sheet update failed (${spreadsheetId}): ${res.status}`);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Sheet update error:", err);
+    return false;
+  }
+}
+
+/** Append rows to the end of a sheet */
+export async function appendSheetRow(
+  spreadsheetId: string,
+  range: string,
+  values: string[][]
+): Promise<boolean> {
+  const token = await getAccessToken();
+  if (!token) return false;
+
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ values }),
+    });
+
+    if (!res.ok) {
+      console.error(`Sheet append failed (${spreadsheetId}): ${res.status}`);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Sheet append error:", err);
+    return false;
+  }
+}
+
+// ── Google Drive API ──────────────────────────────────────────────────────────
 
 export async function listDriveFolder(folderId: string): Promise<DriveFile[]> {
   const token = await getAccessToken();

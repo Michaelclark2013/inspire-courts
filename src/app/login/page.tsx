@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+
+const ADMIN_ROLES = ["admin", "staff", "ref", "front_desk"];
 import Image from "next/image";
 import { ArrowRight, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -33,7 +35,14 @@ export default function LoginPage() {
       setTimeout(() => setShake(false), 600);
       setLoading(false);
     } else {
-      router.push("/admin");
+      // Route based on user role
+      const session = await getSession();
+      const role = session?.user?.role;
+      if (ADMIN_ROLES.includes(role || "")) {
+        router.push("/admin");
+      } else {
+        router.push("/portal");
+      }
     }
   }
 
@@ -50,7 +59,7 @@ export default function LoginPage() {
             Inspire Courts
           </h1>
           <p className="text-white/40 text-xs uppercase tracking-[0.2em]">
-            Operations Dashboard
+            Dashboard
           </p>
         </div>
 

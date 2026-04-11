@@ -43,7 +43,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <div className="flex items-center gap-2.5">
-              <img src="/images/inspire-red-logo.svg" alt="Inspire Athletics" className="w-10 h-10 object-contain" />
+              <img src="/images/inspire-athletics-logo.png" alt="Inspire Athletics" className="w-10 h-10 object-contain" />
               <div className="hidden sm:block">
                 <span className="font-[var(--font-chakra)] font-bold text-white text-lg uppercase tracking-wide">
                   Inspire Courts

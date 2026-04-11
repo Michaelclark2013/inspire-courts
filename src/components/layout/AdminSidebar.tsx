@@ -72,7 +72,7 @@ export default function AdminSidebar() {
         {/* Logo */}
         <div className="px-5 py-5 border-b border-border">
           <Link href="/admin" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-            <img src="/images/inspire-red-logo.svg" alt="Inspire Courts" className="w-9 h-9 object-contain" />
+            <img src="/images/inspire-athletics-logo.png" alt="Inspire Courts" className="w-9 h-9 object-contain" />
             <div>
               <span className="text-white font-bold text-sm uppercase tracking-tight block">
                 Inspire Courts

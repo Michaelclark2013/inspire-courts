@@ -298,7 +298,7 @@ export default function ChatWidget() {
         >
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-light-gray bg-navy rounded-t-xl">
-            <img src="/images/inspire-red-logo.svg" alt="Inspire Courts" className="w-8 h-8 object-contain" />
+            <img src="/images/inspire-athletics-logo.png" alt="Inspire Courts" className="w-8 h-8 object-contain" />
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-bold font-[var(--font-chakra)]">Inspire Courts</p>
               <p className="text-green-400 text-xs">Online now</p>

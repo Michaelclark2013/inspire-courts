@@ -22,7 +22,7 @@ export default function Footer() {
             {/* Brand */}
             <div>
               <div className="flex items-center gap-3 mb-5">
-                <img src="/images/inspire-red-logo.svg" alt="Inspire Athletics" className="w-10 h-10 object-contain" />
+                <img src="/images/inspire-athletics-logo.png" alt="Inspire Athletics" className="w-10 h-10 object-contain" />
                 <span className="font-[var(--font-chakra)] font-bold text-lg uppercase tracking-wide">
                   Inspire Courts
                 </span>

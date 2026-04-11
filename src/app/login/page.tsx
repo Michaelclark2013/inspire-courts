@@ -44,7 +44,7 @@ export default function LoginPage() {
       <div className="relative w-full max-w-sm z-10">
         {/* Logo & Header */}
         <div className="text-center mb-10">
-          <img src="/images/inspire-red-logo.svg" alt="Inspire Athletics" className="w-20 h-20 object-contain mx-auto mb-5" />
+          <img src="/images/inspire-athletics-logo.png" alt="Inspire Athletics" className="w-20 h-20 object-contain mx-auto mb-5" />
           <h1 className="text-white text-xl font-bold uppercase tracking-widest mb-1">
             Inspire Courts
           </h1>

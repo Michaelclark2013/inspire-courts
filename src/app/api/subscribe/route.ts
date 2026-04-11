@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { subscribeSchema } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
@@ -24,6 +25,13 @@ export async function POST(req: NextRequest) {
     }
 
     const cleanEmail = result.data.email.trim().toLowerCase();
+
+    // Save to prospect pipeline sheet (fire-and-forget)
+    const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+    appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [
+      sanitizeSheetRow([timestamp, "", cleanEmail, "", "General", "Newsletter Subscribe", "Warm"]),
+    ]).catch((err) => logger.error("Failed to save subscriber to sheet", { error: String(err) }));
+
     const apiKey = process.env.MAILCHIMP_API_KEY;
     const listId = process.env.MAILCHIMP_LIST_ID;
 

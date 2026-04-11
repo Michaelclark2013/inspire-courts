@@ -5,6 +5,7 @@ import { contactSchema } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
 import { INQUIRY_INTEREST_MAP } from "@/lib/constants";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 
 /** Escape HTML special characters to prevent XSS in downstream systems. */
 function sanitize(value: string): string {
@@ -48,6 +49,12 @@ export async function POST(request: Request) {
     createContactSubmission({ name, email, phone, inquiryType, message }).catch(
       (err) => logger.error("Failed to save contact submission", { error: String(err) })
     );
+
+    // Save to prospect pipeline sheet (fire-and-forget)
+    const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+    appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [
+      sanitizeSheetRow([timestamp, name, email, phone, INQUIRY_INTEREST_MAP[inquiryType ?? ""] ?? "General", "Contact Form", "Warm"]),
+    ]).catch((err) => logger.error("Failed to save contact to sheet", { error: String(err) }));
 
     // Email notification to owner (fire-and-forget)
     sendLeadEmail({

@@ -4,6 +4,7 @@ import { sendLeadEmail } from "@/lib/notify";
 import { bookSchema } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 
 /** Escape HTML special characters to prevent XSS in downstream systems. */
 function sanitize(value: string | undefined): string {
@@ -73,6 +74,12 @@ export async function POST(request: Request) {
     }).catch((err) =>
       logger.error("Failed to save booking to Notion", { error: String(err) })
     );
+
+    // Save to prospect pipeline sheet (fire-and-forget)
+    const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+    appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [
+      sanitizeSheetRow([timestamp, name, email, phone, "Rental", "Booking Form", "Hot"]),
+    ]).catch((err) => logger.error("Failed to save booking to sheet", { error: String(err) }));
 
     // Email notification (fire-and-forget)
     sendLeadEmail({

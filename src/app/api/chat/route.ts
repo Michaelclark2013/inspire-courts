@@ -4,6 +4,7 @@ import { sendLeadEmail, type LeadData } from "@/lib/notify";
 import { chatSchema } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 import {
   FACILITY_EMAIL,
   FACILITY_ADDRESS,
@@ -620,6 +621,20 @@ ${pagePrompt}`;
             saveChatLead(leadData).catch((err) =>
               logger.error("Failed to save chat lead", { error: String(err) })
             );
+
+            // Save to prospect pipeline sheet
+            const chatTimestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+            appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [
+              sanitizeSheetRow([
+                chatTimestamp,
+                leadData.name || "",
+                leadData.email || "",
+                leadData.phone || "",
+                leadData.interest || "General",
+                "Chat Widget",
+                leadData.urgency || "Warm",
+              ]),
+            ]).catch((err) => logger.error("Failed to save chat lead to sheet", { error: String(err) }));
 
             if (shouldNotify) {
               notifiedSessions.set(sid, Date.now());

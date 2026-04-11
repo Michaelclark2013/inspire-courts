@@ -14,10 +14,11 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    redirect("/login");
-  }
+  // Auth temporarily disabled for open access — re-enable when ready
+  // const session = await getServerSession(authOptions);
+  // if (!session) {
+  //   redirect("/login");
+  // }
 
   return (
     <SessionProvider>

@@ -9,7 +9,6 @@ import { trackConversion } from "@/lib/analytics";
 
 const PRIMARY_NAV = [
   { href: "/", label: "Home" },
-  { href: "/events", label: "Events" },
   { href: "/tournaments", label: "Tournaments" },
   { href: "/scores", label: "Scores" },
   { href: "/facility", label: "Facility" },

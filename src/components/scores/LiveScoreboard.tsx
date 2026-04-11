@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Trophy, Radio, Clock } from "lucide-react";
+import { Trophy, Radio, Clock, Calendar } from "lucide-react";
+import Link from "next/link";
 
 type LiveGame = {
   id: number;
@@ -55,8 +56,20 @@ export default function LiveScoreboard() {
   if (games.length === 0) {
     return (
       <div className="text-center py-16">
-        <Trophy className="w-10 h-10 text-white/20 mx-auto mb-4" />
-        <p className="text-white/40 text-sm">No games scheduled yet. Check back on game day!</p>
+        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-5">
+          <Trophy className="w-8 h-8 text-white/20" />
+        </div>
+        <h3 className="text-white/60 font-semibold text-sm mb-2">No Games Right Now</h3>
+        <p className="text-white/30 text-sm max-w-xs mx-auto mb-6">
+          Scores and live updates will appear here on game day. Check back during a tournament!
+        </p>
+        <Link
+          href="/tournaments"
+          className="inline-flex items-center gap-2 text-red hover:text-red-hover text-sm font-semibold transition-colors"
+        >
+          <Calendar className="w-4 h-4" />
+          View Upcoming Tournaments
+        </Link>
       </div>
     );
   }

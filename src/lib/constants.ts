@@ -23,7 +23,6 @@ export const SOCIAL_LINKS = {
   instagramMixtape: "https://instagram.com/azfinestmixtape",
   instagramMixtapeHandle: "@azfinestmixtape",
   youtube: "https://www.youtube.com/watch?v=1pJDZU2I6k4",
-  leagueapps: "https://inspirecourts.leagueapps.com/tournaments",
 };
 
 // ─── Brand Colors ─────────────────────────────────────────────────────────────

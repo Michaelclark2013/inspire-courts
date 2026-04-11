@@ -6,7 +6,6 @@ import { FACILITY_EMAIL, FACILITY_ADDRESS, SOCIAL_LINKS } from "@/lib/constants"
 import { trackConversion } from "@/lib/analytics";
 
 const QUICK_LINKS = [
-  { href: "/events", label: "Events" },
   { href: "/tournaments", label: "Tournaments" },
   { href: "/facility", label: "Facility" },
   { href: "/scores", label: "Scores" },

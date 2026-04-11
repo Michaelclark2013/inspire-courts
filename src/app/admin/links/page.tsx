@@ -9,7 +9,7 @@ const QUICK_LINKS = [
   { name: "Mailchimp", url: "https://mailchimp.com", desc: "Email marketing & lists" },
   { name: "Google Drive", url: "https://drive.google.com", desc: "Shared files & documents" },
   { name: "Make.com", url: "https://make.com", desc: "Automation workflows" },
-  { name: "LeagueApps", url: "https://leagueapps.com", desc: "Tournament registration" },
+  { name: "Vercel Dashboard", url: "https://vercel.com/dashboard", desc: "Hosting & deployments" },
   { name: "Instagram @inspirecourtsaz", url: "https://instagram.com/inspirecourtsaz", desc: "Main brand account" },
   { name: "Instagram @azfinestmixtape", url: "https://instagram.com/azfinestmixtape", desc: "Content & highlights" },
 ];

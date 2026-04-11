@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import KPICard from "@/components/dashboard/KPICard";
 import DashboardCharts from "@/components/admin/DashboardCharts";
+import DashboardAlerts from "@/components/admin/DashboardAlerts";
 import {
   fetchSheetWithHeaders,
   getCol,
@@ -195,6 +196,9 @@ export default async function AdminDashboard() {
           <KPICard key={kpi.title} {...kpi} />
         ))}
       </div>
+
+      {/* Alerts + Quick Actions */}
+      <DashboardAlerts />
 
       {/* Charts row */}
       <DashboardCharts

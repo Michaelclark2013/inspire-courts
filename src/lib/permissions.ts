@@ -57,7 +57,9 @@ export type AdminPage =
   | "users"
   | "portal"
   | "my_schedule"
-  | "my_history";
+  | "my_history"
+  | "announcements"
+  | "leads";
 
 const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
@@ -80,6 +82,8 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   portal: ["admin"],
   my_schedule: ["staff", "ref", "front_desk"],
   my_history: ["staff", "ref"],
+  announcements: ["admin"],
+  leads: ["admin"],
 };
 
 export function canAccess(role: UserRole | undefined, page: AdminPage): boolean {

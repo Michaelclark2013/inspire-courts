@@ -7,9 +7,10 @@ import {
   tournaments,
   tournamentTeams,
   tournamentGames,
+  tournamentRegistrations,
   games,
 } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { generateBracket, type TeamEntry, type ScheduleConfig } from "@/lib/tournament-engine";
 
 type Params = { params: Promise<{ id: string }> };
@@ -41,16 +42,38 @@ export async function POST(_request: NextRequest, { params }: Params) {
     );
   }
 
-  // Get teams
-  const teams = await db
+  // Get teams — only include those with approved+paid registrations (or all if no registrations exist)
+  const allTeams = await db
     .select()
     .from(tournamentTeams)
     .where(eq(tournamentTeams.tournamentId, tournamentId))
     .orderBy(tournamentTeams.seed);
 
+  // Check if registrations exist for this tournament
+  const regs = await db
+    .select()
+    .from(tournamentRegistrations)
+    .where(eq(tournamentRegistrations.tournamentId, tournamentId));
+
+  let teams = allTeams;
+
+  // If registrations exist, filter to only approved+paid/waived teams
+  if (regs.length > 0) {
+    const approvedTeamNames = new Set(
+      regs
+        .filter(
+          (r) =>
+            r.status === "approved" &&
+            (r.paymentStatus === "paid" || r.paymentStatus === "waived")
+        )
+        .map((r) => r.teamName)
+    );
+    teams = allTeams.filter((t) => approvedTeamNames.has(t.teamName));
+  }
+
   if (teams.length < 2) {
     return NextResponse.json(
-      { error: "Need at least 2 teams to generate bracket" },
+      { error: "Need at least 2 approved/paid teams to generate bracket" },
       { status: 400 }
     );
   }

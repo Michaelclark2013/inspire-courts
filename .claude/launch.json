@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "inspire-courts",
-      "runtimeExecutable": "/Users/michaelclark/.nvm/versions/node/v20.20.2/bin/node",
-      "runtimeArgs": ["/Users/michaelclark/.nvm/versions/node/v20.20.2/bin/npm", "run", "dev"],
-      "port": 3000
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["/tmp/start-inspire.sh"],
+      "port": 3000,
+      "autoPort": false
     }
   ]
 }

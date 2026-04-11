@@ -16,7 +16,6 @@ const NAV_LINKS = [
   { href: "/teams", label: "Club" },
   { href: "/training", label: "Training" },
   { href: "/media", label: "Media" },
-  { href: "/schedule", label: "Schedule" },
   { href: "/contact", label: "Contact" },
   { href: "/faq", label: "FAQ" },
 ];
@@ -31,7 +30,6 @@ const MOBILE_NAV_LINKS = [
   { href: "/teams", label: "Inspire Club" },
   { href: "/training", label: "Training" },
   { href: "/media", label: "Media" },
-  { href: "/schedule", label: "Schedule" },
   { href: "/contact", label: "Contact" },
   { href: "/faq", label: "FAQ" },
 ];
@@ -120,7 +118,7 @@ export default function Header() {
         id="mobile-nav"
         className={cn(
           "lg:hidden bg-navy-dark border-t border-border-dark transition-all duration-300 overflow-hidden",
-          open ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+          open ? "max-h-[85vh] opacity-100 overflow-y-auto" : "max-h-0 opacity-0"
         )}
       >
         <nav className="px-4 py-4 space-y-1">

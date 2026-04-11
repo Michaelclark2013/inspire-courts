@@ -41,30 +41,21 @@ export async function POST(request: Request) {
       name,
       email,
       phone,
-      organization,
-      eventType,
       sport,
+      eventType,
       preferredDate,
-      alternateDate,
-      startTime,
-      duration,
+      preferredTime,
       courts,
-      groupSize,
-      recurring,
       notes,
     } = result.data;
 
     // Build a detailed summary for Notion + email
     const summaryLines = [
       `Event: ${eventType}`,
-      `Sport: ${sport || "Basketball"}`,
-      organization ? `Org/Team: ${organization}` : null,
-      `Date: ${preferredDate}${alternateDate ? ` (alt: ${alternateDate})` : ""}`,
-      startTime ? `Time: ${startTime}` : null,
-      `Duration: ${duration || "TBD"}`,
-      `Courts: ${courts || "TBD"}`,
-      `Group Size: ${groupSize || "TBD"}`,
-      recurring ? `Recurring: ${recurring}` : null,
+      `Sport: ${sport}`,
+      `Date: ${preferredDate}`,
+      `Time: ${preferredTime}`,
+      `Courts: ${courts}`,
       notes ? `Notes: ${notes}` : null,
     ]
       .filter(Boolean)

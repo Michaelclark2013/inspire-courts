@@ -9,14 +9,10 @@ export const contactSchema = z.object({
 });
 
 const VALID_EVENT_TYPES = new Set([
-  "Practice / Workout",
-  "League",
+  "Practice",
   "Tournament",
-  "Birthday Party",
-  "Corporate / Private Event",
-  "Youth Camp or Clinic",
-  "Film Session",
-  "Combine / Tryout",
+  "Party / Event",
+  "Open Gym",
   "Other",
 ]);
 
@@ -24,12 +20,11 @@ export const bookSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   email: z.string().email("A valid email is required").max(254),
   phone: z.string().min(1, "Phone is required").max(30),
-  organization: z.string().max(150).optional(),
+  sport: z.string().min(1, "Sport is required").max(50),
   eventType: z
     .string()
     .min(1, "Event type is required")
     .refine((v) => VALID_EVENT_TYPES.has(v), "Invalid event type."),
-  sport: z.string().optional(),
   preferredDate: z
     .string()
     .min(1, "Preferred date is required")
@@ -38,12 +33,8 @@ export const bookSchema = z.object({
       today.setHours(0, 0, 0, 0);
       return new Date(val) >= today;
     }, "Preferred date must be today or in the future."),
-  alternateDate: z.string().optional(),
-  startTime: z.string().optional(),
-  duration: z.string().optional(),
-  courts: z.string().optional(),
-  groupSize: z.string().optional(),
-  recurring: z.string().optional(),
+  preferredTime: z.string().min(1, "Preferred time is required").max(50),
+  courts: z.string().min(1, "Courts needed is required").max(50),
   notes: z.string().max(2000).optional(),
 });
 

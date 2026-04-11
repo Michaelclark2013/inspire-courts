@@ -3,163 +3,205 @@ import {
   Trophy,
   DollarSign,
   UserCheck,
-  Handshake,
-  Flame,
-  Mail,
-  MessageSquare,
+  ClipboardList,
+  TrendingUp,
+  Activity,
 } from "lucide-react";
 import KPICard from "@/components/dashboard/KPICard";
-import NotionFallback from "@/components/dashboard/NotionFallback";
+import DashboardCharts from "@/components/admin/DashboardCharts";
 import {
-  getAllTeams,
-  getAllTournaments,
-  getMoneyLog,
-  getAllStaff,
-  getAllReferees,
-  getAllSponsors,
-  getChatLeads,
-  getProperty,
-  isNotionConfigured,
-} from "@/lib/notion";
+  fetchSheetWithHeaders,
+  getCol,
+  isGoogleConfigured,
+  SHEETS,
+} from "@/lib/google-sheets";
 
-export default async function AdminOverview() {
-  if (!isNotionConfigured()) {
+export const revalidate = 300;
+
+async function getDashboardData() {
+  const [teamsData, moneyData, playersData, scoresData] = await Promise.all([
+    fetchSheetWithHeaders(SHEETS.masterTeams),
+    fetchSheetWithHeaders(SHEETS.momMoney),
+    fetchSheetWithHeaders(SHEETS.playerCheckIn),
+    fetchSheetWithHeaders(SHEETS.gameScores),
+  ]);
+
+  // ── Teams by division ──────────────────────────────────────────────────────
+  const divisionCounts: Record<string, number> = {};
+  const DIVISION_COLS = ["Division", "Age Group", "Age", "Grade"];
+  teamsData.rows.forEach((row) => {
+    const div = getCol(row, ...DIVISION_COLS) || "Unknown";
+    divisionCounts[div] = (divisionCounts[div] || 0) + 1;
+  });
+
+  // ── Revenue by source (Mom Money) ──────────────────────────────────────────
+  let totalCash = 0;
+  let totalCard = 0;
+  let totalSquare = 0;
+  const CASH_COLS = ["Cash", "Cash Amount", "Cash $"];
+  const CARD_COLS = ["Card", "Credit Card", "Card Amount", "Debit"];
+  const SQUARE_COLS = ["Square", "Square Amount", "Square $", "Venmo", "Zelle"];
+
+  moneyData.rows.forEach((row) => {
+    totalCash += parseFloat(getCol(row, ...CASH_COLS).replace(/[$,]/g, "") || "0") || 0;
+    totalCard += parseFloat(getCol(row, ...CARD_COLS).replace(/[$,]/g, "") || "0") || 0;
+    totalSquare += parseFloat(getCol(row, ...SQUARE_COLS).replace(/[$,]/g, "") || "0") || 0;
+  });
+
+  // Try "Total" column if sources don't parse
+  const TOTAL_COLS = ["Total", "Amount", "Revenue", "Total $"];
+  const totalRevenue = totalCash + totalCard + totalSquare ||
+    moneyData.rows.reduce((sum, row) => {
+      return sum + (parseFloat(getCol(row, ...TOTAL_COLS).replace(/[$,]/g, "") || "0") || 0);
+    }, 0);
+
+  // ── Players by division ────────────────────────────────────────────────────
+  const playerDivCounts: Record<string, number> = {};
+  const PLAYER_DIV_COLS = ["Division", "Age Group", "Team Division", "Grade Level"];
+  playersData.rows.forEach((row) => {
+    const div = getCol(row, ...PLAYER_DIV_COLS) || "Unknown";
+    playerDivCounts[div] = (playerDivCounts[div] || 0) + 1;
+  });
+
+  // ── Recent game scores ─────────────────────────────────────────────────────
+  const HOME_COLS = ["Home Team", "Home", "Team 1"];
+  const AWAY_COLS = ["Away Team", "Away", "Team 2"];
+  const HOME_SCORE_COLS = ["Home Score", "Score 1", "Home Points"];
+  const AWAY_SCORE_COLS = ["Away Score", "Score 2", "Away Points"];
+  const WINNER_COLS = ["Winner", "Winning Team", "Result"];
+  const DIV_COLS = ["Division", "Age Group", "Division/Age"];
+  const COURT_COLS = ["Court", "Court Number", "Court #"];
+  const TIME_COLS = ["Timestamp", "Date", "Time", "Game Time"];
+
+  const recentGames = scoresData.rows.slice(-10).reverse().map((row) => ({
+    home: getCol(row, ...HOME_COLS) || "—",
+    away: getCol(row, ...AWAY_COLS) || "—",
+    homeScore: getCol(row, ...HOME_SCORE_COLS) || "—",
+    awayScore: getCol(row, ...AWAY_SCORE_COLS) || "—",
+    winner: getCol(row, ...WINNER_COLS) || "—",
+    division: getCol(row, ...DIV_COLS) || "—",
+    court: getCol(row, ...COURT_COLS) || "—",
+    time: getCol(row, ...TIME_COLS) || "—",
+  }));
+
+  return {
+    totalTeams: teamsData.rows.length,
+    totalRevenue,
+    totalCash,
+    totalCard,
+    totalSquare,
+    totalPlayers: playersData.rows.length,
+    totalGames: scoresData.rows.length,
+    divisionCounts,
+    playerDivCounts,
+    recentGames,
+  };
+}
+
+export default async function AdminDashboard() {
+  const configured = isGoogleConfigured();
+
+  if (!configured) {
     return (
       <div className="p-6 lg:p-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Dashboard</h1>
-          <p className="text-text-secondary text-sm mt-1">Inspire Courts AZ Operations Overview</p>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+            Dashboard
+          </h1>
+          <p className="text-text-secondary text-sm mt-1">
+            Inspire Courts AZ — Operations Overview
+          </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {["Teams in Pipeline", "Hot Leads", "Upcoming Events", "Last Event Revenue", "Active Sponsors", "Staff on Roster"].map((title) => (
-            <KPICard key={title} title={title} value="—" icon={Users} />
-          ))}
+
+        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
+          <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Activity className="w-6 h-6 text-accent" />
+          </div>
+          <h2 className="text-white font-bold text-lg mb-2">
+            Connect Google Sheets
+          </h2>
+          <p className="text-text-secondary text-sm max-w-md mx-auto mb-6">
+            Add your Google service account credentials to load live data from
+            your Google Sheets — game scores, revenue, team registrations, and
+            more.
+          </p>
+          <div className="bg-bg rounded-sm p-4 text-left max-w-sm mx-auto font-mono text-xs text-text-secondary space-y-1">
+            <p className="text-accent"># Add to .env.local</p>
+            <p>GOOGLE_SERVICE_ACCOUNT_EMAIL=...</p>
+            <p>GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY..."</p>
+          </div>
+          <p className="text-text-secondary text-xs mt-4">
+            Then share each Google Sheet with your service account email.
+          </p>
         </div>
-        <NotionFallback type="no-key" entityName="dashboard" />
       </div>
     );
   }
 
-  const [teams, tournaments, moneyLog, staff, referees, sponsors, leads] = await Promise.all([
-    getAllTeams(),
-    getAllTournaments(),
-    getMoneyLog(),
-    getAllStaff(),
-    getAllReferees(),
-    getAllSponsors(),
-    getChatLeads(),
-  ]);
-
-  // Compute KPIs
-  const upcomingEvents = tournaments.filter((t: any) => {
-    const status = getProperty(t, "Status");
-    return status === "Registration Open" || status === "Planning" || status === "In Progress";
-  });
-
-  const hotLeads = leads.filter((l: any) => {
-    const urgency = getProperty(l, "Urgency");
-    const status = getProperty(l, "Status");
-    return urgency === "Hot" || status === "New";
-  });
-
-  const activeSponsors = sponsors.filter((s: any) => {
-    const status = getProperty(s, "Status");
-    return status === "Active";
-  });
-
-  // Revenue from money log
-  let totalRevenue = 0;
-  for (const entry of moneyLog) {
-    const amount = getProperty(entry, "Amount") || 0;
-    const direction = getProperty(entry, "Direction") || getProperty(entry, "Type");
-    if (direction === "In" || direction === "Money In" || direction === "Revenue") {
-      totalRevenue += Number(amount) || 0;
-    }
-  }
+  const data = await getDashboardData();
 
   const kpis = [
-    { title: "Teams in Pipeline", value: teams.length.toString(), icon: Users },
-    { title: "Hot Leads", value: hotLeads.length.toString(), icon: Flame },
-    { title: "Upcoming Events", value: upcomingEvents.length.toString(), icon: Trophy },
-    { title: "Total Revenue", value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign },
-    { title: "Active Sponsors", value: activeSponsors.length.toString(), icon: Handshake },
-    { title: "Staff on Roster", value: (staff.length + referees.length).toString(), icon: UserCheck },
+    {
+      title: "Total Teams",
+      value: data.totalTeams.toString(),
+      icon: Users,
+      trend: "Registered this season",
+      trendUp: true,
+    },
+    {
+      title: "Total Revenue",
+      value: `$${data.totalRevenue.toLocaleString("en-US", { maximumFractionDigits: 0 })}`,
+      icon: DollarSign,
+      trend: "Cash + Card + Square",
+      trendUp: true,
+    },
+    {
+      title: "Players Checked In",
+      value: data.totalPlayers.toString(),
+      icon: UserCheck,
+    },
+    {
+      title: "Games Recorded",
+      value: data.totalGames.toString(),
+      icon: ClipboardList,
+    },
   ];
 
-  // Recent leads (last 5)
-  const recentLeads = leads.slice(0, 5).map((l: any) => ({
-    name: getProperty(l, "Name") || "Unknown",
-    email: getProperty(l, "Email") || "—",
-    interest: getProperty(l, "Interest") || "General",
-    urgency: getProperty(l, "Urgency") || "—",
-    source: getProperty(l, "Source") || "—",
-    date: getProperty(l, "Created") || l.created_time || "—",
-  }));
+  const divisionData = Object.entries(data.divisionCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([label, value]) => ({ label, value }));
 
-  const urgencyColors: Record<string, string> = {
-    Hot: "bg-red-500/10 text-red-400 border border-red-500/20",
-    Warm: "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20",
-    Cold: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
-  };
+  const revenueData = [
+    { label: "Cash", value: Math.round(data.totalCash) },
+    { label: "Card", value: Math.round(data.totalCard) },
+    { label: "Square/Venmo", value: Math.round(data.totalSquare) },
+  ].filter((d) => d.value > 0);
 
   return (
     <div className="p-6 lg:p-8">
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Dashboard</h1>
-        <p className="text-text-secondary text-sm mt-1">Inspire Courts AZ Operations Overview</p>
+        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          Dashboard
+        </h1>
+        <p className="text-text-secondary text-sm mt-1">
+          Inspire Courts AZ — Operations Overview
+        </p>
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {kpis.map((kpi) => (
           <KPICard key={kpi.title} {...kpi} />
         ))}
       </div>
 
-      {/* Recent Leads */}
-      <div className="bg-bg-secondary border border-border rounded-sm">
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="w-4 h-4 text-accent" />
-            <h2 className="text-white font-bold text-sm uppercase tracking-tight">Recent Leads</h2>
-          </div>
-          <a href="/admin/contacts" className="text-accent text-xs hover:underline">
-            View all →
-          </a>
-        </div>
-        {recentLeads.length === 0 ? (
-          <div className="p-6 text-center text-text-secondary text-sm">
-            No leads captured yet. They will appear here from the chatbot and contact form.
-          </div>
-        ) : (
-          <div className="divide-y divide-border">
-            {recentLeads.map((lead: any, i: number) => (
-              <div key={i} className="px-5 py-3 flex items-center gap-4">
-                <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  {lead.source === "Contact Form" ? (
-                    <Mail className="w-3.5 h-3.5 text-accent" />
-                  ) : (
-                    <MessageSquare className="w-3.5 h-3.5 text-accent" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">{lead.name}</p>
-                  <p className="text-text-secondary text-xs truncate">{lead.email}</p>
-                </div>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent flex-shrink-0">
-                  {lead.interest}
-                </span>
-                <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${urgencyColors[lead.urgency] || "bg-bg text-text-secondary"}`}>
-                  {lead.urgency}
-                </span>
-                <span className="text-text-secondary text-xs flex-shrink-0 hidden sm:block">
-                  {lead.date !== "—" ? new Date(lead.date).toLocaleDateString() : "—"}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Charts row */}
+      <DashboardCharts
+        divisionData={divisionData}
+        revenueData={revenueData}
+        recentGames={data.recentGames}
+      />
     </div>
   );
 }

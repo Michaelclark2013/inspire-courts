@@ -212,14 +212,14 @@ export default function Header() {
             <Link
               href="/book"
               onClick={() => trackConversion("book_cta_click")}
-              className="flex items-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-6 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+              className="flex items-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-5 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
               <Calendar className="w-4 h-4" /> Book
             </Link>
             <Link
               href="/tournaments"
               onClick={() => trackConversion("register_click")}
-              className="flex items-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-7 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+              className="flex items-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
               Register Now <ArrowRight className="w-4 h-4" />
             </Link>

@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import fs from "fs";
-import path from "path";
-
-// Import the token store from the forgot-password route
-// Since they share the same server process, the in-memory Map is shared
-import { resetTokens } from "../forgot-password/route";
-
-const OVERRIDE_PATH = path.join(process.cwd(), "data", "auth-override.json");
+import { db } from "@/lib/db";
+import { resetTokens, users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   try {
@@ -27,8 +22,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate token
-    const tokenData = resetTokens.get(token);
+    // Look up token in DB
+    const [tokenData] = await db
+      .select()
+      .from(resetTokens)
+      .where(eq(resetTokens.token, token))
+      .limit(1);
+
     if (!tokenData) {
       return NextResponse.json(
         { error: "Invalid or expired reset link. Please request a new one." },
@@ -36,8 +36,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (tokenData.expires < Date.now()) {
-      resetTokens.delete(token);
+    if (tokenData.usedAt || new Date(tokenData.expiresAt) < new Date()) {
       return NextResponse.json(
         { error: "This reset link has expired. Please request a new one." },
         { status: 400 }
@@ -47,27 +46,58 @@ export async function POST(request: Request) {
     // Hash the new password
     const newHash = await bcrypt.hash(password, 12);
 
-    // Save the override
-    const dataDir = path.dirname(OVERRIDE_PATH);
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
+    // Check if this is the env-var admin or a DB user
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const isEnvAdmin = adminEmail && tokenData.email.toLowerCase() === adminEmail.toLowerCase();
+
+    if (isEnvAdmin) {
+      // For env-var admin: upsert a DB user record with the new password
+      // Auth checks DB users first, so this will take precedence over the env hash
+      const [existing] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, tokenData.email))
+        .limit(1);
+
+      if (existing) {
+        await db
+          .update(users)
+          .set({ passwordHash: newHash, updatedAt: new Date().toISOString() })
+          .where(eq(users.id, existing.id));
+      } else {
+        await db.insert(users).values({
+          email: tokenData.email,
+          name: "Admin",
+          passwordHash: newHash,
+          role: "admin",
+        });
+      }
+    } else {
+      // For regular DB users
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, tokenData.email))
+        .limit(1);
+
+      if (!user) {
+        return NextResponse.json(
+          { error: "User not found." },
+          { status: 404 }
+        );
+      }
+
+      await db
+        .update(users)
+        .set({ passwordHash: newHash, updatedAt: new Date().toISOString() })
+        .where(eq(users.id, user.id));
     }
 
-    fs.writeFileSync(
-      OVERRIDE_PATH,
-      JSON.stringify(
-        {
-          passwordHash: newHash,
-          updatedAt: new Date().toISOString(),
-          updatedBy: tokenData.email,
-        },
-        null,
-        2
-      )
-    );
-
-    // Invalidate the used token
-    resetTokens.delete(token);
+    // Mark token as used
+    await db
+      .update(resetTokens)
+      .set({ usedAt: new Date().toISOString() })
+      .where(eq(resetTokens.id, tokenData.id));
 
     return NextResponse.json({
       success: true,

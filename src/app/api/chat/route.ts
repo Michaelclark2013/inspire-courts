@@ -43,11 +43,21 @@ async function getEventContext(): Promise<string> {
     } else {
       const eventList = events
         .map((e: any) => {
-          const name = getProperty(e, "Name") || getProperty(e, "Event Name") || "Unnamed Event";
-          const date = getProperty(e, "Date") || getProperty(e, "Event Date") || "TBD";
+          const name = getProperty(e, "Tournament Name") || "Unnamed Event";
+          const date = getProperty(e, "Event Date") || "TBD";
           const status = getProperty(e, "Status") || "TBD";
-          const divisions = getProperty(e, "Divisions") || getProperty(e, "Age Groups") || "";
-          return `- ${name} | Date: ${date} | Status: ${status}${divisions ? ` | Divisions: ${divisions}` : ""}`;
+          const divisions = getProperty(e, "Divisions") || "";
+          const fee = getProperty(e, "Entry Fee") || "";
+          const regDeadline = getProperty(e, "Registration Deadline") || "";
+          const brand = getProperty(e, "Brand") || "OFF SZN HOOPS";
+          const teamCount = getProperty(e, "Team Count") || 0;
+          const maxTeams = getProperty(e, "Max Teams") || "";
+          let line = `- ${name} (${brand}) | Date: ${date} | Status: ${status}`;
+          if (divisions) line += ` | Divisions: ${divisions}`;
+          if (fee) line += ` | Entry Fee: $${fee}`;
+          if (maxTeams && teamCount) line += ` | Teams: ${teamCount}/${maxTeams}`;
+          if (regDeadline) line += ` | Reg Deadline: ${regDeadline}`;
+          return line;
         })
         .join("\n");
       cachedEvents = `Current upcoming events:\n${eventList}`;
@@ -293,15 +303,48 @@ CONTACT
 - Job applications: email ${FACILITY_EMAIL}
 
 ═══════════════════════════════════════════
+INSPIRE PREP (BASKETBALL PREP SCHOOL)
+═══════════════════════════════════════════
+- Basketball-focused prep program based at Inspire Courts
+- Combines elite-level training and competition with structured academics
+- Daily skill development and team training
+- Competitive game schedule with regional and national showcases
+- Game film and film review sessions with coaches
+- Academic support, tutoring, and college prep guidance
+- Strength and conditioning program
+- Recruiting guidance and exposure events
+- For serious student-athletes who want to compete at the next level
+- To apply: Visit /contact?type=Inspire+Prep or email ${FACILITY_EMAIL}
+- Prep page: /prep
+
+═══════════════════════════════════════════
+BOOKING / HOW TO BOOK A COURT
+═══════════════════════════════════════════
+- Online booking form: /book (preferred method)
+- Email: ${FACILITY_EMAIL}
+- Phone: (480) 221-7218
+- Pricing: $80 per court per hour
+- Available for basketball, volleyball, and futsal
+- Same-day availability when courts are open
+- Corporate events, birthday parties: email for custom packages
+- What's included: regulation hardwood, electronic scoreboards, climate control, ample parking
+
+═══════════════════════════════════════════
 WEBSITE PAGES (direct people here)
 ═══════════════════════════════════════════
 - Home: / (overview of everything)
 - About: /about (our story, mission, brands)
 - Events: /events (upcoming tournaments, registration)
-- Facility: /facility (courts, amenities, rental info)
-- Schedule: /schedule (game schedules, brackets, results)
+- Facility: /facility (courts, amenities, rental info, pricing)
+- Book: /book (booking request form — MAIN WAY TO BOOK)
+- Scores: /scores (live scores, schedules, brackets, results)
 - Game Day: /gameday (everything for game day — check-in, rules)
+- Training: /training (private training, 1-on-1, small groups)
+- Teams: /teams (Team Inspire club basketball, tryouts)
+- Prep: /prep (Inspire Prep basketball academy)
+- Media: /media (game film, highlights, mixtapes)
 - Gallery: /gallery (photos and videos)
+- FAQ: /faq (frequently asked questions)
 - Contact: /contact (form, email, location, hours)
 
 ═══════════════════════════════════════════
@@ -421,7 +464,7 @@ If someone sends gibberish, spam, or nonsense:
 - Respond once with: "Didn't quite catch that! If you have a question about Inspire Courts — tournaments, rentals, training, or anything at the facility — I'm here for you!"
 - Do not engage further with nonsense.
 
-Keep responses SHORT. 2-3 sentences max unless they ask for specific details. Don't over-explain. Every word should serve a purpose for our business.
+Keep responses concise and punchy — typically 2-4 sentences. For simple questions (location, hours, pricing), keep it short. For detailed questions (what's included in a rental, how registration works, program details), give a thorough but focused answer. Never pad responses with fluff. Every sentence should either answer their question or move them toward a next step.
 
 ═══════════════════════════════════════════
 CONVERSATION INTELLIGENCE
@@ -447,7 +490,7 @@ PRIVACY:
 - NEVER share the owner's personal phone number, home address, or private email
 - NEVER discuss internal revenue, profit, staff salaries, or business financials
 - NEVER share other customers' information, team details, or personal data
-- The only contact info to share is: ${FACILITY_EMAIL} and @inspirecourts on Instagram
+- The only contact info to share is: ${FACILITY_EMAIL}, (480) 221-7218, and ${SOCIAL_LINKS.instagramHandle} on Instagram
 - NEVER disclose admin credentials, API keys, database details, or any technical infrastructure
 
 CONTENT BOUNDARIES:
@@ -529,9 +572,9 @@ ${pagePrompt}`;
           "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001",
-          max_tokens: 600,
-          temperature: 0.8,
+          model: "claude-sonnet-4-5-20250514",
+          max_tokens: 1024,
+          temperature: 0.5,
           system: systemPrompt,
           messages,
         }),
@@ -625,7 +668,8 @@ interface Pattern {
 const PATTERNS: Pattern[] = [
   { keywords: ["hello", "hi", "hey", "sup", "what's up", "yo", "howdy", "good morning", "good afternoon", "what up", "whats up"], response: "Hey! Welcome to Inspire Courts — 52,000 sq ft, 7 courts, Arizona's best basketball & volleyball facility. What are you looking for today? Tournaments, court rentals, training, or something else?" },
   { keywords: ["price", "cost", "fee", "how much", "pay", "rate", "pricing", "charge", "expensive", "affordable", "budget", "money", "dollar", "$"], response: `Here's a quick breakdown:\n\n🏀 Tournament entry: $350/team\n🏟️ Court rental: $80/court/hour\n🎟️ Spectator admission: $15 (kids under 5 free)\n\nWant exact pricing for your situation? Drop your name and email and I'll have someone follow up!` },
-  { keywords: ["rent", "book", "lease", "reserve", "court time", "court rental", "available"], response: "Courts are $80/hour per court — we have 7 available! We host basketball, volleyball, and futsal. Perfect for leagues, practices, camps, birthday parties, corporate events, and more. What sport and how many courts are you looking for?" },
+  { keywords: ["rent", "lease", "reserve", "court time", "court rental", "available", "rental"], response: "Courts are $80/hour per court — we have 7 available! We host basketball, volleyball, and futsal. Perfect for leagues, practices, camps, birthday parties, corporate events, and more. What sport and how many courts are you looking for?" },
+  { keywords: ["book a court", "booking", "book court", "book online", "how to book", "make a reservation", "reservation"], response: `Booking is easy! Head to /book to fill out a request, or email ${FACILITY_EMAIL}, or call (480) 221-7218. Courts are $80/hour and include regulation hardwood, electronic scoreboards, and climate control. What sport and how many courts do you need?` },
   { keywords: ["register", "sign up", "signup", "enter", "enter team", "enroll"], response: `You can register on our Tournaments page (/events) or email ${FACILITY_EMAIL} with your team name, age group, and which event. What division are you looking at?` },
   { keywords: ["location", "address", "where", "direction", "find you", "map", "get there", "located", "navigate"], response: `We're at ${FACILITY_ADDRESS.full}. Ample parking, easy access. Here's a virtual tour: ${SOCIAL_LINKS.youtube} — Are you coming for an event or looking to rent?` },
   { keywords: ["schedule", "bracket", "game time", "when do we play", "when is", "what time", "start time"], response: "Schedules drop 48 hours before each event and get emailed to the head coach on file. They're also posted on /schedule. What event are you looking for?" },
@@ -634,7 +678,8 @@ const PATTERNS: Pattern[] = [
   { keywords: ["volleyball", "volley", "v-ball"], response: "We have 7 regulation volleyball courts! Courts are available to rent at $80/hour for leagues, practices, tournaments, and events. We host volleyball regularly. How many courts and what dates are you looking at?" },
   { keywords: ["futsal", "soccer", "futbol", "indoor soccer"], response: "Our facility is perfect for futsal! Courts available at $80/hour. We host futsal leagues and pickup regularly. What are you looking for — a league, practice time, or a one-time rental?" },
   { keywords: ["camp", "summer camp", "basketball camp", "youth camp"], response: "Camps are coming soon! Drop your name, email, and the age of your player — we'll make sure you're first to know when registration opens. In the meantime, check out our private training at /training!" },
-  { keywords: ["academy", "program", "year round", "year-round", "development program"], response: "Our basketball academy is launching soon — structured, year-round development for serious players. Give me your name and email and you'll be first to hear when we drop it!" },
+  { keywords: ["prep", "prep school", "inspire prep", "prep academy", "prep program"], response: "Inspire Prep is our basketball-focused prep program — elite training, competitive game schedule, film review, academic support, strength & conditioning, and recruiting guidance all under one roof. It's built for serious student-athletes who want to compete at the next level. Check out /prep for the full breakdown or email InspireCourts@gmail.com to learn more!" },
+  { keywords: ["academy", "program", "year round", "year-round", "development program"], response: "We have Inspire Prep — a full basketball prep academy with daily training, competitive games, film review, academics, and recruiting support. For serious players who want structured, year-round development. Check /prep for details or give me your name and email and we'll follow up!" },
   { keywords: ["food", "snack", "drink", "eat", "hungry", "concession", "water", "gatorade", "bring", "outside food"], response: "Weekdays: only sports drinks and water in the court area — no food or gum. Weekend tournaments: no coolers or outside food/drinks, but players can bring 1 bottled water and 1 sports drink each. Our snack shop is open during events! Anything else?" },
   { keywords: ["shoe", "shoes", "wear", "cleats", "sandal", "sole", "non-marking", "dress shoe"], response: "Only athletic shoes with non-marking soles are allowed on the courts — basketball shoes, volleyball shoes, or indoor soccer shoes. No dress shoes, sandals, or cleats. Anything else you need for game day?" },
   { keywords: ["parking", "park", "tailgate", "tent", "camping", "campsite"], response: "We have ample parking with easy access. Tailgating: pop-up tents only (max 10'x10'), no stakes/ropes, no alcohol, no charcoal grills, tents must come down at end of each day and during storms. Campsites open 1 hour before events." },
@@ -642,7 +687,7 @@ const PATTERNS: Pattern[] = [
   { keywords: ["age", "division", "10u", "11u", "12u", "13u", "14u", "15u", "16u", "17u", "how old", "age group", "grade", "youth"], response: "Tournament divisions run from 10U through 17U for both boys and girls! Our club team (Team Inspire) currently plays 16U and 17U on the MADE Hoops circuit. What age is your player?" },
   { keywords: ["birthday", "party", "corporate", "event", "celebration", "team building", "private event"], response: `Yes! We host birthday parties, corporate events, and private events. Email ${FACILITY_EMAIL} with your date, group size, and what you're looking for — we'll put together a package! How many people are you expecting?` },
   { keywords: ["open gym", "pickup", "pick up", "drop in", "walk in", "open run", "open play"], response: `Open Gym is available during all open hours based on court availability! Just show up with proper court shoes (non-marking soles). Want to know what's available today? Email ${FACILITY_EMAIL}!` },
-  { keywords: ["contact", "email", "phone", "reach", "talk to", "call", "message", "get in touch", "speak"], response: `Best way to reach us:\n\n📧 ${FACILITY_EMAIL}\n📱 DM ${SOCIAL_LINKS.instagramHandle} on Instagram\n📝 Contact form at /contact\n\nWe're quick to respond! What do you need help with?` },
+  { keywords: ["contact", "email", "phone", "reach", "talk to", "call", "message", "get in touch", "speak"], response: `Best way to reach us:\n\n📧 ${FACILITY_EMAIL}\n📞 (480) 221-7218\n📱 DM ${SOCIAL_LINKS.instagramHandle} on Instagram\n📝 Contact form at /contact\n\nWe're quick to respond! What do you need help with?` },
   { keywords: ["ref", "referee", "officiat", "umpire", "whistle"], response: "Want to ref at Inspire Courts? We're always looking for good officials. Fill out the form at /contact and select \"Referee Application\" — what experience do you have?" },
   { keywords: ["sponsor", "partnership", "advertis", "brand", "promote"], response: `We'd love to talk sponsorships! We have options for all budgets — from court signage to tournament naming rights. Email ${FACILITY_EMAIL} or fill out /contact with "Sponsorship Inquiry". What's your brand?` },
   { keywords: ["job", "work", "hire", "employ", "apply", "position", "staff", "scorekeeper"], response: `We hire event staff, scorekeepers, front desk, refs, and more! Email ${FACILITY_EMAIL} with a bit about yourself and what role interests you. Do you have experience working events?` },
@@ -652,6 +697,8 @@ const PATTERNS: Pattern[] = [
   { keywords: ["check in", "check-in", "arrive", "game day", "what to bring", "first time"], response: "Game day checklist:\n✅ Head coach checks in with photo ID\n✅ Roster submitted before first game\n✅ Non-marking court shoes only\n✅ No outside food (1 water + 1 sports drink OK)\n✅ $15 spectator admission\n\nSchedules are emailed 48hrs before. Check /gameday for everything!" },
   { keywords: ["roster", "player list", "team list", "add player", "eligible"], response: `Rosters must be submitted before your first game. Head coaches handle this at check-in. Questions? Email ${FACILITY_EMAIL}. What event is your team in?` },
   { keywords: ["cancel", "refund", "rain", "weather", "postpone"], response: `We're indoors — games happen rain or shine! If there's ever a cancellation, coaches get email + text notification. For refund questions, email ${FACILITY_EMAIL}. What event are you asking about?` },
+  { keywords: ["wifi", "wi-fi", "internet", "password", "wireless"], response: "Yes, we have Wi-Fi available throughout the facility! Ask staff for the network details when you arrive. Anything else about visiting?" },
+  { keywords: ["hours", "open", "close", "what time do you open", "when are you open", "operating hours", "business hours"], response: `Event days follow the tournament schedule (usually early morning through evening). For facility rentals and open gym, availability is by appointment — email ${FACILITY_EMAIL} or call (480) 221-7218 to check what's open!` },
   { keywords: ["air condition", "ac", "hot", "heat", "cool", "temperature", "climate"], response: "Fully air-conditioned, year-round! No more Arizona heat. Our 52,000 sq ft facility stays comfortable no matter what it's like outside. Is there anything else about the facility you want to know?" },
   { keywords: ["scoreboard", "score", "scoring", "points", "stats"], response: "Every court has electronic scoreboards with digital display units and scorer's tables. Plus we have possession arrows on our 5 college regulation courts. Professional setup! Anything else?" },
   { keywords: ["rules", "policy", "allowed", "prohibited", "banned", "can i", "can we", "permitted"], response: "Key rules: non-marking court shoes only, no outside food/drinks (except 1 water + 1 sports drink), no alcohol, no gum/sunflower seeds, good sportsmanship, clean up after your team, no hanging on rims. Full details at /gameday. What specifically are you wondering about?" },

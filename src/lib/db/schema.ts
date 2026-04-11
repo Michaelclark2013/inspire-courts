@@ -67,6 +67,19 @@ export const games = sqliteTable("games", {
     .$defaultFn(() => new Date().toISOString()),
 });
 
+// ── Password Reset Tokens ───────────────────────────────────────────────────
+
+export const resetTokens = sqliteTable("reset_tokens", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  email: text("email").notNull(),
+  token: text("token").notNull().unique(),
+  expiresAt: text("expires_at").notNull(),
+  usedAt: text("used_at"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+});
+
 // ── Game Scores ─────────────────────────────────────────────────────────────
 
 export const gameScores = sqliteTable("game_scores", {

@@ -39,6 +39,15 @@ const ROLE_LABELS: Record<string, string> = {
   parent: "Parent",
 };
 
+const ROLE_DESCRIPTIONS: Record<string, string> = {
+  admin: "Full access to all dashboards, settings, and data",
+  staff: "Score entry, schedules, personal work history",
+  ref: "Personal work history and referee checkout details",
+  front_desk: "Scores, schedules, player check-ins, staffing",
+  coach: "Team roster, check-in, waiver forms, schedule, scores",
+  parent: "Waiver forms, schedule, scores (read-only)",
+};
+
 export default function UsersPage() {
   const [userList, setUserList] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -195,6 +204,9 @@ export default function UsersPage() {
                 <option value="front_desk">Front Desk</option>
                 <option value="admin">Admin (All Access)</option>
               </select>
+              <p className="text-white/30 text-xs mt-1.5">
+                {ROLE_DESCRIPTIONS[form.role]}
+              </p>
             </div>
             <div>
               <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">

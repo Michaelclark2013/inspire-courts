@@ -2,18 +2,9 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
-
-// In-memory token store (TTL: 1 hour)
-// In production with multiple instances, use Redis or a database
-const resetTokens = new Map<string, { email: string; expires: number }>();
-
-// Clean up expired tokens periodically
-function cleanExpired() {
-  const now = Date.now();
-  for (const [token, data] of resetTokens) {
-    if (data.expires < now) resetTokens.delete(token);
-  }
-}
+import { db } from "@/lib/db";
+import { resetTokens } from "@/lib/db/schema";
+import { lt } from "drizzle-orm";
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
@@ -31,7 +22,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    // Always return success (don't reveal if email exists — security best practice)
     const successResponse = NextResponse.json({
       success: true,
       message: "If that email is associated with an account, a reset link has been sent.",
@@ -45,11 +35,20 @@ export async function POST(request: Request) {
 
     // Generate a secure token
     const token = crypto.randomBytes(32).toString("hex");
-    const expires = Date.now() + 60 * 60 * 1000; // 1 hour
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
 
-    // Store token
-    cleanExpired();
-    resetTokens.set(token, { email: adminEmail, expires });
+    // Clean expired tokens and store new one in DB
+    try {
+      await db.delete(resetTokens).where(lt(resetTokens.expiresAt, new Date().toISOString()));
+      await db.insert(resetTokens).values({
+        email: adminEmail,
+        token,
+        expiresAt,
+      });
+    } catch (err) {
+      console.error("Failed to store reset token:", err);
+      return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+    }
 
     // Send reset email
     const gmailUser = process.env.GMAIL_USER;
@@ -96,7 +95,6 @@ export async function POST(request: Request) {
         `,
       });
     } else {
-      // Email not configured — log a generic notice only (no token exposure)
       console.log("[Password Reset] Email transport not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD to enable email delivery.");
     }
 
@@ -109,6 +107,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
-// Export the token store so the reset route can access it
-export { resetTokens };

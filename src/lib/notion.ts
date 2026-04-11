@@ -174,6 +174,17 @@ export async function getRefShifts() {
   return queryDatabase(DB.refShifts);
 }
 
+export async function getChatLeads() {
+  if (!DB.chatLeads) return [];
+  return queryDatabase(DB.chatLeads, undefined, [
+    { property: "Created", direction: "descending" },
+  ]);
+}
+
+export function isNotionConfigured(): boolean {
+  return !!process.env.NOTION_API_KEY;
+}
+
 // ── Create a page in any Notion database ──
 
 export async function createNotionPage(

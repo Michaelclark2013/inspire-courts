@@ -1,213 +1,56 @@
-"use client";
+import NotionFallback from "@/components/dashboard/NotionFallback";
+import ScoresClient from "@/components/admin/ScoresClient";
+import { getGameScores, getProperty, isNotionConfigured } from "@/lib/notion";
 
-import { useState } from "react";
-import { Search, Trophy, ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+export default async function ScoresPage() {
+  if (!isNotionConfigured()) {
+    return (
+      <div className="p-6 lg:p-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Game Scores</h1>
+          <p className="text-text-secondary text-sm mt-1">Game Results from Notion</p>
+        </div>
+        <NotionFallback type="no-key" entityName="game scores" />
+      </div>
+    );
+  }
 
-interface Game {
-  home: string;
-  away: string;
-  score: string;
-  winner: string;
-  court: number;
-  division: string;
-  date: string;
-  time: string;
-  event: string;
-}
+  const data = await getGameScores();
 
-const GAMES: Game[] = [
-  // OFF SZN Session 1 — Day 1
-  { home: "Showtime", away: "All AZ", score: "44-53", winner: "All AZ", court: 4, division: "13U", date: "Apr 3", time: "4:00 PM", event: "OFF SZN Session 1" },
-  { home: "DAWGS", away: "Inspire 16U", score: "66-55", winner: "Inspire 16U", court: 4, division: "16U", date: "Apr 3", time: "5:00 PM", event: "OFF SZN Session 1" },
-  { home: "Showtime", away: "Monstarz", score: "65-60", winner: "Monstarz", court: 4, division: "13U", date: "Apr 3", time: "6:00 PM", event: "OFF SZN Session 1" },
-  { home: "Downtown Bang", away: "Hoop Dreams", score: "38-82", winner: "Downtown Bang", court: 4, division: "16U", date: "Apr 3", time: "7:00 PM", event: "OFF SZN Session 1" },
-  { home: "Inspire", away: "Downtown Bang", score: "39-50", winner: "Inspire", court: 5, division: "16U", date: "Apr 3", time: "4:00 PM", event: "OFF SZN Session 1" },
-  { home: "Downtown Bang", away: "Reach", score: "49-46", winner: "Reach", court: 5, division: "16U", date: "Apr 3", time: "5:00 PM", event: "OFF SZN Session 1" },
-  { home: "Southside Yucky Buckets", away: "All-AZ", score: "77-33", winner: "All-AZ", court: 5, division: "13U", date: "Apr 3", time: "6:00 PM", event: "OFF SZN Session 1" },
-  { home: "Santan Dawgs 17U", away: "Monstarz 17U", score: "70-59", winner: "Monstarz", court: 5, division: "17U", date: "Apr 3", time: "7:00 PM", event: "OFF SZN Session 1" },
-  { home: "Inspire", away: "NDO", score: "47-42", winner: "Inspire", court: 6, division: "16U", date: "Apr 3", time: "5:00 PM", event: "OFF SZN Session 1" },
-  { home: "Inspire", away: "Monstarz", score: "71-54", winner: "Monstarz", court: 6, division: "17U", date: "Apr 3", time: "6:00 PM", event: "OFF SZN Session 1" },
-  { home: "NDO", away: "Hoop and Bat", score: "66-50", winner: "NDO", court: 6, division: "17U", date: "Apr 3", time: "7:00 PM", event: "OFF SZN Session 1" },
-  { home: "QC Elite", away: "Inspire", score: "67-41", winner: "Inspire", court: 7, division: "17U", date: "Apr 3", time: "5:00 PM", event: "OFF SZN Session 1" },
-  { home: "NDO Elite", away: "Hoop Dreams", score: "49-47", winner: "Hoop Dreams", court: 7, division: "16U", date: "Apr 3", time: "6:00 PM", event: "OFF SZN Session 1" },
-  { home: "Yucky Buckets", away: "Monstarz", score: "63-26", winner: "Monstarz", court: 7, division: "13U", date: "Apr 3", time: "7:00 PM", event: "OFF SZN Session 1" },
-  { home: "NDO", away: "Inspire 16U", score: "77-54", winner: "Inspire", court: 4, division: "16U", date: "Apr 3", time: "8:00 PM", event: "OFF SZN Session 1" },
-  { home: "Reach", away: "Downtown Bang", score: "46-52", winner: "Reach", court: 5, division: "16U", date: "Apr 3", time: "8:00 PM", event: "OFF SZN Session 1" },
-  // OFF SZN Session 1 — Day 2
-  { home: "QC Elite", away: "Inspire 17U", score: "61-38", winner: "Inspire 17U", court: 4, division: "17U", date: "Apr 4", time: "11:00 AM", event: "OFF SZN Session 1" },
-  { home: "Monstarz", away: "Santan Dawgs", score: "60-58", winner: "Santan Dawgs", court: 5, division: "17U", date: "Apr 4", time: "11:00 AM", event: "OFF SZN Session 1" },
-  { home: "Hoop Dream", away: "NDO", score: "30-53", winner: "Hoop Dream", court: 4, division: "16U", date: "Apr 4", time: "12:00 PM", event: "OFF SZN Session 1" },
-  { home: "DT Bang White", away: "DT Bang Blue", score: "61-53", winner: "DT Bang Blue", court: 6, division: "16U", date: "Apr 4", time: "12:00 PM", event: "OFF SZN Session 1" },
-  { home: "Hoop N Bat", away: "NDO", score: "49-33", winner: "NDO", court: 5, division: "17U", date: "Apr 4", time: "12:00 PM", event: "OFF SZN Session 1" },
-  { home: "Inspire", away: "Santan Dawgs", score: "73-34", winner: "Inspire", court: 5, division: "17U", date: "Apr 4", time: "1:00 PM", event: "OFF SZN Session 1" },
-  { home: "Showtime", away: "All-AZ", score: "53-41", winner: "All-AZ", court: 4, division: "13U", date: "Apr 4", time: "1:00 PM", event: "OFF SZN Session 1" },
-  { home: "Inspire", away: "Hoop Dreams", score: "60-48", winner: "Inspire", court: 4, division: "14U", date: "Apr 4", time: "2:00 PM", event: "OFF SZN Session 1" },
-  { home: "NDO", away: "Inspire", score: "70-67", winner: "NDO", court: 5, division: "17U", date: "Apr 4", time: "2:00 PM", event: "OFF SZN Session 1" },
-  { home: "Monstarz", away: "All-AZ", score: "39-41", winner: "Monstarz", court: 4, division: "12U", date: "Apr 4", time: "3:00 PM", event: "OFF SZN Session 1" },
-  { home: "Inspire", away: "NDO", score: "56-55", winner: "NDO", court: 5, division: "17U", date: "Apr 4", time: "3:30 PM", event: "OFF SZN Session 1" },
-  { home: "Inspire", away: "Downtown Bang", score: "82-76", winner: "Inspire", court: 6, division: "16U", date: "Apr 4", time: "3:30 PM", event: "OFF SZN Session 1" },
-];
-
-export default function ScoresPage() {
-  const [search, setSearch] = useState("");
-  const [eventFilter, setEventFilter] = useState("All");
-  const [divisionFilter, setDivisionFilter] = useState("All");
-  const [dateFilter, setDateFilter] = useState("All");
-
-  const events = ["All", ...new Set(GAMES.map((g) => g.event))];
-  const divisions = ["All", ...new Set(GAMES.map((g) => g.division).sort())];
-
-  // Dates filtered by selected event
-  const datesForEvent = GAMES.filter((g) => eventFilter === "All" || g.event === eventFilter);
-  const dates = ["All", ...new Set(datesForEvent.map((g) => g.date))];
-
-  const filtered = GAMES.filter((g) => {
-    const matchSearch = g.home.toLowerCase().includes(search.toLowerCase()) || g.away.toLowerCase().includes(search.toLowerCase()) || g.winner.toLowerCase().includes(search.toLowerCase());
-    const matchEvent = eventFilter === "All" || g.event === eventFilter;
-    const matchDivision = divisionFilter === "All" || g.division === divisionFilter;
-    const matchDate = dateFilter === "All" || g.date === dateFilter;
-    return matchSearch && matchEvent && matchDivision && matchDate;
+  const games = data.map((g: any) => {
+    const date = getProperty(g, "Date") || getProperty(g, "Game Date") || "";
+    return {
+      home: getProperty(g, "Home Team") || getProperty(g, "Home") || "—",
+      away: getProperty(g, "Away Team") || getProperty(g, "Away") || "—",
+      score: getProperty(g, "Score") || getProperty(g, "Final Score") || "—",
+      winner: getProperty(g, "Winner") || "—",
+      court: getProperty(g, "Court") || "—",
+      division: getProperty(g, "Division") || getProperty(g, "Age Group") || "—",
+      date: date ? new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—",
+      time: getProperty(g, "Time") || getProperty(g, "Game Time") || "—",
+      event: getProperty(g, "Event") || getProperty(g, "Tournament") || "—",
+    };
   });
 
-  // Group games by event
-  const groupedByEvent = filtered.reduce<Record<string, Game[]>>((acc, g) => {
-    if (!acc[g.event]) acc[g.event] = [];
-    acc[g.event].push(g);
-    return acc;
-  }, {});
+  if (games.length === 0) {
+    return (
+      <div className="p-6 lg:p-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Game Scores</h1>
+          <p className="text-text-secondary text-sm mt-1">Game Results from Notion</p>
+        </div>
+        <NotionFallback type="empty" entityName="game scores" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-1">
-          <Trophy className="w-6 h-6 text-accent" />
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">
-            Game Scores
-          </h1>
-        </div>
-        <p className="text-text-secondary text-sm">
-          {filtered.length} games across {Object.keys(groupedByEvent).length} event{Object.keys(groupedByEvent).length !== 1 ? "s" : ""}
-        </p>
+        <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Game Scores</h1>
+        <p className="text-text-secondary text-sm mt-1">Game Results from Notion</p>
       </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-bg-secondary border border-border rounded-sm p-4 text-center">
-          <p className="text-3xl font-bold text-white">{filtered.length}</p>
-          <p className="text-xs text-text-secondary uppercase tracking-wider mt-1">Games</p>
-        </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4 text-center">
-          <p className="text-3xl font-bold text-white">{events.length - 1}</p>
-          <p className="text-xs text-text-secondary uppercase tracking-wider mt-1">Events</p>
-        </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4 text-center">
-          <p className="text-3xl font-bold text-white">{divisions.length - 1}</p>
-          <p className="text-xs text-text-secondary uppercase tracking-wider mt-1">Divisions</p>
-        </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4 text-center">
-          <p className="text-3xl font-bold text-white">4</p>
-          <p className="text-xs text-text-secondary uppercase tracking-wider mt-1">Courts</p>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by team name..."
-            className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50"
-          />
-        </div>
-        <select
-          value={eventFilter}
-          onChange={(e) => { setEventFilter(e.target.value); setDateFilter("All"); }}
-          className="bg-bg border border-border rounded-sm px-3 py-2.5 text-white text-sm focus:outline-none focus:border-accent"
-        >
-          {events.map((ev) => (
-            <option key={ev} value={ev}>{ev === "All" ? "All Events" : ev}</option>
-          ))}
-        </select>
-        <select
-          value={divisionFilter}
-          onChange={(e) => setDivisionFilter(e.target.value)}
-          className="bg-bg border border-border rounded-sm px-3 py-2.5 text-white text-sm focus:outline-none focus:border-accent"
-        >
-          {divisions.map((d) => (
-            <option key={d} value={d}>{d === "All" ? "All Divisions" : d}</option>
-          ))}
-        </select>
-        <select
-          value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
-          className="bg-bg border border-border rounded-sm px-3 py-2.5 text-white text-sm focus:outline-none focus:border-accent"
-        >
-          {dates.map((d) => (
-            <option key={d} value={d}>{d === "All" ? "All Dates" : d}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Games Grouped by Event */}
-      {Object.entries(groupedByEvent).map(([eventName, games]) => (
-        <div key={eventName} className="mb-8">
-          {/* Event Header */}
-          <div className="flex items-center gap-3 mb-3">
-            <Trophy className="w-5 h-5 text-accent" />
-            <h2 className="text-white font-bold text-lg uppercase tracking-tight">{eventName}</h2>
-            <span className="bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded-sm text-xs font-bold">{games.length} games</span>
-          </div>
-
-          {/* Game Cards */}
-          <div className="space-y-2">
-            {games.map((g, i) => {
-              const homeWon = g.winner.toLowerCase().includes(g.home.toLowerCase().slice(0, 5));
-              return (
-                <div key={i} className="bg-bg-secondary border border-border rounded-sm p-4 hover:border-border/80 transition-colors">
-                  <div className="flex items-center gap-4">
-                    {/* Division & Court */}
-                    <div className="text-center flex-shrink-0 w-16">
-                      <span className="bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded-sm text-xs font-bold uppercase block">{g.division}</span>
-                      <span className="text-text-secondary text-[10px] uppercase tracking-wider mt-1 block">Court {g.court}</span>
-                    </div>
-
-                    {/* Matchup */}
-                    <div className="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-                      <div className={cn("text-right", homeWon ? "text-white font-bold" : "text-text-secondary")}>
-                        <p className="text-sm">{g.home}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-white font-bold text-lg tracking-wider font-mono">{g.score}</p>
-                      </div>
-                      <div className={cn("text-left", !homeWon ? "text-white font-bold" : "text-text-secondary")}>
-                        <p className="text-sm">{g.away}</p>
-                      </div>
-                    </div>
-
-                    {/* Date/Time */}
-                    <div className="text-right flex-shrink-0 text-xs text-text-secondary">
-                      <p>{g.date}</p>
-                      <p>{g.time}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-
-      {filtered.length === 0 && (
-        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary">
-          No games found
-        </div>
-      )}
-
-      <p className="text-text-secondary text-xs mt-3">Connect Notion API for live data from all events</p>
+      <ScoresClient games={games} />
     </div>
   );
 }

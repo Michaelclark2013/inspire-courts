@@ -1,3 +1,6 @@
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import AdminSidebar from "@/components/layout/AdminSidebar";
 import SessionProvider from "@/components/layout/SessionProvider";
 
@@ -11,7 +14,11 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Auth temporarily disabled for development access
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <SessionProvider>
       <div className="min-h-screen bg-bg flex">

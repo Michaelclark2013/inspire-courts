@@ -34,7 +34,7 @@ const NAV_ITEMS = [
   { href: "/admin/sponsors", label: "Sponsorships", icon: Handshake },
   { href: "/admin/schools", label: "Schools", icon: GraduationCap },
   { href: "/admin/scores", label: "Game Scores", icon: ClipboardList },
-  { href: "/admin/contacts", label: "Contact Submissions", icon: MessageSquare },
+  { href: "/admin/contacts", label: "Leads", icon: MessageSquare },
   { href: "/admin/links", label: "Quick Links", icon: ExternalLink },
 ];
 
@@ -119,7 +119,7 @@ export default function AdminSidebar() {
             View Public Site
           </Link>
           <button
-            onClick={() => signOut({ callbackUrl: "/admin/login" })}
+            onClick={() => signOut({ callbackUrl: "/login" })}
             className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-secondary hover:text-danger hover:bg-bg transition-colors w-full text-left"
           >
             <LogOut className="w-4 h-4" />

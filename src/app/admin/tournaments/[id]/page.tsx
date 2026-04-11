@@ -235,6 +235,12 @@ export default function TournamentDetailPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link
+            href={`/admin/tournaments/${id}/registrations`}
+            className="flex items-center gap-2 text-white/50 hover:text-white text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-white/10 rounded-lg hover:border-white/20 transition-colors"
+          >
+            <Users className="w-4 h-4" /> Registrations
+          </Link>
           {data.status === "draft" && data.teams.length >= 2 && (
             <button
               onClick={generateBracket}

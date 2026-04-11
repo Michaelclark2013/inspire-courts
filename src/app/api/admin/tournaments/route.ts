@@ -62,6 +62,11 @@ export async function POST(request: NextRequest) {
     courts,
     gameLength,
     breakLength,
+    entryFee,
+    maxTeamsPerDivision,
+    registrationDeadline,
+    registrationOpen,
+    description,
   } = body;
 
   if (!name || !startDate) {
@@ -90,6 +95,11 @@ export async function POST(request: NextRequest) {
       courts: courts ? JSON.stringify(courts) : null,
       gameLength: gameLength || 40,
       breakLength: breakLength || 10,
+      entryFee: entryFee ?? null,
+      maxTeamsPerDivision: maxTeamsPerDivision ?? null,
+      registrationDeadline: registrationDeadline || null,
+      registrationOpen: registrationOpen ?? false,
+      description: description || null,
       status: "draft",
       createdBy: userId && !isNaN(userId) ? userId : null,
     })

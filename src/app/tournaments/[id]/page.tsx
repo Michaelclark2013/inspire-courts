@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { Trophy, ChevronLeft, Loader2, Radio } from "lucide-react";
+import { Trophy, ChevronLeft, Loader2, Radio, Users, DollarSign, Calendar } from "lucide-react";
 import BracketView from "@/components/tournament/BracketView";
 import PoolStandings from "@/components/tournament/PoolStandings";
 
@@ -16,6 +16,10 @@ type TournamentPublic = {
   format: string;
   status: string;
   divisions: string[];
+  entryFee: number | null;
+  registrationOpen: boolean;
+  registrationDeadline: string | null;
+  description: string | null;
   teams: { teamName: string; seed: number; division: string | null; poolGroup: string | null; eliminated: boolean }[];
   bracket: {
     bracketPosition: number | null;
@@ -136,6 +140,69 @@ export default function PublicTournamentPage() {
             <span>{data.teams.length} teams</span>
           </div>
         </div>
+
+        {/* Registration CTA */}
+        {data.registrationOpen && (
+          <div className="mb-8 bg-gradient-to-r from-red/10 to-red/5 border border-red/20 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-white font-bold text-lg mb-1">Registration Open</h2>
+              <div className="flex flex-wrap items-center gap-3 text-text-secondary text-sm">
+                {data.entryFee != null && data.entryFee > 0 && (
+                  <span className="flex items-center gap-1">
+                    <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                    ${(data.entryFee / 100).toFixed(0)} per team
+                  </span>
+                )}
+                {data.registrationDeadline && (
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5" />
+                    Deadline: {new Date(data.registrationDeadline + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </span>
+                )}
+              </div>
+            </div>
+            <Link
+              href={`/tournaments/${data.id}/register`}
+              className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
+            >
+              Register Now
+            </Link>
+          </div>
+        )}
+
+        {/* Description */}
+        {data.description && (
+          <div className="mb-8 bg-card border border-white/10 rounded-xl p-5">
+            <p className="text-white/70 text-sm whitespace-pre-wrap">{data.description}</p>
+          </div>
+        )}
+
+        {/* Registered Teams */}
+        {data.teams.length > 0 && data.bracket.length === 0 && (
+          <div className="mb-8 bg-card border border-white/10 rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2">
+              <Users className="w-4 h-4 text-red" />
+              <h2 className="text-white font-bold text-sm uppercase tracking-wider">
+                Registered Teams ({data.teams.length})
+              </h2>
+            </div>
+            <div className="divide-y divide-white/5">
+              {data.teams.map((team, i) => (
+                <div key={i} className="px-5 py-3 flex items-center gap-3">
+                  <span className="text-white/30 text-xs font-bold w-6 text-center tabular-nums">
+                    {i + 1}
+                  </span>
+                  <span className="text-white text-sm font-semibold">{team.teamName}</span>
+                  {team.division && (
+                    <span className="text-[10px] bg-red/10 text-red px-1.5 py-0.5 rounded font-bold">
+                      {team.division}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Bracket */}
         {data.bracket.length > 0 ? (

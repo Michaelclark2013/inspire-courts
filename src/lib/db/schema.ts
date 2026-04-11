@@ -118,6 +118,14 @@ export const tournaments = sqliteTable("tournaments", {
   })
     .notNull()
     .default("draft"),
+  // Registration fields
+  entryFee: integer("entry_fee"), // in cents (e.g. 5000 = $50)
+  maxTeamsPerDivision: integer("max_teams_per_division"),
+  registrationDeadline: text("registration_deadline"), // ISO date
+  registrationOpen: integer("registration_open", { mode: "boolean" }).default(false),
+  requireWaivers: integer("require_waivers", { mode: "boolean" }).default(true),
+  requirePayment: integer("require_payment", { mode: "boolean" }).default(true),
+  description: text("description"), // tournament rules / info
   createdBy: integer("created_by").references(() => users.id),
   createdAt: text("created_at")
     .notNull()
@@ -161,6 +169,44 @@ export const tournamentGames = sqliteTable("tournament_games", {
   winnerAdvancesTo: integer("winner_advances_to"), // self-ref tournament_games.id
   loserDropsTo: integer("loser_drops_to"), // for double-elim
   createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+});
+
+// ── Tournament Registrations ────────────────────────────────────────────────
+
+export const tournamentRegistrations = sqliteTable("tournament_registrations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  tournamentId: integer("tournament_id")
+    .notNull()
+    .references(() => tournaments.id),
+  teamName: text("team_name").notNull(),
+  coachName: text("coach_name").notNull(),
+  coachEmail: text("coach_email").notNull(),
+  coachPhone: text("coach_phone"),
+  division: text("division"),
+  playerCount: integer("player_count"),
+  entryFee: integer("entry_fee"), // cents — snapshot at time of registration
+  paymentStatus: text("payment_status", {
+    enum: ["pending", "paid", "refunded", "waived"],
+  })
+    .notNull()
+    .default("pending"),
+  squarePaymentId: text("square_payment_id"),
+  squareOrderId: text("square_order_id"),
+  squareCheckoutUrl: text("square_checkout_url"),
+  rosterSubmitted: integer("roster_submitted", { mode: "boolean" }).default(false),
+  waiversSigned: integer("waivers_signed", { mode: "boolean" }).default(false),
+  status: text("status", {
+    enum: ["pending", "approved", "rejected", "waitlisted"],
+  })
+    .notNull()
+    .default("pending"),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
 });

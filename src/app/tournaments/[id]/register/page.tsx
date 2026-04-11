@@ -1,0 +1,471 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  ChevronLeft,
+  Loader2,
+  Trophy,
+  Users,
+  FileCheck,
+  CreditCard,
+  CheckCircle2,
+  Circle,
+} from "lucide-react";
+
+type TournamentInfo = {
+  id: number;
+  name: string;
+  startDate: string;
+  location: string | null;
+  entryFee: number | null;
+  divisions: string[];
+  registrationOpen: boolean;
+  registrationDeadline: string | null;
+  maxTeamsPerDivision: number | null;
+  requirePayment: boolean;
+  requireWaivers: boolean;
+  description: string | null;
+  registrationCount: number;
+};
+
+export default function RegisterPage() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const [tournament, setTournament] = useState<TournamentInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [step, setStep] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  // Form state
+  const [teamName, setTeamName] = useState("");
+  const [coachName, setCoachName] = useState("");
+  const [coachEmail, setCoachEmail] = useState("");
+  const [coachPhone, setCoachPhone] = useState("");
+  const [division, setDivision] = useState("");
+  const [playerCount, setPlayerCount] = useState("");
+  const [waiversAcknowledged, setWaiversAcknowledged] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/tournaments/${id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setTournament({
+          id: data.id,
+          name: data.name,
+          startDate: data.startDate,
+          location: data.location,
+          entryFee: data.entryFee ?? null,
+          divisions: data.divisions || [],
+          registrationOpen: data.registrationOpen ?? false,
+          registrationDeadline: data.registrationDeadline ?? null,
+          maxTeamsPerDivision: data.maxTeamsPerDivision ?? null,
+          requirePayment: data.requirePayment ?? true,
+          requireWaivers: data.requireWaivers ?? true,
+          description: data.description ?? null,
+          registrationCount: data.teams?.length ?? 0,
+        });
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  async function handleSubmit() {
+    setSubmitting(true);
+    setError("");
+
+    try {
+      const res = await fetch(`/api/tournaments/${id}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          teamName,
+          coachName,
+          coachEmail,
+          coachPhone: coachPhone || undefined,
+          division: division || undefined,
+          playerCount: playerCount ? Number(playerCount) : undefined,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Registration failed");
+        setSubmitting(false);
+        return;
+      }
+
+      // If checkout URL, redirect to Square
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+
+      // Otherwise go to confirmation
+      router.push(
+        `/tournaments/${id}/register/confirmation?reg=${data.registrationId}`
+      );
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setSubmitting(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-white/40" />
+      </div>
+    );
+  }
+
+  if (!tournament) {
+    return (
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+        <p className="text-white/40">Tournament not found.</p>
+      </div>
+    );
+  }
+
+  if (!tournament.registrationOpen) {
+    return (
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+        <div className="text-center">
+          <Trophy className="w-10 h-10 mx-auto mb-3 text-white/20" />
+          <p className="text-white/40 mb-4">Registration is not open for this tournament.</p>
+          <Link href={`/tournaments/${id}`} className="text-red text-sm hover:text-red-hover">
+            View Tournament
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const fee = tournament.entryFee ?? 0;
+  const totalSteps = tournament.requireWaivers ? 3 : 2;
+  const needsPayment = tournament.requirePayment && fee > 0;
+
+  const steps = [
+    { label: "Team Info", icon: Users },
+    ...(tournament.requireWaivers ? [{ label: "Waivers", icon: FileCheck }] : []),
+    { label: needsPayment ? "Payment" : "Confirm", icon: needsPayment ? CreditCard : CheckCircle2 },
+  ];
+
+  return (
+    <div className="min-h-screen bg-bg-primary">
+      <div className="max-w-2xl mx-auto px-4 py-8 lg:py-12">
+        <Link
+          href={`/tournaments/${id}`}
+          className="text-text-secondary text-xs hover:text-white flex items-center gap-1 mb-6 transition-colors"
+        >
+          <ChevronLeft className="w-3 h-3" /> Back to {tournament.name}
+        </Link>
+
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-white font-heading mb-1">
+            Register for {tournament.name}
+          </h1>
+          <div className="flex items-center gap-3 text-text-secondary text-sm">
+            <span>
+              {new Date(tournament.startDate + "T00:00:00").toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </span>
+            {tournament.location && <span>{tournament.location}</span>}
+            {fee > 0 && (
+              <span className="text-emerald-400 font-semibold">
+                ${(fee / 100).toFixed(0)} entry fee
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Step indicators */}
+        <div className="flex items-center gap-2 mb-8">
+          {steps.map((s, i) => {
+            const StepIcon = s.icon;
+            const active = step === i + 1;
+            const done = step > i + 1;
+            return (
+              <div key={i} className="flex items-center gap-2 flex-1">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    done
+                      ? "bg-emerald-500/20 text-emerald-400"
+                      : active
+                      ? "bg-red/20 text-red"
+                      : "bg-white/5 text-white/20"
+                  }`}
+                >
+                  {done ? (
+                    <CheckCircle2 className="w-4 h-4" />
+                  ) : (
+                    <StepIcon className="w-4 h-4" />
+                  )}
+                </div>
+                <span
+                  className={`text-xs font-semibold uppercase tracking-wider ${
+                    active ? "text-white" : "text-white/30"
+                  }`}
+                >
+                  {s.label}
+                </span>
+                {i < steps.length - 1 && (
+                  <div className="flex-1 h-px bg-white/10 mx-2" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {error && (
+          <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-6">
+            {error}
+          </div>
+        )}
+
+        {/* Step 1: Team Info */}
+        {step === 1 && (
+          <div className="bg-card border border-white/10 rounded-2xl p-6">
+            <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+              Team Information
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  Team Name *
+                </label>
+                <input
+                  type="text"
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  required
+                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                  placeholder="e.g. Phoenix Elite"
+                />
+              </div>
+              {tournament.divisions.length > 0 && (
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Division *
+                  </label>
+                  <select
+                    value={division}
+                    onChange={(e) => setDivision(e.target.value)}
+                    required
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+                  >
+                    <option value="">Select division</option>
+                    {tournament.divisions.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Coach Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={coachName}
+                    onChange={(e) => setCoachName(e.target.value)}
+                    required
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="Full name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Coach Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={coachEmail}
+                    onChange={(e) => setCoachEmail(e.target.value)}
+                    required
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="coach@email.com"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Phone (optional)
+                  </label>
+                  <input
+                    type="tel"
+                    value={coachPhone}
+                    onChange={(e) => setCoachPhone(e.target.value)}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Number of Players
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={25}
+                    value={playerCount}
+                    onChange={(e) => setPlayerCount(e.target.value)}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="e.g. 10"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => {
+                  if (!teamName || !coachName || !coachEmail) {
+                    setError("Please fill in all required fields");
+                    return;
+                  }
+                  if (tournament.divisions.length > 0 && !division) {
+                    setError("Please select a division");
+                    return;
+                  }
+                  setError("");
+                  setStep(tournament.requireWaivers ? 2 : totalSteps);
+                }}
+                className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Waivers (if required) */}
+        {step === 2 && tournament.requireWaivers && (
+          <div className="bg-card border border-white/10 rounded-2xl p-6">
+            <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+              Waivers & Acknowledgment
+            </h2>
+            <div className="bg-navy/50 border border-white/5 rounded-xl p-4 mb-4 text-white/60 text-sm space-y-2">
+              <p>
+                All players must have a signed waiver on file before participating.
+                You can submit waivers through the coach portal after registration.
+              </p>
+              <p>
+                Paper waivers will also be accepted at the front desk on game day.
+              </p>
+            </div>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={waiversAcknowledged}
+                onChange={(e) => setWaiversAcknowledged(e.target.checked)}
+                className="mt-1 accent-red"
+              />
+              <span className="text-white text-sm">
+                I acknowledge that all players on my team will have signed waivers
+                before competing.
+              </span>
+            </label>
+            <div className="mt-6 flex justify-between">
+              <button
+                onClick={() => setStep(1)}
+                className="text-white/40 hover:text-white text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                Back
+              </button>
+              <button
+                onClick={() => {
+                  if (!waiversAcknowledged) {
+                    setError("Please acknowledge the waiver requirement");
+                    return;
+                  }
+                  setError("");
+                  setStep(totalSteps);
+                }}
+                className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Final step: Payment / Confirm */}
+        {step === totalSteps && (
+          <div className="bg-card border border-white/10 rounded-2xl p-6">
+            <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+              {needsPayment ? "Review & Pay" : "Review & Confirm"}
+            </h2>
+
+            {/* Summary */}
+            <div className="bg-navy/50 border border-white/5 rounded-xl p-4 mb-6 space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-white/50">Team</span>
+                <span className="text-white font-semibold">{teamName}</span>
+              </div>
+              {division && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-white/50">Division</span>
+                  <span className="text-white">{division}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-white/50">Coach</span>
+                <span className="text-white">{coachName}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/50">Email</span>
+                <span className="text-white">{coachEmail}</span>
+              </div>
+              {needsPayment && (
+                <div className="flex justify-between text-sm pt-2 border-t border-white/5">
+                  <span className="text-white/50">Entry Fee</span>
+                  <span className="text-emerald-400 font-bold">
+                    ${(fee / 100).toFixed(2)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                onClick={() =>
+                  setStep(tournament.requireWaivers ? 2 : 1)
+                }
+                className="text-white/40 hover:text-white text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                {submitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : needsPayment ? (
+                  <CreditCard className="w-4 h-4" />
+                ) : (
+                  <CheckCircle2 className="w-4 h-4" />
+                )}
+                {needsPayment
+                  ? `Pay $${(fee / 100).toFixed(0)}`
+                  : "Complete Registration"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

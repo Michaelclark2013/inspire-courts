@@ -46,6 +46,9 @@ export default function PortalDashboard() {
   const [portalAnnouncements, setPortalAnnouncements] = useState<
     { id: number; title: string; body: string; audience: string; createdAt: string }[]
   >([]);
+  const [myRegistrations, setMyRegistrations] = useState<
+    { id: number; tournamentId: number; tournamentName: string; tournamentDate: string; teamName: string; division: string | null; paymentStatus: string; status: string }[]
+  >([]);
 
   const role = session?.user?.role;
   const name = session?.user?.name?.split(" ")[0] || "there";
@@ -61,6 +64,12 @@ export default function PortalDashboard() {
     fetch("/api/portal/announcements")
       .then((r) => r.json())
       .then(setPortalAnnouncements)
+      .catch(() => {});
+
+    // Fetch registrations
+    fetch("/api/portal/registrations")
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data)) setMyRegistrations(data); })
       .catch(() => {});
 
     // Check roster count for coaches
@@ -247,6 +256,55 @@ export default function PortalDashboard() {
                 </Link>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* My Registrations */}
+      {myRegistrations.length > 0 && (
+        <div className="mb-6 bg-gradient-to-br from-bg-secondary to-bg-secondary/60 border border-white/[0.06] rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
+                <Trophy className="w-4 h-4 text-red" />
+              </div>
+              <h2 className="text-white font-bold text-sm">My Tournaments</h2>
+            </div>
+            <Link href="/tournaments" className="text-red text-xs font-semibold hover:text-red-hover transition-colors flex items-center gap-1">
+              Browse <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="divide-y divide-white/[0.04]">
+            {myRegistrations.map((reg) => (
+              <Link
+                key={reg.id}
+                href={`/tournaments/${reg.tournamentId}`}
+                className="px-5 py-3 flex items-center justify-between hover:bg-white/[0.02] transition-colors"
+              >
+                <div className="min-w-0">
+                  <p className="text-white text-sm font-semibold truncate">{reg.tournamentName}</p>
+                  <p className="text-text-secondary text-xs">{reg.teamName}{reg.division ? ` · ${reg.division}` : ""}</p>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    reg.paymentStatus === "paid" || reg.paymentStatus === "waived"
+                      ? "bg-emerald-500/20 text-emerald-400"
+                      : "bg-amber-500/20 text-amber-400"
+                  }`}>
+                    {reg.paymentStatus}
+                  </span>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    reg.status === "approved"
+                      ? "bg-emerald-500/20 text-emerald-400"
+                      : reg.status === "rejected"
+                      ? "bg-red/20 text-red"
+                      : "bg-amber-500/20 text-amber-400"
+                  }`}>
+                    {reg.status}
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       )}

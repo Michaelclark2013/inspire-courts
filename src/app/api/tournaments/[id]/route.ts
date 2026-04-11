@@ -85,6 +85,13 @@ export async function GET(_request: NextRequest, { params }: Params) {
         format: tournament.format,
         status: tournament.status,
         divisions: tournament.divisions ? JSON.parse(tournament.divisions) : [],
+        entryFee: tournament.entryFee,
+        registrationOpen: tournament.registrationOpen,
+        registrationDeadline: tournament.registrationDeadline,
+        maxTeamsPerDivision: tournament.maxTeamsPerDivision,
+        requirePayment: tournament.requirePayment,
+        requireWaivers: tournament.requireWaivers,
+        description: tournament.description,
         teams: teams.map((t) => ({
           teamName: t.teamName,
           seed: t.seed,

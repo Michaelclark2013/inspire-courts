@@ -60,6 +60,11 @@ export default function TournamentManagePage() {
     courts: "",
     gameLength: 40,
     breakLength: 10,
+    entryFee: "",
+    maxTeamsPerDivision: "",
+    registrationDeadline: "",
+    registrationOpen: false,
+    description: "",
   });
 
   const fetchTournaments = useCallback(async () => {
@@ -103,6 +108,11 @@ export default function TournamentManagePage() {
         courts: courts.length > 0 ? courts : ["Court 1", "Court 2"],
         gameLength: form.gameLength,
         breakLength: form.breakLength,
+        entryFee: form.entryFee ? Math.round(Number(form.entryFee) * 100) : undefined,
+        maxTeamsPerDivision: form.maxTeamsPerDivision ? Number(form.maxTeamsPerDivision) : undefined,
+        registrationDeadline: form.registrationDeadline || undefined,
+        registrationOpen: form.registrationOpen,
+        description: form.description || undefined,
       }),
     });
 
@@ -117,6 +127,11 @@ export default function TournamentManagePage() {
         courts: "",
         gameLength: 40,
         breakLength: 10,
+        entryFee: "",
+        maxTeamsPerDivision: "",
+        registrationDeadline: "",
+        registrationOpen: false,
+        description: "",
       });
       setShowForm(false);
       fetchTournaments();
@@ -270,6 +285,71 @@ export default function TournamentManagePage() {
                 }
                 className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
               />
+            </div>
+            {/* Registration Settings */}
+            <div className="lg:col-span-3 border-t border-white/10 pt-4 mt-2">
+              <p className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">Registration Settings</p>
+            </div>
+            <div>
+              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Entry Fee ($)
+              </label>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={form.entryFee}
+                onChange={(e) => setForm({ ...form, entryFee: e.target.value })}
+                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                placeholder="50"
+              />
+            </div>
+            <div>
+              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Max Teams Per Division
+              </label>
+              <input
+                type="number"
+                min={2}
+                value={form.maxTeamsPerDivision}
+                onChange={(e) => setForm({ ...form, maxTeamsPerDivision: e.target.value })}
+                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                placeholder="8"
+              />
+            </div>
+            <div>
+              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Registration Deadline
+              </label>
+              <input
+                type="date"
+                value={form.registrationDeadline}
+                onChange={(e) => setForm({ ...form, registrationDeadline: e.target.value })}
+                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+              />
+            </div>
+            <div className="lg:col-span-2">
+              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Description / Rules
+              </label>
+              <input
+                type="text"
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                placeholder="Tournament rules, age requirements, etc."
+              />
+            </div>
+            <div className="flex items-center gap-3 self-end pb-1">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.registrationOpen}
+                  onChange={(e) => setForm({ ...form, registrationOpen: e.target.checked })}
+                  className="accent-red"
+                />
+                <span className="text-white text-sm">Open Registration</span>
+              </label>
             </div>
             <div className="flex items-end">
               <button

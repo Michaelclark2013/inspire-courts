@@ -26,9 +26,9 @@ import { isNotionConfigured } from "@/lib/notion";
 import EventsList from "./EventsList";
 
 export const metadata: Metadata = {
-  title: "Youth Basketball & Volleyball Tournaments in Gilbert, AZ | Inspire Courts AZ",
+  title: "Basketball Tournaments | Inspire Courts AZ — Gilbert, AZ",
   description:
-    "Register for upcoming youth basketball and volleyball tournaments at Inspire Courts AZ. 10U-17U divisions, boys and girls. Game film, live scoreboards, 3+ game guarantee.",
+    "Youth basketball tournaments in Gilbert, AZ at Inspire Courts AZ. 10U–17U boys & girls divisions. 3+ game guarantee, game film every game, live scoreboards. Register your team now.",
   alternates: {
     canonical: "https://inspirecourtsaz.com/events",
   },
@@ -101,15 +101,19 @@ export default function EventsPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
-              Compete. Get Ranked. Get Seen.
+              🏀 Compete. Get Ranked. Get Seen.
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg">
-              Tournaments
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-4 font-[var(--font-chakra)] drop-shadow-lg">
+              Youth Basketball<br />Tournaments
             </h1>
+            <p className="text-red font-bold text-sm uppercase tracking-[0.2em] mb-6 font-[var(--font-chakra)]">
+              Gilbert, AZ · Boys &amp; Girls · 10U – 17U
+            </p>
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed mb-8">
-              Youth basketball and volleyball tournaments in Gilbert, AZ. 10U
-              through 17U divisions, boys and girls. 3+ game guarantee, game
-              film every game, live scoreboards on every court.
+              Competitive basketball tournaments for youth players in the East
+              Valley. Age-bracket divisions from 10U through 17U, boys and
+              girls. Every team gets 3+ games, game film, live scoreboards, and
+              electronic stats. Volleyball tournaments also available.
             </p>
             <a
               href={REGISTER_URL}
@@ -133,18 +137,19 @@ export default function EventsPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader
               eyebrow="Upcoming"
-              title="Upcoming Events"
-              description="Register your team for the next tournament. Spots fill fast."
+              title="Upcoming Basketball Tournaments"
+              description="Register your team for the next tournament. Spots fill fast — don't wait."
             />
             <AnimateIn>
               <div className="max-w-2xl mx-auto text-center bg-off-white border border-light-gray rounded-xl p-10">
                 <Trophy className="w-10 h-10 text-red mx-auto mb-4" />
                 <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2 font-[var(--font-chakra)]">
-                  Events Coming Soon
+                  Basketball Tournaments Coming Soon
                 </h3>
                 <p className="text-text-muted text-sm mb-6 leading-relaxed">
-                  New tournaments are announced regularly. Follow us on Instagram
-                  or register on LeagueApps to be the first to know.
+                  New basketball tournaments are announced regularly. Follow us
+                  on Instagram or register on LeagueApps to be the first to know
+                  when registration opens.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <a
@@ -193,8 +198,8 @@ export default function EventsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Game Time"
-            title="Schedules & Brackets"
-            description="Find your game times, court assignments, and bracket placements."
+            title="Tournament Schedules & Brackets"
+            description="Find your basketball game times, court assignments, and bracket placements."
           />
 
           {/* Info bar */}
@@ -277,11 +282,11 @@ export default function EventsPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <AnimateIn>
             <h3 className="text-white font-semibold text-xl uppercase tracking-tight mb-4 font-[var(--font-chakra)]">
-              Don&apos;t see your division?
+              Don&apos;t see your basketball division?
             </h3>
             <p className="text-white/70 mb-6">
-              Let us know what you&apos;re looking for. We&apos;re always adding
-              new events and age groups.
+              Let us know what age group or division you&apos;re looking for.
+              We&apos;re always adding new basketball tournaments and age groups.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

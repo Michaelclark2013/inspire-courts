@@ -60,8 +60,8 @@ export default async function EventsList() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Upcoming"
-            title="Upcoming Events"
-            description="Register your team for the next tournament. Spots fill fast."
+            title="Upcoming Basketball Tournaments"
+            description="Register your team for the next basketball tournament. Spots fill fast — don't wait."
           />
 
           {upcoming.length > 0 ? (
@@ -139,11 +139,12 @@ export default async function EventsList() {
               <div className="max-w-2xl mx-auto text-center bg-off-white border border-light-gray rounded-xl p-10">
                 <Trophy className="w-10 h-10 text-red mx-auto mb-4" />
                 <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2 font-[var(--font-chakra)]">
-                  Events Coming Soon
+                  Basketball Tournaments Coming Soon
                 </h3>
                 <p className="text-text-muted text-sm mb-6 leading-relaxed">
-                  New tournaments are announced regularly. Follow us on Instagram
-                  or register on LeagueApps to be the first to know.
+                  New basketball tournaments are announced regularly. Follow us
+                  on Instagram or register on LeagueApps to be the first to know
+                  when registration opens.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <a
@@ -175,8 +176,8 @@ export default async function EventsList() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader
               eyebrow="Results"
-              title="Past Events"
-              description="Previous tournaments and results."
+              title="Past Basketball Tournaments"
+              description="Previous basketball tournaments and results."
             />
             <div className="max-w-3xl mx-auto space-y-3">
               {past.map((event: typeof past[0], i: number) => (

@@ -13,6 +13,7 @@ import {
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 import QuickContactBar from "@/components/ui/QuickContactBar";
+import { getPageContent, getField, getList } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Private Basketball & Volleyball Training in Gilbert, AZ | Inspire Courts AZ",
@@ -60,6 +61,19 @@ const SKILLS = [
 ];
 
 export default function TrainingPage() {
+  const page = getPageContent("training");
+
+  const cmsTrainingOptions = page ? getList(page, "Training Options") : [];
+
+  const trainingOptions = TRAINING_OPTIONS.map((opt, i) => ({
+    ...opt,
+    title: cmsTrainingOptions[i]?.title ?? opt.title,
+    desc: cmsTrainingOptions[i]?.description ?? opt.desc,
+    features: cmsTrainingOptions[i]?.features
+      ? cmsTrainingOptions[i].features.split(", ")
+      : opt.features,
+  }));
+
   return (
     <>
       {/* Hero */}
@@ -76,16 +90,13 @@ export default function TrainingPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-6 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
-              Get Better
+              {page ? getField(page, "Hero", "badge") : "Get Better"}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg leading-[0.9]">
-              Private
-              <br />
-              <span className="text-red">Training</span>
+              {page ? getField(page, "Hero", "headline") : "Private Training"}
             </h1>
             <p className="text-white/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-              1-on-1 and small group basketball and volleyball training at a
-              pro-level facility. Every session is designed to make you better.
+              {page ? getField(page, "Hero", "description") : "1-on-1 and small group basketball and volleyball training at a pro-level facility. Every session is designed to make you better."}
             </p>
             <Link
               href="/contact?type=Private+Training"
@@ -107,7 +118,7 @@ export default function TrainingPage() {
             description="Choose the format that fits your goals. Every session happens at Inspire Courts on regulation hardwood."
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TRAINING_OPTIONS.map((opt, i) => (
+            {trainingOptions.map((opt, i) => (
               <AnimateIn key={opt.title} delay={i * 100}>
                 <div
                   className={`relative rounded-2xl p-8 lg:p-10 h-full flex flex-col overflow-hidden ${

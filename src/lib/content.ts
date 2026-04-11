@@ -436,3 +436,20 @@ export function getContent(): SiteContent {
 export function saveContent(content: SiteContent): void {
   writeFileSync(CONTENT_FILE, JSON.stringify(content, null, 2), "utf-8");
 }
+
+// ── Helper functions for page content access ──
+
+export function getPageContent(pageId: string): PageContent | undefined {
+  const content = getContent();
+  return content.pages[pageId];
+}
+
+export function getField(page: PageContent, sectionName: string, fieldKey: string): string {
+  const section = page.sections.find((s) => s.name === sectionName);
+  return section?.fields[fieldKey]?.value ?? "";
+}
+
+export function getList(page: PageContent, sectionName: string): ContentListItem[] {
+  const section = page.sections.find((s) => s.name === sectionName);
+  return section?.list?.items ?? [];
+}

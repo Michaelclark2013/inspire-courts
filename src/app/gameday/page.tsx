@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { FACILITY_EMAIL } from "@/lib/constants";
 import Link from "next/link";
+import { getPageContent, getField } from "@/lib/content";
 import {
   MapPin,
   Ticket,
@@ -93,6 +94,8 @@ const INFO_SECTIONS = [
 ];
 
 export default function GameDayPage() {
+  const page = getPageContent("gameday");
+
   return (
     <>
       {/* Hero */}
@@ -108,13 +111,13 @@ export default function GameDayPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
-              Be Ready
+              {page ? getField(page, "Hero", "badge") : "Be Ready"}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg">
-              Game Day Info
+              {page ? getField(page, "Hero", "headline") : "Game Day Info"}
             </h1>
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
-              Everything you need to know before you walk through the doors.
+              {page ? getField(page, "Hero", "description") : "Everything you need to know before you walk through the doors."}
             </p>
           </AnimateIn>
         </div>

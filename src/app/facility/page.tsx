@@ -4,6 +4,7 @@ import { ArrowRight, Tv, Video, Snowflake, UtensilsCrossed, Trophy } from "lucid
 import AnimateIn from "@/components/ui/AnimateIn";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 import BackToTop from "@/components/ui/BackToTop";
+import { getPageContent, getField, getList } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Indoor Basketball & Volleyball Court Rental in Gilbert, AZ | Inspire Courts AZ",
@@ -42,6 +43,17 @@ const FEATURES = [
 ];
 
 export default function FacilityPage() {
+  const page = getPageContent("facility");
+
+  const cmsFeatures = page ? getList(page, "Features") : [];
+
+  const features = FEATURES.map((f, i) => ({
+    ...f,
+    title: cmsFeatures[i]?.eyebrow ?? f.title,
+    headline: cmsFeatures[i]?.title ?? f.headline,
+    desc: cmsFeatures[i]?.description ?? f.desc,
+  }));
+
   return (
     <>
       {/* Hero */}
@@ -57,15 +69,13 @@ export default function FacilityPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
-              The Complex
+              {page ? getField(page, "Hero", "badge") : "The Complex"}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg">
-              The Facility
+              {page ? getField(page, "Hero", "headline") : "The Facility"}
             </h1>
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
-              A premium indoor basketball &amp; volleyball facility built from
-              the ground up for serious competition. Every detail is
-              intentional.
+              {page ? getField(page, "Hero", "description") : "A premium indoor basketball & volleyball facility built from the ground up for serious competition. Every detail is intentional."}
             </p>
           </AnimateIn>
         </div>
@@ -76,7 +86,7 @@ export default function FacilityPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="sr-only">Facility Features</h2>
           <div className="space-y-16">
-            {FEATURES.map((feature, i) => (
+            {features.map((feature, i) => (
               <AnimateIn key={feature.title} delay={i * 80}>
                 <div
                   className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center`}
@@ -138,13 +148,10 @@ export default function FacilityPage() {
                   Rentals
                 </p>
                 <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-white mb-4 font-[var(--font-chakra)]">
-                  Book the Facility
+                  {page ? getField(page, "Rental CTA", "headline") : "Book the Facility"}
                 </h2>
                 <p className="text-white/70 leading-relaxed mb-6">
-                  Host your league, practice, or private event at Inspire
-                  Courts. Available for basketball and volleyball leagues, team
-                  practices, private tournaments, camps, clinics, and corporate
-                  events.
+                  {page ? getField(page, "Rental CTA", "description") : "Host your league, practice, or private event at Inspire Courts. Available for basketball and volleyball leagues, team practices, private tournaments, camps, clinics, and corporate events."}
                 </p>
                 <Link
                   href="/book"

@@ -6,7 +6,9 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import MobileRegisterBar from "@/components/layout/MobileRegisterBar";
 import ChatWidget from "@/components/layout/ChatWidget";
+import EditToolbar from "@/components/layout/EditToolbar";
 import Analytics from "@/components/layout/Analytics";
+import SessionProvider from "@/components/layout/SessionProvider";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/lib/constants";
 
 const workSans = Work_Sans({
@@ -50,12 +52,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${workSans.variable} ${chakra.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Header />
-        <main id="main-content" className="flex-1">{children}</main>
-        <Footer />
-        <MobileRegisterBar />
-        <ChatWidget />
-        <Analytics />
+        <SessionProvider>
+          <Header />
+          <main id="main-content" className="flex-1">{children}</main>
+          <Footer />
+          <MobileRegisterBar />
+          <ChatWidget />
+          <EditToolbar />
+          <Analytics />
+        </SessionProvider>
       </body>
     </html>
   );

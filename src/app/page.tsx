@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FACILITY_EMAIL, SOCIAL_LINKS } from "@/lib/constants";
+import { getPageContent, getField, getList } from "@/lib/content";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -66,58 +67,30 @@ const localBusinessSchema = {
   ],
 };
 
-const FACILITY_FEATURES = [
-  {
-    icon: Trophy,
-    title: "7 Indoor Courts",
-    desc: "Regulation hardwood floors, professional dimensions, adjustable hoops for all age groups.",
-  },
-  {
-    icon: Tv,
-    title: "Live Scoreboards",
-    desc: "Digital scoreboards visible from every seat. Real-time scores, period tracking, shot clocks.",
-  },
-  {
-    icon: Video,
-    title: "Game Film",
-    desc: "Every game filmed, every play captured. Teams get footage to review and improve.",
-  },
-  {
-    icon: BarChart3,
-    title: "Stats & Analytics",
-    desc: "Real-time stats tracking for every game. Points, rebounds, assists — all on record.",
-  },
-  {
-    icon: UtensilsCrossed,
-    title: "Snack Bar",
-    desc: "Drinks, snacks, and game-day fuel available all day. No outside food or beverages permitted.",
-  },
-  {
-    icon: Wifi,
-    title: "Climate Controlled",
-    desc: "Fully air-conditioned year-round. No Arizona heat, no excuses. Play in comfort every game.",
-  },
+const FEATURE_ICONS = [Trophy, Tv, Video, BarChart3, UtensilsCrossed, Wifi];
+
+const FALLBACK_FEATURES = [
+  { title: "7 Indoor Courts", desc: "Regulation hardwood floors, professional dimensions, adjustable hoops for all age groups." },
+  { title: "Live Scoreboards", desc: "Digital scoreboards visible from every seat. Real-time scores, period tracking, shot clocks." },
+  { title: "Game Film", desc: "Every game filmed, every play captured. Teams get footage to review and improve." },
+  { title: "Stats & Analytics", desc: "Real-time stats tracking for every game. Points, rebounds, assists — all on record." },
+  { title: "Snack Bar", desc: "Drinks, snacks, and game-day fuel available all day. No outside food or beverages permitted." },
+  { title: "Climate Controlled", desc: "Fully air-conditioned year-round. No Arizona heat, no excuses. Play in comfort every game." },
 ];
 
-const WHY_INSPIRE = [
-  {
-    icon: Shield,
-    title: "Pro-Level Setup",
-    desc: "College-quality courts, scoreboards, and game film — not a rec gym.",
-  },
-  {
-    icon: Zap,
-    title: "Year-Round Action",
-    desc: "Tournaments, leagues, and open runs every month. Never an off season.",
-  },
-  {
-    icon: Users,
-    title: "Real Competition",
-    desc: "500+ teams hosted. The best youth players in Arizona compete here.",
-  },
+const VALUE_PROP_ICONS = [Shield, Zap, Users];
+
+const FALLBACK_VALUE_PROPS = [
+  { title: "Pro-Level Setup", desc: "College-quality courts, scoreboards, and game film — not a rec gym." },
+  { title: "Year-Round Action", desc: "Tournaments, leagues, and open runs every month. Never an off season." },
+  { title: "Real Competition", desc: "500+ teams hosted. The best youth players in Arizona compete here." },
 ];
 
 export default function Home() {
+  const page = getPageContent("home");
+  const valueProps = page ? getList(page, "Value Props") : [];
+  const features = page ? getList(page, "Facility Features") : [];
+
   return (
     <>
       <script
@@ -138,7 +111,7 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-8 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
-              Est. Gilbert, AZ
+              {page ? getField(page, "Hero", "badge") : "Est. Gilbert, AZ"}
             </span>
           </AnimateIn>
 
@@ -152,11 +125,12 @@ export default function Home() {
               <br />
               Facility
             </h1>
+            {/* CMS headline available at: getField(page, "Hero", "headline") */}
           </AnimateIn>
 
           <AnimateIn delay={200}>
             <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-              7 courts. 52,000 sq ft. Basketball &amp; volleyball. Built for competitors.
+              {page ? getField(page, "Hero", "subheadline") : "7 courts. 52,000 sq ft. Basketball & volleyball. Built for competitors."}
             </p>
           </AnimateIn>
 
@@ -168,14 +142,14 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
               >
-                Register for Next Event{" "}
+                {page ? getField(page, "Hero", "ctaPrimary") : "Register for Next Event"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
               <Link
                 href="/facility"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
               >
-                Book the Facility{" "}
+                {page ? getField(page, "Hero", "ctaSecondary") : "Book the Facility"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -201,7 +175,7 @@ export default function Home() {
                 <Calendar className="w-4 h-4" />
               </div>
               <span className="font-[var(--font-chakra)] font-bold text-sm uppercase tracking-wide">
-                OFF SZN HOOPS — Tournaments Running Year-Round
+                {page ? getField(page, "Event Bar", "text") : "OFF SZN HOOPS — Tournaments Running Year-Round"}
               </span>
             </div>
             <a
@@ -210,7 +184,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="group flex items-center gap-2 bg-white text-red px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide hover:bg-off-white transition-colors font-[var(--font-chakra)]"
             >
-              Register Now{" "}
+              {page ? getField(page, "Event Bar", "buttonText") : "Register Now"}{" "}
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </a>
           </div>
@@ -222,23 +196,28 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="sr-only">Why Inspire Courts</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y divide-white/10 md:divide-y-0 md:divide-x md:divide-white/10">
-            {WHY_INSPIRE.map((item, i) => (
-              <AnimateIn key={item.title} delay={i * 100}>
-                <div className="flex items-start gap-4 px-4 sm:px-8 py-6 md:py-0">
-                  <div className="w-12 h-12 bg-red/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <item.icon className="w-6 h-6 text-red" />
+            {VALUE_PROP_ICONS.map((Icon, i) => {
+              const item = valueProps[i];
+              const title = item?.title || FALLBACK_VALUE_PROPS[i].title;
+              const desc = item?.description || FALLBACK_VALUE_PROPS[i].desc;
+              return (
+                <AnimateIn key={title} delay={i * 100}>
+                  <div className="flex items-start gap-4 px-4 sm:px-8 py-6 md:py-0">
+                    <div className="w-12 h-12 bg-red/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-6 h-6 text-red" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-semibold text-sm uppercase tracking-tight font-[var(--font-chakra)] mb-1">
+                        {title}
+                      </h3>
+                      <p className="text-white/80 text-sm leading-relaxed">
+                        {desc}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-sm uppercase tracking-tight font-[var(--font-chakra)] mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-white/80 text-sm leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              </AnimateIn>
-            ))}
+                </AnimateIn>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -247,28 +226,33 @@ export default function Home() {
       <section className="py-20 lg:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
-            eyebrow="The Facility"
-            title="Built for Competitors"
-            description="Professional-grade courts, technology, and amenities designed for serious athletes."
+            eyebrow={page ? getField(page, "Facility Features", "eyebrow") : "The Facility"}
+            title={page ? getField(page, "Facility Features", "headline") : "Built for Competitors"}
+            description={page ? getField(page, "Facility Features", "description") : "Professional-grade courts, technology, and amenities designed for serious athletes."}
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {FACILITY_FEATURES.map((feature, i) => (
-              <AnimateIn key={feature.title} delay={i * 80}>
-                <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden h-full">
-                  {/* Red accent stripe */}
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="w-16 h-16 bg-gradient-to-br from-navy to-navy-dark rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
-                    <feature.icon className="w-7 h-7 text-white" />
+            {FEATURE_ICONS.map((Icon, i) => {
+              const item = features[i];
+              const title = item?.title || FALLBACK_FEATURES[i].title;
+              const desc = item?.description || FALLBACK_FEATURES[i].desc;
+              return (
+                <AnimateIn key={title} delay={i * 80}>
+                  <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden h-full">
+                    {/* Red accent stripe */}
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="w-16 h-16 bg-gradient-to-br from-navy to-navy-dark rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Icon className="w-7 h-7 text-white" />
+                    </div>
+                    <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg lg:text-xl uppercase tracking-tight mb-3">
+                      {title}
+                    </h3>
+                    <p className="text-text-muted text-sm leading-relaxed">
+                      {desc}
+                    </p>
                   </div>
-                  <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg lg:text-xl uppercase tracking-tight mb-3">
-                    {feature.title}
-                  </h3>
-                  <p className="text-text-muted text-sm leading-relaxed">
-                    {feature.desc}
-                  </p>
-                </div>
-              </AnimateIn>
-            ))}
+                </AnimateIn>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -286,19 +270,16 @@ export default function Home() {
               Our Mission
             </span>
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
-              Two Brands.
-              <br />
-              One Mission.
+              {page ? getField(page, "Mission Section", "headline") : "Two Brands. One Mission."}
             </h2>
             <p className="text-white/75 text-lg lg:text-xl leading-relaxed mb-10 max-w-2xl mx-auto">
-              Inspire Courts is the home base. OFF SZN HOOPS is the tournament
-              series. Together, we&apos;re elevating youth sports in Arizona.
+              {page ? getField(page, "Mission Section", "description") : "Inspire Courts is the home base. OFF SZN HOOPS is the tournament series. Together, we're elevating youth sports in Arizona."}
             </p>
             <Link
               href="/about"
               className="group inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
             >
-              Our Story{" "}
+              {page ? getField(page, "Mission Section", "buttonText") : "Our Story"}{" "}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </AnimateIn>
@@ -411,10 +392,10 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16">
             {[
-              { num: "500+", label: "Teams Hosted" },
-              { num: "30+", label: "Tournaments" },
-              { num: "5,000+", label: "Players" },
-              { num: "100%", label: "Game Film Coverage" },
+              { num: page ? getField(page, "Stats", "stat1Value") : "500+", label: page ? getField(page, "Stats", "stat1Label") : "Teams Hosted" },
+              { num: page ? getField(page, "Stats", "stat2Value") : "30+", label: page ? getField(page, "Stats", "stat2Label") : "Tournaments" },
+              { num: page ? getField(page, "Stats", "stat3Value") : "5,000+", label: page ? getField(page, "Stats", "stat3Label") : "Players" },
+              { num: page ? getField(page, "Stats", "stat4Value") : "100%", label: page ? getField(page, "Stats", "stat4Label") : "Game Film Coverage" },
             ].map((stat, i) => (
               <AnimateIn key={stat.label} delay={i * 100}>
                 <div className="text-center">
@@ -457,7 +438,7 @@ export default function Home() {
                   Visit Us
                 </p>
                 <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy mb-8 font-[var(--font-chakra)]">
-                  Come See It Live
+                  {page ? getField(page, "Location", "headline") : "Come See It Live"}
                 </h2>
 
                 <div className="space-y-4 mb-8">
@@ -467,18 +448,17 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="font-bold text-navy">
-                        1090 N Fiesta Blvd, Ste 101 & 102
+                        {page ? getField(page, "Location", "address") : "1090 N Fiesta Blvd, Ste 101 & 102"}
                       </p>
                       <p className="text-text-muted text-sm">
-                        Gilbert, AZ 85233
+                        {page ? getField(page, "Location", "city") : "Gilbert, AZ 85233"}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <p className="text-text-muted leading-relaxed mb-8">
-                  Follow us on Instagram for game highlights, tournament recaps,
-                  and behind-the-scenes content.
+                  {page ? getField(page, "Location", "description") : "Follow us on Instagram for game highlights, tournament recaps, and behind-the-scenes content."}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a
@@ -534,9 +514,9 @@ export default function Home() {
               Ready to{" "}
               <span className="text-red">Compete</span>?
             </h2>
+            {/* CMS headline available at: getField(page, "Final CTA", "headline") */}
             <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">
-              Register your team for the next OFF SZN HOOPS tournament. Spots
-              fill fast.
+              {page ? getField(page, "Final CTA", "description") : "Register your team for the next OFF SZN HOOPS tournament. Spots fill fast."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -545,14 +525,14 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
               >
-                Register Now{" "}
+                {page ? getField(page, "Final CTA", "ctaPrimary") : "Register Now"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
               <Link
                 href="/contact"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
               >
-                Contact Us{" "}
+                {page ? getField(page, "Final CTA", "ctaSecondary") : "Contact Us"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>

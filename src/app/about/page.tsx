@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
+import { getPageContent, getField } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "About | Inspire Courts AZ",
@@ -53,6 +54,8 @@ const sportsOrgSchema = {
 };
 
 export default function AboutPage() {
+  const page = getPageContent("about");
+
   return (
     <>
       <script
@@ -73,15 +76,13 @@ export default function AboutPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
-              Our Story
+              {page ? getField(page, "Hero", "badge") : "Our Story"}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg">
-              The Story
+              {page ? getField(page, "Hero", "headline") : "The Story"}
             </h1>
             <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-              Founded to give Arizona&apos;s youth athletes a
-              professional-level experience. Basketball. Volleyball. No more
-              dusty rec centers. No more outdoor courts in 115-degree heat.
+              {page ? getField(page, "Hero", "description") : "Founded to give Arizona's youth athletes a professional-level experience. Basketball. Volleyball. No more dusty rec centers. No more outdoor courts in 115-degree heat."}
             </p>
           </AnimateIn>
         </div>
@@ -94,28 +95,20 @@ export default function AboutPage() {
             <AnimateIn>
               <div>
                 <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-4 font-[var(--font-chakra)]">
-                  Why We Exist
+                  {page ? getField(page, "Origin", "eyebrow") : "Why We Exist"}
                 </p>
                 <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy mb-6 font-[var(--font-chakra)]">
-                  Built for Competitors
+                  {page ? getField(page, "Origin", "headline") : "Built for Competitors"}
                 </h2>
                 <div className="space-y-4 text-text-muted leading-relaxed">
                   <p>
-                    Inspire Courts is climate-controlled, professionally
-                    equipped, and built for competitors. 7 regulation indoor
-                    courts for basketball and volleyball, with live digital
-                    scoreboards, game film for every game, and a setup that
-                    rivals college-level facilities.
+                    {page ? getField(page, "Origin", "paragraph1") : "Inspire Courts is climate-controlled, professionally equipped, and built for competitors. 7 regulation indoor courts for basketball and volleyball, with live digital scoreboards, game film for every game, and a setup that rivals college-level facilities."}
                   </p>
                   <p>
-                    We saw what youth sports looked like in Arizona — rec
-                    gyms with broken rims, outdoor tournaments in 115-degree
-                    heat, and zero game footage. We built the opposite.
+                    {page ? getField(page, "Origin", "paragraph2") : "We saw what youth sports looked like in Arizona — rec gyms with broken rims, outdoor tournaments in 115-degree heat, and zero game footage. We built the opposite."}
                   </p>
                   <p>
-                    Every team that walks through our doors gets the same
-                    experience: professional courts, real scoreboards, and film
-                    they can use to get better. That&apos;s the standard.
+                    {page ? getField(page, "Origin", "paragraph3") : "Every team that walks through our doors gets the same experience: professional courts, real scoreboards, and film they can use to get better. That's the standard."}
                   </p>
                 </div>
               </div>
@@ -126,8 +119,7 @@ export default function AboutPage() {
                   Our Mission
                 </h3>
                 <p className="text-red text-xl font-bold leading-snug font-[var(--font-chakra)]">
-                  Elevate youth basketball and volleyball in Arizona — one court,
-                  one game, one player at a time.
+                  {page ? getField(page, "Origin", "mission") : "Elevate youth basketball and volleyball in Arizona — one court, one game, one player at a time."}
                 </p>
                 <div className="pt-4 border-t border-light-gray space-y-4">
                   <div className="flex gap-3">

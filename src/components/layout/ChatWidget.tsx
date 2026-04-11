@@ -6,6 +6,7 @@ import Image from "next/image";
 import { MessageCircle, X, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FACILITY_EMAIL } from "@/lib/constants";
+import { trackConversion } from "@/lib/analytics";
 
 interface Message {
   role: "user" | "assistant";
@@ -425,7 +426,7 @@ export default function ChatWidget() {
     <>
       {/* Chat button with pulse animation and unread badge */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => { if (!open) trackConversion("chat_open"); setOpen(!open); }}
         className={cn(
           "fixed z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all",
           "bg-red hover:bg-red-hover text-white",

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MapPin, Mail, Camera, ArrowRight, Check } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import { trackConversion } from "@/lib/analytics";
 import {
   INQUIRY_TYPES,
   FACILITY_EMAIL,
@@ -37,6 +38,7 @@ export default function ContactPage() {
         body: JSON.stringify(data),
       });
       if (res.ok) {
+        trackConversion("contact_form_submit");
         setSubmitted(true);
       }
     } catch {
@@ -204,6 +206,7 @@ export default function ContactPage() {
                       <a
                         href={`mailto:${FACILITY_EMAIL}`}
                         className="hover:text-red transition-colors"
+                        onClick={() => trackConversion("email_click")}
                       >
                         {FACILITY_EMAIL}
                       </a>

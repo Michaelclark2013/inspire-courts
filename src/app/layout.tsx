@@ -7,7 +7,8 @@ import Footer from "@/components/layout/Footer";
 import MobileRegisterBar from "@/components/layout/MobileRegisterBar";
 import ChatWidget from "@/components/layout/ChatWidget";
 import EditToolbar from "@/components/layout/EditToolbar";
-import Analytics from "@/components/layout/Analytics";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import MetaPixel from "@/components/analytics/MetaPixel";
 import SessionProvider from "@/components/layout/SessionProvider";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/lib/constants";
 
@@ -42,6 +43,11 @@ export const metadata: Metadata = {
     description: "Arizona's premier indoor basketball & volleyball facility.",
   },
   metadataBase: new URL(SITE_URL),
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && {
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    },
+  }),
 };
 
 export default function RootLayout({
@@ -59,7 +65,8 @@ export default function RootLayout({
           <MobileRegisterBar />
           <ChatWidget />
           <EditToolbar />
-          <Analytics />
+          <GoogleAnalytics />
+          <MetaPixel />
         </SessionProvider>
       </body>
     </html>

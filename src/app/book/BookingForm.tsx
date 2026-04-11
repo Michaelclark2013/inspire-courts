@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { FACILITY_EMAIL } from "@/lib/constants";
 import { INPUT_CLASS_LG, LABEL_CLASS, SELECT_CLASS, TEXTAREA_CLASS } from "@/lib/form-styles";
+import { trackConversion } from "@/lib/analytics";
 
 const SPORT_OPTIONS = ["Basketball", "Volleyball", "Other"];
 
@@ -70,6 +71,7 @@ export default function BookingForm() {
       });
 
       if (res.ok) {
+        trackConversion("book_form_submit");
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {

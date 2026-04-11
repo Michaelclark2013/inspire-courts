@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X, ArrowRight, Calendar, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import { trackConversion } from "@/lib/analytics";
 
 const PRIMARY_NAV = [
   { href: "/", label: "Home" },
@@ -191,6 +192,7 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-3">
             <Link
               href="/book"
+              onClick={() => trackConversion("book_cta_click")}
               className="flex items-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
               <Calendar className="w-3.5 h-3.5" /> Book
@@ -199,6 +201,7 @@ export default function Header() {
               href={SOCIAL_LINKS.leagueapps}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackConversion("register_click")}
               className="flex items-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
               Register Now <ArrowRight className="w-3.5 h-3.5" />
@@ -257,7 +260,7 @@ export default function Header() {
           <div className="pt-3 space-y-2">
             <Link
               href="/book"
-              onClick={() => setOpen(false)}
+              onClick={() => { setOpen(false); trackConversion("book_cta_click"); }}
               className="flex items-center justify-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
             >
               <Calendar className="w-4 h-4" /> Book Facility
@@ -266,7 +269,7 @@ export default function Header() {
               href={SOCIAL_LINKS.leagueapps}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
+              onClick={() => { setOpen(false); trackConversion("register_click"); }}
               className="flex items-center justify-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
             >
               Register Now <ArrowRight className="w-4 h-4" />

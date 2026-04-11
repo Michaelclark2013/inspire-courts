@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import { trackConversion } from "@/lib/analytics";
 
 export default function MobileRegisterBar() {
   return (
@@ -10,6 +11,7 @@ export default function MobileRegisterBar() {
         href={SOCIAL_LINKS.leagueapps}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => trackConversion("register_click")}
         className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors shadow-lg"
       >
         Register Now <ArrowRight className="w-4 h-4" />

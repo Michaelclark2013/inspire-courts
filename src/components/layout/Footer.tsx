@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Camera, Mail, MapPin } from "lucide-react";
 import { FACILITY_EMAIL, FACILITY_ADDRESS, SOCIAL_LINKS } from "@/lib/constants";
+import { trackConversion } from "@/lib/analytics";
 
 const QUICK_LINKS = [
   { href: "/events", label: "Events" },
@@ -61,7 +64,11 @@ export default function Footer() {
               <div className="space-y-3">
                 <div className="flex gap-3 text-white/80 text-sm">
                   <Mail className="w-4 h-4 text-red flex-shrink-0 mt-0.5" />
-                  <a href={`mailto:${FACILITY_EMAIL}`} className="hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 rounded-sm">
+                  <a
+                    href={`mailto:${FACILITY_EMAIL}`}
+                    onClick={() => trackConversion("email_click")}
+                    className="hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 rounded-sm"
+                  >
                     {FACILITY_EMAIL}
                   </a>
                 </div>
@@ -107,6 +114,7 @@ export default function Footer() {
                 </a>
                 <a
                   href={`mailto:${FACILITY_EMAIL}`}
+                  onClick={() => trackConversion("email_click")}
                   className="w-11 h-11 bg-navy-light rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-red transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-navy"
                   aria-label="Email Inspire Courts"
                   title="Email Inspire Courts"

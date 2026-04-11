@@ -4,46 +4,35 @@ import { useState, useEffect } from "react";
 import { BarChart3 } from "lucide-react";
 import type { StandingRow } from "@/lib/standings";
 
+type GameData = {
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number;
+  awayScore: number;
+  status: string;
+  division: string | null;
+};
+
 export default function StandingsTable() {
   const [standings, setStandings] = useState<StandingRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [allGames, setAllGames] = useState<GameData[]>([]);
+  const [divisions, setDivisions] = useState<string[]>([]);
+  const [divisionFilter, setDivisionFilter] = useState("");
 
   useEffect(() => {
     async function fetchStandings() {
       try {
         const res = await fetch("/api/scores/live");
         if (!res.ok) return;
-        const games = await res.json();
+        const games: GameData[] = await res.json();
+        setAllGames(games);
 
-        // Compute standings client-side from game results
-        const records: Record<string, { wins: number; losses: number }> = {};
-        for (const g of games) {
-          if (g.status !== "final") continue;
-          if (g.homeTeam) records[g.homeTeam] = records[g.homeTeam] || { wins: 0, losses: 0 };
-          if (g.awayTeam) records[g.awayTeam] = records[g.awayTeam] || { wins: 0, losses: 0 };
+        // Extract unique divisions
+        const divs = [...new Set(games.map((g) => g.division).filter(Boolean))] as string[];
+        setDivisions(divs.sort());
 
-          if (g.homeScore > g.awayScore) {
-            records[g.homeTeam].wins++;
-            records[g.awayTeam].losses++;
-          } else if (g.awayScore > g.homeScore) {
-            records[g.awayTeam].wins++;
-            records[g.homeTeam].losses++;
-          }
-        }
-
-        const rows = Object.entries(records)
-          .map(([team, rec]) => ({
-            team,
-            wins: rec.wins,
-            losses: rec.losses,
-            pct:
-              rec.wins + rec.losses > 0
-                ? ((rec.wins / (rec.wins + rec.losses)) * 100).toFixed(0)
-                : "0",
-          }))
-          .sort((a, b) => b.wins - a.wins || a.losses - b.losses);
-
-        setStandings(rows);
+        computeStandings(games, "");
       } catch {
         // API not available
       } finally {
@@ -53,6 +42,46 @@ export default function StandingsTable() {
 
     fetchStandings();
   }, []);
+
+  function computeStandings(games: GameData[], division: string) {
+    const filtered = division
+      ? games.filter((g) => g.division === division)
+      : games;
+
+    const records: Record<string, { wins: number; losses: number }> = {};
+    for (const g of filtered) {
+      if (g.status !== "final") continue;
+      if (g.homeTeam) records[g.homeTeam] = records[g.homeTeam] || { wins: 0, losses: 0 };
+      if (g.awayTeam) records[g.awayTeam] = records[g.awayTeam] || { wins: 0, losses: 0 };
+
+      if (g.homeScore > g.awayScore) {
+        records[g.homeTeam].wins++;
+        records[g.awayTeam].losses++;
+      } else if (g.awayScore > g.homeScore) {
+        records[g.awayTeam].wins++;
+        records[g.homeTeam].losses++;
+      }
+    }
+
+    const rows = Object.entries(records)
+      .map(([team, rec]) => ({
+        team,
+        wins: rec.wins,
+        losses: rec.losses,
+        pct:
+          rec.wins + rec.losses > 0
+            ? ((rec.wins / (rec.wins + rec.losses)) * 100).toFixed(0)
+            : "0",
+      }))
+      .sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+
+    setStandings(rows);
+  }
+
+  function handleDivisionChange(div: string) {
+    setDivisionFilter(div);
+    computeStandings(allGames, div);
+  }
 
   if (loading) {
     return (
@@ -74,6 +103,30 @@ export default function StandingsTable() {
 
   return (
     <div className="overflow-x-auto">
+      {divisions.length > 0 && (
+        <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2">
+          <span className="text-white/40 text-xs font-semibold uppercase tracking-wider">Division:</span>
+          <button
+            onClick={() => handleDivisionChange("")}
+            className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
+              divisionFilter === "" ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
+            }`}
+          >
+            All
+          </button>
+          {divisions.map((d) => (
+            <button
+              key={d}
+              onClick={() => handleDivisionChange(d)}
+              className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
+                divisionFilter === d ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
+              }`}
+            >
+              {d}
+            </button>
+          ))}
+        </div>
+      )}
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">

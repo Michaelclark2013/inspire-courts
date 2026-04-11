@@ -85,6 +85,37 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(newUser, { status: 201 });
 }
 
+// PUT /api/admin/users — update a user's role, name, phone
+export async function PUT(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const { id, role, name, phone } = body;
+
+  if (!id) {
+    return NextResponse.json({ error: "Missing user id" }, { status: 400 });
+  }
+
+  const validRoles = ["admin", "staff", "ref", "front_desk", "coach", "parent"];
+  if (role && !validRoles.includes(role)) {
+    return NextResponse.json({ error: "Invalid role" }, { status: 400 });
+  }
+
+  const updates: Record<string, unknown> = {
+    updatedAt: new Date().toISOString(),
+  };
+  if (role) updates.role = role;
+  if (name) updates.name = name;
+  if (phone !== undefined) updates.phone = phone || null;
+
+  await db.update(users).set(updates).where(eq(users.id, Number(id)));
+
+  return NextResponse.json({ success: true });
+}
+
 // DELETE /api/admin/users — delete a user
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);

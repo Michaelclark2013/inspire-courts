@@ -15,6 +15,7 @@ import {
   Circle,
   ArrowRight,
   Zap,
+  Megaphone,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -42,6 +43,9 @@ export default function PortalDashboard() {
   const [liveGames, setLiveGames] = useState<LiveGame[]>([]);
   const [rosterCount, setRosterCount] = useState<number | null>(null);
   const [waiverSubmitted, setWaiverSubmitted] = useState(false);
+  const [portalAnnouncements, setPortalAnnouncements] = useState<
+    { id: number; title: string; body: string; audience: string; createdAt: string }[]
+  >([]);
 
   const role = session?.user?.role;
   const name = session?.user?.name?.split(" ")[0] || "there";
@@ -51,6 +55,12 @@ export default function PortalDashboard() {
     fetch("/api/scores/live")
       .then((r) => r.json())
       .then(setLiveGames)
+      .catch(() => {});
+
+    // Fetch announcements
+    fetch("/api/portal/announcements")
+      .then((r) => r.json())
+      .then(setPortalAnnouncements)
       .catch(() => {});
 
     // Check roster count for coaches
@@ -117,6 +127,28 @@ export default function PortalDashboard() {
           {greeting}, {name}
         </h1>
       </div>
+
+      {/* Announcements */}
+      {portalAnnouncements.length > 0 && (
+        <div className="mb-6 space-y-2">
+          {portalAnnouncements.slice(0, 3).map((a) => (
+            <div
+              key={a.id}
+              className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4"
+            >
+              <div className="flex items-start gap-3">
+                <Megaphone className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-amber-400 text-xs font-bold uppercase tracking-wider mb-0.5">
+                    {a.title}
+                  </p>
+                  <p className="text-white/70 text-sm">{a.body}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Live Games Banner */}
       {liveNow.length > 0 && (

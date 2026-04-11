@@ -56,6 +56,10 @@ export default function UsersPage() {
   const [error, setError] = useState("");
 
   // Form state
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editRole, setEditRole] = useState("");
+
+  // Form state
   const [form, setForm] = useState({
     email: "",
     name: "",
@@ -100,6 +104,16 @@ export default function UsersPage() {
       setError(data.error || "Failed to create user");
     }
     setSaving(false);
+  }
+
+  async function handleRoleChange(id: number, newRole: string) {
+    await fetch("/api/admin/users", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, role: newRole }),
+    });
+    setEditingId(null);
+    fetchUsers();
   }
 
   async function handleDelete(id: number, name: string) {
@@ -301,11 +315,35 @@ export default function UsersPage() {
                     </td>
                     <td className="px-6 py-4 text-text-secondary">{u.email}</td>
                     <td className="px-6 py-4">
-                      <span
-                        className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${ROLE_COLORS[u.role] || "bg-white/10 text-white/60"}`}
-                      >
-                        {ROLE_LABELS[u.role] || u.role}
-                      </span>
+                      {editingId === u.id ? (
+                        <select
+                          value={editRole}
+                          onChange={(e) => {
+                            handleRoleChange(u.id, e.target.value);
+                          }}
+                          onBlur={() => setEditingId(null)}
+                          autoFocus
+                          className="bg-navy border border-white/10 rounded-lg px-2 py-1 text-white text-xs focus:outline-none focus:border-red cursor-pointer"
+                        >
+                          <option value="coach">Coach</option>
+                          <option value="parent">Parent</option>
+                          <option value="staff">Staff</option>
+                          <option value="ref">Referee</option>
+                          <option value="front_desk">Front Desk</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setEditingId(u.id);
+                            setEditRole(u.role);
+                          }}
+                          className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full cursor-pointer hover:ring-1 hover:ring-white/20 transition-all ${ROLE_COLORS[u.role] || "bg-white/10 text-white/60"}`}
+                          title="Click to change role"
+                        >
+                          {ROLE_LABELS[u.role] || u.role}
+                        </button>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-text-secondary">
                       {u.phone || "—"}

@@ -5,16 +5,15 @@ import { db } from "@/lib/db";
 import { checkins } from "@/lib/db/schema";
 import {
   appendSheetRow,
-  isGoogleConfigured,
   sanitizeSheetRow,
   SHEETS,
+  isGoogleConfigured,
 } from "@/lib/google-sheets";
 
-// POST /api/admin/checkin — check in a player (dual-write: DB + Sheets)
+// POST /api/portal/checkin — coach check-in for their team players
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  const allowedRoles = ["admin", "front_desk", "staff"];
-  if (!session || !allowedRoles.includes(session.user.role as string)) {
+  if (!session || !["coach", "admin", "front_desk", "staff"].includes(session.user.role || "")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -41,10 +40,8 @@ export async function POST(request: NextRequest) {
 
   // Fire-and-forget: write to Google Sheets
   if (isGoogleConfigured()) {
-    const timestamp = new Date().toLocaleString("en-US", {
-      timeZone: "America/Phoenix",
-    });
-    appendSheetRow(SHEETS.playerCheckIn, "A:F", [
+    const timestamp = new Date().toISOString();
+    appendSheetRow(SHEETS.playerCheckIn, "Sheet1!A:F", [
       sanitizeSheetRow([timestamp, playerName, teamName || "", division || "", "CHECKIN", session.user.name || ""]),
     ]).catch(() => {});
   }

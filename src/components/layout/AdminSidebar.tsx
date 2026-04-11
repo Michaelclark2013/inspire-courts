@@ -28,6 +28,7 @@ import {
   Columns3,
   Calendar,
   History,
+  Megaphone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { canAccess, ROLE_LABELS } from "@/lib/permissions";
@@ -56,8 +57,9 @@ const OPERATIONS: NavItem[] = [
 const RESOURCES: NavItem[] = [
   { href: "/admin/files", label: "Files & Drive", icon: FolderOpen, page: "files" },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3, page: "analytics" },
-  { href: "/admin/contacts", label: "Leads", icon: MessageSquare, page: "contacts" },
-  { href: "/admin/tournaments", label: "Tournaments", icon: Trophy, page: "tournaments" },
+  { href: "/admin/leads", label: "Prospect Pipeline", icon: TrendingUp, page: "prospects" },
+  { href: "/admin/tournaments/manage", label: "Tournament Manager", icon: Trophy, page: "tournaments" },
+  { href: "/admin/announcements", label: "Announcements", icon: Megaphone, page: "tournaments" },
   { href: "/admin/sponsors", label: "Sponsorships", icon: Handshake, page: "sponsors" },
   { href: "/admin/schools", label: "Schools", icon: GraduationCap, page: "schools" },
   { href: "/admin/content", label: "Content Editor", icon: FileEdit, page: "content" },

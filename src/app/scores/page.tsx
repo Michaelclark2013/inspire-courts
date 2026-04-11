@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import LiveScoreboard from "@/components/scores/LiveScoreboard";
 import StandingsTable from "@/components/scores/StandingsTable";
+import TournamentsList from "@/components/scores/TournamentsList";
 import BackToTop from "@/components/ui/BackToTop";
 
 export const metadata: Metadata = {
@@ -27,6 +28,13 @@ export default function ScoresPage() {
             Real-time game scores and league standings. Updates every 30 seconds
             during live games.
           </p>
+        </div>
+      </section>
+
+      {/* Active Tournaments */}
+      <section className="px-4 pb-8">
+        <div className="max-w-4xl mx-auto">
+          <TournamentsList />
         </div>
       </section>
 

@@ -38,7 +38,7 @@ export default function CoachCheckInPage() {
 
   async function checkIn(playerName: string, playerId?: number) {
     if (playerId) setCheckingIn(playerId);
-    const res = await fetch("/api/admin/checkin", {
+    const res = await fetch("/api/portal/checkin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ playerName, teamName }),

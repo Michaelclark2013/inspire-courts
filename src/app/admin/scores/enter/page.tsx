@@ -30,12 +30,16 @@ const STATUS_STYLES = {
   final: "bg-red/20 text-red",
 };
 
+type TournamentOption = { id: number; name: string };
+
 export default function ScoreEntryPage() {
   const [gameList, setGameList] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [tournamentFilter, setTournamentFilter] = useState<string>("");
+  const [tournamentOptions, setTournamentOptions] = useState<TournamentOption[]>([]);
 
   // New game form
   const [form, setForm] = useState({
@@ -64,6 +68,14 @@ export default function ScoreEntryPage() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  // Fetch tournament options
+  useEffect(() => {
+    fetch("/api/admin/tournaments")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: TournamentOption[]) => setTournamentOptions(data))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -116,9 +128,12 @@ export default function ScoreEntryPage() {
     setSaving(false);
   }
 
-  const liveGames = gameList.filter((g) => g.status === "live");
-  const scheduledGames = gameList.filter((g) => g.status === "scheduled");
-  const finalGames = gameList.filter((g) => g.status === "final");
+  const filtered = tournamentFilter
+    ? gameList.filter((g) => g.eventName === tournamentFilter)
+    : gameList;
+  const liveGames = filtered.filter((g) => g.status === "live");
+  const scheduledGames = filtered.filter((g) => g.status === "scheduled");
+  const finalGames = filtered.filter((g) => g.status === "final");
 
   return (
     <div className="p-6 lg:p-8">
@@ -132,13 +147,29 @@ export default function ScoreEntryPage() {
             Create games and enter live scores
           </p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
-        >
-          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-          {showForm ? "Cancel" : "New Game"}
-        </button>
+        <div className="flex items-center gap-3">
+          {tournamentOptions.length > 0 && (
+            <select
+              value={tournamentFilter}
+              onChange={(e) => setTournamentFilter(e.target.value)}
+              className="bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-red cursor-pointer"
+            >
+              <option value="">All Games</option>
+              {tournamentOptions.map((t) => (
+                <option key={t.id} value={t.name}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          )}
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          >
+            {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+            {showForm ? "Cancel" : "New Game"}
+          </button>
+        </div>
       </div>
 
       {/* New game form */}

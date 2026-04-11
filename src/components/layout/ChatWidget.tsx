@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +14,8 @@ const QUICK_QUESTIONS = [
   "How do I register my team?",
   "Tell me about training",
   "How do I join Team Inspire?",
+  "Where are you located?",
+  "What events are coming up?",
 ];
 
 const INITIAL_MESSAGE: Message = {
@@ -47,6 +49,110 @@ function loadMessages(): Message[] {
   return [INITIAL_MESSAGE];
 }
 
+// ── Rich text renderer ──
+// Converts plain text with \n, URLs, and basic markdown into JSX
+function RichText({ text }: { text: string }) {
+  const elements = useMemo(() => {
+    // Split into paragraphs by double newlines
+    const paragraphs = text.split(/\n{2,}/);
+
+    return paragraphs.map((para, pIdx) => {
+      // Split paragraph into lines
+      const lines = para.split("\n");
+
+      const lineElements = lines.map((line, lIdx) => {
+        // Parse line into segments: text and links
+        const segments: React.ReactNode[] = [];
+        const urlRegex = /(https?:\/\/[^\s),]+)/g;
+        let lastIndex = 0;
+        let match;
+
+        while ((match = urlRegex.exec(line)) !== null) {
+          // Text before the URL
+          if (match.index > lastIndex) {
+            segments.push(line.slice(lastIndex, match.index));
+          }
+          // The URL itself — make it a clickable link
+          const url = match[1];
+          // Show a friendly label for known URLs
+          let label = url;
+          if (url.includes("youtube.com") || url.includes("youtu.be")) label = "Watch Tour →";
+          else if (url.includes("instagram.com")) label = "View Profile →";
+          else if (url.length > 35) label = url.slice(0, 32) + "...";
+
+          segments.push(
+            <a
+              key={`${pIdx}-${lIdx}-${match.index}`}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-red underline underline-offset-2 hover:text-red-hover break-all"
+            >
+              {label}
+            </a>
+          );
+          lastIndex = match.index + match[0].length;
+        }
+
+        // Remaining text after last URL
+        if (lastIndex < line.length) {
+          segments.push(line.slice(lastIndex));
+        }
+
+        // If line is empty, skip
+        if (segments.length === 0) return null;
+
+        return (
+          <span key={`${pIdx}-${lIdx}`}>
+            {lIdx > 0 && <br />}
+            {segments}
+          </span>
+        );
+      });
+
+      return (
+        <span key={pIdx} className={pIdx > 0 ? "mt-2 block" : undefined}>
+          {lineElements}
+        </span>
+      );
+    });
+  }, [text]);
+
+  return <>{elements}</>;
+}
+
+// ── Contextual follow-up suggestions based on last bot message ──
+function getFollowUpSuggestions(lastBotMessage: string): string[] {
+  const msg = lastBotMessage.toLowerCase();
+
+  if (msg.includes("tournament") || msg.includes("register") || msg.includes("division")) {
+    return ["What age groups?", "How much to enter?", "When's the next event?"];
+  }
+  if (msg.includes("rent") || msg.includes("$80") || msg.includes("court rental")) {
+    return ["How do I book?", "What sports?", "Birthday party options?"];
+  }
+  if (msg.includes("training") || msg.includes("shooting") || msg.includes("1-on-1")) {
+    return ["How do I book?", "How much is training?", "Group sessions?"];
+  }
+  if (msg.includes("club") || msg.includes("made hoops") || msg.includes("team inspire")) {
+    return ["How do I try out?", "What ages?", "What's MADE Hoops?"];
+  }
+  if (msg.includes("location") || msg.includes("address") || msg.includes("gilbert")) {
+    return ["What are your hours?", "Is there parking?", "Can I rent courts?"];
+  }
+  if (msg.includes("price") || msg.includes("cost") || msg.includes("$")) {
+    return ["I want to register!", "Court rental details?", "Contact the team"];
+  }
+  if (msg.includes("schedule") || msg.includes("bracket")) {
+    return ["How do I register?", "Where are you located?", "What age groups?"];
+  }
+  if (msg.includes("welcome") || msg.includes("what can i help")) {
+    return []; // Don't show follow-ups on the initial greeting
+  }
+
+  return ["Tell me about events", "How much to rent?", "Contact info"];
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
@@ -55,6 +161,7 @@ export default function ChatWidget() {
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Persist messages to sessionStorage
   useEffect(() => {
@@ -65,9 +172,16 @@ export default function ChatWidget() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
 
-  // Auto-open chat on first visit (no sound — just a pulse animation on the button)
+  // Auto-focus input when chat opens
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [open]);
+
+  // Auto-open chat on first visit
   useEffect(() => {
     if (hasAutoOpened) return;
     const timer = setTimeout(() => {
@@ -87,21 +201,40 @@ export default function ChatWidget() {
     if (open) setUnreadCount(0);
   }, [open]);
 
+  // Get follow-up suggestions based on last bot message
+  const followUpSuggestions = useMemo(() => {
+    const lastBotMsg = [...messages].reverse().find((m) => m.role === "assistant");
+    if (!lastBotMsg || messages.length <= 1) return [];
+    return getFollowUpSuggestions(lastBotMsg.content);
+  }, [messages]);
+
+  // Show quick questions only on initial state (1 message = just the greeting)
+  const showQuickQuestions = messages.length <= 1 && !loading;
+  // Show follow-up suggestions after the first real exchange
+  const showFollowUps = !showQuickQuestions && followUpSuggestions.length > 0 && !loading;
+
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;
 
     const userMsg: Message = { role: "user", content: text.trim() };
-    setMessages((prev) => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInput("");
     setLoading(true);
 
     try {
+      // Send full conversation history (excluding initial greeting)
+      const history = updatedMessages
+        .slice(1) // skip initial greeting
+        .slice(-20) // last 20 messages
+        .map((m) => ({ role: m.role, content: m.content }));
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: text.trim(),
-          history: messages.filter((m) => m.role !== "assistant" || messages.indexOf(m) > 0),
+          history: history.slice(0, -1), // don't include the message we just sent (it's in `message`)
           sessionId: getSessionId(),
         }),
       });
@@ -150,7 +283,7 @@ export default function ChatWidget() {
         <div
           className={cn(
             "fixed z-[100] bg-white border border-light-gray rounded-xl shadow-2xl flex flex-col",
-            "bottom-36 right-4 w-[calc(100vw-2rem)] max-w-[380px] h-[500px]",
+            "bottom-36 right-4 w-[calc(100vw-2rem)] max-w-[400px] h-[min(580px,calc(100vh-10rem))]",
             "lg:bottom-24 lg:right-6",
             "animate-[slideUp_0.3s_ease-out]"
           )}
@@ -176,39 +309,62 @@ export default function ChatWidget() {
               <div
                 key={i}
                 className={cn(
-                  "max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm leading-relaxed",
+                  "max-w-[88%] rounded-xl px-3.5 py-2.5 text-sm leading-relaxed",
                   msg.role === "user"
                     ? "ml-auto bg-red text-white"
                     : "bg-white border border-light-gray text-text-muted shadow-sm"
                 )}
               >
-                {msg.content}
+                {msg.role === "assistant" ? (
+                  <RichText text={msg.content} />
+                ) : (
+                  msg.content
+                )}
               </div>
             ))}
             {loading && (
               <div className="bg-white border border-light-gray rounded-xl px-3.5 py-2.5 text-sm text-text-muted max-w-[85%] shadow-sm">
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-text-muted/60 rounded-full animate-[bounce_1.4s_infinite_0ms]" />
-                  <span className="w-1.5 h-1.5 bg-text-muted/60 rounded-full animate-[bounce_1.4s_infinite_200ms]" />
-                  <span className="w-1.5 h-1.5 bg-text-muted/60 rounded-full animate-[bounce_1.4s_infinite_400ms]" />
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="w-2 h-2 bg-navy/40 rounded-full animate-[bounce_1.4s_infinite_0ms]" />
+                  <span className="w-2 h-2 bg-navy/40 rounded-full animate-[bounce_1.4s_infinite_200ms]" />
+                  <span className="w-2 h-2 bg-navy/40 rounded-full animate-[bounce_1.4s_infinite_400ms]" />
                 </span>
               </div>
             )}
             <div ref={bottomRef} />
           </div>
 
-          {/* Quick questions */}
-          {messages.length <= 2 && (
-            <div className="px-4 pb-2 bg-off-white flex flex-wrap gap-1.5">
-              {QUICK_QUESTIONS.map((q) => (
-                <button
-                  key={q}
-                  onClick={() => sendMessage(q)}
-                  className="text-xs bg-white border border-light-gray text-text-muted hover:text-navy hover:border-red/50 px-2.5 py-1.5 rounded-full transition-colors"
-                >
-                  {q}
-                </button>
-              ))}
+          {/* Quick questions (initial state) */}
+          {showQuickQuestions && (
+            <div className="px-3 pb-2 bg-off-white">
+              <div className="flex flex-wrap gap-1.5">
+                {QUICK_QUESTIONS.map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => sendMessage(q)}
+                    className="text-xs bg-white border border-light-gray text-text-muted hover:text-navy hover:border-red/50 px-2.5 py-1.5 rounded-full transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Contextual follow-up suggestions (after bot responds) */}
+          {showFollowUps && (
+            <div className="px-3 pb-2 bg-off-white">
+              <div className="flex flex-wrap gap-1.5">
+                {followUpSuggestions.map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => sendMessage(q)}
+                    className="text-xs bg-red/5 border border-red/20 text-red hover:bg-red/10 hover:border-red/40 px-2.5 py-1.5 rounded-full transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -222,6 +378,7 @@ export default function ChatWidget() {
               className="flex gap-2"
             >
               <input
+                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

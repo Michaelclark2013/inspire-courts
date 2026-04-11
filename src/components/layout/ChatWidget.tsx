@@ -18,7 +18,7 @@ const PAGE_CONTEXT: Record<
 > = {
   "/events": {
     greeting:
-      "Looking for tournament info? Ask me about upcoming events, age divisions, registration, or entry fees!",
+      "Hey! I'm your Inspire Courts assistant 🏀 I see you're checking out our events — want help finding the right tournament, registering your team, or figuring out divisions and fees? I'm here for you!",
     quickQuestions: [
       "What events are coming up?",
       "How do I register my team?",
@@ -30,7 +30,7 @@ const PAGE_CONTEXT: Record<
   },
   "/schedule": {
     greeting:
-      "Need schedule info? I can help with brackets, game times, and results!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Looking for your game schedule? Tell me your team or age group and I'll help you find brackets, game times, and results!",
     quickQuestions: [
       "When does the schedule drop?",
       "How do I find my bracket?",
@@ -42,7 +42,7 @@ const PAGE_CONTEXT: Record<
   },
   "/facility": {
     greeting:
-      "Want to know about our facility? I can tell you about our courts, amenities, and rental options!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Checking out the facility? I'd love to walk you through what we've got — courts, amenities, rentals, you name it. What are you looking for?",
     quickQuestions: [
       "How much to rent a court?",
       "What sports can I play?",
@@ -54,7 +54,7 @@ const PAGE_CONTEXT: Record<
   },
   "/book": {
     greeting:
-      "Need help booking? I can answer questions about availability, pricing, and what to expect!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Ready to book? I can walk you through availability, pricing, and get you set up. What are you looking to do?",
     quickQuestions: [
       "How much to rent a court?",
       "How do I book a court?",
@@ -66,7 +66,7 @@ const PAGE_CONTEXT: Record<
   },
   "/training": {
     greeting:
-      "Looking to level up your game? Ask me about our training programs, coaches, and how to book!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Looking to level up? Our training programs are built to take your game to the next level. Tell me what you're looking for and I'll point you in the right direction!",
     quickQuestions: [
       "What training do you offer?",
       "How do I book a session?",
@@ -78,7 +78,7 @@ const PAGE_CONTEXT: Record<
   },
   "/teams": {
     greeting:
-      "Interested in Team Inspire? I can tell you about tryouts, age divisions, and the MADE Hoops circuit!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Interested in Team Inspire? We've got an amazing club basketball program — let me tell you about tryouts, age divisions, and our MADE Hoops circuit!",
     quickQuestions: [
       "How do I try out?",
       "What ages are on the team?",
@@ -90,7 +90,7 @@ const PAGE_CONTEXT: Record<
   },
   "/prep": {
     greeting:
-      "Want to know about Inspire Prep? Ask me about the academy program and how to get started!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Checking out Inspire Prep? This program is built for serious players who want to compete at the next level. What would you like to know?",
     quickQuestions: [
       "What is Inspire Prep?",
       "How do I enroll?",
@@ -102,7 +102,7 @@ const PAGE_CONTEXT: Record<
   },
   "/media": {
     greeting:
-      "Interested in our media services? I can tell you about game film, highlights, and mixtapes!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Our media team does some incredible work — game film for every game, player highlights, mixtapes, and social exposure. What are you interested in?",
     quickQuestions: [
       "How does game film work?",
       "How do I get my highlights?",
@@ -114,7 +114,7 @@ const PAGE_CONTEXT: Record<
   },
   "/gameday": {
     greeting:
-      "Getting ready for game day? I can help with check-in, rules, what to bring, and parking!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Game day is the best day! Let me help you get ready — check-in, rules, parking, what to bring. What do you need to know?",
     quickQuestions: [
       "What do I need to bring?",
       "How does check-in work?",
@@ -126,7 +126,7 @@ const PAGE_CONTEXT: Record<
   },
   "/contact": {
     greeting:
-      "Looking to get in touch? I can point you to the right contact, hours, and location info!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Want to get in touch with our team? I can help you reach the right person or answer your question right here. What's on your mind?",
     quickQuestions: [
       "What's your email?",
       "Where are you located?",
@@ -138,7 +138,7 @@ const PAGE_CONTEXT: Record<
   },
   "/gallery": {
     greeting:
-      "Checking out the gallery? Ask me anything about our facility, past events, or what's coming up!",
+      "Hey! I'm your Inspire Courts assistant 🏀 Love what you see? Wait until you see it in person! Ask me anything about the facility, our events, or how to get involved.",
     quickQuestions: [
       "Tell me about the facility",
       "What events do you host?",
@@ -150,7 +150,7 @@ const PAGE_CONTEXT: Record<
   },
   "/": {
     greeting:
-      "What's up! 👋 Welcome to Inspire Courts — Arizona's top indoor basketball & volleyball facility. 7 courts, 52,000 sq ft, game film every game. What can I help you with today?",
+      "What's up! 👋 I'm your personal Inspire Courts assistant. Welcome to Arizona's premier indoor basketball & volleyball facility — 52,000 sq ft, 7 courts, game film every game. I'm here to help with whatever you need. What can I do for you?",
     quickQuestions: [
       "How much to rent a court?",
       "How do I register my team?",
@@ -457,8 +457,8 @@ export default function ChatWidget() {
           <div className="flex items-center gap-3 px-4 py-3 border-b border-light-gray bg-navy rounded-t-xl">
             <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={32} height={32} className="object-contain" />
             <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-bold font-[var(--font-chakra)]">Inspire Courts</p>
-              <p className="text-green-400 text-xs">Online now</p>
+              <p className="text-white text-sm font-bold font-[var(--font-chakra)]">Inspire Assistant</p>
+              <p className="text-green-400 text-xs">Your personal guide — online now</p>
             </div>
             <button onClick={() => setOpen(false)} className="text-white/60 hover:text-white">
               <X className="w-5 h-5" />
@@ -544,7 +544,7 @@ export default function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask anything..."
+                placeholder="Ask me anything about Inspire Courts..."
                 className="flex-1 bg-off-white border border-light-gray rounded-full px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
               />
               <button

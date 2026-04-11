@@ -484,6 +484,17 @@ export async function POST(request: Request) {
 
     const { message, history, sessionId, pathname } = result.data;
 
+    // Block gibberish and pure nonsense before hitting the API (saves tokens)
+    const cleaned = message.replace(/[^a-zA-Z]/g, "");
+    const isGibberish = cleaned.length > 3 && !/[aeiou]/i.test(cleaned);
+    const isTooShort = cleaned.length > 0 && cleaned.length < 2 && !/[?!]/.test(message);
+    if (isGibberish || isTooShort) {
+      return NextResponse.json({
+        success: true,
+        reply: "Didn't quite catch that! If you have a question about Inspire Courts — tournaments, rentals, training, or anything at the facility — I'm here for you! 🏀",
+      });
+    }
+
     // Use Claude if API key is available
     if (process.env.ANTHROPIC_API_KEY) {
       const messages = [

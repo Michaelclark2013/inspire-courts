@@ -2,8 +2,10 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { MessageCircle, X, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FACILITY_EMAIL } from "@/lib/constants";
 
 interface Message {
   role: "user" | "assistant";
@@ -253,7 +255,7 @@ export default function ChatWidget() {
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, something went wrong. Email us at InspireCourts@gmail.com for help.",
+          content: `Sorry, something went wrong. Email us at ${FACILITY_EMAIL} for help.`,
         },
       ]);
     } finally {
@@ -272,7 +274,7 @@ export default function ChatWidget() {
         className={cn(
           "fixed z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all",
           "bg-red hover:bg-red-hover text-white",
-          "bottom-20 right-4 lg:bottom-6 lg:right-6",
+          "bottom-28 right-4 lg:bottom-6 lg:right-6",
           !hasAutoOpened && "animate-[pulse_2s_ease-in-out_infinite]"
         )}
         aria-label="Open chat"
@@ -290,7 +292,7 @@ export default function ChatWidget() {
         <div
           className={cn(
             "fixed z-[100] bg-white border border-light-gray rounded-xl shadow-2xl flex flex-col",
-            "bottom-36 right-4 w-[calc(100vw-2rem)] max-w-[400px] h-[min(580px,calc(100vh-10rem))]",
+            "bottom-44 right-4 w-[calc(100vw-2rem)] max-w-[400px] h-[min(560px,calc(100vh-12rem))]",
             "lg:bottom-24 lg:right-6",
             "animate-[slideUp_0.3s_ease-out]"
           )}
@@ -298,7 +300,7 @@ export default function ChatWidget() {
         >
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-light-gray bg-navy rounded-t-xl">
-            <img src="/images/inspire-athletics-logo.png" alt="Inspire Courts" className="w-8 h-8 object-contain" />
+            <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={32} height={32} className="object-contain" />
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-bold font-[var(--font-chakra)]">Inspire Courts</p>
               <p className="text-green-400 text-xs">Online now</p>

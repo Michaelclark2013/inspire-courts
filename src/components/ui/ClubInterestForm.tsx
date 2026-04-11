@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { FACILITY_EMAIL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 type Role = "player" | "coach";
@@ -43,7 +45,7 @@ export default function ClubInterestForm() {
       });
       if (res.ok) setSubmitted(true);
     } catch {
-      alert("Something went wrong. Please email InspireCourts@gmail.com directly.");
+      alert(`Something went wrong. Please email ${FACILITY_EMAIL} directly.`);
     } finally {
       setLoading(false);
     }
@@ -229,14 +231,9 @@ export default function ClubInterestForm() {
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
-      >
-        {loading ? "Submitting..." : "Submit Interest"}{" "}
-        <ArrowRight className="w-4 h-4" />
-      </button>
+      <SubmitButton loading={loading} loadingText="Submitting..." fullWidth>
+        Submit Interest
+      </SubmitButton>
     </form>
   );
 }

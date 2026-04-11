@@ -59,11 +59,18 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
         Stay in the Loop
       </h2>
       <p
-        className={`text-lg leading-relaxed mb-8 max-w-xl mx-auto ${
+        className={`text-lg leading-relaxed mb-2 max-w-xl mx-auto ${
           isDark ? "text-white/70" : "text-text-muted"
         }`}
       >
-        Get tournament announcements, schedule drops, and Inspire Courts updates.
+        Get early access to event registration and schedule updates — before spots sell out.
+      </p>
+      <p
+        className={`text-sm mb-8 max-w-md mx-auto ${
+          isDark ? "text-white/50" : "text-text-muted/70"
+        }`}
+      >
+        Tournament announcements, schedule drops, and Inspire Courts news. No spam.
       </p>
 
       {status === "success" ? (

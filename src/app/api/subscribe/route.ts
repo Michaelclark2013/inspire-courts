@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { subscribeSchema } from "@/lib/schemas";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email } = body;
+    const result = subscribeSchema.safeParse(body);
 
-    if (!email || typeof email !== "string" || !EMAIL_REGEX.test(email.trim())) {
+    if (!result.success) {
       return NextResponse.json(
-        { error: "Please enter a valid email address." },
+        { success: false, error: result.error.issues[0]?.message ?? "Invalid request." },
         { status: 400 }
       );
     }
 
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanEmail = result.data.email.trim().toLowerCase();
     const apiKey = process.env.MAILCHIMP_API_KEY;
     const listId = process.env.MAILCHIMP_LIST_ID;
 
@@ -45,22 +45,21 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ success: true });
         }
 
-        console.error("Mailchimp error:", data);
+        logger.error("Mailchimp subscription failed", { title: data.title });
         return NextResponse.json(
-          { error: "Subscription failed. Please try again." },
+          { success: false, error: "Subscription failed. Please try again." },
           { status: 500 }
         );
       }
     } else {
-      // Graceful fallback — log and return success
-      console.log(`[subscribe] No Mailchimp config — email captured: ${cleanEmail}`);
+      logger.info("Mailchimp not configured — email captured", { email: cleanEmail });
     }
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("[subscribe] Error:", err);
+    logger.error("Subscribe handler failed", { error: String(err) });
     return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
+      { success: false, error: "Something went wrong. Please try again." },
       { status: 500 }
     );
   }

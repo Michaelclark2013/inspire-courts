@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { FACILITY_EMAIL } from "@/lib/constants";
+import Link from "next/link";
 import {
   MapPin,
   Ticket,
@@ -9,13 +11,19 @@ import {
   CloudSun,
   ShieldAlert,
   HelpCircle,
+  Car,
+  ArrowRight,
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import BackToTop from "@/components/ui/BackToTop";
 
 export const metadata: Metadata = {
-  title: "Game Day Info | Inspire Courts AZ — Parking, Check-In, Schedule",
+  title: "Game Day Info | Inspire Courts AZ",
   description:
-    "Everything you need to know for game day at Inspire Courts AZ. Location, parking, admission, check-in, schedules, food, house rules, and more.",
+    "Everything you need for game day at Inspire Courts AZ. Location, parking, admission, check-in, schedules, food, house rules, and more. Gilbert, AZ.",
+  alternates: {
+    canonical: "https://inspirecourtsaz.com/gameday",
+  },
 };
 
 const INFO_SECTIONS = [
@@ -79,7 +87,7 @@ const INFO_SECTIONS = [
     icon: HelpCircle,
     title: "Need Help?",
     content:
-      "Email InspireCourts@gmail.com or find any staff member in an Inspire Courts shirt.",
+      `Email ${FACILITY_EMAIL} or find any staff member in an Inspire Courts shirt.`,
     highlight: false,
   },
 ];
@@ -97,7 +105,7 @@ export default function GameDayPage() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
               Be Ready
@@ -145,7 +153,7 @@ export default function GameDayPage() {
                   {section.map && (
                     <div className="mt-4 bg-off-white border border-light-gray rounded-xl overflow-hidden aspect-[16/9]">
                       <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3331.1!2d-111.7897!3d33.3528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDIxJzEwLjEiTiAxMTHCsDQ3JzIyLjkiVw!5e0!3m2!1sen!2sus!4v1234567890"
+                        src="https://maps.google.com/maps?q=1090+N+Fiesta+Blvd+Ste+101+%26+102+Gilbert+AZ+85233&output=embed&z=16"
                         width="100%"
                         height="100%"
                         style={{ border: 0 }}
@@ -163,6 +171,66 @@ export default function GameDayPage() {
         </div>
       </section>
 
+      {/* Getting Here */}
+      <section className="py-16 bg-navy">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimateIn>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-red rounded-full flex items-center justify-center flex-shrink-0">
+                <Car className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-white font-bold text-sm uppercase tracking-[0.15em] font-[var(--font-chakra)]">
+                Getting Here & Parking
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-white/80 text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">Address</h3>
+                <p className="text-white text-sm leading-relaxed">1090 N Fiesta Blvd<br />Ste 101 &amp; 102<br />Gilbert, AZ 85233</p>
+              </div>
+              <div>
+                <h3 className="text-white/80 text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">Parking</h3>
+                <p className="text-white/80 text-sm leading-relaxed">Free parking in the lot directly in front of the building. Enter from Fiesta Blvd. Look for the Inspire Courts signage.</p>
+              </div>
+              <div>
+                <h3 className="text-white/80 text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">Entrance</h3>
+                <p className="text-white/80 text-sm leading-relaxed">Enter through Suite 101 &amp; 102. Staff in Inspire Courts shirts are at the entrance on event days.</p>
+              </div>
+              <div>
+                <h3 className="text-white/80 text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">From US-60</h3>
+                <p className="text-white/80 text-sm leading-relaxed">Exit at Gilbert Rd south → right on Guadalupe Rd → left on Fiesta Blvd. Facility is on the right.</p>
+              </div>
+            </div>
+          </AnimateIn>
+        </div>
+      </section>
+
+      {/* Related Pages */}
+      <section className="py-12 bg-off-white border-t border-light-gray">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-text-muted text-xs font-bold uppercase tracking-[0.2em] mb-5 text-center font-[var(--font-chakra)]">
+            Related Pages
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { href: "/events", label: "Tournaments" },
+              { href: "/schedule", label: "Schedules" },
+              { href: "/facility", label: "Facility" },
+              { href: "/contact", label: "Contact" },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="flex items-center justify-center gap-1.5 bg-white border border-light-gray hover:border-red/40 hover:text-red text-navy text-xs font-bold uppercase tracking-wide py-3 px-4 rounded-xl transition-colors font-[var(--font-chakra)]"
+              >
+                {link.label} <ArrowRight className="w-3 h-3 opacity-60" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* ── Brand color CSS custom properties (usable in inline styles & arbitrary values) ── */
+:root {
+  --color-brand-red: #CC0000;
+  --color-brand-navy: #0B1D3A;
+}
+
 @theme inline {
   /* ── Red, White & Blue ── */
   --color-navy: #0B1D3A;
@@ -45,16 +51,93 @@ html {
 ::-webkit-scrollbar-thumb { background: var(--color-navy); border-radius: 5px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-navy-light); }
 
-/* Animations */
+/* Keyframe definitions */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-in-up {
-  animation: fade-in-up 0.6s ease-out forwards;
 }
 
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px) scale(0.95); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Only apply animations when user has no motion preference */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out forwards;
+  }
+}
+
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Accessible focus rings — keyboard navigation */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #CC0000;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Mobile optimizations ── */
+
+/* Prevent horizontal scroll on mobile */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Improve tap targets on mobile */
+@media (max-width: 1024px) {
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* iOS: prevent parallax overflow issues */
+@supports (-webkit-touch-callout: none) {
+  .bg-fixed {
+    background-attachment: scroll;
+  }
+}
+
+/* Hide scrollbar on mobile for cleaner look */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar { width: 0; }
+}
+
+/* ── Shared heading size utilities ── */
+@layer components {
+  .heading-hero {
+    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl;
+  }
+  .heading-page {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+  .heading-section {
+    @apply text-3xl md:text-5xl lg:text-6xl;
+  }
+  .heading-subsection {
+    @apply text-3xl md:text-4xl;
+  }
+  .heading-card {
+    @apply text-3xl lg:text-4xl;
+  }
+  /* Stats/numbers display — used in stat bars */
+  .stats-number {
+    @apply text-4xl sm:text-5xl md:text-7xl lg:text-8xl;
+  }
 }

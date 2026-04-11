@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { ArrowLeft, Lock, Loader2, CheckCircle, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
@@ -25,8 +26,8 @@ function ResetPasswordForm() {
       return;
     }
 
-    if (password.length < 3) {
-      setError("Password must be at least 3 characters.");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
       return;
     }
 
@@ -190,7 +191,7 @@ export default function ResetPasswordPage() {
       <div className="relative w-full max-w-sm z-10">
         {/* Logo */}
         <div className="text-center mb-10">
-          <img src="/images/inspire-athletics-logo.png" alt="Inspire Athletics" className="w-20 h-20 object-contain mx-auto mb-5" />
+          <Image src="/images/inspire-athletics-logo.png" alt="Inspire Athletics" width={80} height={80} className="object-contain mx-auto mb-5" priority />
           <h1 className="text-white text-xl font-bold uppercase tracking-widest mb-1">
             Inspire Courts
           </h1>

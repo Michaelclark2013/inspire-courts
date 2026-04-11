@@ -63,10 +63,8 @@ export async function POST(request: Request) {
         subject: "Password Reset — Inspire Courts Dashboard",
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 500px; margin: 0 auto;">
-            <div style="background: #0B1D3A; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
-              <div style="background: #CC0000; display: inline-block; padding: 8px 16px; border-radius: 6px; margin-bottom: 12px;">
-                <span style="color: white; font-weight: bold; font-size: 18px;">IC</span>
-              </div>
+            <div style="background: #0B1D3A; padding: 32px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+              <img src="${baseUrl}/images/inspire-athletics-logo.png" alt="Inspire Courts" style="width: 80px; height: 80px; object-fit: contain; display: block; margin: 0 auto 12px;" />
               <h2 style="color: white; margin: 0; font-size: 16px; letter-spacing: 2px;">INSPIRE COURTS</h2>
             </div>
             <div style="border: 1px solid #e0e0e0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">

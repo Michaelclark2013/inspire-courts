@@ -1,50 +1,72 @@
 import { NextResponse } from "next/server";
 import { createContactSubmission } from "@/lib/notion";
 import { sendLeadEmail } from "@/lib/notify";
+import { contactSchema } from "@/lib/schemas";
+import { logger } from "@/lib/logger";
+import { INQUIRY_INTEREST_MAP } from "@/lib/constants";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+
+/** Escape HTML special characters to prevent XSS in downstream systems. */
+function sanitize(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 export async function POST(request: Request) {
-  try {
-    const data = await request.json();
-    const { name, email, phone, inquiryType, message } = data;
+  // Rate limit: 5 requests per minute per IP
+  const ip = getClientIp(request);
+  if (isRateLimited(`contact:${ip}`, 5, 60 * 1000)) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests. Please wait a moment and try again." },
+      { status: 429 }
+    );
+  }
 
-    if (!name || !email || !message) {
+  try {
+    const body = await request.json();
+    const result = contactSchema.safeParse(body);
+
+    if (!result.success) {
       return NextResponse.json(
-        { error: "Name, email, and message are required." },
+        { success: false, error: result.error.issues[0]?.message ?? "Invalid request." },
         { status: 400 }
       );
     }
 
+    // Sanitize all user-supplied strings before sending to Notion / email
+    const name = sanitize(result.data.name);
+    const email = sanitize(result.data.email);
+    const phone = sanitize(result.data.phone ?? "");
+    const inquiryType = sanitize(result.data.inquiryType ?? "");
+    const message = sanitize(result.data.message);
+
     // Save to Notion (fire-and-forget)
     createContactSubmission({ name, email, phone, inquiryType, message }).catch(
-      (err) => console.error("Failed to save contact submission:", err)
+      (err) => logger.error("Failed to save contact submission", { error: String(err) })
     );
 
     // Email notification to owner (fire-and-forget)
-    const interestMap: Record<string, string> = {
-      "Tournament Registration": "Tournament",
-      "Club Interest - Player": "Club",
-      "Club Interest - Coach": "Club",
-      "Facility Rental": "Rental",
-      "Sponsorship Inquiry": "General",
-      "Referee Application": "General",
-      "General Question": "General",
-      Other: "General",
-    };
-
     sendLeadEmail({
       name,
       email,
       phone,
-      interest: interestMap[inquiryType] || "General",
+      interest: INQUIRY_INTEREST_MAP[inquiryType ?? ""] ?? "General",
       urgency: "Warm",
       summary: `${inquiryType}: ${message.slice(0, 300)}`,
       source: "Contact Form",
-    }).catch((err) => console.error("Failed to send contact notification:", err));
+    }).catch((err) =>
+      logger.error("Failed to send contact notification", { error: String(err) })
+    );
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
+    logger.error("Contact form handler failed", { error: String(err) });
     return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
+      { success: false, error: "Something went wrong. Please try again." },
       { status: 500 }
     );
   }

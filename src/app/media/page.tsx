@@ -17,9 +17,12 @@ import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 export const metadata: Metadata = {
-  title: "Basketball Media Services | Highlights, Film & Content | Inspire Courts",
+  title: "Basketball Media Services | Highlights, Film & Content | Inspire Courts AZ",
   description:
     "Professional basketball media services — game film, highlight reels, mixtapes, player profiles, and social media content. Powered by @AZFinestMixtape.",
+  alternates: {
+    canonical: "https://inspirecourtsaz.com/media",
+  },
 };
 
 const SERVICES = [
@@ -120,7 +123,7 @@ export default function MediaPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(204,0,0,0.15),transparent_60%)]" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-6 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
               @AZFinestMixtape
@@ -412,6 +415,53 @@ export default function MediaPage() {
               </Link>
             </div>
           </AnimateIn>
+        </div>
+      </section>
+
+      {/* Related Pages */}
+      <section className="py-16 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-6 text-center font-[var(--font-chakra)]">
+            You Might Also Like
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link
+              href="/gallery"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Gallery
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Tournament action and facility photos</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/events"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Tournaments
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Upcoming OFF SZN HOOPS events</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/contact?type=Media+Services"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Get a Quote
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Request media services for your player</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -3,11 +3,15 @@ import Link from "next/link";
 import { ArrowRight, Tv, Video, Snowflake, UtensilsCrossed, Trophy } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import QuickContactBar from "@/components/ui/QuickContactBar";
+import BackToTop from "@/components/ui/BackToTop";
 
 export const metadata: Metadata = {
-  title: "Indoor Basketball Court Rental in Gilbert, AZ | Inspire Courts",
+  title: "Indoor Basketball Court Rental in Gilbert, AZ | Inspire Courts AZ",
   description:
-    "Rent professional indoor basketball courts in Gilbert, AZ. 2 regulation courts, live scoreboards, game film, climate-controlled. Perfect for leagues, practices, and events.",
+    "Professional indoor basketball court rental in Gilbert, AZ. 7 courts, live scoreboards, game film, climate-controlled. Book for leagues, practices, and events.",
+  alternates: {
+    canonical: "https://inspirecourtsaz.com/facility",
+  },
 };
 
 const FEATURES = [
@@ -50,7 +54,7 @@ export default function FacilityPage() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
               The Complex
@@ -69,6 +73,7 @@ export default function FacilityPage() {
       {/* Features - alternating layout */}
       <section className="py-20 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="sr-only">Facility Features</h2>
           <div className="space-y-16">
             {FEATURES.map((feature, i) => (
               <AnimateIn key={feature.title} delay={i * 80}>
@@ -81,7 +86,7 @@ export default function FacilityPage() {
                       i % 2 === 1 ? "lg:order-2" : ""
                     }`}
                   >
-                    <feature.icon className="w-16 h-16 text-light-gray" />
+                    <feature.icon className="w-16 h-16 text-red" />
                   </div>
 
                   {/* Content */}
@@ -89,7 +94,7 @@ export default function FacilityPage() {
                     <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-3 font-[var(--font-chakra)]">
                       {feature.title}
                     </p>
-                    <h3 className="text-2xl md:text-3xl font-bold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)]">
+                    <h3 className="text-2xl md:text-3xl font-semibold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)]">
                       {feature.headline}
                     </h3>
                     <p className="text-text-muted leading-relaxed">
@@ -105,7 +110,7 @@ export default function FacilityPage() {
 
       {/* Parallax break */}
       <section
-        className="relative py-28 bg-fixed bg-cover bg-center"
+        className="relative py-28 bg-scroll md:bg-fixed bg-cover bg-center"
         style={{
           backgroundImage:
             "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
@@ -140,10 +145,10 @@ export default function FacilityPage() {
                   tournaments, camps, clinics, and corporate events.
                 </p>
                 <Link
-                  href="/contact?type=Facility+Rental"
+                  href="/book"
                   className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                 >
-                  Request a Quote <ArrowRight className="w-4 h-4" />
+                  Book the Facility <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
               <div className="space-y-3">
@@ -169,8 +174,56 @@ export default function FacilityPage() {
         </div>
       </section>
 
-      <QuickContactBar subject="Facility Rental" label="Book the court?" />
-      <div className="h-28 lg:h-0 lg:hidden" />
+      {/* Related Pages */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-6 text-center font-[var(--font-chakra)]">
+            You Might Also Like
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link
+              href="/book"
+              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Book the Facility
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Request a reservation online</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/events"
+              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Tournaments
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Register for OFF SZN HOOPS events</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/training"
+              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Private Training
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Train here with a pro coach</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <QuickContactBar subject="Facility Rental" label="Book the court?" formHref="/book" />
+      <BackToTop />
+      <div className="h-28 lg:hidden" />
     </>
   );
 }

@@ -17,9 +17,12 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import ClubInterestForm from "@/components/ui/ClubInterestForm";
 
 export const metadata: Metadata = {
-  title: "Team Inspire | MADE Hoops Circuit — Club Basketball in Gilbert, AZ",
+  title: "Team Inspire | Club Basketball in Gilbert, AZ | Inspire Courts AZ",
   description:
-    "Team Inspire plays on the MADE Hoops High School Circuit. 16U and 17U boys club basketball based out of Inspire Courts in Gilbert, AZ. Looking for competitive coaches and players.",
+    "Team Inspire competes on the MADE Hoops Circuit. 16U and 17U boys club basketball based at Inspire Courts in Gilbert, AZ. Now recruiting coaches and players.",
+  alternates: {
+    canonical: "https://inspirecourtsaz.com/teams",
+  },
 };
 
 const CURRENT_DIVISIONS = [
@@ -88,7 +91,7 @@ export default function TeamsPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-4 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
               MADE Hoops Circuit
@@ -101,20 +104,20 @@ export default function TeamsPage() {
             <p className="text-white/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-4">
               Club basketball on the MADE Hoops High School Circuit. Based out of Inspire Courts in Gilbert, AZ.
             </p>
-            <p className="text-white/50 text-sm mb-10">
+            <p className="text-white/80 text-sm mb-10">
               Currently fielding 16U & 17U Boys — looking for coaches and players
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="#join"
-                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
               >
                 Join the Team{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
               <Link
                 href="/contact"
-                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/60 text-white hover:bg-white hover:text-navy px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
+                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
               >
                 Contact Us{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -181,14 +184,14 @@ export default function TeamsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {WHAT_YOU_GET.map((item, i) => (
               <AnimateIn key={item.title} delay={i * 80}>
-                <div className="group relative bg-white border border-light-gray rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="flex items-start gap-5">
                     <div className="w-14 h-14 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                       <item.icon className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-navy font-[var(--font-chakra)] font-bold text-lg uppercase tracking-tight mb-2">
+                      <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg uppercase tracking-tight mb-2">
                         {item.title}
                       </h3>
                       <p className="text-text-muted text-sm leading-relaxed">
@@ -205,7 +208,7 @@ export default function TeamsPage() {
 
       {/* Why Team Inspire */}
       <section
-        className="relative py-28 lg:py-36 bg-fixed bg-cover bg-center"
+        className="relative py-28 lg:py-36 bg-scroll md:bg-fixed bg-cover bg-center"
         style={{
           backgroundImage:
             "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
@@ -218,7 +221,7 @@ export default function TeamsPage() {
               <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white mb-4 font-[var(--font-chakra)] leading-[0.95]">
                 Why Team Inspire
               </h2>
-              <p className="text-white/60 max-w-2xl mx-auto">
+              <p className="text-white/80 max-w-2xl mx-auto">
                 This isn&apos;t rec ball. We compete on a national stage and develop players who are serious about the game.
               </p>
             </div>
@@ -231,7 +234,7 @@ export default function TeamsPage() {
                   <h3 className="text-white font-bold text-sm uppercase tracking-wide font-[var(--font-chakra)] mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
+                  <p className="text-white/80 text-sm leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
@@ -256,6 +259,53 @@ export default function TeamsPage() {
             </p>
           </div>
           <ClubInterestForm />
+        </div>
+      </section>
+
+      {/* Related Pages */}
+      <section className="py-16 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-6 text-center font-[var(--font-chakra)]">
+            You Might Also Like
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link
+              href="/training"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Private Training
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">1-on-1 and small group sessions at Inspire Courts</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/events"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Tournaments
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Upcoming OFF SZN HOOPS events</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/prep"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Inspire Prep
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Basketball prep school in Gilbert, AZ</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
       </section>
 

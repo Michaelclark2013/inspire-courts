@@ -1,5 +1,25 @@
 import type { NextConfig } from "next";
 
+const ContentSecurityPolicy = [
+  "default-src 'self'",
+  // Next.js requires unsafe-inline for its runtime scripts and style injection
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "style-src 'self' 'unsafe-inline'",
+  // Images: self, data URIs, blob, and the SportNgin CDN used for court photos
+  "img-src 'self' data: blob: https://cdn.sportngin.com https://cdn1.sportngin.com https://cdn4.sportngin.com https://*.instagram.com",
+  // Iframes: Google Maps and YouTube embeds
+  "frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://quickscores.com",
+  // API calls: Claude AI and self
+  "connect-src 'self' https://api.anthropic.com",
+  "font-src 'self' data:",
+  "media-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+]
+  .join("; ");
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
@@ -24,10 +44,12 @@ const nextConfig: NextConfig = {
     {
       source: "/(.*)",
       headers: [
+        { key: "Content-Security-Policy", value: ContentSecurityPolicy },
         { key: "X-Content-Type-Options", value: "nosniff" },
         { key: "X-Frame-Options", value: "DENY" },
         { key: "X-XSS-Protection", value: "1; mode=block" },
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
       ],
     },
   ],

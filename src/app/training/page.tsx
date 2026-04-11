@@ -15,9 +15,12 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 
 export const metadata: Metadata = {
-  title: "Private Basketball Training in Gilbert, AZ | Inspire Courts",
+  title: "Private Basketball Training in Gilbert, AZ | Inspire Courts AZ",
   description:
     "1-on-1 and small group basketball training at Inspire Courts AZ. Skill development, shooting, ball handling, game IQ, and position-specific work for all ages.",
+  alternates: {
+    canonical: "https://inspirecourtsaz.com/training",
+  },
 };
 
 const TRAINING_OPTIONS = [
@@ -64,7 +67,7 @@ export default function TrainingPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-6 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
               Get Better
@@ -80,7 +83,7 @@ export default function TrainingPage() {
             </p>
             <Link
               href="/contact?type=Private+Training"
-              className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+              className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
             >
               Book a Session{" "}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -101,7 +104,7 @@ export default function TrainingPage() {
             {TRAINING_OPTIONS.map((opt, i) => (
               <AnimateIn key={opt.title} delay={i * 100}>
                 <div
-                  className={`relative rounded-2xl p-8 h-full flex flex-col overflow-hidden ${
+                  className={`relative rounded-2xl p-8 lg:p-10 h-full flex flex-col overflow-hidden ${
                     opt.highlighted
                       ? "bg-navy text-white"
                       : "bg-white border border-light-gray"
@@ -124,7 +127,7 @@ export default function TrainingPage() {
                   )}
                   <div className="relative z-10 flex flex-col h-full">
                     <h3
-                      className={`font-[var(--font-chakra)] font-bold text-xl uppercase tracking-tight mb-3 ${
+                      className={`font-[var(--font-chakra)] font-semibold text-xl uppercase tracking-tight mb-3 ${
                         opt.highlighted ? "text-white" : "text-navy"
                       }`}
                     >
@@ -185,12 +188,12 @@ export default function TrainingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {SKILLS.map((skill, i) => (
               <AnimateIn key={skill.title} delay={i * 80}>
-                <div className="group relative bg-white border border-light-gray rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="w-14 h-14 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-5 shadow-md">
                     <skill.icon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-navy font-[var(--font-chakra)] font-bold text-lg uppercase tracking-tight mb-2">
+                  <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg uppercase tracking-tight mb-2">
                     {skill.title}
                   </h3>
                   <p className="text-text-muted text-sm leading-relaxed">
@@ -224,7 +227,7 @@ export default function TrainingPage() {
             </p>
             <Link
               href="/contact?type=Private+Training"
-              className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
+              className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
             >
               Book a Session{" "}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -233,8 +236,55 @@ export default function TrainingPage() {
         </div>
       </section>
 
+      {/* Related Pages */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-6 text-center font-[var(--font-chakra)]">
+            You Might Also Like
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link
+              href="/teams"
+              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Team Inspire
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Club basketball on the MADE Hoops Circuit</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/events"
+              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Tournaments
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Compete in OFF SZN HOOPS events</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/prep"
+              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Inspire Prep
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Full-time basketball prep school program</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <QuickContactBar subject="Private Training" label="Train with us?" />
-      <div className="h-28 lg:h-0 lg:hidden" />
+      <div className="h-28 lg:hidden" />
     </>
   );
 }

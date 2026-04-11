@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ArrowLeft, Mail, Loader2, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
@@ -43,7 +44,7 @@ export default function ForgotPasswordPage() {
       <div className="relative w-full max-w-sm z-10">
         {/* Logo */}
         <div className="text-center mb-10">
-          <img src="/images/inspire-athletics-logo.png" alt="Inspire Athletics" className="w-20 h-20 object-contain mx-auto mb-5" />
+          <Image src="/images/inspire-athletics-logo.png" alt="Inspire Athletics" width={80} height={80} className="object-contain mx-auto mb-5" priority />
           <h1 className="text-white text-xl font-bold uppercase tracking-widest mb-1">
             Inspire Courts
           </h1>

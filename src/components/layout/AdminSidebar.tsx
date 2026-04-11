@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
@@ -72,7 +73,7 @@ export default function AdminSidebar() {
         {/* Logo */}
         <div className="px-5 py-5 border-b border-border">
           <Link href="/admin" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-            <img src="/images/inspire-athletics-logo.png" alt="Inspire Courts" className="w-9 h-9 object-contain" />
+            <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={36} height={36} className="object-contain" />
             <div>
               <span className="text-white font-bold text-sm uppercase tracking-tight block">
                 Inspire Courts

@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import path from "path";
+import { FACILITY_EMAIL } from "@/lib/constants";
 
 const CONTENT_FILE = path.join(process.cwd(), "content.json");
 
@@ -403,7 +404,7 @@ const DEFAULT_CONTENT: SiteContent = {
         {
           name: "Info",
           fields: {
-            email: { label: "Email", value: "InspireCourts@gmail.com", type: "text" },
+            email: { label: "Email", value: FACILITY_EMAIL, type: "text" },
             address: { label: "Address", value: "1090 N Fiesta Blvd, Ste 101 & 102", type: "text" },
             city: { label: "City", value: "Gilbert, AZ 85233", type: "text" },
             instagram: { label: "Instagram", value: "@inspirecourtsaz", type: "text" },

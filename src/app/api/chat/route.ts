@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { getUpcomingEvents, getProperty, saveChatLead } from "@/lib/notion";
 import { sendLeadEmail, type LeadData } from "@/lib/notify";
+import { chatSchema } from "@/lib/schemas";
+import { logger } from "@/lib/logger";
+import {
+  FACILITY_EMAIL,
+  FACILITY_ADDRESS,
+  SOCIAL_LINKS,
+} from "@/lib/constants";
 
 // ── In-memory caches ──
 let cachedEvents: string | null = null;
@@ -20,7 +27,7 @@ async function getEventContext(): Promise<string> {
   try {
     const events = await getUpcomingEvents();
     if (!events || events.length === 0) {
-      cachedEvents = "No upcoming events currently listed. Direct visitors to /events or email InspireCourts@gmail.com for the latest schedule.";
+      cachedEvents = `No upcoming events currently listed. Direct visitors to /events or email ${FACILITY_EMAIL} for the latest schedule.`;
     } else {
       const eventList = events
         .map((e: any) => {
@@ -51,7 +58,7 @@ FACILITY
 ═══════════════════════════════════════════
 - Name: Inspire Courts AZ
 - Type: Premium indoor sports facility — basketball, volleyball, and futsal
-- Address: 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233
+- Address: ${FACILITY_ADDRESS.full}
 - Size: 52,000 square feet
 - 7 hardwood basketball courts (5 are college regulation with possession arrows)
 - 7 regulation volleyball courts
@@ -70,7 +77,7 @@ FACILITY
 - Open Gym: Available during all open hours based on court availability
 - Hours: Event days follow the tournament schedule. Facility rental is by appointment.
 - Founder: Mike Clark
-- YouTube facility tour: https://www.youtube.com/watch?v=1pJDZU2I6k4
+- YouTube facility tour: ${SOCIAL_LINKS.youtube}
 
 ═══════════════════════════════════════════
 MISSION
@@ -102,7 +109,7 @@ TOURNAMENTS (OFF SZN HOOPS)
 - Entry fee: Typically $350 per team
 - Game guarantee: Minimum 3 games per team, most teams play 4-5
 - Every game includes: live scoreboards, game film, stats
-- Registration: Visit the Events page (/events) or email InspireCourts@gmail.com
+- Registration: Visit the Events page (/events) or email ${FACILITY_EMAIL}
 - External registration: Some events use LeagueApps for online registration
 - Schedules: Released 48 hours before the event, sent to the head coach on file via email
 - Brackets & results: Available on the Schedule page (/schedule) during and after events
@@ -154,8 +161,8 @@ FACILITY RENTAL
 - Courts available for rent for: leagues, team practices, private tournaments, camps, clinics, corporate events, birthday parties, film sessions, combines
 - Also available for: volleyball leagues/practices, futsal leagues/practices
 - Pricing: $80 per court per hour
-- Corporate events, birthday parties, and private events: Email InspireCourts@gmail.com for info
-- General rental inquiries: Email InspireCourts@gmail.com or fill out the form at /contact with "Facility Rental" selected
+- Corporate events, birthday parties, and private events: Email ${FACILITY_EMAIL} for info
+- General rental inquiries: Email ${FACILITY_EMAIL} or fill out the form at /contact with "Facility Rental" selected
 - Rental page: /facility#rentals
 
 ═══════════════════════════════════════════
@@ -170,7 +177,7 @@ PRIVATE TRAINING
 TEAM INSPIRE (CLUB BASKETBALL)
 ═══════════════════════════════════════════
 - Club basketball program based out of Inspire Courts
-- Plays on the MADE Hoops High School Circuit — one of the top grassroots platforms in the country
+- Plays on the MADE Hoops High School Circuit — one of the top platforms in the country
 - Current divisions: 16U and 17U Boys
 - Looking to expand to more divisions (13U, 14U, 15U) down the line
 - Actively recruiting coaches and players
@@ -187,21 +194,21 @@ GAME FILM (NOT STREAMING)
 ═══════════════════════════════════════════
 CONTENT & SOCIAL MEDIA
 ═══════════════════════════════════════════
-- Main Instagram: @inspirecourtsaz (facility, events, announcements)
-- Highlights Instagram: @azfinestmixtape (player highlights, mixtapes, exposure content)
-- Want highlights featured? Follow @azfinestmixtape and tag them in your plays
+- Main Instagram: ${SOCIAL_LINKS.instagramHandle} (facility, events, announcements)
+- Highlights Instagram: ${SOCIAL_LINKS.instagramMixtapeHandle} (player highlights, mixtapes, exposure content)
+- Want highlights featured? Follow ${SOCIAL_LINKS.instagramMixtapeHandle} and tag them in your plays
 
 ═══════════════════════════════════════════
 CONTACT
 ═══════════════════════════════════════════
-- Email: InspireCourts@gmail.com (best way to reach us)
-- Instagram DMs: @inspirecourtsaz
+- Email: ${FACILITY_EMAIL} (best way to reach us)
+- Instagram DMs: ${SOCIAL_LINKS.instagramHandle}
 - Contact form: /contact page on the website
 - For tournament questions: email or /contact with "Tournament Registration"
 - For rental inquiries: email or /contact with "Facility Rental"
 - For referee applications: /contact with "Referee Application"
 - For sponsorship inquiries: /contact with "Sponsorship Inquiry"
-- Job applications: email InspireCourts@gmail.com
+- Job applications: email ${FACILITY_EMAIL}
 
 ═══════════════════════════════════════════
 WEBSITE PAGES (direct people here)
@@ -220,22 +227,22 @@ COMMON QUESTIONS & ANSWERS
 ═══════════════════════════════════════════
 
 Q: How do I register my team?
-A: Head to our Events page (/events) to see upcoming tournaments, then click Register — or just email InspireCourts@gmail.com with your team name, age group, and the event you want to enter!
+A: Head to our Events page (/events) to see upcoming tournaments, then click Register — or just email ${FACILITY_EMAIL} with your team name, age group, and the event you want to enter!
 
 Q: What age groups do you have?
 A: We run 10U through 17U divisions for both boys and girls.
 
 Q: How much does it cost?
-A: Tournament entry is typically $350–$500 per team depending on the event. Spectator admission is $15 at the door (kids under 5 free).
+A: Tournament entry is typically $350-$500 per team depending on the event. Spectator admission is $15 at the door (kids under 5 free).
 
 Q: Do you film games?
 A: Yes! Every single game is filmed. It's one of the things that makes Inspire Courts special.
 
 Q: Can I rent the facility?
-A: Absolutely! We host leagues, practices, camps, clinics, and private events. Email InspireCourts@gmail.com or visit /contact for a quote.
+A: Absolutely! We host leagues, practices, camps, clinics, and private events. Email ${FACILITY_EMAIL} or visit /contact for a quote.
 
 Q: Where are you located?
-A: 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233. Easy to find!
+A: ${FACILITY_ADDRESS.full}. Easy to find!
 
 Q: When do schedules come out?
 A: 48 hours before the event. They're emailed directly to the head coach on file and posted on the Schedule page.
@@ -244,13 +251,13 @@ Q: Is there food?
 A: Yes — our snack bar is open all day during events with drinks, snacks, and food. Please note: no outside food or beverages are permitted.
 
 Q: Do you have volleyball?
-A: We're expanding into volleyball! Stay tuned by following @inspirecourtsaz on Instagram.
+A: We're expanding into volleyball! Stay tuned by following ${SOCIAL_LINKS.instagramHandle} on Instagram.
 
 Q: How do I become a referee?
 A: Fill out the contact form at /contact and select "Referee Application" — we'll be in touch!
 
 Q: Can I sponsor an event?
-A: We'd love to talk! Fill out the contact form at /contact with "Sponsorship Inquiry" or email InspireCourts@gmail.com.
+A: We'd love to talk! Fill out the contact form at /contact with "Sponsorship Inquiry" or email ${FACILITY_EMAIL}.
 
 ═══════════════════════════════════════════
 LEAD CAPTURE — CRITICAL INSTRUCTIONS
@@ -293,7 +300,7 @@ TONE GUIDELINES
 - It's okay to say "we" when talking about the facility
 - Keep it short — coaches are busy people on their phones
 - Always end with a helpful next step or link
-- If you genuinely don't know something, say "Great question! I'd recommend reaching out to us directly at InspireCourts@gmail.com so we can get you the right answer."
+- If you genuinely don't know something, say "Great question! I'd recommend reaching out to us directly at ${FACILITY_EMAIL} so we can get you the right answer."
 
 ═══════════════════════════════════════════
 CONVERSATION INTELLIGENCE
@@ -306,15 +313,20 @@ CONVERSATION INTELLIGENCE
 
 export async function POST(request: Request) {
   try {
-    const { message, history, sessionId } = await request.json();
+    const body = await request.json();
+    const result = chatSchema.safeParse(body);
 
-    if (!message) {
-      return NextResponse.json({ error: "Message is required" }, { status: 400 });
+    if (!result.success) {
+      return NextResponse.json(
+        { success: false, reply: "Invalid request.", error: result.error.errors[0].message },
+        { status: 400 }
+      );
     }
+
+    const { message, history, sessionId } = result.data;
 
     // Use Claude if API key is available
     if (process.env.ANTHROPIC_API_KEY) {
-      // Build conversation history (last 20 messages)
       const messages = [
         ...(history || []).slice(-20).map((h: { role: string; content: string }) => ({
           role: h.role,
@@ -323,7 +335,6 @@ export async function POST(request: Request) {
         { role: "user", content: message },
       ];
 
-      // Fetch live event data to inject into system prompt
       const eventContext = await getEventContext();
       const systemPrompt = `${BUSINESS_CONTEXT}
 
@@ -353,16 +364,13 @@ Use this real event data when visitors ask about upcoming tournaments or events.
         const data = await response.json();
         let reply = data.content?.[0]?.text || "Sorry, I couldn't process that. Please try again!";
 
-        // Extract lead data if present
         const leadMatch = reply.match(/<lead_data>([\s\S]*?)<\/lead_data>/);
         if (leadMatch) {
-          // Strip lead data from visible reply
           reply = reply.replace(/<lead_data>[\s\S]*?<\/lead_data>/, "").trim();
 
           try {
             const leadData: LeadData = JSON.parse(leadMatch[1]);
 
-            // Build transcript from last few messages
             const recentMessages = (history || []).slice(-5);
             recentMessages.push({ role: "user", content: message });
             const transcript = recentMessages
@@ -374,20 +382,18 @@ Use this real event data when visitors ask about upcoming tournaments or events.
             leadData.transcript = transcript;
             leadData.source = "Chat Widget";
 
-            // Check dedup — don't re-notify for same session within cooldown
             const sid = sessionId || "unknown";
             const lastNotified = notifiedSessions.get(sid) || 0;
             const shouldNotify = Date.now() - lastNotified > NOTIFY_COOLDOWN;
 
-            // Fire-and-forget: save to Notion + send email
             saveChatLead(leadData).catch((err) =>
-              console.error("Failed to save chat lead:", err)
+              logger.error("Failed to save chat lead", { error: String(err) })
             );
 
             if (shouldNotify) {
               notifiedSessions.set(sid, Date.now());
               sendLeadEmail(leadData).catch((err) =>
-                console.error("Failed to send lead email:", err)
+                logger.error("Failed to send lead email", { error: String(err) })
               );
             }
 
@@ -399,26 +405,28 @@ Use this real event data when visitors ask about upcoming tournaments or events.
               }
             }
           } catch (parseErr) {
-            console.error("Failed to parse lead data:", parseErr);
+            logger.error("Failed to parse lead data", { error: String(parseErr) });
           }
         }
 
-        return NextResponse.json({ reply });
+        return NextResponse.json({ success: true, reply });
       }
     }
 
-    // Fallback: smart keyword responses
     const reply = getKeywordResponse(message.toLowerCase());
-    return NextResponse.json({ reply });
-  } catch {
+    return NextResponse.json({ success: true, reply });
+  } catch (err) {
+    logger.error("Chat handler failed", { error: String(err) });
     return NextResponse.json(
-      { reply: "Oops, something went wrong on my end! Please email us at InspireCourts@gmail.com and we'll help you out." },
+      {
+        success: false,
+        reply: `Oops, something went wrong on my end! Please email us at ${FACILITY_EMAIL} and we'll help you out.`,
+      },
       { status: 200 }
     );
   }
 }
 
-// Smart pattern matching with scoring — matches the best response, not just the first keyword
 interface Pattern {
   keywords: string[];
   mustMatch?: number;
@@ -427,116 +435,43 @@ interface Pattern {
 }
 
 const PATTERNS: Pattern[] = [
-  // Greetings
   { keywords: ["hello", "hi", "hey", "sup", "what's up", "yo", "howdy", "good morning", "good afternoon", "what up", "whats up"], response: "Hey! Welcome to Inspire Courts — 52,000 sq ft, 7 courts, the best basketball facility in Arizona. What are you looking for today? Tournaments, court rentals, training, or something else?" },
-
-  // Pricing / Cost
-  { keywords: ["price", "cost", "fee", "how much", "pay", "rate", "pricing", "charge", "expensive", "affordable", "budget", "money", "dollar", "$"], response: "Here's a quick breakdown:\n\n🏀 Tournament entry: $350/team\n🏟️ Court rental: $80/court/hour\n🎟️ Spectator admission: $15 (kids under 5 free)\n\nWant exact pricing for your situation? Drop your name and email and I'll have someone follow up!" },
-
-  // Court Rental
+  { keywords: ["price", "cost", "fee", "how much", "pay", "rate", "pricing", "charge", "expensive", "affordable", "budget", "money", "dollar", "$"], response: `Here's a quick breakdown:\n\n🏀 Tournament entry: $350/team\n🏟️ Court rental: $80/court/hour\n🎟️ Spectator admission: $15 (kids under 5 free)\n\nWant exact pricing for your situation? Drop your name and email and I'll have someone follow up!` },
   { keywords: ["rent", "book", "lease", "reserve", "court time", "court rental", "available"], response: "Courts are $80/hour per court — we have 7 available! We host basketball, volleyball, and futsal. Perfect for leagues, practices, camps, birthday parties, corporate events, and more. What sport and how many courts are you looking for?" },
-
-  // Registration / Sign up
-  { keywords: ["register", "sign up", "signup", "enter", "enter team", "enroll"], response: "You can register on our Tournaments page (/events) or email InspireCourts@gmail.com with your team name, age group, and which event. What division are you looking at?" },
-
-  // Location
-  { keywords: ["location", "address", "where", "direction", "find you", "map", "get there", "located", "navigate"], response: "We're at 1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233. Ample parking, easy access. Here's a virtual tour: https://youtube.com/watch?v=1pJDZU2I6k4 — Are you coming for an event or looking to rent?" },
-
-  // Schedule / Brackets
+  { keywords: ["register", "sign up", "signup", "enter", "enter team", "enroll"], response: `You can register on our Tournaments page (/events) or email ${FACILITY_EMAIL} with your team name, age group, and which event. What division are you looking at?` },
+  { keywords: ["location", "address", "where", "direction", "find you", "map", "get there", "located", "navigate"], response: `We're at ${FACILITY_ADDRESS.full}. Ample parking, easy access. Here's a virtual tour: ${SOCIAL_LINKS.youtube} — Are you coming for an event or looking to rent?` },
   { keywords: ["schedule", "bracket", "game time", "when do we play", "when is", "what time", "start time"], response: "Schedules drop 48 hours before each event and get emailed to the head coach on file. They're also posted on /schedule. What event are you looking for?" },
-
-  // Training
   { keywords: ["training", "trainer", "coach me", "lesson", "session", "skill", "workout", "develop", "improve", "get better", "personal"], response: "We offer 1-on-1 training, small group sessions (2-4 players), and shooting workouts on regulation hardwood with a shooting gun. Fill out the form at /training to book! What position and age is your player?" },
-
-  // Club / Team Inspire / MADE Hoops
   { keywords: ["club", "team inspire", "made hoops", "tryout", "try out", "aau", "grassroots", "circuit"], response: "Team Inspire plays on the MADE Hoops High School Circuit — one of the top platforms in grassroots basketball. We're running 16U and 17U boys and actively recruiting coaches and players. Fill out the interest form at /teams! Are you a player or coach?" },
-
-  // Volleyball
   { keywords: ["volleyball", "volley", "v-ball"], response: "We have 7 regulation volleyball courts! Courts are available to rent at $80/hour for leagues, practices, tournaments, and events. We host volleyball regularly. How many courts and what dates are you looking at?" },
-
-  // Futsal
   { keywords: ["futsal", "soccer", "futbol", "indoor soccer"], response: "Our facility is perfect for futsal! Courts available at $80/hour. We host futsal leagues and pickup regularly. What are you looking for — a league, practice time, or a one-time rental?" },
-
-  // Camps
   { keywords: ["camp", "summer camp", "basketball camp", "youth camp"], response: "Camps are coming soon! Drop your name, email, and the age of your player — we'll make sure you're first to know when registration opens. In the meantime, check out our private training at /training!" },
-
-  // Academy
   { keywords: ["academy", "program", "year round", "year-round", "development program"], response: "Our basketball academy is launching soon — structured, year-round development for serious players. Give me your name and email and you'll be first to hear when we drop it!" },
-
-  // Food / Drink
   { keywords: ["food", "snack", "drink", "eat", "hungry", "concession", "water", "gatorade", "bring", "outside food"], response: "Weekdays: only sports drinks and water in the court area — no food or gum. Weekend tournaments: no coolers or outside food/drinks, but players can bring 1 bottled water and 1 sports drink each. Our snack shop is open during events! Anything else?" },
-
-  // Shoes / What to wear
   { keywords: ["shoe", "shoes", "wear", "cleats", "sandal", "sole", "non-marking", "dress shoe"], response: "Only athletic shoes with non-marking soles are allowed on the courts — basketball shoes, volleyball shoes, or indoor soccer shoes. No dress shoes, sandals, or cleats. Anything else you need for game day?" },
-
-  // Parking / Camping / Tailgating
   { keywords: ["parking", "park", "tailgate", "tent", "camping", "campsite"], response: "We have ample parking with easy access. Tailgating: pop-up tents only (max 10'x10'), no stakes/ropes, no alcohol, no charcoal grills, tents must come down at end of each day and during storms. Campsites open 1 hour before events." },
-
-  // Game Film
   { keywords: ["film", "video", "footage", "record", "stream", "streaming", "watch", "broadcast", "live stream"], response: "Every game is filmed (recorded) during tournaments — great for development and recruiting. We don't live-stream, but all game film is available after. Ask staff on game day for access! What else can I help with?" },
-
-  // Age / Division
   { keywords: ["age", "division", "10u", "11u", "12u", "13u", "14u", "15u", "16u", "17u", "how old", "age group", "grade", "youth"], response: "Tournament divisions run from 10U through 17U for both boys and girls! Our club team (Team Inspire) currently plays 16U and 17U on the MADE Hoops circuit. What age is your player?" },
-
-  // Birthday / Corporate / Private Events
-  { keywords: ["birthday", "party", "corporate", "event", "celebration", "team building", "private event"], response: "Yes! We host birthday parties, corporate events, and private events. Email InspireCourts@gmail.com with your date, group size, and what you're looking for — we'll put together a package! How many people are you expecting?" },
-
-  // Open Gym
-  { keywords: ["open gym", "pickup", "pick up", "drop in", "walk in", "open run", "open play"], response: "Open Gym is available during all open hours based on court availability! Just show up with proper court shoes (non-marking soles). Want to know what's available today? Email InspireCourts@gmail.com!" },
-
-  // Contact
-  { keywords: ["contact", "email", "phone", "reach", "talk to", "call", "message", "get in touch", "speak"], response: "Best way to reach us:\n\n📧 InspireCourts@gmail.com\n📱 DM @inspirecourtsaz on Instagram\n📝 Contact form at /contact\n\nWe're quick to respond! What do you need help with?" },
-
-  // Referee
+  { keywords: ["birthday", "party", "corporate", "event", "celebration", "team building", "private event"], response: `Yes! We host birthday parties, corporate events, and private events. Email ${FACILITY_EMAIL} with your date, group size, and what you're looking for — we'll put together a package! How many people are you expecting?` },
+  { keywords: ["open gym", "pickup", "pick up", "drop in", "walk in", "open run", "open play"], response: `Open Gym is available during all open hours based on court availability! Just show up with proper court shoes (non-marking soles). Want to know what's available today? Email ${FACILITY_EMAIL}!` },
+  { keywords: ["contact", "email", "phone", "reach", "talk to", "call", "message", "get in touch", "speak"], response: `Best way to reach us:\n\n📧 ${FACILITY_EMAIL}\n📱 DM ${SOCIAL_LINKS.instagramHandle} on Instagram\n📝 Contact form at /contact\n\nWe're quick to respond! What do you need help with?` },
   { keywords: ["ref", "referee", "officiat", "umpire", "whistle"], response: "Want to ref at Inspire Courts? We're always looking for good officials. Fill out the form at /contact and select \"Referee Application\" — what experience do you have?" },
-
-  // Sponsorship
-  { keywords: ["sponsor", "partnership", "advertis", "brand", "promote"], response: "We'd love to talk sponsorships! We have options for all budgets — from court signage to tournament naming rights. Email InspireCourts@gmail.com or fill out /contact with \"Sponsorship Inquiry\". What's your brand?" },
-
-  // Jobs
-  { keywords: ["job", "work", "hire", "employ", "apply", "position", "staff", "scorekeeper"], response: "We hire event staff, scorekeepers, front desk, refs, and more! Email InspireCourts@gmail.com with a bit about yourself and what role interests you. Do you have experience working events?" },
-
-  // Instagram / Social
-  { keywords: ["instagram", "social", "follow", "ig", "insta", "tiktok", "facebook", "youtube"], response: "Follow us!\n\n📸 @inspirecourtsaz — facility news & events\n🎬 @azfinestmixtape — player highlights & mixtapes\n🎥 YouTube tour: https://youtube.com/watch?v=1pJDZU2I6k4\n\nTag us in your best plays to get featured!" },
-
-  // Highlight / Mixtape
-  { keywords: ["highlight", "mixtape", "exposure", "featured", "clip", "dunk", "play"], response: "Follow @azfinestmixtape on Instagram and tag us in your best plays! We create player highlights and mixtapes that get exposure. Want to be featured at your next tournament?" },
-
-  // Facility Info
-  { keywords: ["facility", "court", "how big", "size", "square", "amenities", "features", "what do you have"], response: "52,000 sq ft with 7 hardwood basketball courts (5 college regulation), 7 volleyball courts, electronic scoreboards on every court, glass backboards with NBA rims, bleachers, conference room, hospitality rooms, snack shop, shooting gun, and Inspire Performance Training. Come see it: https://youtube.com/watch?v=1pJDZU2I6k4" },
-
-  // Check-in / Game Day
+  { keywords: ["sponsor", "partnership", "advertis", "brand", "promote"], response: `We'd love to talk sponsorships! We have options for all budgets — from court signage to tournament naming rights. Email ${FACILITY_EMAIL} or fill out /contact with "Sponsorship Inquiry". What's your brand?` },
+  { keywords: ["job", "work", "hire", "employ", "apply", "position", "staff", "scorekeeper"], response: `We hire event staff, scorekeepers, front desk, refs, and more! Email ${FACILITY_EMAIL} with a bit about yourself and what role interests you. Do you have experience working events?` },
+  { keywords: ["instagram", "social", "follow", "ig", "insta", "tiktok", "facebook", "youtube"], response: `Follow us!\n\n📸 ${SOCIAL_LINKS.instagramHandle} — facility news & events\n🎬 ${SOCIAL_LINKS.instagramMixtapeHandle} — player highlights & mixtapes\n🎥 YouTube tour: ${SOCIAL_LINKS.youtube}\n\nTag us in your best plays to get featured!` },
+  { keywords: ["highlight", "mixtape", "exposure", "featured", "clip", "dunk", "play"], response: `Follow ${SOCIAL_LINKS.instagramMixtapeHandle} on Instagram and tag us in your best plays! We create player highlights and mixtapes that get exposure. Want to be featured at your next tournament?` },
+  { keywords: ["facility", "court", "how big", "size", "square", "amenities", "features", "what do you have"], response: `52,000 sq ft with 7 hardwood basketball courts (5 college regulation), 7 volleyball courts, electronic scoreboards on every court, glass backboards with NBA rims, bleachers, conference room, hospitality rooms, snack shop, shooting gun, and Inspire Performance Training. Come see it: ${SOCIAL_LINKS.youtube}` },
   { keywords: ["check in", "check-in", "arrive", "game day", "what to bring", "first time"], response: "Game day checklist:\n✅ Head coach checks in with photo ID\n✅ Roster submitted before first game\n✅ Non-marking court shoes only\n✅ No outside food (1 water + 1 sports drink OK)\n✅ $15 spectator admission\n\nSchedules are emailed 48hrs before. Check /gameday for everything!" },
-
-  // Roster
-  { keywords: ["roster", "player list", "team list", "add player", "eligible"], response: "Rosters must be submitted before your first game. Head coaches handle this at check-in. Questions? Email InspireCourts@gmail.com. What event is your team in?" },
-
-  // Cancellation / Refund
-  { keywords: ["cancel", "refund", "rain", "weather", "postpone"], response: "We're indoors — games happen rain or shine! If there's ever a cancellation, coaches get email + text notification. For refund questions, email InspireCourts@gmail.com. What event are you asking about?" },
-
-  // Air Conditioning
+  { keywords: ["roster", "player list", "team list", "add player", "eligible"], response: `Rosters must be submitted before your first game. Head coaches handle this at check-in. Questions? Email ${FACILITY_EMAIL}. What event is your team in?` },
+  { keywords: ["cancel", "refund", "rain", "weather", "postpone"], response: `We're indoors — games happen rain or shine! If there's ever a cancellation, coaches get email + text notification. For refund questions, email ${FACILITY_EMAIL}. What event are you asking about?` },
   { keywords: ["air condition", "ac", "hot", "heat", "cool", "temperature", "climate"], response: "Fully air-conditioned, year-round! No more Arizona heat. Our 52,000 sq ft facility stays comfortable no matter what it's like outside. Is there anything else about the facility you want to know?" },
-
-  // Scoreboards
   { keywords: ["scoreboard", "score", "scoring", "points", "stats"], response: "Every court has electronic scoreboards with digital display units and scorer's tables. Plus we have possession arrows on our 5 college regulation courts. Professional setup! Anything else?" },
-
-  // Rules
   { keywords: ["rules", "policy", "allowed", "prohibited", "banned", "can i", "can we", "permitted"], response: "Key rules: non-marking court shoes only, no outside food/drinks (except 1 water + 1 sports drink), no alcohol, no gum/sunflower seeds, good sportsmanship, clean up after your team, no hanging on rims. Full details at /gameday. What specifically are you wondering about?" },
-
-  // Thanks
-  { keywords: ["thank", "thanks", "appreciate", "awesome", "perfect", "great", "cool", "bet", "dope"], response: "Glad I could help! If anything else comes up, I'm right here. And if you haven't already, follow @inspirecourtsaz to stay in the loop. See you on the court! 🏀" },
-
-  // Yes / Affirmative
-  { keywords: ["yes", "yeah", "yep", "sure", "definitely", "absolutely", "for sure", "please", "ok", "okay"], response: "Awesome! Drop your name, email, and what you're interested in and I'll make sure someone from our team follows up with you directly. Or you can email InspireCourts@gmail.com — we're quick!" },
-
-  // No
-  { keywords: ["no", "nah", "nope", "not really", "i'm good", "all good"], response: "No worries! If you ever need anything — tournaments, court rentals, training — we're here. Follow @inspirecourtsaz on Instagram to stay updated. Have a good one! 🏀" },
-
-  // Mission / About
+  { keywords: ["thank", "thanks", "appreciate", "awesome", "perfect", "great", "cool", "bet", "dope"], response: `Glad I could help! If anything else comes up, I'm right here. And if you haven't already, follow ${SOCIAL_LINKS.instagramHandle} to stay in the loop. See you on the court! 🏀` },
+  { keywords: ["yes", "yeah", "yep", "sure", "definitely", "absolutely", "for sure", "please", "ok", "okay"], response: `Awesome! Drop your name, email, and what you're interested in and I'll make sure someone from our team follows up with you directly. Or you can email ${FACILITY_EMAIL} — we're quick!` },
+  { keywords: ["no", "nah", "nope", "not really", "i'm good", "all good"], response: `No worries! If you ever need anything — tournaments, court rentals, training — we're here. Follow ${SOCIAL_LINKS.instagramHandle} on Instagram to stay updated. Have a good one! 🏀` },
   { keywords: ["mission", "about", "story", "who are you", "what is inspire", "tell me about"], response: "Inspire Athletics exists to provide student-athletes with the opportunity to develop their athletic ability at a world-class facility in a diverse environment that promotes personal development. We're the leading basketball complex in Arizona! Check /about for the full story. What can I help you with?" },
-
-  // Tour
-  { keywords: ["tour", "visit", "see the facility", "come by", "walk through", "look around"], response: "Here's a virtual tour of our facility: https://youtube.com/watch?v=1pJDZU2I6k4 — 52,000 sq ft, 7 courts, the works. Want to schedule an in-person visit? Email InspireCourts@gmail.com!" },
+  { keywords: ["tour", "visit", "see the facility", "come by", "walk through", "look around"], response: `Here's a virtual tour of our facility: ${SOCIAL_LINKS.youtube} — 52,000 sq ft, 7 courts, the works. Want to schedule an in-person visit? Email ${FACILITY_EMAIL}!` },
 ];
 
 function getKeywordResponse(msg: string): string {
@@ -561,7 +496,7 @@ function getKeywordResponse(msg: string): string {
   }
 
   if (msg.includes("?")) {
-    return "Good question! I want to make sure I give you the right answer. Could you tell me a bit more? Are you asking about basketball tournaments, renting a court, training, or something else? You can also email InspireCourts@gmail.com and we'll get right back to you!";
+    return `Good question! I want to make sure I give you the right answer. Could you tell me a bit more? Are you asking about basketball tournaments, renting a court, training, or something else? You can also email ${FACILITY_EMAIL} and we'll get right back to you!`;
   }
 
   return "I hear you! I can help with basketball tournaments, court rentals ($80/hr for basketball, volleyball, or futsal), private training, our MADE Hoops club team, facility info, or game day questions. What sounds closest to what you need?";

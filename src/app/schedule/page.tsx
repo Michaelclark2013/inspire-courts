@@ -3,11 +3,15 @@ import Link from "next/link";
 import { ArrowRight, Clock, Mail, ExternalLink } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
+import QuickScoresEmbed from "@/components/ui/QuickScoresEmbed";
 
 export const metadata: Metadata = {
   title: "Schedules & Brackets | Inspire Courts AZ",
   description:
-    "View tournament schedules, brackets, and results for Inspire Courts AZ events via QuickScores. Schedules drop 48 hours before tip-off.",
+    "View live tournament schedules, brackets, and results for Inspire Courts AZ events via QuickScores. Game schedules drop 48 hours before tip-off.",
+  alternates: {
+    canonical: "https://inspirecourtsaz.com/schedule",
+  },
 };
 
 export default function SchedulePage() {
@@ -23,7 +27,7 @@ export default function SchedulePage() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
               Game Time
@@ -67,12 +71,10 @@ export default function SchedulePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
           <AnimateIn>
             <div className="bg-white border border-light-gray rounded-2xl overflow-hidden shadow-sm">
-              <iframe
+              <QuickScoresEmbed
                 src="https://quickscores.com/inspirecourts"
                 title="Inspire Courts Tournament Schedules — QuickScores"
-                className="w-full border-0"
-                style={{ minHeight: "800px" }}
-                loading="lazy"
+                className="min-h-[500px] md:min-h-[800px]"
               />
             </div>
           </AnimateIn>
@@ -87,6 +89,9 @@ export default function SchedulePage() {
             title="Past Event Results"
             description="Brackets and results from previous tournaments."
           />
+          <p className="text-text-muted text-xs mb-6 text-center">
+            Last updated: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+          </p>
           <div className="max-w-3xl mx-auto space-y-3">
             {[
               { name: "Red Rock Invitational", date: "April 2025" },
@@ -97,7 +102,7 @@ export default function SchedulePage() {
               <AnimateIn key={i} delay={i * 50}>
                 <div className="bg-white border border-light-gray rounded-xl p-5 flex items-center justify-between shadow-sm">
                   <div>
-                    <h3 className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                    <h3 className="text-navy font-semibold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
                       {event.name}
                     </h3>
                     <p className="text-text-muted text-xs mt-0.5">
@@ -118,9 +123,9 @@ export default function SchedulePage() {
       <section className="py-16 bg-navy">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <AnimateIn>
-            <h3 className="text-white font-bold text-lg uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
+            <h2 className="text-white font-bold text-lg uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
               Not seeing your schedule?
-            </h3>
+            </h2>
             <p className="text-white/70 mb-4">
               Text or email us and we&apos;ll get you sorted.
             </p>

@@ -1,11 +1,9 @@
+import { Suspense } from "react";
+import { SOCIAL_LINKS } from "@/lib/constants";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
-  Calendar,
-  Users,
-  DollarSign,
-  MapPin,
   Clock,
   ExternalLink,
   Film,
@@ -18,23 +16,25 @@ import {
   UserCheck,
   ShieldCheck,
   Footprints,
+  MapPin,
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
-import {
-  getUpcomingEvents,
-  getPastEvents,
-  getProperty,
-  isNotionConfigured,
-} from "@/lib/notion";
+import QuickScoresEmbed from "@/components/ui/QuickScoresEmbed";
+import BackToTop from "@/components/ui/BackToTop";
+import { isNotionConfigured } from "@/lib/notion";
+import EventsList from "./EventsList";
 
 export const metadata: Metadata = {
-  title: "Youth Basketball Tournaments in Gilbert, AZ | OFF SZN HOOPS",
+  title: "Youth Basketball Tournaments in Gilbert, AZ | Inspire Courts AZ",
   description:
     "Register for upcoming youth basketball tournaments at Inspire Courts AZ. 10U-17U divisions, boys and girls. Game film, live scoreboards, 3+ game guarantee.",
+  alternates: {
+    canonical: "https://inspirecourtsaz.com/events",
+  },
 };
 
-const REGISTER_URL = "https://inspirecourts.leagueapps.com/tournaments";
+const REGISTER_URL = SOCIAL_LINKS.leagueapps;
 
 const INCLUDED_FEATURES = [
   { icon: Trophy, label: "3+ Game Guarantee" },
@@ -54,47 +54,40 @@ const GAME_DAY_INFO = [
   { icon: MapPin, label: "Location", detail: "1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233" },
 ];
 
-export default async function EventsPage() {
-  // Fetch live data from Notion
-  let upcomingEvents: any[] = [];
-  let pastEvents: any[] = [];
+function EventsListSkeleton() {
+  return (
+    <section className="py-20 lg:py-28 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <div className="h-4 w-24 bg-light-gray rounded-full mx-auto mb-3 animate-pulse" />
+          <div className="h-8 w-64 bg-light-gray rounded-full mx-auto mb-3 animate-pulse" />
+          <div className="h-4 w-80 bg-light-gray rounded-full mx-auto animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white border border-light-gray rounded-xl p-6 animate-pulse">
+              <div className="h-6 bg-light-gray rounded-full w-32 mb-4" />
+              <div className="h-7 bg-light-gray rounded w-full mb-3" />
+              <div className="space-y-2 mb-4">
+                <div className="h-4 bg-light-gray rounded w-40" />
+                <div className="h-4 bg-light-gray rounded w-32" />
+              </div>
+              <div className="flex gap-2 mb-6">
+                {[1, 2, 3].map((j) => (
+                  <div key={j} className="h-6 w-12 bg-light-gray rounded-full" />
+                ))}
+              </div>
+              <div className="h-12 bg-light-gray rounded-full" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
-  if (isNotionConfigured()) {
-    [upcomingEvents, pastEvents] = await Promise.all([
-      getUpcomingEvents(),
-      getPastEvents(),
-    ]);
-  }
-
-  // Map Notion data to display format
-  const upcoming = upcomingEvents.map((e: any) => {
-    const divisions = getProperty(e, "Divisions") || getProperty(e, "Age Groups") || "";
-    const fee = getProperty(e, "Registration Fee") || getProperty(e, "Fee") || getProperty(e, "Entry Fee") || "";
-    const date = getProperty(e, "Date") || getProperty(e, "Event Date") || "";
-    const teams = getProperty(e, "Teams Registered") || getProperty(e, "Teams") || 0;
-    const maxTeams = getProperty(e, "Max Teams") || getProperty(e, "Capacity") || "";
-    const status = getProperty(e, "Status") || "";
-
-    return {
-      name: getProperty(e, "Name") || getProperty(e, "Event Name") || "Upcoming Event",
-      date: date ? new Date(date).toLocaleDateString("en-US", { month: "long", year: "numeric", day: "numeric" }) : "TBD",
-      divisions: Array.isArray(divisions) ? divisions : (divisions ? divisions.split(",").map((d: string) => d.trim()) : []),
-      fee: fee ? (typeof fee === "number" ? `$${fee}` : fee) : "",
-      teams: Number(teams) || 0,
-      maxTeams: maxTeams ? Number(maxTeams) : null,
-      status,
-    };
-  });
-
-  const past = pastEvents.slice(0, 6).map((e: any) => {
-    const date = getProperty(e, "Date") || getProperty(e, "Event Date") || "";
-    const teams = getProperty(e, "Teams Registered") || getProperty(e, "Teams") || 0;
-    return {
-      name: getProperty(e, "Name") || getProperty(e, "Event Name") || "Past Event",
-      date: date ? new Date(date).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "",
-      teams: Number(teams) || 0,
-    };
-  });
+export default function EventsPage() {
+  const notionEnabled = isNotionConfigured();
 
   return (
     <>
@@ -102,13 +95,10 @@ export default async function EventsPage() {
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
-          }}
+          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
               Compete. Get Ranked. Get Seen.
@@ -133,87 +123,19 @@ export default async function EventsPage() {
         </div>
       </section>
 
-      {/* Upcoming Events */}
-      <section className="py-20 lg:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader
-            eyebrow="Upcoming"
-            title="Upcoming Events"
-            description="Register your team for the next tournament. Spots fill fast."
-          />
-
-          {upcoming.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {upcoming.map((event, i) => (
-                <AnimateIn key={i} delay={i * 100}>
-                  <div className="bg-white border border-light-gray rounded-xl p-6 flex flex-col h-full hover:shadow-lg transition-shadow shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                        OFF SZN HOOPS
-                      </span>
-                      {event.status && (
-                        <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${event.status === "Registration Open" ? "bg-green-500/10 text-green-600" : "bg-yellow-500/10 text-yellow-600"}`}>
-                          {event.status}
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-navy font-bold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
-                      {event.name}
-                    </h3>
-
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center gap-2 text-text-muted text-sm">
-                        <Calendar className="w-4 h-4 text-red flex-shrink-0" />
-                        {event.date}
-                      </div>
-                      {event.fee && (
-                        <div className="flex items-center gap-2 text-text-muted text-sm">
-                          <DollarSign className="w-4 h-4 text-red flex-shrink-0" />
-                          {event.fee} per team
-                        </div>
-                      )}
-                      {event.maxTeams && (
-                        <div className="flex items-center gap-2 text-text-muted text-sm">
-                          <Users className="w-4 h-4 text-red flex-shrink-0" />
-                          {event.teams} / {event.maxTeams} teams registered
-                        </div>
-                      )}
-                      <div className="flex items-center gap-2 text-text-muted text-sm">
-                        <MapPin className="w-4 h-4 text-red flex-shrink-0" />
-                        Inspire Courts AZ, Gilbert
-                      </div>
-                    </div>
-
-                    {event.divisions.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mb-6">
-                        {event.divisions.map((div: string) => (
-                          <span
-                            key={div}
-                            className="bg-off-white text-navy text-xs font-semibold px-2.5 py-1 rounded-full"
-                          >
-                            {div}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="mt-auto">
-                      <a
-                        href={REGISTER_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
-                      >
-                        Register <ArrowRight className="w-4 h-4" />
-                      </a>
-                    </div>
-                  </div>
-                </AnimateIn>
-              ))}
-            </div>
-          ) : (
-            /* Fallback when no events / no Notion key */
+      {/* Events list — Suspense-wrapped so hero renders immediately */}
+      {notionEnabled ? (
+        <Suspense fallback={<EventsListSkeleton />}>
+          <EventsList />
+        </Suspense>
+      ) : (
+        <section className="py-20 lg:py-28 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              eyebrow="Upcoming"
+              title="Upcoming Events"
+              description="Register your team for the next tournament. Spots fill fast."
+            />
             <AnimateIn>
               <div className="max-w-2xl mx-auto text-center bg-off-white border border-light-gray rounded-xl p-10">
                 <Trophy className="w-10 h-10 text-red mx-auto mb-4" />
@@ -231,7 +153,7 @@ export default async function EventsPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                   >
-                    Register on LeagueApps <ArrowRight className="w-4 h-4" />
+                    Register Now <ArrowRight className="w-4 h-4" />
                   </a>
                   <a
                     href="https://instagram.com/inspirecourtsaz"
@@ -244,9 +166,9 @@ export default async function EventsPage() {
                 </div>
               </div>
             </AnimateIn>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* What's Included */}
       <section className="py-12 bg-navy">
@@ -293,16 +215,17 @@ export default async function EventsPage() {
               Open in QuickScores <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
+          <p className="text-text-muted text-xs text-right">
+            Last updated: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+          </p>
 
-          {/* QuickScores embed */}
+          {/* QuickScores embed with loading state and fallback */}
           <AnimateIn>
             <div className="bg-white border border-light-gray rounded-2xl overflow-hidden shadow-sm">
-              <iframe
+              <QuickScoresEmbed
                 src="https://quickscores.com/inspirecourts"
                 title="Inspire Courts Tournament Schedules — QuickScores"
-                className="w-full border-0"
-                style={{ minHeight: "700px" }}
-                loading="lazy"
+                className="min-h-[500px] md:min-h-[700px]"
               />
             </div>
           </AnimateIn>
@@ -326,9 +249,9 @@ export default async function EventsPage() {
                     <item.icon className="w-5 h-5 text-red" />
                   </div>
                   <div>
-                    <h4 className="text-navy font-bold text-sm uppercase tracking-tight mb-1 font-[var(--font-chakra)]">
+                    <h3 className="text-navy font-medium text-sm uppercase tracking-tight mb-1 font-[var(--font-chakra)]">
                       {item.label}
-                    </h4>
+                    </h3>
                     <p className="text-text-muted text-sm leading-relaxed">
                       {item.detail}
                     </p>
@@ -349,46 +272,11 @@ export default async function EventsPage() {
         </div>
       </section>
 
-      {/* Past Events */}
-      {past.length > 0 && (
-        <section className="py-20 lg:py-28 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <SectionHeader
-              eyebrow="Results"
-              title="Past Events"
-              description="Previous tournaments and results."
-            />
-            <div className="max-w-3xl mx-auto space-y-3">
-              {past.map((event, i) => (
-                <AnimateIn key={i} delay={i * 50}>
-                  <div className="bg-white border border-light-gray rounded-xl p-5 flex items-center justify-between shadow-sm">
-                    <div>
-                      <h3 className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
-                        {event.name}
-                      </h3>
-                      <p className="text-text-muted text-xs mt-0.5">
-                        {event.date}{event.teams ? ` · ${event.teams} teams` : ""}
-                      </p>
-                    </div>
-                    <Link
-                      href="/schedule"
-                      className="text-red text-xs font-bold uppercase tracking-wide hover:text-red-hover transition-colors"
-                    >
-                      Results
-                    </Link>
-                  </div>
-                </AnimateIn>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Bottom CTA */}
       <section className="py-16 bg-navy">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <AnimateIn>
-            <h3 className="text-white font-bold text-xl uppercase tracking-tight mb-4 font-[var(--font-chakra)]">
+            <h3 className="text-white font-semibold text-xl uppercase tracking-tight mb-4 font-[var(--font-chakra)]">
               Don&apos;t see your division?
             </h3>
             <p className="text-white/70 mb-6">
@@ -408,13 +296,39 @@ export default async function EventsPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/40 hover:bg-white hover:text-navy text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
-                Register on LeagueApps <ExternalLink className="w-4 h-4" />
+                Register Now <ArrowRight className="w-4 h-4" />
               </a>
             </div>
           </AnimateIn>
         </div>
       </section>
 
+      {/* Related Pages */}
+      <section className="py-12 bg-off-white border-t border-light-gray">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-text-muted text-xs font-bold uppercase tracking-[0.2em] mb-5 text-center font-[var(--font-chakra)]">
+            Related Pages
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { href: "/schedule", label: "Schedule" },
+              { href: "/gameday", label: "Game Day Info" },
+              { href: "/training", label: "Training" },
+              { href: "/facility", label: "Facility" },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="flex items-center justify-center gap-1.5 bg-white border border-light-gray hover:border-red/40 hover:text-red text-navy text-xs font-bold uppercase tracking-wide py-3 px-4 rounded-xl transition-colors font-[var(--font-chakra)]"
+              >
+                {link.label} <ArrowRight className="w-3 h-3 opacity-60" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

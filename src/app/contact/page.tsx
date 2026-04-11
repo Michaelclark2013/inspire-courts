@@ -3,17 +3,14 @@
 import { useState } from "react";
 import { MapPin, Mail, Camera, ArrowRight, Check } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
-
-const INQUIRY_TYPES = [
-  "Tournament Registration",
-  "Club Interest - Player",
-  "Club Interest - Coach",
-  "Facility Rental",
-  "Sponsorship Inquiry",
-  "Referee Application",
-  "General Question",
-  "Other",
-];
+import {
+  INQUIRY_TYPES,
+  FACILITY_EMAIL,
+  FACILITY_ADDRESS,
+  SOCIAL_LINKS,
+  HERO_BG_IMAGE,
+} from "@/lib/constants";
+import { INPUT_CLASS, LABEL_CLASS } from "@/lib/form-styles";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -55,13 +52,10 @@ export default function ContactPage() {
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg')",
-          }}
+          style={{ backgroundImage: `url('${HERO_BG_IMAGE}')` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
               Get in Touch
@@ -98,10 +92,7 @@ export default function ContactPage() {
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
-                        <label
-                          htmlFor="name"
-                          className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
-                        >
+                        <label htmlFor="name" className={LABEL_CLASS}>
                           Full Name *
                         </label>
                         <input
@@ -109,15 +100,12 @@ export default function ContactPage() {
                           id="name"
                           name="name"
                           required
-                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+                          className={INPUT_CLASS}
                           placeholder="Your name"
                         />
                       </div>
                       <div>
-                        <label
-                          htmlFor="email"
-                          className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
-                        >
+                        <label htmlFor="email" className={LABEL_CLASS}>
                           Email *
                         </label>
                         <input
@@ -125,7 +113,7 @@ export default function ContactPage() {
                           id="email"
                           name="email"
                           required
-                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+                          className={INPUT_CLASS}
                           placeholder="you@example.com"
                         />
                       </div>
@@ -133,25 +121,19 @@ export default function ContactPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
-                        <label
-                          htmlFor="phone"
-                          className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
-                        >
+                        <label htmlFor="phone" className={LABEL_CLASS}>
                           Phone
                         </label>
                         <input
                           type="tel"
                           id="phone"
                           name="phone"
-                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+                          className={INPUT_CLASS}
                           placeholder="(480) 555-1234"
                         />
                       </div>
                       <div>
-                        <label
-                          htmlFor="inquiryType"
-                          className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
-                        >
+                        <label htmlFor="inquiryType" className={LABEL_CLASS}>
                           Inquiry Type
                         </label>
                         <select
@@ -169,10 +151,7 @@ export default function ContactPage() {
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="message"
-                        className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]"
-                      >
+                      <label htmlFor="message" className={LABEL_CLASS}>
                         Message *
                       </label>
                       <textarea
@@ -188,7 +167,7 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="inline-flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                     >
                       {loading ? "Sending..." : "Send Message"}{" "}
                       <ArrowRight className="w-4 h-4" />
@@ -209,9 +188,9 @@ export default function ContactPage() {
                     <div className="flex gap-3 text-text-muted text-sm">
                       <MapPin className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
                       <div>
-                        <p>1090 N Fiesta Blvd</p>
-                        <p>Ste 101 & 102</p>
-                        <p>Gilbert, AZ 85233</p>
+                        <p>{FACILITY_ADDRESS.street}</p>
+                        <p>{FACILITY_ADDRESS.suite}</p>
+                        <p>{FACILITY_ADDRESS.city}, {FACILITY_ADDRESS.state} {FACILITY_ADDRESS.zip}</p>
                       </div>
                     </div>
                   </div>
@@ -223,10 +202,10 @@ export default function ContactPage() {
                     <div className="flex gap-3 text-text-muted text-sm">
                       <Mail className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
                       <a
-                        href="mailto:InspireCourts@gmail.com"
+                        href={`mailto:${FACILITY_EMAIL}`}
                         className="hover:text-red transition-colors"
                       >
-                        InspireCourts@gmail.com
+                        {FACILITY_EMAIL}
                       </a>
                     </div>
                   </div>
@@ -238,12 +217,12 @@ export default function ContactPage() {
                     <div className="flex gap-3 text-text-muted text-sm">
                       <Camera className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
                       <a
-                        href="https://instagram.com/inspirecourtsaz"
+                        href={SOCIAL_LINKS.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:text-red transition-colors"
                       >
-                        @inspirecourtsaz
+                        {SOCIAL_LINKS.instagramHandle}
                       </a>
                     </div>
                   </div>

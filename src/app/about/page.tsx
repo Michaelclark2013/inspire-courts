@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FACILITY_EMAIL } from "@/lib/constants";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -19,12 +20,46 @@ import SectionHeader from "@/components/ui/SectionHeader";
 export const metadata: Metadata = {
   title: "About | Inspire Courts AZ",
   description:
-    "The story behind Arizona's premier indoor basketball facility. Founded to give youth basketball players a professional-level experience.",
+    "The story behind Arizona's premier indoor basketball facility. Founded to give youth basketball players a true professional-level experience in Gilbert, AZ.",
+  alternates: {
+    canonical: "https://inspirecourtsaz.com/about",
+  },
+};
+
+const sportsOrgSchema = {
+  "@context": "https://schema.org",
+  "@type": "SportsOrganization",
+  name: "Inspire Courts AZ",
+  description:
+    "Arizona's premier indoor basketball facility and youth tournament organization. Home of OFF SZN HOOPS and Team Inspire.",
+  url: "https://inspirecourtsaz.com",
+  email: FACILITY_EMAIL,
+  location: {
+    "@type": "Place",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
+      addressLocality: "Gilbert",
+      addressRegion: "AZ",
+      postalCode: "85233",
+      addressCountry: "US",
+    },
+  },
+  sameAs: [
+    "https://www.instagram.com/inspirecourtsaz",
+    "https://www.youtube.com/@AZFinestMixtape",
+  ],
+  sport: "Basketball",
 };
 
 export default function AboutPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(sportsOrgSchema) }}
+      />
+
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div
@@ -35,7 +70,7 @@ export default function AboutPage() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
               Our Story
@@ -86,7 +121,7 @@ export default function AboutPage() {
             </AnimateIn>
             <AnimateIn delay={200}>
               <div className="bg-off-white border border-light-gray rounded-xl p-8 lg:p-10 space-y-6">
-                <h3 className="text-navy font-bold text-lg uppercase tracking-tight font-[var(--font-chakra)]">
+                <h3 className="text-navy font-semibold text-lg uppercase tracking-tight font-[var(--font-chakra)]">
                   Our Mission
                 </h3>
                 <p className="text-red text-xl font-bold leading-snug font-[var(--font-chakra)]">
@@ -135,11 +170,11 @@ export default function AboutPage() {
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <AnimateIn>
-              <div className="bg-white border border-light-gray rounded-xl p-8 h-full shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-navy rounded-full flex items-center justify-center mb-6">
                   <Target className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-navy font-bold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
+                <h3 className="text-navy font-semibold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
                   Inspire Courts
                 </h3>
                 <p className="text-text-muted text-sm leading-relaxed">
@@ -150,11 +185,11 @@ export default function AboutPage() {
               </div>
             </AnimateIn>
             <AnimateIn delay={150}>
-              <div className="bg-white border border-light-gray rounded-xl p-8 h-full shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-red rounded-full flex items-center justify-center mb-6">
                   <Flame className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-navy font-bold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
+                <h3 className="text-navy font-semibold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
                   OFF SZN HOOPS
                 </h3>
                 <p className="text-text-muted text-sm leading-relaxed">
@@ -164,11 +199,11 @@ export default function AboutPage() {
               </div>
             </AnimateIn>
             <AnimateIn delay={300}>
-              <div className="bg-white border border-light-gray rounded-xl p-8 h-full shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-navy rounded-full flex items-center justify-center mb-6">
                   <Camera className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-navy font-bold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
+                <h3 className="text-navy font-semibold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
                   @AZFinestMixtape
                 </h3>
                 <p className="text-text-muted text-sm leading-relaxed">
@@ -229,7 +264,7 @@ export default function AboutPage() {
                     <item.icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-navy font-bold text-sm uppercase tracking-tight mb-1 font-[var(--font-chakra)]">
+                    <h3 className="text-navy font-semibold text-sm uppercase tracking-tight mb-1 font-[var(--font-chakra)]">
                       {item.title}
                     </h3>
                     <p className="text-text-muted text-sm leading-relaxed">
@@ -258,6 +293,53 @@ export default function AboutPage() {
           >
             See Upcoming Events <ArrowRight className="w-4 h-4" />
           </Link>
+        </div>
+      </section>
+
+      {/* Related Pages */}
+      <section className="py-16 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-6 text-center font-[var(--font-chakra)]">
+            Explore More
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link
+              href="/events"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Tournaments
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Upcoming OFF SZN HOOPS events</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/teams"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Team Inspire
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">Club basketball on the MADE Hoops Circuit</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/training"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
+                  Private Training
+                </p>
+                <p className="text-text-muted text-xs mt-0.5">1-on-1 and small group sessions</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
       </section>
 

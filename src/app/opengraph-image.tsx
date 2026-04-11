@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Inspire Courts AZ — Arizona's Premier Indoor Basketball Facility";
+export const alt = "Inspire Courts AZ — Arizona's Premier Indoor Basketball & Volleyball Facility";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

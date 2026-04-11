@@ -43,8 +43,8 @@ const DEFAULT_CONTENT: SiteContent = {
           name: "Hero",
           fields: {
             badge: { label: "Badge Text", value: "Est. Gilbert, AZ", type: "text" },
-            headline: { label: "Headline", value: "Arizona's Premier Indoor Basketball Facility", type: "text" },
-            subheadline: { label: "Subheadline", value: "7 courts. 52,000 sq ft. Arizona's premier basketball facility.", type: "text" },
+            headline: { label: "Headline", value: "Arizona's Premier Basketball & Volleyball Facility", type: "text" },
+            subheadline: { label: "Subheadline", value: "7 courts. 52,000 sq ft. Basketball & volleyball. Built for competitors.", type: "text" },
             ctaPrimary: { label: "Primary Button", value: "Register for Next Event", type: "text" },
             ctaSecondary: { label: "Secondary Button", value: "Book the Facility", type: "text" },
             backgroundImage: { label: "Background Image URL", value: "https://cdn4.sportngin.com/attachments/background_graphic/5768/6045/background.jpg", type: "image" },
@@ -93,7 +93,7 @@ const DEFAULT_CONTENT: SiteContent = {
           name: "Mission Section",
           fields: {
             headline: { label: "Headline", value: "Two Brands. One Mission.", type: "text" },
-            description: { label: "Description", value: "Inspire Courts is the home base. OFF SZN HOOPS is the tournament series. Together, we're elevating youth basketball in Arizona.", type: "textarea" },
+            description: { label: "Description", value: "Inspire Courts is the home base. OFF SZN HOOPS is the tournament series. Together, we're elevating youth sports in Arizona.", type: "textarea" },
             buttonText: { label: "Button Text", value: "Our Story", type: "text" },
           },
         },
@@ -138,7 +138,7 @@ const DEFAULT_CONTENT: SiteContent = {
           fields: {
             badge: { label: "Badge", value: "Our Story", type: "text" },
             headline: { label: "Headline", value: "The Story", type: "text" },
-            description: { label: "Description", value: "Founded to give Arizona's youth basketball players a professional-level experience. No more dusty rec centers. No more outdoor courts in 115-degree heat.", type: "textarea" },
+            description: { label: "Description", value: "Founded to give Arizona's youth athletes a professional-level experience. Basketball. Volleyball. No more dusty rec centers. No more outdoor courts in 115-degree heat.", type: "textarea" },
           },
         },
         {
@@ -146,10 +146,10 @@ const DEFAULT_CONTENT: SiteContent = {
           fields: {
             eyebrow: { label: "Eyebrow", value: "Why We Exist", type: "text" },
             headline: { label: "Headline", value: "Built for Competitors", type: "text" },
-            paragraph1: { label: "Paragraph 1", value: "Inspire Courts is climate-controlled, professionally equipped, and built for competitors. Two regulation indoor courts with live digital scoreboards, game film for every game, and a setup that rivals college-level facilities.", type: "textarea" },
-            paragraph2: { label: "Paragraph 2", value: "We saw what youth basketball looked like in Arizona — rec gyms with broken rims, outdoor tournaments in 115-degree heat, and zero game footage. We built the opposite.", type: "textarea" },
+            paragraph1: { label: "Paragraph 1", value: "Inspire Courts is climate-controlled, professionally equipped, and built for competitors. 7 regulation indoor courts for basketball and volleyball, with live digital scoreboards, game film for every game, and a setup that rivals college-level facilities.", type: "textarea" },
+            paragraph2: { label: "Paragraph 2", value: "We saw what youth sports looked like in Arizona — rec gyms with broken rims, outdoor tournaments in 115-degree heat, and zero game footage. We built the opposite.", type: "textarea" },
             paragraph3: { label: "Paragraph 3", value: "Every team that walks through our doors gets the same experience: professional courts, real scoreboards, and film they can use to get better. That's the standard.", type: "textarea" },
-            mission: { label: "Mission Statement", value: "Elevate youth basketball in Arizona — one court, one game, one player at a time.", type: "text" },
+            mission: { label: "Mission Statement", value: "Elevate youth basketball and volleyball in Arizona — one court, one game, one player at a time.", type: "text" },
           },
         },
       ],
@@ -191,7 +191,7 @@ const DEFAULT_CONTENT: SiteContent = {
           fields: {
             badge: { label: "Badge", value: "The Complex", type: "text" },
             headline: { label: "Headline", value: "The Facility", type: "text" },
-            description: { label: "Description", value: "A premium indoor basketball facility built from the ground up for serious competition. Every detail is intentional.", type: "textarea" },
+            description: { label: "Description", value: "A premium indoor basketball & volleyball facility built from the ground up for serious competition. Every detail is intentional.", type: "textarea" },
           },
         },
         {
@@ -279,7 +279,7 @@ const DEFAULT_CONTENT: SiteContent = {
           fields: {
             badge: { label: "Badge", value: "Get Better", type: "text" },
             headline: { label: "Headline", value: "Private Training", type: "text" },
-            description: { label: "Description", value: "1-on-1 and small group basketball training at a pro-level facility. Every session is designed to make you better.", type: "textarea" },
+            description: { label: "Description", value: "1-on-1 and small group basketball and volleyball training at a pro-level facility. Every session is designed to make you better.", type: "textarea" },
           },
         },
         {

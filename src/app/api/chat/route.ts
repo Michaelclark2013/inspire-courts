@@ -3,6 +3,7 @@ import { getUpcomingEvents, getProperty, saveChatLead } from "@/lib/notion";
 import { sendLeadEmail, type LeadData } from "@/lib/notify";
 import { chatSchema } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import {
   FACILITY_EMAIL,
   FACILITY_ADDRESS,
@@ -49,6 +50,47 @@ async function getEventContext(): Promise<string> {
   return cachedEvents;
 }
 
+function getPageSystemPrompt(pathname: string): string {
+  const segment = "/" + (pathname.split("/")[1] || "");
+
+  const map: Record<string, string> = {
+    "/events":
+      "The user is currently viewing the Events page. Prioritize information about upcoming tournaments, registration, entry fees, age groups, and event dates. Lead with specifics from the live event data when available.",
+    "/schedule":
+      "The user is currently viewing the Schedule page. Prioritize information about game schedules, brackets, results, when schedules are released, and how to find their team's games.",
+    "/facility":
+      "The user is currently viewing the Facility page. Prioritize information about the courts, amenities, size, features, and facility rental options including pricing and how to book.",
+    "/book":
+      "The user is currently viewing the Booking page. Prioritize information about the booking process, court availability, pricing ($80/court/hour), what's included, and how to get started.",
+    "/training":
+      "The user is currently viewing the Training page. Prioritize information about training programs, 1-on-1 sessions, small group sessions, shooting workouts, how to book, and pricing.",
+    "/teams":
+      "The user is currently viewing the Teams page. Prioritize information about Team Inspire club basketball, tryouts, current age divisions (16U/17U boys), the MADE Hoops High School Circuit, and how to express interest.",
+    "/prep":
+      "The user is currently viewing the Prep page. Prioritize information about the Inspire Prep academy program, what it offers, who it's for, and how to enroll.",
+    "/media":
+      "The user is currently viewing the Media page. Prioritize information about media services, game film recording, player highlights, mixtapes, and how to get featured on social media.",
+    "/gameday":
+      "The user is currently viewing the Game Day page. Prioritize information about game day logistics — check-in process, what to bring, rules, spectator admission ($15), parking, food policy, and schedule access.",
+    "/contact":
+      "The user is currently viewing the Contact page. Prioritize information about how to reach Inspire Courts, the facility email, location, hours, and the contact form options.",
+    "/gallery":
+      "The user is currently viewing the Gallery page. Prioritize information about the facility, past events, and what makes Inspire Courts special. Encourage them to come see it in person or check out upcoming events.",
+    "/about":
+      "The user is currently viewing the About page. Prioritize information about Inspire Athletics' mission, history, founder Mike Clark, and the brands under the umbrella.",
+    "/faq":
+      "The user is currently viewing the FAQ page. The user likely has a specific question. Give direct, accurate answers and reference the FAQ content if relevant. If their question isn't covered, direct them to email.",
+    "/":
+      "The user is currently on the Home page. Give a general overview of what Inspire Courts offers and help them navigate to the right page for their needs — events, facility, training, teams, or contact.",
+  };
+
+  return (
+    map[segment] ||
+    map[pathname] ||
+    "The user is browsing the Inspire Courts website. Answer their question helpfully and direct them to the most relevant page."
+  );
+}
+
 const BUSINESS_CONTEXT = `You are the Inspire Courts AZ virtual assistant — a friendly, helpful guide for anyone visiting the website. Your job is to answer any question a customer might have and point them to the right place. You're warm, knowledgeable, and sound like someone who actually works at the facility — not a robot.
 
 Keep answers concise (2-4 sentences max unless they ask for detail). Use a casual but professional tone. You can use exclamation marks and be enthusiastic about the facility. Never make up information you don't have — instead, direct them to email or the right page.
@@ -82,7 +124,7 @@ FACILITY
 ═══════════════════════════════════════════
 MISSION
 ═══════════════════════════════════════════
-Inspire Athletics exists to provide student-athletes with the opportunity to develop their athletic ability at a world class facility in a diverse environment that promotes personal development. We pride ourselves on being the leading basketball complex in Arizona, providing premier coaching to committed athletes. We recognize the demands placed on athletes in sports and are devoted to helping them manage those demands and get the most out of their athletic experience.
+Inspire Athletics exists to provide student-athletes with the opportunity to develop their athletic ability at a world class facility in a diverse environment that promotes personal development. We pride ourselves on being the leading basketball and volleyball complex in Arizona, providing premier coaching to committed athletes. We recognize the demands placed on athletes in sports and are devoted to helping them manage those demands and get the most out of their athletic experience.
 
 ═══════════════════════════════════════════
 CAMPSITE / TAILGATING RULES
@@ -251,7 +293,7 @@ Q: Is there food?
 A: Yes — our snack bar is open all day during events with drinks, snacks, and food. Please note: no outside food or beverages are permitted.
 
 Q: Do you have volleyball?
-A: We're expanding into volleyball! Stay tuned by following ${SOCIAL_LINKS.instagramHandle} on Instagram.
+A: Yes! We have 7 regulation volleyball courts available for leagues, tournaments, practices, and events. Courts rent for $80/hour. Email ${FACILITY_EMAIL} or fill out the booking form at /facility to get started!
 
 Q: How do I become a referee?
 A: Fill out the contact form at /contact and select "Referee Application" — we'll be in touch!
@@ -312,18 +354,26 @@ CONVERSATION INTELLIGENCE
 - If someone asks something you have live event data for (see LIVE DATA section), use the real event names and dates — don't give generic answers`;
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request);
+  if (isRateLimited(ip, 20, 60 * 1000)) {
+    return NextResponse.json(
+      { success: false, reply: "Too many messages. Please slow down." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await request.json();
     const result = chatSchema.safeParse(body);
 
     if (!result.success) {
       return NextResponse.json(
-        { success: false, reply: "Invalid request.", error: result.error.errors[0].message },
+        { success: false, reply: "Invalid request.", error: result.error.issues[0]?.message ?? "Invalid request" },
         { status: 400 }
       );
     }
 
-    const { message, history, sessionId } = result.data;
+    const { message, history, sessionId, pathname } = result.data;
 
     // Use Claude if API key is available
     if (process.env.ANTHROPIC_API_KEY) {
@@ -336,6 +386,7 @@ export async function POST(request: Request) {
       ];
 
       const eventContext = await getEventContext();
+      const pagePrompt = getPageSystemPrompt(pathname || "/");
       const systemPrompt = `${BUSINESS_CONTEXT}
 
 ═══════════════════════════════════════════
@@ -343,7 +394,12 @@ LIVE DATA — UPCOMING EVENTS (from database)
 ═══════════════════════════════════════════
 ${eventContext}
 
-Use this real event data when visitors ask about upcoming tournaments or events. Give specific event names and dates when available.`;
+Use this real event data when visitors ask about upcoming tournaments or events. Give specific event names and dates when available.
+
+═══════════════════════════════════════════
+CURRENT PAGE CONTEXT
+═══════════════════════════════════════════
+${pagePrompt}`;
 
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -435,7 +491,7 @@ interface Pattern {
 }
 
 const PATTERNS: Pattern[] = [
-  { keywords: ["hello", "hi", "hey", "sup", "what's up", "yo", "howdy", "good morning", "good afternoon", "what up", "whats up"], response: "Hey! Welcome to Inspire Courts — 52,000 sq ft, 7 courts, the best basketball facility in Arizona. What are you looking for today? Tournaments, court rentals, training, or something else?" },
+  { keywords: ["hello", "hi", "hey", "sup", "what's up", "yo", "howdy", "good morning", "good afternoon", "what up", "whats up"], response: "Hey! Welcome to Inspire Courts — 52,000 sq ft, 7 courts, Arizona's best basketball & volleyball facility. What are you looking for today? Tournaments, court rentals, training, or something else?" },
   { keywords: ["price", "cost", "fee", "how much", "pay", "rate", "pricing", "charge", "expensive", "affordable", "budget", "money", "dollar", "$"], response: `Here's a quick breakdown:\n\n🏀 Tournament entry: $350/team\n🏟️ Court rental: $80/court/hour\n🎟️ Spectator admission: $15 (kids under 5 free)\n\nWant exact pricing for your situation? Drop your name and email and I'll have someone follow up!` },
   { keywords: ["rent", "book", "lease", "reserve", "court time", "court rental", "available"], response: "Courts are $80/hour per court — we have 7 available! We host basketball, volleyball, and futsal. Perfect for leagues, practices, camps, birthday parties, corporate events, and more. What sport and how many courts are you looking for?" },
   { keywords: ["register", "sign up", "signup", "enter", "enter team", "enroll"], response: `You can register on our Tournaments page (/events) or email ${FACILITY_EMAIL} with your team name, age group, and which event. What division are you looking at?` },
@@ -470,7 +526,7 @@ const PATTERNS: Pattern[] = [
   { keywords: ["thank", "thanks", "appreciate", "awesome", "perfect", "great", "cool", "bet", "dope"], response: `Glad I could help! If anything else comes up, I'm right here. And if you haven't already, follow ${SOCIAL_LINKS.instagramHandle} to stay in the loop. See you on the court! 🏀` },
   { keywords: ["yes", "yeah", "yep", "sure", "definitely", "absolutely", "for sure", "please", "ok", "okay"], response: `Awesome! Drop your name, email, and what you're interested in and I'll make sure someone from our team follows up with you directly. Or you can email ${FACILITY_EMAIL} — we're quick!` },
   { keywords: ["no", "nah", "nope", "not really", "i'm good", "all good"], response: `No worries! If you ever need anything — tournaments, court rentals, training — we're here. Follow ${SOCIAL_LINKS.instagramHandle} on Instagram to stay updated. Have a good one! 🏀` },
-  { keywords: ["mission", "about", "story", "who are you", "what is inspire", "tell me about"], response: "Inspire Athletics exists to provide student-athletes with the opportunity to develop their athletic ability at a world-class facility in a diverse environment that promotes personal development. We're the leading basketball complex in Arizona! Check /about for the full story. What can I help you with?" },
+  { keywords: ["mission", "about", "story", "who are you", "what is inspire", "tell me about"], response: "Inspire Athletics exists to provide student-athletes with the opportunity to develop their athletic ability at a world-class facility in a diverse environment that promotes personal development. We're the leading basketball and volleyball complex in Arizona! Check /about for the full story. What can I help you with?" },
   { keywords: ["tour", "visit", "see the facility", "come by", "walk through", "look around"], response: `Here's a virtual tour of our facility: ${SOCIAL_LINKS.youtube} — 52,000 sq ft, 7 courts, the works. Want to schedule an in-person visit? Email ${FACILITY_EMAIL}!` },
 ];
 

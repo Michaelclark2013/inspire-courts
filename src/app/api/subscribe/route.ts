@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { subscribeSchema } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  if (isRateLimited(ip, 5, 60 * 1000)) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await req.json();
     const result = subscribeSchema.safeParse(body);

@@ -15,9 +15,9 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 
 export const metadata: Metadata = {
-  title: "Private Basketball Training in Gilbert, AZ | Inspire Courts AZ",
+  title: "Private Basketball & Volleyball Training in Gilbert, AZ | Inspire Courts AZ",
   description:
-    "1-on-1 and small group basketball training at Inspire Courts AZ. Skill development, shooting, ball handling, game IQ, and position-specific work for all ages.",
+    "1-on-1 and small group basketball and volleyball training at Inspire Courts AZ. Skill development, shooting, ball handling, and sport-specific work for all ages.",
   alternates: {
     canonical: "https://inspirecourtsaz.com/training",
   },
@@ -40,6 +40,12 @@ const TRAINING_OPTIONS = [
     title: "Shooting Sessions",
     desc: "Dedicated shooting workouts focused on form, footwork, consistency, and game-speed shooting off screens and catches.",
     features: ["Form correction", "Game-speed reps", "Catch & shoot / off-dribble"],
+    highlighted: false,
+  },
+  {
+    title: "Volleyball Training",
+    desc: "Sport-specific volleyball sessions covering serving, passing, setting, attacking, and defensive positioning on regulation courts.",
+    features: ["Individual & small group", "All skill levels", "Regulation courts"],
     highlighted: false,
   },
 ];
@@ -78,8 +84,8 @@ export default function TrainingPage() {
               <span className="text-red">Training</span>
             </h1>
             <p className="text-white/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-              1-on-1 and small group basketball training at a pro-level facility.
-              Every session is designed to make you better.
+              1-on-1 and small group basketball and volleyball training at a
+              pro-level facility. Every session is designed to make you better.
             </p>
             <Link
               href="/contact?type=Private+Training"

@@ -6,9 +6,9 @@ import QuickContactBar from "@/components/ui/QuickContactBar";
 import BackToTop from "@/components/ui/BackToTop";
 
 export const metadata: Metadata = {
-  title: "Indoor Basketball Court Rental in Gilbert, AZ | Inspire Courts AZ",
+  title: "Indoor Basketball & Volleyball Court Rental in Gilbert, AZ | Inspire Courts AZ",
   description:
-    "Professional indoor basketball court rental in Gilbert, AZ. 7 courts, live scoreboards, game film, climate-controlled. Book for leagues, practices, and events.",
+    "Professional indoor basketball & volleyball court rental in Gilbert, AZ. 7 courts, live scoreboards, game film, climate-controlled. Book for leagues, practices, and events.",
   alternates: {
     canonical: "https://inspirecourtsaz.com/facility",
   },
@@ -63,8 +63,9 @@ export default function FacilityPage() {
               The Facility
             </h1>
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
-              A premium indoor basketball facility built from the ground up for
-              serious competition. Every detail is intentional.
+              A premium indoor basketball &amp; volleyball facility built from
+              the ground up for serious competition. Every detail is
+              intentional.
             </p>
           </AnimateIn>
         </div>
@@ -122,7 +123,7 @@ export default function FacilityPage() {
             No Rec Gyms. No Excuses.
           </h2>
           <p className="text-white/70 text-lg">
-            This is what youth basketball should look like.
+            This is what youth sports should look like.
           </p>
         </div>
       </section>
@@ -141,8 +142,9 @@ export default function FacilityPage() {
                 </h2>
                 <p className="text-white/70 leading-relaxed mb-6">
                   Host your league, practice, or private event at Inspire
-                  Courts. Available for leagues, team practices, private
-                  tournaments, camps, clinics, and corporate events.
+                  Courts. Available for basketball and volleyball leagues, team
+                  practices, private tournaments, camps, clinics, and corporate
+                  events.
                 </p>
                 <Link
                   href="/book"
@@ -153,11 +155,12 @@ export default function FacilityPage() {
               </div>
               <div className="space-y-3">
                 {[
-                  "Leagues & rec programs",
+                  "Basketball leagues & rec programs",
+                  "Volleyball leagues & tournaments",
                   "Team practices & workouts",
                   "Private tournaments",
                   "Youth camps & clinics",
-                  "Corporate events",
+                  "Corporate events & birthday parties",
                   "Film sessions & combines",
                 ].map((item) => (
                   <div

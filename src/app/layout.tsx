@@ -24,10 +24,10 @@ const chakra = Chakra_Petch({
 });
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} | Indoor Basketball Facility & Tournaments in Gilbert, Arizona`,
+  title: `${SITE_NAME} | Indoor Basketball & Volleyball Facility in Gilbert, Arizona`,
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: `${SITE_NAME} | Indoor Basketball Facility & Tournaments`,
+    title: `${SITE_NAME} | Indoor Basketball & Volleyball Facility`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     siteName: SITE_NAME,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
-    description: "Arizona's premier indoor basketball facility.",
+    description: "Arizona's premier indoor basketball & volleyball facility.",
   },
   metadataBase: new URL(SITE_URL),
 };

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 // In-memory token store (TTL: 1 hour)
 // In production with multiple instances, use Redis or a database
@@ -15,6 +16,14 @@ function cleanExpired() {
 }
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request);
+  if (isRateLimited(ip, 3, 15 * 60 * 1000)) {
+    return NextResponse.json({
+      success: true,
+      message: "If that email is associated with an account, a reset link has been sent.",
+    });
+  }
+
   try {
     const { email } = await request.json();
 
@@ -88,8 +97,8 @@ export async function POST(request: Request) {
         `,
       });
     } else {
-      console.log(`[Password Reset] Token for ${adminEmail}: ${token}`);
-      console.log(`[Password Reset] URL: /reset-password?token=${token}`);
+      // Email not configured — log a generic notice only (no token exposure)
+      console.log("[Password Reset] Email transport not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD to enable email delivery.");
     }
 
     return successResponse;

@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const contactSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("A valid email is required"),
-  phone: z.string().optional(),
-  inquiryType: z.string().optional(),
-  message: z.string().min(1, "Message is required"),
+  name: z.string().min(1, "Name is required").max(100),
+  email: z.string().email("A valid email is required").max(254),
+  phone: z.string().max(30).optional(),
+  inquiryType: z.string().max(100).optional(),
+  message: z.string().min(1, "Message is required").max(5000),
 });
 
 const VALID_EVENT_TYPES = new Set([
@@ -21,10 +21,10 @@ const VALID_EVENT_TYPES = new Set([
 ]);
 
 export const bookSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("A valid email is required"),
-  phone: z.string().min(1, "Phone is required"),
-  organization: z.string().optional(),
+  name: z.string().min(1, "Name is required").max(100),
+  email: z.string().email("A valid email is required").max(254),
+  phone: z.string().min(1, "Phone is required").max(30),
+  organization: z.string().max(150).optional(),
   eventType: z
     .string()
     .min(1, "Event type is required")
@@ -44,20 +44,22 @@ export const bookSchema = z.object({
   courts: z.string().optional(),
   groupSize: z.string().optional(),
   recurring: z.string().optional(),
-  notes: z.string().optional(),
+  notes: z.string().max(2000).optional(),
 });
 
 export const chatSchema = z.object({
-  message: z.string().min(1, "Message is required"),
+  message: z.string().min(1, "Message is required").max(2000),
   history: z
     .array(
       z.object({
-        role: z.string(),
-        content: z.string(),
+        role: z.enum(["user", "assistant"]),
+        content: z.string().max(4000),
       })
     )
+    .max(40)
     .optional(),
-  sessionId: z.string().optional(),
+  sessionId: z.string().max(128).optional(),
+  pathname: z.string().max(256).optional(),
 });
 
 export const subscribeSchema = z.object({

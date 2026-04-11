@@ -20,7 +20,7 @@ import SectionHeader from "@/components/ui/SectionHeader";
 export const metadata: Metadata = {
   title: "About | Inspire Courts AZ",
   description:
-    "The story behind Arizona's premier indoor basketball facility. Founded to give youth basketball players a true professional-level experience in Gilbert, AZ.",
+    "The story behind Arizona's premier indoor basketball & volleyball facility. Founded to give youth athletes a true professional-level experience in Gilbert, AZ.",
   alternates: {
     canonical: "https://inspirecourtsaz.com/about",
   },
@@ -31,7 +31,7 @@ const sportsOrgSchema = {
   "@type": "SportsOrganization",
   name: "Inspire Courts AZ",
   description:
-    "Arizona's premier indoor basketball facility and youth tournament organization. Home of OFF SZN HOOPS and Team Inspire.",
+    "Arizona's premier indoor basketball & volleyball facility and youth tournament organization. Home of OFF SZN HOOPS and Team Inspire.",
   url: "https://inspirecourtsaz.com",
   email: FACILITY_EMAIL,
   location: {
@@ -49,7 +49,7 @@ const sportsOrgSchema = {
     "https://www.instagram.com/inspirecourtsaz",
     "https://www.youtube.com/@AZFinestMixtape",
   ],
-  sport: "Basketball",
+  sport: ["Basketball", "Volleyball"],
 };
 
 export default function AboutPage() {
@@ -79,9 +79,9 @@ export default function AboutPage() {
               The Story
             </h1>
             <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-              Founded to give Arizona&apos;s youth basketball players a
-              professional-level experience. No more dusty rec centers. No more
-              outdoor courts in 115-degree heat.
+              Founded to give Arizona&apos;s youth athletes a
+              professional-level experience. Basketball. Volleyball. No more
+              dusty rec centers. No more outdoor courts in 115-degree heat.
             </p>
           </AnimateIn>
         </div>
@@ -102,12 +102,13 @@ export default function AboutPage() {
                 <div className="space-y-4 text-text-muted leading-relaxed">
                   <p>
                     Inspire Courts is climate-controlled, professionally
-                    equipped, and built for competitors. Two regulation indoor
-                    courts with live digital scoreboards, game film for every
-                    game, and a setup that rivals college-level facilities.
+                    equipped, and built for competitors. 7 regulation indoor
+                    courts for basketball and volleyball, with live digital
+                    scoreboards, game film for every game, and a setup that
+                    rivals college-level facilities.
                   </p>
                   <p>
-                    We saw what youth basketball looked like in Arizona — rec
+                    We saw what youth sports looked like in Arizona — rec
                     gyms with broken rims, outdoor tournaments in 115-degree
                     heat, and zero game footage. We built the opposite.
                   </p>
@@ -125,8 +126,8 @@ export default function AboutPage() {
                   Our Mission
                 </h3>
                 <p className="text-red text-xl font-bold leading-snug font-[var(--font-chakra)]">
-                  Elevate youth basketball in Arizona — one court, one game, one
-                  player at a time.
+                  Elevate youth basketball and volleyball in Arizona — one court,
+                  one game, one player at a time.
                 </p>
                 <div className="pt-4 border-t border-light-gray space-y-4">
                   <div className="flex gap-3">
@@ -150,7 +151,7 @@ export default function AboutPage() {
                       <Flame className="w-4 h-4 text-white" />
                     </div>
                     <p className="text-text-muted text-sm">
-                      Raising the standard for youth basketball in AZ
+                      Raising the standard for youth sports in AZ
                     </p>
                   </div>
                 </div>
@@ -166,7 +167,7 @@ export default function AboutPage() {
           <SectionHeader
             eyebrow="The Brands"
             title="Three Brands, One Mission"
-            description="Inspire Courts, OFF SZN HOOPS, and @AZFinestMixtape work together to deliver the complete youth basketball experience."
+            description="Inspire Courts, OFF SZN HOOPS, and @AZFinestMixtape work together to deliver the complete youth sports experience."
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <AnimateIn>
@@ -178,9 +179,10 @@ export default function AboutPage() {
                   Inspire Courts
                 </h3>
                 <p className="text-text-muted text-sm leading-relaxed">
-                  The facility. Two regulation courts, live scoreboards, game
-                  film, and a pro-level setup. Available for rentals, leagues,
-                  practices, and private events.
+                  The facility. 7 regulation courts for basketball and
+                  volleyball, live scoreboards, game film, and a pro-level
+                  setup. Available for rentals, leagues, practices, and private
+                  events.
                 </p>
               </div>
             </AnimateIn>

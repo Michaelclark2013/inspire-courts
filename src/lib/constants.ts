@@ -38,7 +38,7 @@ export const BRAND_COLORS = {
 export const SITE_NAME = "Inspire Courts AZ";
 export const SITE_URL = "https://inspirecourtsaz.com";
 export const SITE_DESCRIPTION =
-  "Arizona's premier indoor basketball facility. 7 courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.";
+  "Arizona's premier indoor basketball & volleyball facility. 7 courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.";
 
 // ─── Assets ──────────────────────────────────────────────────────────────────
 

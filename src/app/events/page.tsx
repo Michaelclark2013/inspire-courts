@@ -26,9 +26,9 @@ import { isNotionConfigured } from "@/lib/notion";
 import EventsList from "./EventsList";
 
 export const metadata: Metadata = {
-  title: "Youth Basketball Tournaments in Gilbert, AZ | Inspire Courts AZ",
+  title: "Youth Basketball & Volleyball Tournaments in Gilbert, AZ | Inspire Courts AZ",
   description:
-    "Register for upcoming youth basketball tournaments at Inspire Courts AZ. 10U-17U divisions, boys and girls. Game film, live scoreboards, 3+ game guarantee.",
+    "Register for upcoming youth basketball and volleyball tournaments at Inspire Courts AZ. 10U-17U divisions, boys and girls. Game film, live scoreboards, 3+ game guarantee.",
   alternates: {
     canonical: "https://inspirecourtsaz.com/events",
   },
@@ -107,9 +107,9 @@ export default function EventsPage() {
               Tournaments
             </h1>
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed mb-8">
-              Youth basketball tournaments in Gilbert, AZ. 10U through 17U
-              divisions, boys and girls. 3+ game guarantee, game film every game,
-              live scoreboards on every court.
+              Youth basketball and volleyball tournaments in Gilbert, AZ. 10U
+              through 17U divisions, boys and girls. 3+ game guarantee, game
+              film every game, live scoreboards on every court.
             </p>
             <a
               href={REGISTER_URL}

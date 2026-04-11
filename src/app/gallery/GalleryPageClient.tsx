@@ -10,7 +10,7 @@ const TABS = ["All", "Tournaments", "Facility", "Highlights"] as const;
 
 const GALLERY_ITEMS = [
   { id: 1, category: "Tournaments", color: "from-red/20 to-red/5", label: "Tournament action at Inspire Courts AZ" },
-  { id: 2, category: "Facility", color: "from-navy/20 to-navy/5", label: "Inspire Courts AZ indoor basketball courts" },
+  { id: 2, category: "Facility", color: "from-navy/20 to-navy/5", label: "Inspire Courts AZ indoor basketball and volleyball courts" },
   { id: 3, category: "Highlights", color: "from-green-500/20 to-green-500/5", label: "Player highlight reel from AZFinestMixtape" },
   { id: 4, category: "Tournaments", color: "from-purple-500/20 to-purple-500/5", label: "OFF SZN HOOPS tournament game action" },
   { id: 5, category: "Facility", color: "from-red/20 to-red/5", label: "Live digital scoreboards at Inspire Courts AZ" },

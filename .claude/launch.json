@@ -3,10 +3,9 @@
   "configurations": [
     {
       "name": "inspire-courts",
-      "runtimeExecutable": "/usr/bin/env",
-      "runtimeArgs": ["PATH=/Users/michaelclark/.nvm/versions/node/v20.20.2/bin:/usr/local/bin:/usr/bin:/bin", "bash", "-c", "cd /Users/michaelclark/inspire-courts && exec /Users/michaelclark/.nvm/versions/node/v20.20.2/bin/node node_modules/.bin/next dev"],
-      "port": 3000,
-      "autoPort": false
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
     }
   ]
 }

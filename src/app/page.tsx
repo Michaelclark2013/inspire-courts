@@ -22,9 +22,9 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import EmailSignup from "@/components/ui/EmailSignup";
 
 export const metadata: Metadata = {
-  title: "Inspire Courts AZ | Indoor Basketball Facility & Tournaments in Gilbert, Arizona",
+  title: "Inspire Courts AZ | Indoor Basketball & Volleyball Facility in Gilbert, Arizona",
   description:
-    "Arizona's premier indoor basketball facility. 7 courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.",
+    "Arizona's premier indoor basketball & volleyball facility. 7 courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.",
   alternates: {
     canonical: "https://inspirecourtsaz.com",
   },
@@ -36,7 +36,7 @@ const localBusinessSchema = {
   "@id": "https://inspirecourtsaz.com",
   name: "Inspire Courts AZ",
   description:
-    "Arizona's premier indoor basketball facility. 7 regulation courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS youth basketball tournaments.",
+    "Arizona's premier indoor basketball & volleyball facility. 7 regulation courts, live digital scoreboards, game film every game. Home of OFF SZN HOOPS youth basketball tournaments.",
   url: "https://inspirecourtsaz.com",
   email: FACILITY_EMAIL,
   address: {
@@ -56,7 +56,7 @@ const localBusinessSchema = {
     "https://www.instagram.com/inspirecourtsaz",
     "https://www.youtube.com/@AZFinestMixtape",
   ],
-  sport: "Basketball",
+  sport: ["Basketball", "Volleyball"],
   amenityFeature: [
     { "@type": "LocationFeatureSpecification", name: "Indoor Courts", value: true },
     { "@type": "LocationFeatureSpecification", name: "Air Conditioning", value: true },
@@ -147,7 +147,7 @@ export default function Home() {
               Arizona&apos;s Premier
               <br />
               <span className="text-red drop-shadow-[0_0_30px_rgba(204,0,0,0.3)]">
-                Indoor Basketball
+                Basketball &amp; Volleyball
               </span>
               <br />
               Facility
@@ -156,7 +156,7 @@ export default function Home() {
 
           <AnimateIn delay={200}>
             <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-              7 courts. 52,000 sq ft. Arizona&apos;s premier basketball facility.
+              7 courts. 52,000 sq ft. Basketball &amp; volleyball. Built for competitors.
             </p>
           </AnimateIn>
 
@@ -292,7 +292,7 @@ export default function Home() {
             </h2>
             <p className="text-white/75 text-lg lg:text-xl leading-relaxed mb-10 max-w-2xl mx-auto">
               Inspire Courts is the home base. OFF SZN HOOPS is the tournament
-              series. Together, we&apos;re elevating youth basketball in Arizona.
+              series. Together, we&apos;re elevating youth sports in Arizona.
             </p>
             <Link
               href="/about"
@@ -311,7 +311,7 @@ export default function Home() {
           <SectionHeader
             eyebrow="The Brands"
             title="Two Brands. One Mission."
-            description="Inspire Courts is the home base. OFF SZN HOOPS is the tournament series. Together, we're elevating youth basketball in Arizona."
+            description="Inspire Courts is the home base. OFF SZN HOOPS is the tournament series. Together, we're elevating youth sports in Arizona."
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
             {/* Inspire Courts card */}
@@ -333,9 +333,10 @@ export default function Home() {
                     Inspire Courts
                   </h3>
                   <p className="text-white/75 leading-relaxed mb-8 flex-1 text-base">
-                    The home base. Two regulation indoor courts with live
-                    scoreboards, game film, and a pro-level setup. Available for
-                    leagues, practices, camps, clinics, and private events.
+                    The home base. 7 regulation indoor courts — basketball and
+                    volleyball — with live scoreboards, game film, and a
+                    pro-level setup. Available for leagues, practices, camps,
+                    clinics, and private events.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-10">
                     {["7 Courts", "Game Film", "Scoreboards", "Rentals"].map(

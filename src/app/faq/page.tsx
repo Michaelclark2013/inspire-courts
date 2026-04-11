@@ -41,6 +41,14 @@ const FAQ_CATEGORIES = [
         q: "How do I book the facility?",
         a: "Fill out the booking request form at inspirecourtsaz.com/book. Provide your contact info, event details, preferred dates, and any special requests. We'll respond within 24 hours to confirm availability and pricing.",
       },
+      {
+        q: "Do you have volleyball courts?",
+        a: "Yes! Inspire Courts has 7 regulation volleyball courts available to rent at $80/hour per court. We host volleyball leagues, practices, tournaments, and private events. Use the same booking form at inspirecourtsaz.com/book or select 'Volleyball' as your sport.",
+      },
+      {
+        q: "What sports can I rent courts for?",
+        a: "We host basketball, volleyball, and futsal. All 7 courts can be configured for the sport you need. Email us or fill out the booking form with your sport and we'll set you up.",
+      },
     ],
   },
   {
@@ -74,7 +82,7 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "What training programs do you offer?",
-        a: "We offer private 1-on-1 training sessions, small group workouts, and skills clinics. Training covers shooting mechanics, ball handling, footwork, athleticism, and game IQ — for all skill levels and age groups. Sessions are held at Inspire Courts by appointment.",
+        a: "We offer private 1-on-1 training sessions, small group workouts, and skills clinics for basketball and volleyball. Basketball training covers shooting mechanics, ball handling, footwork, athleticism, and game IQ. Volleyball training covers serving, passing, setting, attacking, and positioning — all on regulation courts. Sessions are held at Inspire Courts by appointment.",
       },
       {
         q: "How do I book a training session?",

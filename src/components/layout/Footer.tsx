@@ -29,8 +29,8 @@ export default function Footer() {
                 </span>
               </div>
               <p className="text-white/80 text-sm leading-relaxed">
-                Arizona&apos;s premier indoor basketball facility. 7 courts.
-                52,000 sq ft. Built for competitors.
+                Arizona&apos;s premier indoor basketball &amp; volleyball
+                facility. 7 courts. 52,000 sq ft. Built for competitors.
               </p>
             </div>
 

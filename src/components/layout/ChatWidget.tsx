@@ -12,20 +12,172 @@ interface Message {
   content: string;
 }
 
-const QUICK_QUESTIONS = [
-  "How much to rent a court?",
-  "How do I register my team?",
-  "Tell me about training",
-  "How do I join Team Inspire?",
-  "Where are you located?",
-  "What events are coming up?",
-];
-
-const INITIAL_MESSAGE: Message = {
-  role: "assistant",
-  content:
-    "What's up! 👋 Welcome to Inspire Courts — Arizona's top indoor basketball facility. 7 courts, 52,000 sq ft, game film every game. What can I help you with today?",
+const PAGE_CONTEXT: Record<
+  string,
+  { greeting: string; quickQuestions: string[] }
+> = {
+  "/events": {
+    greeting:
+      "Looking for tournament info? Ask me about upcoming events, age divisions, registration, or entry fees!",
+    quickQuestions: [
+      "What events are coming up?",
+      "How do I register my team?",
+      "What age groups do you have?",
+      "How much is entry?",
+      "When do schedules come out?",
+      "Boys or girls divisions?",
+    ],
+  },
+  "/schedule": {
+    greeting:
+      "Need schedule info? I can help with brackets, game times, and results!",
+    quickQuestions: [
+      "When does the schedule drop?",
+      "How do I find my bracket?",
+      "What age groups are playing?",
+      "How do I register?",
+      "Where are you located?",
+      "What events are coming up?",
+    ],
+  },
+  "/facility": {
+    greeting:
+      "Want to know about our facility? I can tell you about our courts, amenities, and rental options!",
+    quickQuestions: [
+      "How much to rent a court?",
+      "What sports can I play?",
+      "How many courts do you have?",
+      "Tell me about the facility",
+      "Birthday party options?",
+      "How do I book?",
+    ],
+  },
+  "/book": {
+    greeting:
+      "Need help booking? I can answer questions about availability, pricing, and what to expect!",
+    quickQuestions: [
+      "How much to rent a court?",
+      "How do I book a court?",
+      "What's included in a rental?",
+      "Birthday party options?",
+      "What sports are available?",
+      "How do I contact you?",
+    ],
+  },
+  "/training": {
+    greeting:
+      "Looking to level up your game? Ask me about our training programs, coaches, and how to book!",
+    quickQuestions: [
+      "What training do you offer?",
+      "How do I book a session?",
+      "How much is training?",
+      "Group sessions available?",
+      "Who are the coaches?",
+      "1-on-1 or small group?",
+    ],
+  },
+  "/teams": {
+    greeting:
+      "Interested in Team Inspire? I can tell you about tryouts, age divisions, and the MADE Hoops circuit!",
+    quickQuestions: [
+      "How do I try out?",
+      "What ages are on the team?",
+      "What's MADE Hoops?",
+      "Are you recruiting players?",
+      "Are you recruiting coaches?",
+      "Tell me about club basketball",
+    ],
+  },
+  "/prep": {
+    greeting:
+      "Want to know about Inspire Prep? Ask me about the academy program and how to get started!",
+    quickQuestions: [
+      "What is Inspire Prep?",
+      "How do I enroll?",
+      "What ages is it for?",
+      "Tell me about the program",
+      "How do I contact you?",
+      "What does it cost?",
+    ],
+  },
+  "/media": {
+    greeting:
+      "Interested in our media services? I can tell you about game film, highlights, and mixtapes!",
+    quickQuestions: [
+      "How does game film work?",
+      "How do I get my highlights?",
+      "What's the mixtape service?",
+      "How do I get featured?",
+      "Who do I contact?",
+      "How much does it cost?",
+    ],
+  },
+  "/gameday": {
+    greeting:
+      "Getting ready for game day? I can help with check-in, rules, what to bring, and parking!",
+    quickQuestions: [
+      "What do I need to bring?",
+      "How does check-in work?",
+      "What are the rules?",
+      "Is there parking?",
+      "How much is admission?",
+      "Where are you located?",
+    ],
+  },
+  "/contact": {
+    greeting:
+      "Looking to get in touch? I can point you to the right contact, hours, and location info!",
+    quickQuestions: [
+      "What's your email?",
+      "Where are you located?",
+      "What are your hours?",
+      "How do I book a court?",
+      "How do I register for an event?",
+      "I have a general question",
+    ],
+  },
+  "/gallery": {
+    greeting:
+      "Checking out the gallery? Ask me anything about our facility, past events, or what's coming up!",
+    quickQuestions: [
+      "Tell me about the facility",
+      "What events do you host?",
+      "How do I get featured?",
+      "How do I rent a court?",
+      "What events are coming up?",
+      "Where are you located?",
+    ],
+  },
+  "/": {
+    greeting:
+      "What's up! 👋 Welcome to Inspire Courts — Arizona's top indoor basketball & volleyball facility. 7 courts, 52,000 sq ft, game film every game. What can I help you with today?",
+    quickQuestions: [
+      "How much to rent a court?",
+      "How do I register my team?",
+      "Tell me about training",
+      "How do I join Team Inspire?",
+      "Where are you located?",
+      "What events are coming up?",
+    ],
+  },
 };
+
+const DEFAULT_CONTEXT = PAGE_CONTEXT["/"];
+
+function getPageContext(pathname: string | null) {
+  if (!pathname) return DEFAULT_CONTEXT;
+  // Exact match first, then prefix match (e.g. /events/123 → /events)
+  if (PAGE_CONTEXT[pathname]) return PAGE_CONTEXT[pathname];
+  const segment = "/" + (pathname.split("/")[1] || "");
+  return PAGE_CONTEXT[segment] || DEFAULT_CONTEXT;
+}
+
+function getInitialMessage(pathname: string | null): Message {
+  return {
+    role: "assistant",
+    content: getPageContext(pathname).greeting,
+  };
+}
 
 const SESSION_KEY = "inspire-chat-messages";
 const SESSION_ID_KEY = "inspire-chat-session-id";
@@ -40,8 +192,8 @@ function getSessionId(): string {
   return id;
 }
 
-function loadMessages(): Message[] {
-  if (typeof window === "undefined") return [INITIAL_MESSAGE];
+function loadMessages(pathname: string | null): Message[] {
+  if (typeof window === "undefined") return [getInitialMessage(pathname)];
   try {
     const stored = sessionStorage.getItem(SESSION_KEY);
     if (stored) {
@@ -49,7 +201,7 @@ function loadMessages(): Message[] {
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
   } catch {}
-  return [INITIAL_MESSAGE];
+  return [getInitialMessage(pathname)];
 }
 
 // ── Rich text renderer ──
@@ -160,9 +312,11 @@ export default function ChatWidget() {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin") || pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password";
 
+  const pageCtx = getPageContext(pathname);
+
   const [open, setOpen] = useState(false);
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
-  const [messages, setMessages] = useState<Message[]>(() => loadMessages());
+  const [messages, setMessages] = useState<Message[]>(() => loadMessages(pathname));
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -242,6 +396,7 @@ export default function ChatWidget() {
           message: text.trim(),
           history: history.slice(0, -1), // don't include the message we just sent (it's in `message`)
           sessionId: getSessionId(),
+          pathname: pathname || "/",
         }),
       });
       const data = await res.json();
@@ -345,7 +500,7 @@ export default function ChatWidget() {
           {showQuickQuestions && (
             <div className="px-3 pb-2 bg-off-white">
               <div className="flex flex-wrap gap-1.5">
-                {QUICK_QUESTIONS.map((q) => (
+                {pageCtx.quickQuestions.map((q) => (
                   <button
                     key={q}
                     onClick={() => sendMessage(q)}

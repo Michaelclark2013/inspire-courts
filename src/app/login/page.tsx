@@ -204,8 +204,16 @@ export default function LoginPage() {
           </form>
         </div>
 
+        {/* Register link */}
+        <div className="mt-5 text-center">
+          <span className="text-white/30 text-xs">Don&apos;t have an account? </span>
+          <Link href="/register" className="text-red text-xs hover:text-red-hover transition-colors font-semibold">
+            Create Account
+          </Link>
+        </div>
+
         {/* Footer */}
-        <p className="text-center text-white/20 text-xs mt-8 uppercase tracking-widest">
+        <p className="text-center text-white/20 text-xs mt-6 uppercase tracking-widest">
           Inspire Courts AZ &bull; Gilbert, Arizona
         </p>
       </div>

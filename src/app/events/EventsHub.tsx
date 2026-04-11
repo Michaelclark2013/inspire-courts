@@ -271,7 +271,7 @@ export default function EventsHub({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-5 py-4 text-sm font-bold uppercase tracking-wide whitespace-nowrap border-b-2 transition-colors ${
+                  className={`flex items-center gap-2 px-3 py-3 lg:px-5 lg:py-4 text-xs lg:text-sm font-bold uppercase tracking-normal lg:tracking-wide whitespace-nowrap border-b-2 transition-colors ${
                     isActive
                       ? "border-red text-red"
                       : "border-transparent text-text-muted hover:text-navy hover:border-navy/20"
@@ -319,7 +319,7 @@ export default function EventsHub({
                   <select
                     value={divisionFilter}
                     onChange={(e) => setDivisionFilter(e.target.value)}
-                    className="appearance-none pl-10 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-colors"
+                    className="w-full lg:w-auto appearance-none pl-10 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-colors"
                   >
                     <option value="all">All Divisions</option>
                     {allDivisions.map((d) => (
@@ -334,7 +334,7 @@ export default function EventsHub({
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="appearance-none pl-4 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-colors"
+                    className="w-full lg:w-auto appearance-none pl-4 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-colors"
                   >
                     <option value="all">All Statuses</option>
                     {allStatuses.map((s) => (
@@ -356,7 +356,7 @@ export default function EventsHub({
           <section className="py-12 lg:py-20 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               {filteredEvents.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                   {filteredEvents.map((event, i) => (
                     <div
                       key={i}
@@ -524,11 +524,11 @@ export default function EventsHub({
               <p className="text-white/50 text-xs font-bold uppercase tracking-[0.2em] text-center mb-6 font-[var(--font-chakra)]">
                 Every Tournament Includes
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4">
                 {WHATS_INCLUDED.map((item, i) => (
-                  <div key={i} className="text-center px-2">
-                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-2">
-                      <item.icon className="w-5 h-5 text-red" />
+                  <div key={i} className="text-center px-1 lg:px-2">
+                    <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+                      <item.icon className="w-4 h-4 lg:w-5 lg:h-5 text-red" />
                     </div>
                     <p className="text-white text-xs font-bold uppercase tracking-wider mb-0.5">
                       {item.label}
@@ -551,7 +551,7 @@ export default function EventsHub({
                   {past.map((event, i) => (
                     <div
                       key={i}
-                      className="bg-white border border-light-gray rounded-xl px-5 py-4 flex items-center justify-between hover:shadow-sm transition-shadow"
+                      className="bg-white border border-light-gray rounded-xl px-4 py-3 lg:px-5 lg:py-4 flex items-center justify-between gap-3 hover:shadow-sm transition-shadow"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-8 h-8 bg-navy/5 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -723,22 +723,22 @@ export default function EventsHub({
           {/* Quick summary bar */}
           <section className="py-6 bg-red">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 text-center">
                 <div>
-                  <p className="text-white font-bold text-lg font-[var(--font-chakra)]">$15</p>
-                  <p className="text-white/70 text-xs">Spectator Admission</p>
+                  <p className="text-white font-bold text-base lg:text-lg font-[var(--font-chakra)]">$15</p>
+                  <p className="text-white/70 text-[11px] lg:text-xs">Spectator Admission</p>
                 </div>
                 <div>
-                  <p className="text-white font-bold text-lg font-[var(--font-chakra)]">48 hrs</p>
-                  <p className="text-white/70 text-xs">Schedule Release</p>
+                  <p className="text-white font-bold text-base lg:text-lg font-[var(--font-chakra)]">48 hrs</p>
+                  <p className="text-white/70 text-[11px] lg:text-xs">Schedule Release</p>
                 </div>
                 <div>
-                  <p className="text-white font-bold text-lg font-[var(--font-chakra)]">Photo ID</p>
-                  <p className="text-white/70 text-xs">Coach Check-In</p>
+                  <p className="text-white font-bold text-base lg:text-lg font-[var(--font-chakra)]">Photo ID</p>
+                  <p className="text-white/70 text-[11px] lg:text-xs">Coach Check-In</p>
                 </div>
                 <div>
-                  <p className="text-white font-bold text-lg font-[var(--font-chakra)]">Court Shoes</p>
-                  <p className="text-white/70 text-xs">Non-Marking Only</p>
+                  <p className="text-white font-bold text-base lg:text-lg font-[var(--font-chakra)]">Court Shoes</p>
+                  <p className="text-white/70 text-[11px] lg:text-xs">Non-Marking Only</p>
                 </div>
               </div>
             </div>

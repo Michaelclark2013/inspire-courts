@@ -311,7 +311,7 @@ function getFollowUpSuggestions(lastBotMessage: string): string[] {
 
 export default function ChatWidget() {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin") || pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password";
+  const isAdmin = pathname?.startsWith("/admin") || pathname?.startsWith("/portal") || pathname?.startsWith("/events") || pathname === "/login" || pathname === "/register" || pathname === "/forgot-password" || pathname === "/reset-password";
 
   const pageCtx = getPageContext(pathname);
 
@@ -430,7 +430,7 @@ export default function ChatWidget() {
         className={cn(
           "fixed z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all",
           "bg-red hover:bg-red-hover text-white",
-          "bottom-28 right-4 lg:bottom-6 lg:right-6",
+          "bottom-6 right-4 lg:right-6",
           !hasAutoOpened && "animate-[pulse_2s_ease-in-out_infinite]"
         )}
         aria-label="Open chat"
@@ -448,7 +448,8 @@ export default function ChatWidget() {
         <div
           className={cn(
             "fixed z-[100] bg-white border border-light-gray rounded-xl shadow-2xl flex flex-col",
-            "bottom-44 right-4 w-[calc(100vw-2rem)] max-w-[400px] h-[min(560px,calc(100vh-12rem))]",
+            "bottom-24 right-4 w-[calc(100vw-2rem)] max-w-[400px]",
+            "h-[min(340px,calc(100vh-8rem))] lg:h-[min(560px,calc(100vh-12rem))]",
             "lg:bottom-24 lg:right-6",
             "animate-[slideUp_0.3s_ease-out]"
           )}
@@ -500,12 +501,12 @@ export default function ChatWidget() {
           {/* Quick questions (initial state) */}
           {showQuickQuestions && (
             <div className="px-3 pb-2 bg-off-white">
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1.5 max-h-[60px] overflow-y-auto lg:max-h-none">
                 {pageCtx.quickQuestions.map((q) => (
                   <button
                     key={q}
                     onClick={() => sendMessage(q)}
-                    className="text-xs bg-white border border-light-gray text-text-muted hover:text-navy hover:border-red/50 px-2.5 py-1.5 rounded-full transition-colors"
+                    className="text-[11px] lg:text-xs bg-white border border-light-gray text-text-muted hover:text-navy hover:border-red/50 px-2 py-1 lg:px-2.5 lg:py-1.5 rounded-full transition-colors"
                   >
                     {q}
                   </button>
@@ -517,12 +518,12 @@ export default function ChatWidget() {
           {/* Contextual follow-up suggestions (after bot responds) */}
           {showFollowUps && (
             <div className="px-3 pb-2 bg-off-white">
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1.5 max-h-[60px] overflow-y-auto lg:max-h-none">
                 {followUpSuggestions.map((q) => (
                   <button
                     key={q}
                     onClick={() => sendMessage(q)}
-                    className="text-xs bg-red/5 border border-red/20 text-red hover:bg-red/10 hover:border-red/40 px-2.5 py-1.5 rounded-full transition-colors"
+                    className="text-[11px] lg:text-xs bg-red/5 border border-red/20 text-red hover:bg-red/10 hover:border-red/40 px-2 py-1 lg:px-2.5 lg:py-1.5 rounded-full transition-colors"
                   >
                     {q}
                   </button>

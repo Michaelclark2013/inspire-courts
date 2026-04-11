@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -120,6 +121,23 @@ export const authOptions: NextAuthOptions = {
                 .returning({ id: users.id, role: users.role });
               token.role = newUser.role;
               token.userId = String(newUser.id);
+
+              // Save new OAuth registration to Drive + Sheets (non-blocking)
+              const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+              Promise.allSettled([
+                saveRegistrationToDrive(user.name || "User", user.email!, "parent"),
+                appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [
+                  sanitizeSheetRow([
+                    timestamp,
+                    user.name || "User",
+                    user.email!,
+                    "",
+                    "parent",
+                    `${account.provider} OAuth`,
+                    "Active",
+                  ]),
+                ]),
+              ]).catch(() => {});
             }
           } catch (err) {
             console.error("Google OAuth DB error:", err);

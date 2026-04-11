@@ -441,3 +441,62 @@ export async function listDriveFolder(folderId: string): Promise<DriveFile[]> {
     return [];
   }
 }
+
+// ── Save New Registration to Google Drive ─────────────────────────────────────
+
+const ROLE_FOLDER_NAMES: Record<string, string> = {
+  parent: "Parents",
+  coach: "Coaches",
+  staff: "Staff",
+  ref: "Referees",
+  admin: "Admins",
+  front_desk: "Front Desk",
+};
+
+export async function saveRegistrationToDrive(
+  name: string,
+  email: string,
+  role: string,
+  phone?: string | null,
+): Promise<void> {
+  if (!isGoogleConfigured()) return;
+
+  try {
+    // Find or create "Account Registrations" folder inside root
+    const regFolderId = await findOrCreateDriveFolder(
+      DRIVE_FOLDERS.root,
+      "Account Registrations",
+    );
+    if (!regFolderId) return;
+
+    // Find or create role-specific subfolder
+    const roleFolderName = ROLE_FOLDER_NAMES[role] || role;
+    const roleFolderId = await findOrCreateDriveFolder(regFolderId, roleFolderName);
+    if (!roleFolderId) return;
+
+    // Create a Google Doc with the registration info
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+      year: "numeric",
+    });
+    const title = `${name} — ${email} (${dateStr})`;
+
+    const content = [
+      `ACCOUNT REGISTRATION`,
+      `====================`,
+      ``,
+      `Name: ${name}`,
+      `Email: ${email}`,
+      `Phone: ${phone || "Not provided"}`,
+      `Role: ${roleFolderName}`,
+      `Registered: ${now.toLocaleString("en-US", { timeZone: "America/Phoenix" })}`,
+    ].join("\n");
+
+    await createDriveDoc(roleFolderId, title, content);
+  } catch (err) {
+    // Never block registration on Drive failure
+    console.error("Drive registration save error:", err);
+  }
+}

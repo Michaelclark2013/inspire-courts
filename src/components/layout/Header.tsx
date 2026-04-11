@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, ArrowRight, Calendar, ChevronDown } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { Menu, X, ArrowRight, Calendar, ChevronDown, LogIn, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SOCIAL_LINKS } from "@/lib/constants";
 import { trackConversion } from "@/lib/analytics";
@@ -145,8 +146,15 @@ function MobileAccordion({
   );
 }
 
+const ADMIN_ROLES = ["admin", "staff", "ref", "front_desk"];
+
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const dashboardHref = isLoggedIn
+    ? ADMIN_ROLES.includes(session?.user?.role as string) ? "/admin" : "/portal"
+    : "/login";
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-navy shadow-lg">
@@ -191,6 +199,16 @@ export default function Header() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
+            <Link
+              href={dashboardHref}
+              className="flex items-center gap-2 min-h-[44px] text-white/70 hover:text-white px-4 py-2.5 rounded-full font-semibold text-sm uppercase tracking-wide transition-all hover:bg-white/5"
+            >
+              {isLoggedIn ? (
+                <><LayoutDashboard className="w-4 h-4" /> Dashboard</>
+              ) : (
+                <><LogIn className="w-4 h-4" /> Login</>
+              )}
+            </Link>
             <Link
               href="/book"
               onClick={() => trackConversion("book_cta_click")}
@@ -276,11 +294,15 @@ export default function Header() {
               Register Now <ArrowRight className="w-4 h-4" />
             </a>
             <Link
-              href="/admin"
+              href={dashboardHref}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 min-h-[44px] border border-white/15 text-white/50 px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
+              className="flex items-center justify-center gap-2 min-h-[44px] border border-white/20 hover:border-white/40 text-white/70 hover:text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
             >
-              Admin
+              {isLoggedIn ? (
+                <><LayoutDashboard className="w-4 h-4" /> My Dashboard</>
+              ) : (
+                <><LogIn className="w-4 h-4" /> Login / Register</>
+              )}
             </Link>
           </div>
         </nav>

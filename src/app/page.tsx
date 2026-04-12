@@ -1,21 +1,17 @@
 import type { Metadata } from "next";
-import { FACILITY_EMAIL } from "@/lib/constants";
+import { FACILITY_EMAIL, FACILITY_PHONE } from "@/lib/constants";
 import { getPageContent, getField, getList } from "@/lib/content";
 import Link from "next/link";
 import Image from "next/image";
 import {
   ArrowRight,
-  Tv,
   Video,
   UtensilsCrossed,
   Trophy,
   MapPin,
-  Calendar,
-  Shield,
   Zap,
-  Users,
-  CheckCircle2,
-  Wifi,
+  Thermometer,
+  Phone,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import AnimateIn from "@/components/ui/AnimateIn";
@@ -66,7 +62,7 @@ const localBusinessSchema = {
   ],
 };
 
-const FEATURE_ICONS = [Trophy, Video, UtensilsCrossed, Wifi];
+const FEATURE_ICONS = [Trophy, Video, UtensilsCrossed, Thermometer];
 
 const FALLBACK_FEATURES = [
   { title: "7 Indoor Courts", desc: "Regulation hardwood floors, professional dimensions, adjustable hoops for all age groups." },
@@ -75,17 +71,15 @@ const FALLBACK_FEATURES = [
   { title: "Climate Controlled", desc: "Fully air-conditioned, 52,000 sq ft facility. No Arizona heat — play in comfort year-round." },
 ];
 
-const VALUE_PROP_ICONS = [Shield, Zap, Users];
-
-const FALLBACK_VALUE_PROPS = [
-  { title: "Pro-Level Setup", desc: "College-quality courts and a pro-level environment — not a rec gym." },
-  { title: "Year-Round Action", desc: "Tournaments, leagues, and open runs every month. Never an off season." },
-  { title: "Real Competition", desc: "500+ teams hosted. The best youth players in Arizona compete here." },
+const FALLBACK_STATS = [
+  { value: "500+", label: "Teams Hosted" },
+  { value: "30+", label: "Tournaments" },
+  { value: "5,000+", label: "Players" },
+  { value: "52K", label: "Sq Ft Facility" },
 ];
 
 export default function Home() {
   const page = getPageContent("home");
-  const valueProps = page ? getList(page, "Value Props") : [];
   const features = page ? getList(page, "Facility Features") : [];
 
   return (
@@ -110,10 +104,6 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.15),transparent_60%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-8 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
-            {page ? getField(page, "Hero", "badge") : "Est. Gilbert, AZ"}
-          </span>
-
           <h1 className="heading-hero font-bold uppercase tracking-tight text-white leading-[0.9] mb-8 font-[var(--font-chakra)] drop-shadow-[2px_4px_16px_rgba(0,0,0,0.5)]">
             Arizona&apos;s Premier
             <br />
@@ -149,63 +139,25 @@ export default function Home() {
             </div>
           </AnimateIn>
 
-          {/* Scroll indicator */}
-          <AnimateIn delay={500}>
-            <div className="mt-16 animate-bounce">
-              <div className="w-6 h-10 border-2 border-white/40 rounded-full mx-auto flex justify-center">
-                <div className="w-1.5 h-3 bg-white/60 rounded-full mt-2" />
-              </div>
-            </div>
-          </AnimateIn>
         </div>
       </section>
 
-      {/* ── EVENT CALLOUT BAR ── */}
-      <section className="bg-red py-5 shadow-[0_4px_20px_rgba(204,0,0,0.3)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-white">
-              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                <Calendar className="w-4 h-4" />
-              </div>
-              <span className="font-[var(--font-chakra)] font-bold text-sm uppercase tracking-wide">
-                {page ? getField(page, "Event Bar", "text") : "OFF SZN HOOPS — Tournaments Running Year-Round"}
-              </span>
-            </div>
-            <Link
-              href="/tournaments"
-              className="group flex items-center gap-2 bg-white text-red px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide hover:bg-off-white transition-colors font-[var(--font-chakra)]"
-            >
-              {page ? getField(page, "Event Bar", "buttonText") : "Register Now"}{" "}
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── WHY INSPIRE COURTS (3 value props) ── */}
-      <section className="py-16 bg-navy">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="sr-only">Why Inspire Courts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y divide-white/10 md:divide-y-0 md:divide-x md:divide-white/10">
-            {VALUE_PROP_ICONS.map((Icon, i) => {
-              const item = valueProps[i];
-              const title = item?.title || FALLBACK_VALUE_PROPS[i].title;
-              const desc = item?.description || FALLBACK_VALUE_PROPS[i].desc;
+      {/* ── STATS BAR ── */}
+      <section className="bg-red py-8 shadow-[0_4px_20px_rgba(204,0,0,0.3)]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-white/20">
+            {FALLBACK_STATS.map((stat, i) => {
+              const value = (page ? getField(page, "Stats", `stat${i + 1}Value`) : "") || stat.value;
+              const label = (page ? getField(page, "Stats", `stat${i + 1}Label`) : "") || stat.label;
               return (
-                <AnimateIn key={title} delay={i * 100}>
-                  <div className="flex items-start gap-4 px-4 sm:px-8 py-6 md:py-0">
-                    <div className="w-12 h-12 bg-red/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-6 h-6 text-red" />
-                    </div>
-                    <div>
-                      <h3 className="text-white font-semibold text-sm uppercase tracking-tight font-[var(--font-chakra)] mb-1">
-                        {title}
-                      </h3>
-                      <p className="text-white/80 text-sm leading-relaxed">
-                        {desc}
-                      </p>
-                    </div>
+                <AnimateIn key={label} delay={i * 100}>
+                  <div className="text-center px-4">
+                    <p className="text-2xl md:text-3xl font-bold text-white font-[var(--font-chakra)] leading-none mb-1">
+                      {value}
+                    </p>
+                    <p className="text-xs uppercase tracking-wider text-white/80 font-semibold">
+                      {label}
+                    </p>
                   </div>
                 </AnimateIn>
               );
@@ -213,6 +165,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
       {/* ── FACILITY FEATURES ── */}
       <section className="py-14 lg:py-32 bg-white">
@@ -222,7 +175,7 @@ export default function Home() {
             title={page ? getField(page, "Facility Features", "headline") : "Built for Competitors"}
             description={page ? getField(page, "Facility Features", "description") : "Professional-grade courts, technology, and amenities designed for serious athletes."}
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
             {FEATURE_ICONS.map((Icon, i) => {
               const item = features[i];
               const title = item?.title || FALLBACK_FEATURES[i].title;
@@ -249,42 +202,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── PARALLAX MISSION ── */}
-      <section
-        className="relative py-20 lg:py-44 bg-scroll md:bg-fixed bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/hero-bg-texture.jpg')" }}
-      >
-        <div className="absolute inset-0 bg-navy/85" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(204,0,0,0.1),transparent_70%)]" />
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <AnimateIn>
-            <span className="inline-block bg-red/20 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-6 font-[var(--font-chakra)] border border-red/30">
-              Our Mission
-            </span>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
-              {page ? getField(page, "Mission Section", "headline") : "Elevating Youth Sports in Arizona"}
-            </h2>
-            <p className="text-white/75 text-lg lg:text-xl leading-relaxed mb-10 max-w-2xl mx-auto">
-              {page ? getField(page, "Mission Section", "description") : "We built something Arizona was missing — a facility where young athletes train, compete, and grow in a pro-level environment year-round."}
-            </p>
-            <Link
-              href="/about"
-              className="group inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
-            >
-              {page ? getField(page, "Mission Section", "buttonText") : "Our Story"}{" "}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </AnimateIn>
-        </div>
-      </section>
 
       {/* ── DUAL BRAND CARDS ── */}
       <section className="py-14 lg:py-32 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
-            eyebrow="The Brands"
-            title="Two Brands. One Mission."
-            description="Inspire Courts is the home base. OFF SZN HOOPS is the tournament series. Together, we're elevating youth sports in Arizona."
+            eyebrow="Our Mission"
+            title={page ? getField(page, "Mission Section", "headline") || "Two Brands. One Mission." : "Two Brands. One Mission."}
+            description={page ? getField(page, "Mission Section", "description") || "Inspire Courts is the home base. OFF SZN HOOPS is the tournament series. Together, we're elevating youth sports in Arizona." : "Inspire Courts is the home base. OFF SZN HOOPS is the tournament series. Together, we're elevating youth sports in Arizona."}
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
             {/* Inspire Courts card */}
@@ -365,10 +290,10 @@ export default function Home() {
                     )}
                   </div>
                   <Link
-                    href="/events"
+                    href="/tournaments"
                     className="group/btn inline-flex items-center gap-2 bg-navy hover:bg-navy-dark text-white px-10 py-4.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all self-start font-[var(--font-chakra)] shadow-lg hover:scale-[1.03]"
                   >
-                    See Upcoming Events{" "}
+                    Browse Tournaments{" "}
                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                   </Link>
                 </div>
@@ -421,31 +346,37 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-red/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-5 h-5 text-red" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-navy">{FACILITY_PHONE}</p>
+                      <p className="text-text-muted text-sm">Call or text</p>
+                    </div>
+                  </div>
                 </div>
 
                 <p className="text-text-muted leading-relaxed mb-8">
-                  {page ? getField(page, "Location", "description") : "Follow us on Instagram for game highlights, tournament recaps, and behind-the-scenes content."}
+                  Walk-ins welcome on non-tournament days. Follow us for schedules and highlights.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 mb-4">
                   <a
-                    href="https://instagram.com/inspirecourts"
+                    href="https://www.google.com/maps/dir//1090+N+Fiesta+Blvd+Ste+101+%26+102+Gilbert+AZ+85233"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center justify-center gap-2 bg-navy hover:bg-navy-dark text-white px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all font-[var(--font-chakra)] shadow-md"
+                    className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all font-[var(--font-chakra)] shadow-md"
                   >
-                    @inspirecourts{" "}
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </a>
-                  <a
-                    href="https://instagram.com/azfinestmixtape"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center justify-center gap-2 bg-white border-2 border-navy/20 hover:border-red text-navy px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all font-[var(--font-chakra)]"
-                  >
-                    @azfinestmixtape{" "}
+                    Get Directions{" "}
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </a>
                 </div>
+                <p className="text-text-muted text-sm">
+                  Follow us:{" "}
+                  <a href="https://instagram.com/inspirecourts" target="_blank" rel="noopener noreferrer" className="text-navy font-semibold hover:text-red transition-colors">@inspirecourts</a>
+                  {" · "}
+                  <a href="https://instagram.com/azfinestmixtape" target="_blank" rel="noopener noreferrer" className="text-navy font-semibold hover:text-red transition-colors">@azfinestmixtape</a>
+                </p>
               </div>
             </AnimateIn>
           </div>

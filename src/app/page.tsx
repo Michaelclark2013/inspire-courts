@@ -115,7 +115,7 @@ export default function Home() {
           </h1>
 
           <AnimateIn delay={200}>
-            <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
+            <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed">
               {page ? getField(page, "Hero", "subheadline") : "7 courts. 52,000 sq ft. Basketball & volleyball. Built for competitors."}
             </p>
           </AnimateIn>
@@ -182,11 +182,11 @@ export default function Home() {
               const desc = item?.description || FALLBACK_FEATURES[i].desc;
               return (
                 <AnimateIn key={title} delay={i * 80}>
-                  <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden h-full">
+                  <div className="group relative bg-white border border-light-gray rounded-2xl p-6 sm:p-8 lg:p-10 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden h-full">
                     {/* Red accent stripe */}
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-16 h-16 bg-gradient-to-br from-navy to-navy-dark rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Icon className="w-7 h-7 text-white" />
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                     </div>
                     <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg lg:text-xl uppercase tracking-tight mb-3">
                       {title}
@@ -214,14 +214,14 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
             {/* Inspire Courts card */}
             <AnimateIn>
-              <div className="relative bg-navy rounded-3xl p-10 lg:p-14 h-full flex flex-col text-white overflow-hidden group hover:shadow-2xl transition-shadow">
+              <div className="relative bg-navy rounded-3xl p-6 sm:p-10 lg:p-14 h-full flex flex-col text-white overflow-hidden group hover:shadow-2xl transition-shadow">
                 {/* Background pattern */}
                 <div
                   className="absolute inset-0 opacity-[0.07] bg-cover bg-center"
                   style={{ backgroundImage: "url('/images/hero-bg-texture.jpg')" }}
                 />
                 <div className="relative z-10 flex flex-col h-full">
-                  <div className="mb-8">
+                  <div className="mb-6 sm:mb-8">
                     <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={96} height={96} className="object-contain" />
                   </div>
                   <span className="text-red font-[var(--font-chakra)] font-bold text-xs uppercase tracking-[0.2em] mb-2">
@@ -230,13 +230,13 @@ export default function Home() {
                   <h3 className="text-3xl lg:text-4xl font-semibold uppercase tracking-tight mb-5 font-[var(--font-chakra)] leading-[0.95]">
                     Inspire Courts
                   </h3>
-                  <p className="text-white/75 leading-relaxed mb-8 flex-1 text-base">
+                  <p className="text-white/75 leading-relaxed mb-6 sm:mb-8 flex-1 text-base">
                     The home base. 7 regulation indoor courts — basketball and
                     volleyball — with a pro-level setup and game film available
                     at tournaments. Available for leagues, practices, camps,
                     clinics, and private events.
                   </p>
-                  <div className="flex flex-wrap gap-2 mb-10">
+                  <div className="flex flex-wrap gap-2 mb-6 sm:mb-10">
                     {["7 Courts", "Game Film", "Rentals"].map(
                       (tag) => (
                         <span
@@ -261,10 +261,10 @@ export default function Home() {
 
             {/* OFF SZN card */}
             <AnimateIn delay={150}>
-              <div className="relative bg-white border-2 border-light-gray rounded-3xl p-10 lg:p-14 h-full flex flex-col overflow-hidden group hover:border-red/40 hover:shadow-2xl transition-all">
+              <div className="relative bg-white border-2 border-light-gray rounded-3xl p-6 sm:p-10 lg:p-14 h-full flex flex-col overflow-hidden group hover:border-red/40 hover:shadow-2xl transition-all">
                 <div className="relative z-10 flex flex-col h-full">
-                  <div className="w-16 h-16 bg-navy rounded-2xl flex items-center justify-center mb-8 shadow-lg">
-                    <Zap className="w-7 h-7 text-red" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-navy rounded-xl sm:rounded-2xl flex items-center justify-center mb-6 sm:mb-8 shadow-lg">
+                    <Zap className="w-5 h-5 sm:w-7 sm:h-7 text-red" />
                   </div>
                   <span className="text-red font-[var(--font-chakra)] font-bold text-xs uppercase tracking-[0.2em] mb-2">
                     The Tournament Series
@@ -272,12 +272,12 @@ export default function Home() {
                   <h3 className="text-3xl lg:text-4xl font-semibold uppercase tracking-tight text-navy mb-5 font-[var(--font-chakra)] leading-[0.95]">
                     OFF SZN HOOPS
                   </h3>
-                  <p className="text-text-muted leading-relaxed mb-8 flex-1 text-base">
+                  <p className="text-text-muted leading-relaxed mb-6 sm:mb-8 flex-1 text-base">
                     Compete at the highest level. Year-round youth basketball
                     tournaments with 10U through 17U divisions, boys and girls.
                     Get ranked. Get seen. Get better.
                   </p>
-                  <div className="flex flex-wrap gap-2 mb-10">
+                  <div className="flex flex-wrap gap-2 mb-6 sm:mb-10">
                     {["10U–17U", "Boys & Girls", "3+ Games", "Ranked"].map(
                       (tag) => (
                         <span
@@ -309,7 +309,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimateIn>
-              <div className="rounded-2xl overflow-hidden shadow-lg border border-light-gray aspect-[4/3]">
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-light-gray aspect-video lg:aspect-[4/3]">
                 <iframe
                   src="https://maps.google.com/maps?q=1090+N+Fiesta+Blvd+Ste+101+%26+102+Gilbert+AZ+85233&output=embed&z=16"
                   width="100%"
@@ -435,7 +435,7 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="h-16 lg:hidden" />
+      <div className="h-20 lg:hidden" />
     </>
   );
 }

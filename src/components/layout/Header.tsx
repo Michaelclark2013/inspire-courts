@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { Menu, X, ArrowRight, Calendar, ChevronDown, LogIn, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -155,6 +156,16 @@ export default function Header() {
     ? ADMIN_ROLES.includes(session?.user?.role as string) ? "/admin" : "/portal"
     : "/login";
 
+  // Lock body scroll when mobile nav is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-navy shadow-lg">
       {/* Skip to main content — visible on keyboard focus */}
@@ -169,7 +180,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 flex-shrink-0">
             <div className="flex items-center gap-3">
-              <img src="/images/inspire-athletics-logo.png" alt="Inspire Courts" className="h-14 lg:h-16 w-auto object-contain drop-shadow-lg" />
+              <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts logo" width={64} height={64} className="h-14 lg:h-16 w-auto object-contain drop-shadow-lg" />
               <div className="hidden sm:block">
                 <span className="font-[var(--font-chakra)] font-bold text-white text-xl uppercase tracking-wide">
                   Inspire Courts
@@ -237,11 +248,19 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Mobile backdrop */}
+      {open && (
+        <div
+          className="fixed inset-0 top-20 bg-black/60 backdrop-blur-sm lg:hidden z-40"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
       {/* Mobile Nav */}
       <div
         id="mobile-nav"
         className={cn(
-          "lg:hidden bg-navy-dark border-t border-border-dark transition-all duration-300 overflow-hidden",
+          "lg:hidden bg-navy-dark border-t border-border-dark transition-all duration-300 overflow-hidden relative z-50",
           open ? "max-h-[85vh] opacity-100 overflow-y-auto" : "max-h-0 opacity-0"
         )}
       >

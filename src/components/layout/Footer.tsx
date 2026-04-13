@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Camera, Mail, MapPin } from "lucide-react";
 import { FACILITY_EMAIL, FACILITY_ADDRESS, SOCIAL_LINKS } from "@/lib/constants";
 import { trackConversion } from "@/lib/analytics";
@@ -24,9 +25,11 @@ export default function Footer() {
           {/* Brand + links */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-              <img
+              <Image
                 src="/images/inspire-athletics-logo.png"
-                alt="Inspire Courts"
+                alt="Inspire Courts logo"
+                width={32}
+                height={32}
                 className="w-8 h-8 object-contain"
               />
               <span className="font-[var(--font-chakra)] font-bold text-sm uppercase tracking-wide">

@@ -72,7 +72,7 @@ export default function PrepPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
+        <Image src="/images/courts-bg.jpg" alt="Inspire Prep basketball academy" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">

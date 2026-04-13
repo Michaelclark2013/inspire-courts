@@ -216,10 +216,7 @@ export default function Home() {
             <AnimateIn>
               <div className="relative bg-navy rounded-3xl p-6 sm:p-10 lg:p-14 h-full flex flex-col text-white overflow-hidden group hover:shadow-2xl transition-shadow">
                 {/* Background pattern */}
-                <div
-                  className="absolute inset-0 opacity-[0.07] bg-cover bg-center"
-                  style={{ backgroundImage: "url('/images/hero-bg-texture.jpg')" }}
-                />
+                <Image src="/images/hero-bg-texture.jpg" alt="" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-center opacity-[0.07]" />
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="mb-6 sm:mb-8">
                     <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={96} height={96} className="object-contain" />
@@ -385,10 +382,7 @@ export default function Home() {
 
       {/* ── EMAIL SIGNUP ── */}
       <section className="relative py-14 lg:py-28 bg-navy overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.05] bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/hero-bg-texture.jpg')" }}
-        />
+        <Image src="/images/hero-bg-texture.jpg" alt="" fill sizes="100vw" className="object-cover object-center opacity-[0.05]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(204,0,0,0.08),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimateIn>
@@ -399,10 +393,7 @@ export default function Home() {
 
       {/* ── FINAL CTA ── */}
       <section className="relative py-16 lg:py-32 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/hero-bg-texture.jpg')" }}
-        />
+        <Image src="/images/hero-bg-texture.jpg" alt="" fill sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/95 to-navy/85" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,_rgba(204,0,0,0.15),transparent_60%)]" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

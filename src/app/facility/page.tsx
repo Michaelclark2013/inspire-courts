@@ -378,10 +378,8 @@ export default function FacilityPage() {
       </section>
 
       {/* Virtual Tour / Parallax */}
-      <section
-        className="relative py-20 lg:py-32 bg-scroll md:bg-fixed bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/courts-bg-texture.jpg')" }}
-      >
+      <section className="relative py-20 lg:py-32 overflow-hidden">
+        <Image src="/images/courts-bg-texture.jpg" alt="" fill sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-navy/80" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <AnimateIn>

@@ -93,7 +93,7 @@ export default function Home() {
       <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center justify-center overflow-hidden">
         <Image
           src="/images/hero-bg.jpg"
-          alt=""
+          alt="Indoor basketball courts at Inspire Courts in Gilbert, Arizona"
           fill
           priority
           sizes="100vw"

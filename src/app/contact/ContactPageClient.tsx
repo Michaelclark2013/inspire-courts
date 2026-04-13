@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FACILITY_EMAIL } from "@/lib/constants";
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Mail, Camera, ArrowRight, Check, Clock, Car } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
@@ -62,13 +63,7 @@ export default function ContactPageClient() {
     <>
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('/images/courts-bg.jpg')",
-          }}
-        />
+        <Image src="/images/courts-bg.jpg" alt="Inspire Courts facility in Gilbert, Arizona" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
@@ -122,6 +117,7 @@ export default function ContactPageClient() {
                           id="name"
                           name="name"
                           required
+                          autoComplete="name"
                           className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
                           placeholder="Your name"
                         />
@@ -138,6 +134,7 @@ export default function ContactPageClient() {
                           id="email"
                           name="email"
                           required
+                          autoComplete="email"
                           className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
                           placeholder="you@example.com"
                         />
@@ -157,6 +154,7 @@ export default function ContactPageClient() {
                           type="tel"
                           id="phone"
                           name="phone"
+                          autoComplete="tel"
                           className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
                           placeholder="(480) 555-1234"
                         />

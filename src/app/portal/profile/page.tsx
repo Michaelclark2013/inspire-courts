@@ -77,7 +77,7 @@ export default function ProfilePage() {
         </div>
       ) : loading ? (
         <div className="flex items-center justify-center py-16 text-white/40">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading profile...
         </div>
       ) : (
         <div className="bg-card border border-white/10 rounded-xl p-6 max-w-lg">

@@ -41,7 +41,7 @@ export default function PortalScoresPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16 text-white/40">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading scores...
         </div>
       ) : (
         <div className="space-y-8">

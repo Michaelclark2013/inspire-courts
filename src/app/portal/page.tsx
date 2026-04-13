@@ -261,6 +261,23 @@ export default function PortalDashboard() {
       )}
 
       {/* My Registrations */}
+      {myRegistrations.length === 0 && (
+        <div className="mb-6 bg-gradient-to-br from-bg-secondary to-bg-secondary/60 border border-white/[0.06] rounded-2xl p-6 text-center">
+          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
+            <Trophy className="w-6 h-6 text-white/20" />
+          </div>
+          <h3 className="text-white font-semibold text-sm mb-1">No Tournaments Yet</h3>
+          <p className="text-text-secondary text-xs mb-4 max-w-xs mx-auto">
+            Register for an upcoming tournament to see your events here.
+          </p>
+          <Link
+            href="/tournaments"
+            className="inline-flex items-center gap-1.5 text-red text-xs font-semibold hover:text-red-hover transition-colors"
+          >
+            Browse Tournaments <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+      )}
       {myRegistrations.length > 0 && (
         <div className="mb-6 bg-gradient-to-br from-bg-secondary to-bg-secondary/60 border border-white/[0.06] rounded-2xl overflow-hidden">
           <div className="px-5 py-4 flex items-center justify-between">
@@ -334,16 +351,7 @@ export default function PortalDashboard() {
           desc="Results & standings"
           color="amber"
         />
-        {role === "coach" && (
-          <ActionCard
-            href="/portal/waiver"
-            icon={FileCheck}
-            title="Waivers"
-            desc="Submit player waivers"
-            color="emerald"
-          />
-        )}
-        {role === "parent" && (
+        {(role === "coach" || role === "parent") && (
           <ActionCard
             href="/portal/waiver"
             icon={FileCheck}

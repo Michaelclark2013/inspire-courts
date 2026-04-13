@@ -196,7 +196,7 @@ export async function createNotionPage(
   try {
     const apiKey = process.env.NOTION_API_KEY;
     if (!apiKey || !databaseId) {
-      console.log("Notion not configured, skipping page creation");
+      console.warn("Notion not configured, skipping page creation");
       return null;
     }
 

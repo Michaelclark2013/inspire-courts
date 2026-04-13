@@ -115,7 +115,7 @@ export default function MediaPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
+        <Image src="/images/courts-bg.jpg" alt="Inspire Courts media and highlights" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(204,0,0,0.15),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
@@ -208,13 +208,7 @@ export default function MediaPage() {
                 >
                   {pkg.highlighted && (
                     <>
-                      <div
-                        className="absolute inset-0 opacity-10 bg-cover bg-center"
-                        style={{
-                          backgroundImage:
-                            "url('/images/courts-bg-texture.jpg')",
-                        }}
-                      />
+                      <Image src="/images/courts-bg-texture.jpg" alt="" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-center opacity-10" />
                       <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy/95 to-navy-dark" />
                       <span className="relative z-10 inline-block self-start bg-red text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4 font-[var(--font-chakra)]">
                         Most Popular
@@ -362,13 +356,7 @@ export default function MediaPage() {
 
       {/* Instagram CTA */}
       <section className="relative py-16 lg:py-32 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('/images/courts-bg-texture.jpg')",
-          }}
-        />
+        <Image src="/images/courts-bg-texture.jpg" alt="" fill sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/95 to-navy/85" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <AnimateIn>

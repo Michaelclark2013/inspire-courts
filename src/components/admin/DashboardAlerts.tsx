@@ -155,9 +155,10 @@ function QuickAction({
   return (
     <Link
       href={href}
-      className="flex items-center gap-2.5 bg-card border border-white/10 hover:border-white/20 rounded-xl px-4 py-3 transition-colors group"
+      aria-label={label}
+      className="flex items-center gap-2.5 bg-card border border-white/10 hover:border-white/20 rounded-xl px-4 py-3 transition-all group hover:scale-[1.02] active:scale-[0.98]"
     >
-      <Icon className={`w-4 h-4 ${color}`} />
+      <Icon className={`w-4 h-4 ${color} group-hover:scale-110 transition-transform`} />
       <span className="text-white text-xs font-semibold uppercase tracking-wider">
         {label}
       </span>

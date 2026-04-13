@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -80,6 +80,15 @@ export default function AdminSidebar() {
   const visibleOps = OPERATIONS.filter((item) => canAccess(role, item.page));
   const visibleRes = RESOURCES.filter((item) => canAccess(role, item.page));
   const visiblePersonal = PERSONAL.filter((item) => canAccess(role, item.page));
+
+  // Close sidebar on Escape key
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && open) setOpen(false);
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
 
   function NavLink({ item }: { item: NavItem }) {
     const active =

@@ -125,8 +125,10 @@ export default function DashboardDBStats() {
             </Link>
           </div>
           {data.tournamentStatus.length === 0 ? (
-            <div className="px-5 py-8 text-center text-text-secondary text-sm">
-              No active tournaments
+            <div className="px-5 py-8 text-center">
+              <Trophy className="w-6 h-6 text-white/10 mx-auto mb-2" />
+              <p className="text-text-secondary text-sm">No active tournaments</p>
+              <Link href="/admin/tournaments/manage" className="text-accent text-xs font-semibold hover:underline mt-1 inline-block">Create one</Link>
             </div>
           ) : (
             <div className="divide-y divide-border">
@@ -219,8 +221,10 @@ export default function DashboardDBStats() {
             )}
           </div>
           {data.upcomingGames.length === 0 ? (
-            <div className="px-5 py-8 text-center text-text-secondary text-sm">
-              No games scheduled
+            <div className="px-5 py-8 text-center">
+              <Clock className="w-6 h-6 text-white/10 mx-auto mb-2" />
+              <p className="text-text-secondary text-sm">No games scheduled</p>
+              <Link href="/admin/scores/enter" className="text-accent text-xs font-semibold hover:underline mt-1 inline-block">Add a game</Link>
             </div>
           ) : (
             <div className="overflow-x-auto">

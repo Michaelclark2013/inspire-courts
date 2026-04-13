@@ -11,7 +11,7 @@ interface KPICardProps {
 
 export default function KPICard({ title, value, icon: Icon, trend, trendUp }: KPICardProps) {
   return (
-    <div className="bg-bg-secondary border border-border rounded-sm p-5">
+    <div className="bg-bg-secondary border border-border rounded-sm p-5 transition-colors hover:border-white/15">
       <div className="flex items-start justify-between mb-3">
         <p className="text-text-secondary text-xs font-bold uppercase tracking-wider">
           {title}

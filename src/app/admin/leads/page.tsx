@@ -141,11 +141,13 @@ export default function LeadsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, email, or phone..."
+            aria-label="Search leads"
             className="w-full bg-card border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
           />
         </div>
         <select
           value={sourceFilter}
+          aria-label="Filter by lead source"
           onChange={(e) => setSourceFilter(e.target.value)}
           className="bg-card border border-white/10 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-red cursor-pointer"
         >

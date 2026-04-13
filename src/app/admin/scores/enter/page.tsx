@@ -151,6 +151,7 @@ export default function ScoreEntryPage() {
           {tournamentOptions.length > 0 && (
             <select
               value={tournamentFilter}
+              aria-label="Filter by tournament"
               onChange={(e) => setTournamentFilter(e.target.value)}
               className="bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-red cursor-pointer"
             >

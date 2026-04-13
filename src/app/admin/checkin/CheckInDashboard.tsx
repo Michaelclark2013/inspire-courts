@@ -170,6 +170,7 @@ export default function CheckInDashboard({
                 <input
                   type="text"
                   placeholder="Search teams..."
+                  aria-label="Search teams"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-navy border border-white/10 rounded-lg pl-9 pr-3 py-2 text-white text-xs focus:outline-none focus:border-red transition-all placeholder:text-white/25"
@@ -177,6 +178,7 @@ export default function CheckInDashboard({
               </div>
               <select
                 value={filterStatus}
+                aria-label="Filter by check-in status"
                 onChange={(e) =>
                   setFilterStatus(e.target.value as "all" | "checked" | "not")
                 }

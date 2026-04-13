@@ -46,7 +46,7 @@ export default function DashboardLeads() {
         </Link>
       </div>
       <div className="px-5 py-4">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6 mb-3">
           <div className="text-center">
             <span className="block text-2xl font-bold text-red tabular-nums">{counts.hot}</span>
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Hot</span>
@@ -64,6 +64,14 @@ export default function DashboardLeads() {
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Total</span>
           </div>
         </div>
+        {/* Pipeline bar */}
+        {counts.total > 0 && (
+          <div className="flex h-2 rounded-full overflow-hidden bg-white/5">
+            {counts.hot > 0 && <div className="bg-red transition-all" style={{ width: `${(counts.hot / counts.total) * 100}%` }} />}
+            {counts.warm > 0 && <div className="bg-amber-400 transition-all" style={{ width: `${(counts.warm / counts.total) * 100}%` }} />}
+            {counts.cold > 0 && <div className="bg-blue-400 transition-all" style={{ width: `${(counts.cold / counts.total) * 100}%` }} />}
+          </div>
+        )}
       </div>
     </div>
   );

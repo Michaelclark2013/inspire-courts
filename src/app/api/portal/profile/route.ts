@@ -62,11 +62,27 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Invalid user" }, { status: 400 });
   }
 
-  const body = await request.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  /** Strip HTML special characters to prevent XSS in stored profile data. */
+  function sanitize(value: string): string {
+    return value
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   const updates: Record<string, string> = {};
 
-  if (body.name) updates.name = String(body.name).slice(0, 100);
-  if (body.phone !== undefined) updates.phone = String(body.phone).slice(0, 20);
+  if (body.name) updates.name = sanitize(String(body.name).slice(0, 100));
+  if (body.phone !== undefined) updates.phone = sanitize(String(body.phone).slice(0, 20));
   if (body.newPassword) {
     if (!body.currentPassword) {
       return NextResponse.json(
@@ -80,13 +96,13 @@ export async function PUT(request: NextRequest) {
       .from(users)
       .where(eq(users.id, userId))
       .limit(1);
-    if (!user || !(await bcrypt.compare(body.currentPassword, user.passwordHash))) {
+    if (!user || !(await bcrypt.compare(String(body.currentPassword), user.passwordHash))) {
       return NextResponse.json({ error: "Current password is incorrect" }, { status: 403 });
     }
     if (String(body.newPassword).length < 8) {
       return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
     }
-    updates.passwordHash = await bcrypt.hash(body.newPassword, 12);
+    updates.passwordHash = await bcrypt.hash(String(body.newPassword), 12);
   }
 
   if (Object.keys(updates).length === 0) {

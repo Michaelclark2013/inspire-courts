@@ -6,6 +6,16 @@ import { eq } from "drizzle-orm";
 import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
+/** Strip HTML special characters to prevent XSS in stored data. */
+function sanitize(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function POST(request: NextRequest) {
   // Rate limit: 5 registrations per 10 minutes per IP
   const ip = getClientIp(request);
@@ -56,28 +66,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const sanitizedName = sanitize(String(name).slice(0, 200));
+    const sanitizedEmail = email.toLowerCase().slice(0, 254);
+    const sanitizedPhone = phone ? sanitize(String(phone).slice(0, 20)) : null;
+
     const passwordHash = await bcrypt.hash(password, 12);
     const needsApproval = ["staff", "ref", "front_desk"].includes(role);
 
     await db.insert(users).values({
-      email: email.toLowerCase(),
-      name,
+      email: sanitizedEmail,
+      name: sanitizedName,
       passwordHash,
       role,
-      phone: phone || null,
+      phone: sanitizedPhone,
       approved: !needsApproval,
     });
 
     // Save contact info to Google Drive and Sheets (non-blocking)
     const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
     Promise.allSettled([
-      saveRegistrationToDrive(name, email.toLowerCase(), role, phone),
+      saveRegistrationToDrive(sanitizedName, sanitizedEmail, role, sanitizedPhone ?? ""),
       appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [
         sanitizeSheetRow([
           timestamp,
-          name,
-          email.toLowerCase(),
-          phone || "",
+          sanitizedName,
+          sanitizedEmail,
+          sanitizedPhone || "",
           role,
           "Website Registration",
           "Active",

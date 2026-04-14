@@ -65,7 +65,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
   const {
     name,
     startDate,
@@ -81,7 +87,7 @@ export async function POST(request: NextRequest) {
     registrationDeadline,
     registrationOpen,
     description,
-  } = body;
+  } = body as Record<string, unknown>;
 
   if (!name || !startDate) {
     return NextResponse.json(
@@ -90,34 +96,43 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (typeof name !== "string" || name.trim().length === 0 || name.length > 200) {
+    return NextResponse.json({ error: "Tournament name must be 1–200 characters" }, { status: 400 });
+  }
+
   const validFormats = ["single_elim", "double_elim", "round_robin", "pool_play"];
-  if (format && !validFormats.includes(format)) {
+  if (format && !validFormats.includes(format as string)) {
     return NextResponse.json({ error: "Invalid format" }, { status: 400 });
   }
 
   const userId = session.user.id ? Number(session.user.id) : null;
 
-  const [tournament] = await db
-    .insert(tournaments)
-    .values({
-      name,
-      startDate,
-      endDate: endDate || null,
-      location: location || null,
-      format: format || "single_elim",
-      divisions: divisions ? JSON.stringify(divisions) : null,
-      courts: courts ? JSON.stringify(courts) : null,
-      gameLength: gameLength || 40,
-      breakLength: breakLength || 10,
-      entryFee: entryFee ?? null,
-      maxTeamsPerDivision: maxTeamsPerDivision ?? null,
-      registrationDeadline: registrationDeadline || null,
-      registrationOpen: registrationOpen ?? false,
-      description: description || null,
-      status: "draft",
-      createdBy: userId && !isNaN(userId) ? userId : null,
-    })
-    .returning();
+  try {
+    const [tournament] = await db
+      .insert(tournaments)
+      .values({
+        name: String(name).trim().slice(0, 200),
+        startDate: String(startDate),
+        endDate: endDate ? String(endDate) : null,
+        location: location ? String(location).slice(0, 500) : null,
+        format: (validFormats.includes(format as string) ? format : "single_elim") as "single_elim" | "double_elim" | "round_robin" | "pool_play",
+        divisions: Array.isArray(divisions) ? JSON.stringify(divisions) : null,
+        courts: Array.isArray(courts) ? JSON.stringify(courts) : null,
+        gameLength: typeof gameLength === "number" ? gameLength : 40,
+        breakLength: typeof breakLength === "number" ? breakLength : 10,
+        entryFee: typeof entryFee === "number" ? entryFee : null,
+        maxTeamsPerDivision: typeof maxTeamsPerDivision === "number" ? maxTeamsPerDivision : null,
+        registrationDeadline: registrationDeadline ? String(registrationDeadline) : null,
+        registrationOpen: Boolean(registrationOpen),
+        description: description ? String(description).slice(0, 5000) : null,
+        status: "draft",
+        createdBy: userId && !isNaN(userId) ? userId : null,
+      })
+      .returning();
 
-  return NextResponse.json(tournament, { status: 201 });
+    return NextResponse.json(tournament, { status: 201 });
+  } catch (err) {
+    console.error("Failed to create tournament:", err);
+    return NextResponse.json({ error: "Failed to create tournament" }, { status: 500 });
+  }
 }

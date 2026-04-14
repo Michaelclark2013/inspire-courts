@@ -281,6 +281,71 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Featured Videos */}
+      <section className="py-14 lg:py-28 bg-navy">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimateIn>
+            <div className="text-center mb-12">
+              <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-3 font-[var(--font-chakra)]">
+                As Seen On
+              </p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white font-[var(--font-chakra)]">
+                On the Map
+              </h2>
+              <p className="text-white/60 text-lg mt-4 max-w-2xl mx-auto">
+                From NBA players to rising prep stars — Inspire Courts is where Arizona basketball happens.
+              </p>
+            </div>
+          </AnimateIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Jalen Williams */}
+            <AnimateIn>
+              <div className="text-center">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-auto" style={{ maxWidth: "360px", aspectRatio: "9/16" }}>
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube.com/embed/hLGrKauJzLc?rel=0&modestbranding=1"
+                    title="NBA Star Jalen Williams talks about Inspire Courts"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
+                <p className="text-white font-bold text-sm uppercase tracking-wide mt-4 font-[var(--font-chakra)]">
+                  Jalen Williams
+                </p>
+                <p className="text-white/50 text-xs uppercase tracking-wider">
+                  NBA — OKC Thunder · Gilbert, AZ Native
+                </p>
+              </div>
+            </AnimateIn>
+
+            {/* Adan Diggs — Inspire Prep */}
+            <AnimateIn delay={150}>
+              <div className="text-center">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-auto" style={{ maxWidth: "360px", aspectRatio: "9/16" }}>
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube.com/embed/Vjih-x7OBQ8?rel=0&modestbranding=1"
+                    title="Adan Diggs playing for Inspire Prep"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
+                <p className="text-white font-bold text-sm uppercase tracking-wide mt-4 font-[var(--font-chakra)]">
+                  Adan Diggs
+                </p>
+                <p className="text-white/50 text-xs uppercase tracking-wider">
+                  Inspire Prep
+                </p>
+              </div>
+            </AnimateIn>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 bg-red">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

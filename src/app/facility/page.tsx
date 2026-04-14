@@ -394,12 +394,11 @@ export default function FacilityPage() {
             </div>
           </AnimateIn>
 
-          {/* YouTube Embed — replace VIDEO_ID with actual YouTube video ID */}
           <AnimateIn delay={150}>
             <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10" style={{ paddingBottom: "56.25%" }}>
               <iframe
                 className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/VIDEO_ID?rel=0&modestbranding=1"
+                src="https://www.youtube.com/embed/1pJDZU2I6k4?rel=0&modestbranding=1"
                 title="Inspire Courts AZ Facility Tour"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

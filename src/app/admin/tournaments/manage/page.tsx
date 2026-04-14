@@ -12,6 +12,9 @@ import {
   ChevronRight,
   X,
   Gamepad2,
+  Zap,
+  Check,
+  Sparkles,
 } from "lucide-react";
 
 type Tournament = {
@@ -50,6 +53,8 @@ export default function TournamentManagePage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const [successMsg, setSuccessMsg] = useState("");
+
   const [form, setForm] = useState({
     name: "",
     startDate: "",
@@ -66,6 +71,60 @@ export default function TournamentManagePage() {
     registrationOpen: false,
     description: "",
   });
+
+  const DIVISION_OPTIONS = ["8U", "10U", "12U", "14U", "16U", "18U", "Open"];
+  const COURT_OPTIONS = ["Court 1", "Court 2", "Court 3", "Court 4", "Court 5", "Court 6"];
+
+  function toggleChip(field: "divisions" | "courts", value: string) {
+    const current = form[field]
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const idx = current.indexOf(value);
+    if (idx >= 0) {
+      current.splice(idx, 1);
+    } else {
+      current.push(value);
+    }
+    setForm({ ...form, [field]: current.join(", ") });
+  }
+
+  function chipSelected(field: "divisions" | "courts", value: string) {
+    return form[field]
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .includes(value);
+  }
+
+  const PRESETS = [
+    {
+      name: "Weekend Tournament",
+      desc: "Multi-day bracket with pool play for 4+ age groups",
+      icon: Trophy,
+      values: { format: "pool_play", divisions: "8U, 10U, 12U, 14U", courts: "Court 1, Court 2, Court 3", gameLength: 40, breakLength: 10, location: "Inspire Courts AZ" },
+    },
+    {
+      name: "League Night",
+      desc: "Round robin on 2 courts -- great for weekly leagues",
+      icon: Calendar,
+      values: { format: "round_robin", divisions: "Open", courts: "Court 1, Court 2", gameLength: 48, breakLength: 5, location: "Inspire Courts AZ" },
+    },
+    {
+      name: "Single Day Shootout",
+      desc: "Fast single-elimination bracket, done in one day",
+      icon: Zap,
+      values: { format: "single_elim", divisions: "10U, 12U", courts: "Court 1, Court 2, Court 3", gameLength: 32, breakLength: 8, location: "Inspire Courts AZ" },
+    },
+  ];
+
+  function applyPreset(preset: typeof PRESETS[number]) {
+    setForm((prev) => ({
+      ...prev,
+      ...preset.values,
+    }));
+    setShowForm(true);
+  }
 
   const fetchTournaments = useCallback(async () => {
     try {
@@ -117,6 +176,7 @@ export default function TournamentManagePage() {
     });
 
     if (res.ok) {
+      const createdName = form.name;
       setForm({
         name: "",
         startDate: "",
@@ -134,6 +194,8 @@ export default function TournamentManagePage() {
         description: "",
       });
       setShowForm(false);
+      setSuccessMsg(createdName);
+      setTimeout(() => setSuccessMsg(""), 4000);
       fetchTournaments();
     }
     setSaving(false);
@@ -164,194 +226,320 @@ export default function TournamentManagePage() {
         </button>
       </div>
 
+      {/* Success Banner */}
+      {successMsg && (
+        <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-xl px-5 py-3 mb-6 flex items-center gap-3">
+          <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+          <p className="text-emerald-300 text-sm font-semibold">
+            &ldquo;{successMsg}&rdquo; created successfully!
+          </p>
+        </div>
+      )}
+
       {/* Create Form */}
-      {showForm && (
+      {(showForm || (!loading && tournamentList.length === 0)) && (
         <div className="bg-card border border-white/10 rounded-xl p-6 mb-8">
-          <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+          <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-6 flex items-center gap-2">
             <Plus className="w-4 h-4 text-red" /> Create Tournament
           </h2>
-          <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2">
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Tournament Name *
-              </label>
-              <input
-                type="text"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                required
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25"
-                placeholder="e.g. Spring Classic 2026"
-              />
+
+          {/* Quick-Start Template Presets */}
+          <div className="mb-6">
+            <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3" /> Quick Start — Pick a Template
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {PRESETS.map((preset) => (
+                <button
+                  key={preset.name}
+                  type="button"
+                  onClick={() => applyPreset(preset)}
+                  className="text-left bg-navy border border-white/10 hover:border-red/40 rounded-lg p-4 transition-all group"
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <preset.icon className="w-4 h-4 text-red" />
+                    <span className="text-white font-bold text-sm">{preset.name}</span>
+                  </div>
+                  <p className="text-white/40 text-xs leading-relaxed">{preset.desc}</p>
+                </button>
+              ))}
             </div>
+          </div>
+
+          <form onSubmit={handleCreate} className="space-y-6">
+            {/* Step 1: Basic Info */}
             <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Format
-              </label>
-              <select
-                value={form.format}
-                onChange={(e) => setForm({ ...form, format: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red cursor-pointer"
-              >
-                <option value="single_elim">Single Elimination</option>
-                <option value="double_elim">Double Elimination</option>
-                <option value="round_robin">Round Robin</option>
-                <option value="pool_play">Pool Play</option>
-              </select>
+              <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-3">Step 1 — Basic Info</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2">
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Tournament Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    required
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25"
+                    placeholder="e.g. Spring Classic 2026"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Format
+                  </label>
+                  <select
+                    value={form.format}
+                    onChange={(e) => setForm({ ...form, format: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red cursor-pointer"
+                  >
+                    <option value="single_elim">Single Elimination</option>
+                    <option value="double_elim">Double Elimination</option>
+                    <option value="round_robin">Round Robin</option>
+                    <option value="pool_play">Pool Play</option>
+                  </select>
+                  <p className="text-white/30 text-[11px] mt-1.5">Pool Play is best for 4+ team brackets. Single Elim for quick events.</p>
+                </div>
+              </div>
             </div>
+
+            {/* Step 2: Schedule */}
             <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Start Date *
-              </label>
-              <input
-                type="date"
-                value={form.startDate}
-                onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-                required
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
-              />
+              <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-3">Step 2 — Schedule</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Start Date *
+                  </label>
+                  <input
+                    type="date"
+                    value={form.startDate}
+                    onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+                    required
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={form.endDate}
+                    onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={form.location}
+                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="Inspire Courts AZ"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Game Length (min)
+                  </label>
+                  <input
+                    type="number"
+                    min={10}
+                    value={form.gameLength}
+                    onChange={(e) =>
+                      setForm({ ...form, gameLength: Number(e.target.value) })
+                    }
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+                  />
+                  <p className="text-white/30 text-[11px] mt-1.5">Standard: 40 min (two 20-min halves)</p>
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Break Between Games (min)
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={form.breakLength}
+                    onChange={(e) =>
+                      setForm({ ...form, breakLength: Number(e.target.value) })
+                    }
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+                  />
+                  <p className="text-white/30 text-[11px] mt-1.5">Time between games for court changeover</p>
+                </div>
+              </div>
             </div>
+
+            {/* Step 3: Divisions & Courts */}
             <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                End Date
-              </label>
-              <input
-                type="date"
-                value={form.endDate}
-                onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
-              />
+              <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-3">Step 3 — Divisions & Courts</p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Divisions
+                  </label>
+                  {/* Selected chips */}
+                  {form.divisions.split(",").map((d) => d.trim()).filter(Boolean).length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {form.divisions.split(",").map((d) => d.trim()).filter(Boolean).map((d) => (
+                        <span
+                          key={d}
+                          className="inline-flex items-center gap-1 bg-red/20 text-red text-xs font-semibold px-2.5 py-1 rounded-full cursor-pointer hover:bg-red/30 transition-colors"
+                          onClick={() => toggleChip("divisions", d)}
+                        >
+                          {d}
+                          <X className="w-3 h-3" />
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {/* Quick-pick buttons */}
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {DIVISION_OPTIONS.map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => toggleChip("divisions", d)}
+                        className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
+                          chipSelected("divisions", d)
+                            ? "bg-red/20 border-red/40 text-red"
+                            : "bg-navy border-white/10 text-white/50 hover:border-white/30 hover:text-white/80"
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                  <input
+                    type="text"
+                    value={form.divisions}
+                    onChange={(e) => setForm({ ...form, divisions: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="Or type custom: 8U, 10U, 12U"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Courts
+                  </label>
+                  {/* Selected chips */}
+                  {form.courts.split(",").map((c) => c.trim()).filter(Boolean).length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {form.courts.split(",").map((c) => c.trim()).filter(Boolean).map((c) => (
+                        <span
+                          key={c}
+                          className="inline-flex items-center gap-1 bg-blue-500/20 text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full cursor-pointer hover:bg-blue-500/30 transition-colors"
+                          onClick={() => toggleChip("courts", c)}
+                        >
+                          {c}
+                          <X className="w-3 h-3" />
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {/* Quick-pick buttons */}
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {COURT_OPTIONS.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => toggleChip("courts", c)}
+                        className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
+                          chipSelected("courts", c)
+                            ? "bg-blue-500/20 border-blue-500/40 text-blue-400"
+                            : "bg-navy border-white/10 text-white/50 hover:border-white/30 hover:text-white/80"
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                  <input
+                    type="text"
+                    value={form.courts}
+                    onChange={(e) => setForm({ ...form, courts: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="Or type custom: Court 1, Court 2"
+                  />
+                </div>
+              </div>
             </div>
+
+            {/* Step 4: Registration */}
             <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Location
-              </label>
-              <input
-                type="text"
-                value={form.location}
-                onChange={(e) => setForm({ ...form, location: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
-                placeholder="Inspire Courts AZ"
-              />
+              <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-3">Step 4 — Registration</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Entry Fee ($)
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={form.entryFee}
+                    onChange={(e) => setForm({ ...form, entryFee: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Max Teams Per Division
+                  </label>
+                  <input
+                    type="number"
+                    min={2}
+                    value={form.maxTeamsPerDivision}
+                    onChange={(e) => setForm({ ...form, maxTeamsPerDivision: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="8"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Registration Deadline
+                  </label>
+                  <input
+                    type="date"
+                    value={form.registrationDeadline}
+                    onChange={(e) => setForm({ ...form, registrationDeadline: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+                  />
+                </div>
+                <div className="lg:col-span-2">
+                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Description / Rules
+                  </label>
+                  <input
+                    type="text"
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    placeholder="Tournament rules, age requirements, etc."
+                  />
+                </div>
+                <div className="flex items-center gap-3 self-end pb-1">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.registrationOpen}
+                      onChange={(e) => setForm({ ...form, registrationOpen: e.target.checked })}
+                      className="accent-red"
+                    />
+                    <span className="text-white text-sm">Open Registration</span>
+                  </label>
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Divisions (comma-separated)
-              </label>
-              <input
-                type="text"
-                value={form.divisions}
-                onChange={(e) => setForm({ ...form, divisions: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
-                placeholder="8U, 10U, 12U, 14U"
-              />
-            </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Courts (comma-separated)
-              </label>
-              <input
-                type="text"
-                value={form.courts}
-                onChange={(e) => setForm({ ...form, courts: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
-                placeholder="Court 1, Court 2, Court 3"
-              />
-            </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Game Length (min)
-              </label>
-              <input
-                type="number"
-                min={10}
-                value={form.gameLength}
-                onChange={(e) =>
-                  setForm({ ...form, gameLength: Number(e.target.value) })
-                }
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
-              />
-            </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Break Between Games (min)
-              </label>
-              <input
-                type="number"
-                min={0}
-                value={form.breakLength}
-                onChange={(e) =>
-                  setForm({ ...form, breakLength: Number(e.target.value) })
-                }
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
-              />
-            </div>
-            {/* Registration Settings */}
-            <div className="lg:col-span-3 border-t border-white/10 pt-4 mt-2">
-              <p className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">Registration Settings</p>
-            </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Entry Fee ($)
-              </label>
-              <input
-                type="number"
-                min={0}
-                step="0.01"
-                value={form.entryFee}
-                onChange={(e) => setForm({ ...form, entryFee: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
-                placeholder="50"
-              />
-            </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Max Teams Per Division
-              </label>
-              <input
-                type="number"
-                min={2}
-                value={form.maxTeamsPerDivision}
-                onChange={(e) => setForm({ ...form, maxTeamsPerDivision: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
-                placeholder="8"
-              />
-            </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Registration Deadline
-              </label>
-              <input
-                type="date"
-                value={form.registrationDeadline}
-                onChange={(e) => setForm({ ...form, registrationDeadline: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
-              />
-            </div>
-            <div className="lg:col-span-2">
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Description / Rules
-              </label>
-              <input
-                type="text"
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
-                placeholder="Tournament rules, age requirements, etc."
-              />
-            </div>
-            <div className="flex items-center gap-3 self-end pb-1">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.registrationOpen}
-                  onChange={(e) => setForm({ ...form, registrationOpen: e.target.checked })}
-                  className="accent-red"
-                />
-                <span className="text-white text-sm">Open Registration</span>
-              </label>
-            </div>
-            <div className="flex items-end">
+
+            {/* Submit */}
+            <div className="flex items-center gap-4 pt-2">
               <button
                 type="submit"
                 disabled={saving}
@@ -362,7 +550,14 @@ export default function TournamentManagePage() {
                 ) : (
                   <Plus className="w-4 h-4" />
                 )}
-                Create
+                Create Tournament
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="text-white/40 hover:text-white/60 text-sm transition-colors"
+              >
+                Cancel
               </button>
             </div>
           </form>
@@ -376,11 +571,19 @@ export default function TournamentManagePage() {
           tournaments...
         </div>
       ) : tournamentList.length === 0 ? (
-        <div className="text-center py-16 text-white/40">
-          <Trophy className="w-8 h-8 mx-auto mb-3 opacity-40" />
-          <p className="text-sm">
-            No tournaments yet. Create your first tournament to get started.
+        <div className="text-center py-20 text-white/40">
+          <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <h3 className="text-white font-bold text-lg mb-1">Create Your First Tournament</h3>
+          <p className="text-white/40 text-sm mb-6">
+            Set up a tournament in under 60 seconds using a template
           </p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          >
+            <Sparkles className="w-4 h-4" />
+            Get Started
+          </button>
         </div>
       ) : (
         <div className="space-y-3">

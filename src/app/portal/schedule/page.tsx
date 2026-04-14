@@ -75,24 +75,42 @@ export default function SchedulePage() {
                   {section.items.map((game) => (
                     <div
                       key={game.id}
-                      className="bg-card border border-white/10 rounded-xl px-5 py-4 flex items-center justify-between gap-4"
+                      className="bg-card border border-white/10 rounded-xl px-5 py-4"
                     >
-                      <div className="flex items-center gap-3 text-sm min-w-0">
-                        <span className="text-white font-semibold truncate">{game.homeTeam}</span>
-                        {game.status !== "scheduled" && (
-                          <>
-                            <span className="text-white font-bold tabular-nums">{game.homeScore}</span>
-                            <span className="text-white/30">—</span>
-                            <span className="text-white font-bold tabular-nums">{game.awayScore}</span>
-                          </>
-                        )}
-                        {game.status === "scheduled" && <span className="text-white/30">vs</span>}
-                        <span className="text-white font-semibold truncate">{game.awayTeam}</span>
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3 text-sm min-w-0">
+                          <span className="text-white font-semibold truncate">{game.homeTeam}</span>
+                          {game.status !== "scheduled" && (
+                            <>
+                              <span className="text-white font-bold tabular-nums">{game.homeScore}</span>
+                              <span className="text-white/30">—</span>
+                              <span className="text-white font-bold tabular-nums">{game.awayScore}</span>
+                            </>
+                          )}
+                          {game.status === "scheduled" && <span className="text-white/30">vs</span>}
+                          <span className="text-white font-semibold truncate">{game.awayTeam}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-text-secondary flex-shrink-0">
+                          {game.division && <span>{game.division}</span>}
+                          {game.court && <span className="bg-white/5 px-2 py-0.5 rounded">{game.court}</span>}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-text-secondary flex-shrink-0">
-                        {game.division && <span>{game.division}</span>}
-                        {game.court && <span>{game.court}</span>}
-                      </div>
+                      {(game.scheduledTime || game.court) && (
+                        <div className="flex items-center gap-3 mt-2 text-xs text-white/40">
+                          {game.scheduledTime && (
+                            <span>
+                              {new Date(game.scheduledTime).toLocaleString("en-US", {
+                                weekday: "short",
+                                month: "short",
+                                day: "numeric",
+                                hour: "numeric",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          )}
+                          {game.eventName && <span>{game.eventName}</span>}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

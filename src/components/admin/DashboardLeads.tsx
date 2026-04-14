@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Flame, ArrowRight } from "lucide-react";
 
@@ -11,21 +11,34 @@ type Lead = {
 
 export default function DashboardLeads() {
   const [counts, setCounts] = useState<{ hot: number; warm: number; cold: number; total: number } | null>(null);
+  const [error, setError] = useState(false);
+
+  const fetchLeads = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/leads");
+      if (!res.ok) return;
+      const leads: Lead[] = await res.json();
+      const hot = leads.filter((l) => /hot/i.test(l.status)).length;
+      const warm = leads.filter((l) => /warm/i.test(l.status)).length;
+      const cold = leads.filter((l) => /cold/i.test(l.status)).length;
+      setCounts({ hot, warm, cold, total: leads.length });
+    } catch {
+      setError(true);
+    }
+  }, []);
 
   useEffect(() => {
-    async function fetchLeads() {
-      try {
-        const res = await fetch("/api/admin/leads");
-        if (!res.ok) return;
-        const leads: Lead[] = await res.json();
-        const hot = leads.filter((l) => /hot/i.test(l.status)).length;
-        const warm = leads.filter((l) => /warm/i.test(l.status)).length;
-        const cold = leads.filter((l) => /cold/i.test(l.status)).length;
-        setCounts({ hot, warm, cold, total: leads.length });
-      } catch {}
-    }
     fetchLeads();
-  }, []);
+  }, [fetchLeads]);
+
+  if (error) {
+    return (
+      <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
+        <p className="text-text-secondary text-xs mb-2">Unable to load leads</p>
+        <button onClick={() => { setError(false); fetchLeads(); }} className="text-red text-xs font-bold uppercase tracking-wider hover:text-red-hover transition-colors">Retry</button>
+      </div>
+    );
+  }
 
   if (!counts || counts.total === 0) return null;
 
@@ -47,18 +60,18 @@ export default function DashboardLeads() {
       </div>
       <div className="px-5 py-4">
         <div className="flex items-center gap-6 mb-3">
-          <div className="text-center">
-            <span className="block text-2xl font-bold text-red tabular-nums">{counts.hot}</span>
+          <Link href="/admin/leads?status=hot" className="text-center group">
+            <span className="block text-2xl font-bold text-red tabular-nums group-hover:scale-110 transition-transform inline-block">{counts.hot}</span>
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Hot</span>
-          </div>
-          <div className="text-center">
-            <span className="block text-2xl font-bold text-amber-400 tabular-nums">{counts.warm}</span>
+          </Link>
+          <Link href="/admin/leads?status=warm" className="text-center group">
+            <span className="block text-2xl font-bold text-amber-400 tabular-nums group-hover:scale-110 transition-transform inline-block">{counts.warm}</span>
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Warm</span>
-          </div>
-          <div className="text-center">
-            <span className="block text-2xl font-bold text-blue-400 tabular-nums">{counts.cold}</span>
+          </Link>
+          <Link href="/admin/leads?status=cold" className="text-center group">
+            <span className="block text-2xl font-bold text-blue-400 tabular-nums group-hover:scale-110 transition-transform inline-block">{counts.cold}</span>
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Cold</span>
-          </div>
+          </Link>
           <div className="ml-auto text-right">
             <span className="block text-2xl font-bold text-white tabular-nums">{counts.total}</span>
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Total</span>

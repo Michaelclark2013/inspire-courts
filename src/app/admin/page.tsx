@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Users,
   Trophy,
@@ -6,7 +7,10 @@ import {
   ClipboardList,
   TrendingUp,
   Activity,
+  ChevronDown,
+  ArrowRight,
 } from "lucide-react";
+import CollapsibleSection from "@/components/admin/CollapsibleSection";
 import KPICard from "@/components/dashboard/KPICard";
 import DashboardCharts from "@/components/admin/DashboardCharts";
 import DashboardAlerts from "@/components/admin/DashboardAlerts";
@@ -180,42 +184,57 @@ export default async function AdminDashboard() {
     { label: "Square/Venmo", value: Math.round(data.totalSquare) },
   ].filter((d) => d.value > 0);
 
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+
   return (
     <div className="p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
-          Dashboard
-        </h1>
-        <p className="text-text-secondary text-sm mt-1">
-          Inspire Courts AZ — Operations Overview
-        </p>
+      <div className="sticky top-0 z-10 bg-bg/95 backdrop-blur-sm border-b border-border/50 -mx-6 lg:-mx-8 px-6 lg:px-8 py-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+          <div>
+            <p className="text-text-secondary text-xs mb-0.5">{greeting}</p>
+            <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+              Dashboard
+            </h1>
+          </div>
+          <p className="text-text-secondary text-xs uppercase tracking-wider">
+            {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
+          </p>
+        </div>
       </div>
 
-      {/* Tournament & Registration Overview (DB-powered) */}
-      <DashboardDBStats />
-
-      {/* Alerts + Quick Actions */}
-      <DashboardAlerts />
-
-      {/* Google Sheets KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {kpis.map((kpi) => (
-          <KPICard key={kpi.title} {...kpi} />
-        ))}
-      </div>
-
-      {/* Leads Pipeline */}
-      <div className="mb-8">
-        <DashboardLeads />
+      {/* Tournament & Registration Overview (DB-powered) + Alerts */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 mb-8">
+        <DashboardDBStats />
+        <DashboardAlerts />
       </div>
 
       {/* Charts row */}
-      <DashboardCharts
-        divisionData={divisionData}
-        revenueData={revenueData}
-        recentGames={data.recentGames}
-      />
+      <CollapsibleSection title="Charts & Recent Scores">
+        <DashboardCharts
+          divisionData={divisionData}
+          revenueData={revenueData}
+          recentGames={data.recentGames}
+          registrationRevenue={data.totalRevenue}
+        />
+      </CollapsibleSection>
+
+      {/* Google Sheets KPIs */}
+      <CollapsibleSection title="Google Sheets KPIs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {kpis.map((kpi) => (
+            <KPICard key={kpi.title} {...kpi} />
+          ))}
+        </div>
+      </CollapsibleSection>
+
+      {/* Leads Pipeline */}
+      <CollapsibleSection title="Leads Pipeline" defaultOpen={false}>
+        <div className="mb-8">
+          <DashboardLeads />
+        </div>
+      </CollapsibleSection>
     </div>
   );
 }

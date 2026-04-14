@@ -73,6 +73,7 @@ export default function SchedulePage() {
                 src="https://quickscores.com/inspirecourts"
                 title="Inspire Courts Tournament Schedules — QuickScores"
                 className="min-h-[500px] md:min-h-[800px]"
+                aria-label="QuickScores tournament schedule embed for Inspire Courts AZ"
               />
             </div>
           </AnimateIn>
@@ -98,7 +99,7 @@ export default function SchedulePage() {
               { name: "MLK Weekend Shootout", date: "January 2026" },
             ].map((event, i) => (
               <AnimateIn key={i} delay={i * 50}>
-                <div className="bg-white border border-light-gray rounded-xl p-5 flex items-center justify-between shadow-sm">
+                <div className="bg-white border border-light-gray rounded-xl p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-red/20 transition-all">
                   <div>
                     <h3 className="text-navy font-semibold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
                       {event.name}

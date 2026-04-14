@@ -110,7 +110,7 @@ export default function TrainingPage() {
             {trainingOptions.map((opt, i) => (
               <AnimateIn key={opt.title} delay={i * 100}>
                 <div
-                  className={`relative rounded-2xl p-8 lg:p-10 h-full flex flex-col overflow-hidden ${
+                  className={`relative rounded-2xl p-8 lg:p-10 h-full flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
                     opt.highlighted
                       ? "bg-navy text-white"
                       : "bg-white border border-light-gray"
@@ -160,10 +160,10 @@ export default function TrainingPage() {
                     </ul>
                     <Link
                       href="/contact?type=Private+Training"
-                      className={`group inline-flex items-center justify-center gap-2 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all font-[var(--font-chakra)] ${
+                      className={`group inline-flex items-center justify-center gap-2 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all font-[var(--font-chakra)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 ${
                         opt.highlighted
-                          ? "bg-red hover:bg-red-hover text-white"
-                          : "bg-navy hover:bg-navy-dark text-white"
+                          ? "bg-red hover:bg-red-hover text-white focus-visible:ring-offset-navy"
+                          : "bg-navy hover:bg-navy-dark text-white focus-visible:ring-offset-white"
                       }`}
                     >
                       Book Now{" "}

@@ -44,9 +44,10 @@ type NavItem = {
 
 const OPERATIONS: NavItem[] = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, page: "overview" },
+  { href: "/admin/tournaments/manage", label: "Tournaments", icon: Trophy, page: "tournaments" },
+  { href: "/admin/scores/enter", label: "Score Entry", icon: PenLine, page: "score_entry" },
   { href: "/admin/teams", label: "Teams", icon: Users, page: "teams" },
   { href: "/admin/scores", label: "Game Scores", icon: ClipboardList, page: "scores" },
-  { href: "/admin/scores/enter", label: "Score Entry", icon: PenLine, page: "score_entry" },
   { href: "/admin/players", label: "Players", icon: UserCheck, page: "players" },
   { href: "/admin/checkin", label: "Check-In", icon: UserCheck, page: "checkin" },
   { href: "/admin/staff", label: "Staff & Refs", icon: UserCheck, page: "staff_refs" },

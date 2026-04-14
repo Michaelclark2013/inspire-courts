@@ -8,6 +8,7 @@ import {
   Users,
   Loader2,
   X,
+  Search,
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
 
@@ -54,6 +55,10 @@ export default function UsersPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  // Search & filter
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
 
   // Form state
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -266,6 +271,32 @@ export default function UsersPage() {
         </div>
       )}
 
+      {/* Search & Filter */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by name or email..."
+            aria-label="Search users"
+            className="w-full bg-card border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+          />
+        </div>
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          aria-label="Filter by role"
+          className="bg-card border border-white/10 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-red cursor-pointer"
+        >
+          <option value="">All Roles</option>
+          {Object.entries(ROLE_LABELS).map(([key, label]) => (
+            <option key={key} value={key}>{label}</option>
+          ))}
+        </select>
+      </div>
+
       {/* Users table */}
       <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-white/10 flex items-center gap-2">
@@ -294,15 +325,24 @@ export default function UsersPage() {
               <thead>
                 <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
                   <th className="text-left px-6 py-3 font-semibold">Name</th>
-                  <th className="text-left px-6 py-3 font-semibold">Email</th>
+                  <th className="text-left px-6 py-3 font-semibold hidden sm:table-cell">Email</th>
                   <th className="text-left px-6 py-3 font-semibold">Role</th>
-                  <th className="text-left px-6 py-3 font-semibold">Phone</th>
-                  <th className="text-left px-6 py-3 font-semibold">Created</th>
+                  <th className="text-left px-6 py-3 font-semibold hidden md:table-cell">Phone</th>
+                  <th className="text-left px-6 py-3 font-semibold hidden md:table-cell">Created</th>
                   <th className="px-6 py-3"></th>
                 </tr>
               </thead>
               <tbody>
-                {userList.map((u) => (
+                {userList
+                  .filter((u) => {
+                    if (roleFilter && u.role !== roleFilter) return false;
+                    if (searchQuery) {
+                      const q = searchQuery.toLowerCase();
+                      return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+                    }
+                    return true;
+                  })
+                  .map((u) => (
                   <tr
                     key={u.id}
                     className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
@@ -313,7 +353,7 @@ export default function UsersPage() {
                         <span className="ml-2"><LoyaltyBadge memberSince={u.memberSince} /></span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-text-secondary">{u.email}</td>
+                    <td className="px-6 py-4 text-text-secondary hidden sm:table-cell">{u.email}</td>
                     <td className="px-6 py-4">
                       {editingId === u.id ? (
                         <select
@@ -345,10 +385,10 @@ export default function UsersPage() {
                         </button>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-text-secondary">
+                    <td className="px-6 py-4 text-text-secondary hidden md:table-cell">
                       {u.phone || "—"}
                     </td>
-                    <td className="px-6 py-4 text-text-secondary">
+                    <td className="px-6 py-4 text-text-secondary hidden md:table-cell">
                       {new Date(u.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">

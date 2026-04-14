@@ -151,7 +151,7 @@ export default function Home() {
               const label = (page ? getField(page, "Stats", `stat${i + 1}Label`) : "") || stat.label;
               return (
                 <AnimateIn key={label} delay={i * 100}>
-                  <div className="text-center px-4">
+                  <div className="text-center px-4 hover:scale-105 transition-transform cursor-default" title={`${value} ${label}`}>
                     <p className="text-2xl md:text-3xl font-bold text-white font-[var(--font-chakra)] leading-none mb-1">
                       {value}
                     </p>
@@ -316,6 +316,7 @@ export default function Home() {
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   title="Inspire Courts AZ Location"
+                  aria-label="Google Maps showing Inspire Courts AZ location in Gilbert, Arizona"
                 />
               </div>
             </AnimateIn>

@@ -68,7 +68,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
       </p>
 
       {status === "success" ? (
-        <div className="bg-green-50 border border-green-200 text-green-800 rounded-full px-6 py-4 font-semibold text-sm">
+        <div className="bg-green-50 border border-green-200 text-green-800 rounded-full px-6 py-4 font-semibold text-sm" role="status" aria-live="polite">
           {message}
         </div>
       ) : (
@@ -77,6 +77,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
             type="email"
             required
             placeholder="Enter your email"
+            aria-label="Email address"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -99,7 +100,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
       )}
 
       {status === "error" && (
-        <p className="mt-3 text-red text-sm font-medium">{message}</p>
+        <p className="mt-3 text-red text-sm font-medium" role="alert" aria-live="assertive">{message}</p>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import {
@@ -11,6 +11,7 @@ import {
   Trash2,
   ChevronDown,
   ChevronRight,
+  ChevronsUpDown,
   Image,
   Type,
   AlignLeft,
@@ -23,6 +24,7 @@ export default function ContentEditorPage() {
   const [content, setContent] = useState<SiteContent | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [dirty, setDirty] = useState(false);
   const [activePage, setActivePage] = useState("home");
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(["0"])
@@ -38,7 +40,7 @@ export default function ContentEditorPage() {
       .then(setContent);
   }, []);
 
-  async function save() {
+  const save = useCallback(async () => {
     if (!content) return;
     setSaving(true);
     setSaved(false);
@@ -49,7 +51,27 @@ export default function ContentEditorPage() {
     });
     setSaving(false);
     setSaved(true);
+    setDirty(false);
     setTimeout(() => setSaved(false), 3000);
+  }, [content]);
+
+  // Ctrl+S / Cmd+S keyboard shortcut to save
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        save();
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [save]);
+
+  function toggleAllSections() {
+    if (!content) return;
+    const allKeys = content.pages[activePage].sections.map((_, i) => String(i));
+    const allExpanded = allKeys.every((k) => expandedSections.has(k));
+    setExpandedSections(allExpanded ? new Set() : new Set(allKeys));
   }
 
   function toggleSection(key: string) {
@@ -67,6 +89,7 @@ export default function ContentEditorPage() {
     fieldKey: string,
     value: string
   ) {
+    setDirty(true);
     setContent((prev) => {
       if (!prev) return prev;
       const updated = JSON.parse(JSON.stringify(prev)) as SiteContent;
@@ -82,6 +105,7 @@ export default function ContentEditorPage() {
     fieldKey: string,
     value: string
   ) {
+    setDirty(true);
     setContent((prev) => {
       if (!prev) return prev;
       const updated = JSON.parse(JSON.stringify(prev)) as SiteContent;
@@ -243,45 +267,62 @@ export default function ContentEditorPage() {
             Edit all text, images, and content across the website
           </p>
         </div>
-        <button
-          onClick={save}
-          disabled={saving}
-          className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
-        >
-          {saved ? (
-            <>
-              <Check className="w-4 h-4" /> Saved!
-            </>
-          ) : saving ? (
-            <>
-              <RefreshCw className="w-4 h-4 animate-spin" /> Saving...
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4" /> Save Changes
-            </>
+        <div className="flex items-center gap-3">
+          {dirty && (
+            <span className="flex items-center gap-1.5 text-amber-400 text-xs font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              Unsaved changes
+            </span>
           )}
-        </button>
+          <button
+            onClick={save}
+            disabled={saving}
+            className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+          >
+            {saved ? (
+              <>
+                <Check className="w-4 h-4" /> Saved!
+              </>
+            ) : saving ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" /> Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" /> Save
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Page Tabs */}
-      <div className="flex gap-1.5 mb-8 overflow-x-auto pb-2 scrollbar-none">
-        {pageIds.map((id) => (
-          <button
-            key={id}
-            onClick={() => {
-              setActivePage(id);
-              setExpandedSections(new Set(["0"]));
-            }}
-            className={`px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wide transition-colors whitespace-nowrap ${
-              activePage === id
-                ? "bg-red text-white"
-                : "bg-white/10 text-white/60 hover:text-white hover:bg-white/20"
-            }`}
-          >
-            {content.pages[id].label}
-          </button>
-        ))}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="flex gap-1.5 overflow-x-auto pb-2 scrollbar-none flex-1">
+          {pageIds.map((id) => (
+            <button
+              key={id}
+              onClick={() => {
+                setActivePage(id);
+                setExpandedSections(new Set(["0"]));
+              }}
+              className={`px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wide transition-colors whitespace-nowrap ${
+                activePage === id
+                  ? "bg-red text-white"
+                  : "bg-white/10 text-white/60 hover:text-white hover:bg-white/20"
+              }`}
+            >
+              {content.pages[id].label}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={toggleAllSections}
+          className="flex items-center gap-1.5 text-white/40 hover:text-white text-xs font-bold uppercase tracking-wide transition-colors flex-shrink-0"
+          title="Expand/collapse all sections"
+        >
+          <ChevronsUpDown className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Page Sections */}

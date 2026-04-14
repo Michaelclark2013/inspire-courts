@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FACILITY_EMAIL } from "@/lib/constants";
 import Link from "next/link";
+import Image from "next/image";
 import { trackConversion } from "@/lib/analytics";
 import { ChevronDown, ArrowRight, Calendar, HelpCircle } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
@@ -136,13 +137,7 @@ export default function FAQPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('/images/courts-bg.jpg')",
-          }}
-        />
+        <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-36">
           <AnimateIn>

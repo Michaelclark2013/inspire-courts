@@ -301,18 +301,27 @@ function getFollowUpSuggestions(lastBotMessage: string): string[] {
 
 export default function ChatWidget() {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin") || pathname?.startsWith("/portal") || pathname?.startsWith("/events") || pathname === "/login" || pathname === "/register" || pathname === "/forgot-password" || pathname === "/reset-password";
+  const isAdmin = pathname?.startsWith("/admin") || pathname?.startsWith("/portal") || pathname === "/login" || pathname === "/register" || pathname === "/forgot-password" || pathname === "/reset-password";
 
   const pageCtx = getPageContext(pathname);
 
   const [open, setOpen] = useState(false);
-  const [hasAutoOpened, setHasAutoOpened] = useState(false);
+  const [userClosed, setUserClosed] = useState(false);
   const [messages, setMessages] = useState<Message[]>(() => loadMessages(pathname));
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Close handler — remembers the user dismissed it
+  const closeChat = useCallback(() => {
+    setOpen(false);
+    setUserClosed(true);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("inspire-chat-dismissed", "1");
+    }
+  }, []);
 
   // Persist messages to sessionStorage
   useEffect(() => {
@@ -332,15 +341,17 @@ export default function ChatWidget() {
     }
   }, [open]);
 
-  // Auto-open chat on first visit (less aggressive — 2.5s delay)
+  // Auto-open chat once per session (skip if user already dismissed it)
   useEffect(() => {
-    if (hasAutoOpened) return;
+    if (typeof window === "undefined") return;
+    const wasDismissed = sessionStorage.getItem("inspire-chat-dismissed") === "1";
+    if (wasDismissed || userClosed) return;
     const timer = setTimeout(() => {
       setOpen(true);
-      setHasAutoOpened(true);
-    }, 2500);
+    }, 3000);
     return () => clearTimeout(timer);
-  }, [hasAutoOpened]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Track unread messages when panel is closed
   const handleNewAssistantMessage = useCallback(() => {
@@ -411,26 +422,26 @@ export default function ChatWidget() {
   return (
     <>
       {/* ── Toggle Button ── */}
-      <button
-        onClick={() => { if (!open) trackConversion("chat_open"); setOpen(!open); }}
-        className={cn(
-          "fixed z-[100] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300",
-          "bg-red hover:bg-red-hover text-white",
-          "shadow-xl shadow-red/25 hover:shadow-red/40",
-          "bottom-6 right-4 lg:right-6",
-          "hover:scale-105 active:scale-95",
-          !hasAutoOpened && "animate-[pulse_2s_ease-in-out_infinite]"
-        )}
-        aria-label={open ? "Close chat" : "Open chat"}
-      >
-        <MessageCircle className={cn("w-6 h-6 transition-all duration-200", open && "scale-0 opacity-0 absolute")} />
-        <X className={cn("w-6 h-6 transition-all duration-200", !open && "scale-0 opacity-0 absolute")} />
-        {unreadCount > 0 && !open && (
-          <span className="absolute -top-1 -right-1 bg-white text-red text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
-            {unreadCount}
-          </span>
-        )}
-      </button>
+      {!open && (
+        <button
+          onClick={() => { trackConversion("chat_open"); setOpen(true); }}
+          className={cn(
+            "fixed z-[100] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300",
+            "bg-red hover:bg-red-hover text-white",
+            "shadow-xl shadow-red/25 hover:shadow-red/40",
+            "bottom-6 right-4 lg:right-6",
+            "hover:scale-105 active:scale-95"
+          )}
+          aria-label="Open chat"
+        >
+          <MessageCircle className="w-6 h-6" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-white text-red text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+              {unreadCount}
+            </span>
+          )}
+        </button>
+      )}
 
       {/* ── Chat Panel ── */}
       {open && (
@@ -438,9 +449,9 @@ export default function ChatWidget() {
           className={cn(
             "fixed z-[100] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden",
             "border border-light-gray/60",
-            "bottom-24 right-4 w-[calc(100vw-2rem)] max-w-[400px]",
-            "h-[min(420px,calc(100vh-10rem))] lg:h-[min(600px,calc(100vh-10rem))]",
-            "lg:bottom-24 lg:right-6",
+            "bottom-4 right-4 w-[calc(100vw-2rem)] max-w-[400px]",
+            "h-[min(480px,calc(100vh-6rem))] lg:h-[min(600px,calc(100vh-6rem))]",
+            "lg:bottom-6 lg:right-6",
             "animate-[slideUp_0.3s_ease-out_forwards]"
           )}
         >
@@ -456,6 +467,13 @@ export default function ChatWidget() {
                 Online now
               </p>
             </div>
+            <button
+              onClick={closeChat}
+              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center flex-shrink-0 transition-colors"
+              aria-label="Close chat"
+            >
+              <X className="w-4 h-4 text-white" />
+            </button>
           </div>
 
           {/* ── Messages ── */}

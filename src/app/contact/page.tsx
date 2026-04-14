@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { MapPin, Mail, Camera, ArrowRight, Check } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import { trackConversion } from "@/lib/analytics";
@@ -16,6 +17,7 @@ import { INPUT_CLASS, LABEL_CLASS } from "@/lib/form-styles";
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,6 +33,7 @@ export default function ContactPage() {
       message: formData.get("message") as string,
     };
 
+    setError("");
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -40,9 +43,11 @@ export default function ContactPage() {
       if (res.ok) {
         trackConversion("contact_form_submit");
         setSubmitted(true);
+      } else {
+        setError("Something went wrong. Please try again or email us directly.");
       }
     } catch {
-      alert("Something went wrong. Please try again or email us directly.");
+      setError("Something went wrong. Please try again or email us directly.");
     } finally {
       setLoading(false);
     }
@@ -52,10 +57,7 @@ export default function ContactPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url('${HERO_BG_IMAGE}')` }}
-        />
+        <Image src={HERO_BG_IMAGE} alt="" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
@@ -92,6 +94,11 @@ export default function ContactPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 text-red-700 text-sm">
+                        {error}
+                      </div>
+                    )}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label htmlFor="name" className={LABEL_CLASS}>
@@ -102,6 +109,8 @@ export default function ContactPage() {
                           id="name"
                           name="name"
                           required
+                          aria-required="true"
+                          autoComplete="name"
                           className={INPUT_CLASS}
                           placeholder="Your name"
                         />
@@ -115,6 +124,8 @@ export default function ContactPage() {
                           id="email"
                           name="email"
                           required
+                          aria-required="true"
+                          autoComplete="email"
                           className={INPUT_CLASS}
                           placeholder="you@example.com"
                         />
@@ -130,6 +141,7 @@ export default function ContactPage() {
                           type="tel"
                           id="phone"
                           name="phone"
+                          autoComplete="tel"
                           className={INPUT_CLASS}
                           placeholder="(480) 555-1234"
                         />

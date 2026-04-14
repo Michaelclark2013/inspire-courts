@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { UserCheck, Loader2, CheckCircle2, Search, Users } from "lucide-react";
+import { UserCheck, Loader2, CheckCircle2, Search, Users, ChevronDown, Clock } from "lucide-react";
 
 type Player = {
   id: number;
@@ -20,6 +20,7 @@ export default function CoachCheckInPage() {
   const [checkedIn, setCheckedIn] = useState<CheckedIn[]>([]);
   const [checkingIn, setCheckingIn] = useState<number | null>(null);
   const [manualName, setManualName] = useState("");
+  const [showSummary, setShowSummary] = useState(true);
 
   const fetchRoster = useCallback(async () => {
     try {
@@ -158,6 +159,37 @@ export default function CoachCheckInPage() {
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* Checked-In Summary */}
+      {checkedIn.length > 0 && (
+        <div className="bg-card border border-emerald-500/20 rounded-xl overflow-hidden mt-6">
+          <button
+            onClick={() => setShowSummary(!showSummary)}
+            className="w-full px-6 py-4 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <h2 className="text-emerald-400 font-bold text-sm uppercase tracking-wider">
+                Recently Checked In ({checkedIn.length})
+              </h2>
+            </div>
+            <ChevronDown className={`w-4 h-4 text-emerald-400/50 transition-transform ${showSummary ? "" : "-rotate-90"}`} />
+          </button>
+          {showSummary && (
+            <div className="divide-y divide-white/5 border-t border-emerald-500/10">
+              {checkedIn.map((c, i) => (
+                <div key={i} className="px-6 py-3 flex items-center justify-between">
+                  <span className="text-emerald-400 text-sm font-medium">{c.name}</span>
+                  <span className="flex items-center gap-1.5 text-white/30 text-xs">
+                    <Clock className="w-3 h-3" />
+                    {c.time}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

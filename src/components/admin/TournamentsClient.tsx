@@ -1,43 +1,109 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Trophy, CalendarDays, DollarSign, Users } from "lucide-react";
+import { Fragment, useState, useMemo } from "react";
+import { Search, ChevronDown, ChevronUp, Trophy, Users, DollarSign, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AdminDonutChart, AdminBarChart, CHART_COLORS } from "@/components/dashboard/Charts";
+import StatusBadge from "@/components/dashboard/StatusBadge";
 
 interface Tournament {
   name: string;
   date: string;
+  rawDate: string;
   divisions: string;
   status: string;
   teams: number;
   fee: string;
+  rawFee: number;
   revenue: string;
+  rawRevenue: number;
+  description: string;
+  location: string;
+  organizer: string;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  "Registration Open": "bg-green-500/10 text-green-400 border-green-500/20",
-  Planning: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  Completed: "bg-gray-500/10 text-gray-400 border-gray-500/20",
-  "In Progress": "bg-red-500/10 text-red-400 border-red-500/20",
-};
+interface Props {
+  tournaments: Tournament[];
+  statusData: { label: string; value: number }[];
+  revenueData: { label: string; value: number }[];
+}
 
-export default function TournamentsClient({ tournaments }: { tournaments: Tournament[] }) {
+const NUMERIC_KEYS = new Set(["teams", "rawFee", "rawRevenue"]);
+
+export default function TournamentsClient({ tournaments, statusData, revenueData }: Props) {
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [timeFilter, setTimeFilter] = useState<"All" | "Upcoming" | "Past">("All");
+  const [sortKey, setSortKey] = useState<string>("rawDate");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [expanded, setExpanded] = useState<number | null>(null);
 
-  const statuses = ["All", ...new Set(tournaments.map((t) => t.status))];
+  const statuses = useMemo(
+    () => ["All", ...Array.from(new Set(tournaments.map((t) => t.status))).sort()],
+    [tournaments]
+  );
 
-  const filtered = tournaments.filter((t) => {
-    const matchSearch = t.name.toLowerCase().includes(search.toLowerCase()) || t.divisions.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = filter === "All" || t.status === filter;
-    return matchSearch && matchFilter;
-  });
+  const filtered = useMemo(() => {
+    const now = new Date().toISOString().slice(0, 10);
+    let list = tournaments;
+
+    if (statusFilter !== "All") list = list.filter((t) => t.status === statusFilter);
+
+    if (timeFilter === "Upcoming") list = list.filter((t) => t.rawDate >= now || !t.rawDate);
+    if (timeFilter === "Past") list = list.filter((t) => t.rawDate < now && t.rawDate !== "");
+
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(
+        (t) =>
+          t.name.toLowerCase().includes(q) ||
+          t.divisions.toLowerCase().includes(q) ||
+          t.location.toLowerCase().includes(q)
+      );
+    }
+
+    return [...list].sort((a, b) => {
+      const av = (a as any)[sortKey] ?? "";
+      const bv = (b as any)[sortKey] ?? "";
+      if (NUMERIC_KEYS.has(sortKey)) {
+        return sortDir === "asc" ? Number(av) - Number(bv) : Number(bv) - Number(av);
+      }
+      return sortDir === "asc"
+        ? String(av).localeCompare(String(bv))
+        : String(bv).localeCompare(String(av));
+    });
+  }, [tournaments, search, statusFilter, timeFilter, sortKey, sortDir]);
 
   const totalTeams = tournaments.reduce((s, t) => s + t.teams, 0);
-  const totalRevenue = tournaments.reduce((s, t) => s + parseInt(t.revenue.replace(/[$,]/g, "") || "0"), 0);
+  const totalRevenue = tournaments.reduce((s, t) => s + t.rawRevenue, 0);
+  const avgTeams = tournaments.length > 0 ? Math.round(totalTeams / tournaments.length) : 0;
 
-  // Find next upcoming event
-  const upcoming = tournaments.find((t) => t.status === "Registration Open" || t.status === "Planning");
+  function toggleSort(key: string) {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else {
+      setSortKey(key);
+      setSortDir(key === "rawDate" ? "desc" : "asc");
+    }
+  }
+
+  function SortIcon({ col }: { col: string }) {
+    if (sortKey !== col) return <span className="text-text-secondary/40 ml-1">↕</span>;
+    return sortDir === "asc" ? (
+      <ChevronUp className="inline w-3 h-3 ml-1 text-accent" />
+    ) : (
+      <ChevronDown className="inline w-3 h-3 ml-1 text-accent" />
+    );
+  }
+
+  const columns: [string, string][] = [
+    ["name", "Name"],
+    ["rawDate", "Date"],
+    ["divisions", "Divisions"],
+    ["status", "Status"],
+    ["teams", "Teams"],
+    ["rawFee", "Fee"],
+    ["rawRevenue", "Revenue"],
+  ];
 
   return (
     <>
@@ -66,78 +132,180 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Next Event</span>
-            <CalendarDays className="w-4 h-4 text-text-secondary" />
+            <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Avg Teams/Event</span>
+            <TrendingUp className="w-4 h-4 text-text-secondary" />
           </div>
-          <p className="text-lg font-bold text-white truncate">{upcoming?.date || "—"}</p>
+          <p className="text-2xl font-bold text-white">{avgTeams}</p>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="bg-bg-secondary border border-border rounded-sm p-5">
+          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Status Breakdown</h3>
+          <p className="text-text-secondary text-xs mb-4">Tournaments by status</p>
+          {statusData.length > 0 ? (
+            <AdminDonutChart data={statusData} height={200} />
+          ) : (
+            <div className="h-[160px] flex items-center justify-center text-text-secondary text-sm">No data</div>
+          )}
+        </div>
+        <div className="bg-bg-secondary border border-border rounded-sm p-5">
+          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Revenue by Tournament</h3>
+          <p className="text-text-secondary text-xs mb-4">Top events by revenue</p>
+          {revenueData.length > 0 ? (
+            <AdminBarChart
+              data={revenueData.map((d, i) => ({ ...d, color: CHART_COLORS[i % CHART_COLORS.length] }))}
+              height={200}
+              valueFormatter={(v) => `$${v.toLocaleString()}`}
+            />
+          ) : (
+            <div className="h-[160px] flex items-center justify-center text-text-secondary text-sm">No revenue data</div>
+          )}
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search tournaments or divisions..."
-            className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50"
+            placeholder="Search tournaments, divisions, location..."
+            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
           />
         </div>
         <div className="flex gap-2 flex-wrap">
-          {statuses.map((s) => (
+          {(["All", "Upcoming", "Past"] as const).map((t) => (
             <button
-              key={s}
-              onClick={() => setFilter(s)}
+              key={t}
+              onClick={() => setTimeFilter(t)}
               className={cn(
                 "px-3 py-2 rounded-sm text-xs font-bold uppercase tracking-wider border transition-colors",
-                filter === s ? "bg-accent/10 text-accent border-accent/30" : "bg-bg border-border text-text-secondary hover:text-white"
+                timeFilter === t
+                  ? "bg-accent/10 text-accent border-accent/30"
+                  : "bg-bg border-border text-text-secondary hover:text-white"
               )}
             >
-              {s}
+              {t}
             </button>
           ))}
         </div>
       </div>
-
-      {/* Tournament Cards */}
-      <div className="space-y-3">
-        {filtered.map((t, i) => (
-          <div key={i} className="bg-bg-secondary border border-border rounded-sm p-5 hover:border-border/80 transition-colors">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-1">
-                  <h3 className="text-white font-bold text-lg">{t.name}</h3>
-                  <span className={cn("inline-block px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider border", STATUS_COLORS[t.status] || "bg-bg text-text-secondary border-border")}>
-                    {t.status}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-text-secondary">
-                  <span className="flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" />{t.date}</span>
-                  <span>Divisions: {t.divisions}</span>
-                </div>
-              </div>
-              <div className="flex gap-6 text-right">
-                <div>
-                  <p className="text-xs text-text-secondary uppercase tracking-wider">Teams</p>
-                  <p className="text-white font-bold text-lg">{t.teams}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-text-secondary uppercase tracking-wider">Fee</p>
-                  <p className="text-white font-bold text-lg">{t.fee}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-text-secondary uppercase tracking-wider">Revenue</p>
-                  <p className="text-accent font-bold text-lg">{t.revenue}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="flex gap-2 flex-wrap mb-4">
+        {statuses.map((s) => (
+          <button
+            key={s}
+            onClick={() => setStatusFilter(s)}
+            className={cn(
+              "px-3 py-2 rounded-sm text-xs font-bold uppercase tracking-wider border transition-colors",
+              statusFilter === s
+                ? "bg-accent/10 text-accent border-accent/30"
+                : "bg-bg border-border text-text-secondary hover:text-white"
+            )}
+          >
+            {s}
+          </button>
         ))}
-        {filtered.length === 0 && (
-          <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary">No tournaments found</div>
-        )}
+      </div>
+
+      {/* Table */}
+      <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+        <div className="px-4 py-3 border-b border-border">
+          <p className="text-text-secondary text-xs">
+            Showing <span className="text-white font-semibold">{filtered.length}</span> of {tournaments.length} tournaments
+          </p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border">
+                {columns.map(([key, label]) => (
+                  <th
+                    key={key}
+                    className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider cursor-pointer hover:text-white transition-colors select-none whitespace-nowrap"
+                    onClick={() => toggleSort(key)}
+                  >
+                    {label}
+                    <SortIcon col={key} />
+                  </th>
+                ))}
+                <th className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
+                  Details
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-8 text-center text-text-secondary text-sm">
+                    No tournaments match your filters.
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((t, i) => (
+                  <Fragment key={i}>
+                    <tr
+                      className="hover:bg-bg/40 transition-colors cursor-pointer"
+                      onClick={() => setExpanded(expanded === i ? null : i)}
+                    >
+                      <td className="px-4 py-3 font-semibold text-white whitespace-nowrap">{t.name}</td>
+                      <td className="px-4 py-3 text-text-secondary whitespace-nowrap">{t.date}</td>
+                      <td className="px-4 py-3">
+                        <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded font-mono">
+                          {t.divisions}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={t.status} />
+                      </td>
+                      <td className="px-4 py-3 font-mono text-white">{t.teams}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-text-secondary">{t.fee}</td>
+                      <td className="px-4 py-3 font-bold text-accent">{t.revenue}</td>
+                      <td className="px-4 py-3">
+                        <button className="text-text-secondary hover:text-white transition-colors">
+                          {expanded === i ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                    {expanded === i && (t.location || t.organizer || t.description) && (
+                      <tr className="bg-bg/60">
+                        <td colSpan={8} className="px-4 py-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                            {t.location && (
+                              <div>
+                                <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Location</p>
+                                <p className="text-white">{t.location}</p>
+                              </div>
+                            )}
+                            {t.organizer && (
+                              <div>
+                                <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Organizer</p>
+                                <p className="text-white">{t.organizer}</p>
+                              </div>
+                            )}
+                            {t.description && (
+                              <div className={!t.location && !t.organizer ? "" : "sm:col-span-3"}>
+                                <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Description</p>
+                                <p className="text-white">{t.description}</p>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

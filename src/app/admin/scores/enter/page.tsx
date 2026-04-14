@@ -210,6 +210,24 @@ export default function ScoreEntryPage() {
         </div>
       )}
 
+      {/* Game Count KPIs */}
+      {!loading && gameList.length > 0 && (
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="bg-card border border-emerald-500/20 rounded-xl p-4 text-center">
+            <p className="text-emerald-400 text-2xl font-bold font-heading">{liveGames.length}</p>
+            <p className="text-emerald-400/60 text-xs font-semibold uppercase tracking-wider mt-1">Live</p>
+          </div>
+          <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
+            <p className="text-white text-2xl font-bold font-heading">{scheduledGames.length}</p>
+            <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mt-1">Scheduled</p>
+          </div>
+          <div className="bg-card border border-red/20 rounded-xl p-4 text-center">
+            <p className="text-red text-2xl font-bold font-heading">{finalGames.length}</p>
+            <p className="text-red/60 text-xs font-semibold uppercase tracking-wider mt-1">Final</p>
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex items-center justify-center py-16 text-white/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading games...
@@ -310,11 +328,19 @@ function GameSection({
               <form onSubmit={onSaveScore} className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
                 <div>
                   <label className="block text-white/60 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.homeTeam} Score</label>
-                  <input type="number" min={0} value={scoreForm.homeScore} onChange={(e) => setScoreForm({ ...scoreForm, homeScore: Number(e.target.value) })} className="w-full bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-red" />
+                  <div className="flex items-center gap-1">
+                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, homeScore: Math.max(0, scoreForm.homeScore - 1) })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors">−</button>
+                    <input type="number" min={0} value={scoreForm.homeScore} onChange={(e) => setScoreForm({ ...scoreForm, homeScore: Number(e.target.value) })} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm text-center focus:outline-none focus:border-red tabular-nums" />
+                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, homeScore: scoreForm.homeScore + 1 })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors">+</button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-white/60 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.awayTeam} Score</label>
-                  <input type="number" min={0} value={scoreForm.awayScore} onChange={(e) => setScoreForm({ ...scoreForm, awayScore: Number(e.target.value) })} className="w-full bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-red" />
+                  <div className="flex items-center gap-1">
+                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, awayScore: Math.max(0, scoreForm.awayScore - 1) })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors">−</button>
+                    <input type="number" min={0} value={scoreForm.awayScore} onChange={(e) => setScoreForm({ ...scoreForm, awayScore: Number(e.target.value) })} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm text-center focus:outline-none focus:border-red tabular-nums" />
+                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, awayScore: scoreForm.awayScore + 1 })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors">+</button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-white/60 text-[10px] font-semibold uppercase tracking-wider mb-1">Quarter</label>

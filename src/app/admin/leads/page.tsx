@@ -44,6 +44,7 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
+  const [expandedLead, setExpandedLead] = useState<number | null>(null);
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
@@ -177,16 +178,16 @@ export default function LeadsPage() {
                   <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
                     Contact
                   </th>
-                  <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
+                  <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
                     Interest
                   </th>
                   <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
                     Source
                   </th>
-                  <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
+                  <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden lg:table-cell">
                     Status
                   </th>
-                  <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
+                  <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
                     Date
                   </th>
                 </tr>
@@ -203,7 +204,7 @@ export default function LeadsPage() {
                   </tr>
                 ) : (
                   filtered.map((lead, i) => (
-                    <tr key={i} className="hover:bg-white/[0.02]">
+                    <tr key={i} className="hover:bg-white/[0.02] cursor-pointer" onClick={() => setExpandedLead(expandedLead === i ? null : i)}>
                       <td className="px-5 py-3 text-white font-semibold">
                         {lead.name || "—"}
                       </td>
@@ -212,18 +213,20 @@ export default function LeadsPage() {
                           {lead.email && (
                             <div className="flex items-center gap-1 text-white/60 text-xs">
                               <Mail className="w-3 h-3" />
-                              {lead.email}
+                              <span className="hidden sm:inline">{lead.email}</span>
+                              <span className="sm:hidden">Email</span>
                             </div>
                           )}
                           {lead.phone && (
                             <div className="flex items-center gap-1 text-white/40 text-xs">
                               <Phone className="w-3 h-3" />
-                              {lead.phone}
+                              <span className="hidden sm:inline">{lead.phone}</span>
+                              <span className="sm:hidden">Phone</span>
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="px-3 py-3 text-white/50 text-xs">
+                      <td className="px-3 py-3 text-white/50 text-xs hidden md:table-cell">
                         {lead.interest || "—"}
                       </td>
                       <td className="px-3 py-3">
@@ -233,14 +236,14 @@ export default function LeadsPage() {
                           {lead.source || "Unknown"}
                         </span>
                       </td>
-                      <td className="px-3 py-3">
+                      <td className="px-3 py-3 hidden lg:table-cell">
                         <span
                           className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${STATUS_STYLES[lead.status] || "bg-white/10 text-white/40"}`}
                         >
                           {lead.status || "New"}
                         </span>
                       </td>
-                      <td className="px-3 py-3 text-white/30 text-xs whitespace-nowrap">
+                      <td className="px-3 py-3 text-white/30 text-xs whitespace-nowrap hidden md:table-cell">
                         {lead.timestamp
                           ? new Date(lead.timestamp).toLocaleDateString(
                               "en-US",
@@ -249,7 +252,42 @@ export default function LeadsPage() {
                           : "—"}
                       </td>
                     </tr>
-                  ))
+                  )).flatMap((row, i) => {
+                    const lead = filtered[i];
+                    if (expandedLead !== i) return [row];
+                    return [row, (
+                      <tr key={`${i}-detail`} className="bg-white/[0.02]">
+                        <td colSpan={6} className="px-5 py-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div>
+                              <p className="text-white/40 uppercase tracking-wider mb-1">Email</p>
+                              <p className="text-white">{lead.email || "—"}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/40 uppercase tracking-wider mb-1">Phone</p>
+                              <p className="text-white">{lead.phone || "—"}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/40 uppercase tracking-wider mb-1">Date</p>
+                              <p className="text-white">{lead.timestamp ? new Date(lead.timestamp).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "—"}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/40 uppercase tracking-wider mb-1">Interest</p>
+                              <p className="text-white">{lead.interest || "—"}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/40 uppercase tracking-wider mb-1">Source</p>
+                              <p className="text-white">{lead.source || "Unknown"}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/40 uppercase tracking-wider mb-1">Status</p>
+                              <p className="text-white">{lead.status || "New"}</p>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )];
+                  })
                 )}
               </tbody>
             </table>

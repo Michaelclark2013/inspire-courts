@@ -162,7 +162,7 @@ export default function TeamsPage() {
                         {ag.gender}
                       </div>
                       <div className="inline-flex items-center gap-1.5 mt-3 bg-green-500/20 text-green-400 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                        <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                        <span className="w-1.5 h-1.5 bg-green-400 rounded-full motion-safe:animate-pulse" />
                         Active
                       </div>
                     </div>

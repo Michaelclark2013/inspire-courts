@@ -132,6 +132,20 @@ export default function AnnouncementsPage() {
                 placeholder="Write your announcement..."
               />
             </div>
+            <div className="flex items-center justify-between text-xs text-white/30 -mt-2 mb-2">
+              <span>{form.body.length} characters</span>
+              {form.body.length > 280 && <span className="text-amber-400">Long message — consider shortening</span>}
+            </div>
+
+            {/* Preview */}
+            {form.title && (
+              <div className="bg-navy/50 border border-white/5 rounded-lg p-4 mb-4">
+                <p className="text-white/30 text-[10px] font-bold uppercase tracking-wider mb-2">Preview</p>
+                <p className="text-white font-bold text-sm">{form.title}</p>
+                {form.body && <p className="text-white/60 text-sm mt-1 whitespace-pre-wrap">{form.body}</p>}
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">

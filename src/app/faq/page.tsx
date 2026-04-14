@@ -16,7 +16,7 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "How do I register for a tournament?",
-        a: "Visit our Tournaments page at inspirecourtsaz.com/tournaments. Select your event, choose your division, complete the registration form with your team name and coach contact info, and submit payment. You'll receive a confirmation once registered.",
+        a: "Visit our Tournaments page at inspirecourts.com/tournaments. Select your event, choose your division, complete the registration form with your team name and coach contact info, and submit payment. You'll receive a confirmation once registered.",
       },
       {
         q: "How do I register a team?",
@@ -41,11 +41,11 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "How do I book the facility?",
-        a: "Fill out the booking request form at inspirecourtsaz.com/book. Provide your contact info, event details, preferred dates, and any special requests. We'll respond within 24 hours to confirm availability and pricing.",
+        a: "Fill out the booking request form at inspirecourts.com/book. Provide your contact info, event details, preferred dates, and any special requests. We'll respond within 24 hours to confirm availability and pricing.",
       },
       {
         q: "Do you have volleyball courts?",
-        a: "Yes! Inspire Courts has 7 regulation volleyball courts available for rent. We host volleyball leagues, practices, tournaments, and private events. Contact us for pricing or use the booking form at inspirecourtsaz.com/book and select 'Volleyball' as your sport.",
+        a: "Yes! Inspire Courts has 7 regulation volleyball courts available for rent. We host volleyball leagues, practices, tournaments, and private events. Contact us for pricing or use the booking form at inspirecourts.com/book and select 'Volleyball' as your sport.",
       },
       {
         q: "What sports can I rent courts for?",

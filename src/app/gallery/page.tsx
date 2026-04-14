@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "Browse tournament action, facility photos, and player highlights from Inspire Courts AZ and OFF SZN HOOPS events in Gilbert, Arizona.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/gallery",
+    canonical: "https://inspirecourts.com/gallery",
   },
 };
 

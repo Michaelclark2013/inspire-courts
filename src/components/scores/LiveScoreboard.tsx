@@ -12,6 +12,10 @@ import {
   LayoutGrid,
   List,
   MapPin,
+  Pencil,
+  Check,
+  X,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -38,9 +42,10 @@ type LiveGame = {
 
 type Props = {
   eventFilter?: string;
+  canEditScores?: boolean;
 };
 
-export default function LiveScoreboard({ eventFilter = "" }: Props) {
+export default function LiveScoreboard({ eventFilter = "", canEditScores = false }: Props) {
   const [games, setGames] = useState<LiveGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -333,6 +338,8 @@ export default function LiveScoreboard({ eventFilter = "" }: Props) {
                     teamRecords={teamRecords}
                     expanded={expandedGame === game.id}
                     onToggle={() => setExpandedGame(expandedGame === game.id ? null : game.id)}
+                    canEdit={canEditScores}
+                    onScoreUpdated={() => fetchScores(false)}
                   />
                 ))}
               </div>
@@ -356,6 +363,8 @@ export default function LiveScoreboard({ eventFilter = "" }: Props) {
                     teamRecords={teamRecords}
                     expanded={expandedGame === game.id}
                     onToggle={() => setExpandedGame(expandedGame === game.id ? null : game.id)}
+                    canEdit={canEditScores}
+                    onScoreUpdated={() => fetchScores(false)}
                   />
                 ))}
               </div>
@@ -379,6 +388,8 @@ export default function LiveScoreboard({ eventFilter = "" }: Props) {
                     teamRecords={teamRecords}
                     expanded={expandedGame === game.id}
                     onToggle={() => setExpandedGame(expandedGame === game.id ? null : game.id)}
+                    canEdit={canEditScores}
+                    onScoreUpdated={() => fetchScores(false)}
                   />
                 ))}
               </div>
@@ -403,12 +414,23 @@ function GameCard({
   teamRecords,
   expanded,
   onToggle,
+  canEdit = false,
+  onScoreUpdated,
 }: {
   game: LiveGame;
   teamRecords: Record<string, { w: number; l: number }>;
   expanded: boolean;
   onToggle: () => void;
+  canEdit?: boolean;
+  onScoreUpdated?: () => void;
 }) {
+  const [editing, setEditing] = useState(false);
+  const [editHome, setEditHome] = useState(game.homeScore);
+  const [editAway, setEditAway] = useState(game.awayScore);
+  const [editQuarter, setEditQuarter] = useState(game.quarter || "");
+  const [editStatus, setEditStatus] = useState<string>("");
+  const [saving, setSaving] = useState(false);
+
   const isLive = game.status === "live";
   const isFinal = game.status === "final";
   const homeWinning = game.homeScore > game.awayScore;
@@ -418,6 +440,40 @@ function GameCard({
 
   // Quarter scores (exclude "final" entry for the box score rows)
   const quarterScores = (game.scores || []).filter((s) => s.quarter && s.quarter !== "final");
+
+  function openEdit(e: React.MouseEvent) {
+    e.stopPropagation();
+    setEditHome(game.homeScore);
+    setEditAway(game.awayScore);
+    setEditQuarter(game.quarter || "");
+    setEditStatus("");
+    setEditing(true);
+  }
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setSaving(true);
+    try {
+      await fetch("/api/admin/scores", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gameId: game.id,
+          homeScore: editHome,
+          awayScore: editAway,
+          quarter: editQuarter || undefined,
+          status: editStatus || undefined,
+        }),
+      });
+      setEditing(false);
+      onScoreUpdated?.();
+    } catch {
+      // silently fail
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div
@@ -450,6 +506,15 @@ function GameCard({
             >
               {isLive && game.quarter ? `Q${game.quarter}` : game.status}
             </span>
+            {canEdit && !editing && (
+              <button
+                onClick={openEdit}
+                className="flex items-center gap-1 text-red/70 hover:text-red px-1.5 py-0.5 rounded transition-colors"
+                title="Edit score"
+              >
+                <Pencil className="w-3 h-3" />
+              </button>
+            )}
             {expanded ? (
               <ChevronUp className="w-3.5 h-3.5 text-white/30" />
             ) : (
@@ -514,8 +579,71 @@ function GameCard({
         )}
       </div>
 
+      {/* Inline admin score editor */}
+      {editing && (
+        <form
+          onSubmit={handleSave}
+          onClick={(e) => e.stopPropagation()}
+          className="border-t border-red/20 bg-red/5 px-5 py-4 space-y-3"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <Pencil className="w-3.5 h-3.5 text-red" />
+            <span className="text-red text-xs font-bold uppercase tracking-wider">Update Score</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-white/50 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.homeTeam}</label>
+              <div className="flex items-center gap-1">
+                <button type="button" onClick={() => setEditHome(Math.max(0, editHome - 1))} className="w-8 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors text-sm">-</button>
+                <input type="number" min={0} value={editHome} onChange={(e) => setEditHome(Number(e.target.value))} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm text-center focus:outline-none focus:border-red tabular-nums" />
+                <button type="button" onClick={() => setEditHome(editHome + 1)} className="w-8 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors text-sm">+</button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-white/50 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.awayTeam}</label>
+              <div className="flex items-center gap-1">
+                <button type="button" onClick={() => setEditAway(Math.max(0, editAway - 1))} className="w-8 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors text-sm">-</button>
+                <input type="number" min={0} value={editAway} onChange={(e) => setEditAway(Number(e.target.value))} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm text-center focus:outline-none focus:border-red tabular-nums" />
+                <button type="button" onClick={() => setEditAway(editAway + 1)} className="w-8 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors text-sm">+</button>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-white/50 text-[10px] font-semibold uppercase tracking-wider mb-1">Quarter</label>
+              <select value={editQuarter} onChange={(e) => setEditQuarter(e.target.value)} className="w-full bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm focus:outline-none focus:border-red">
+                <option value="">--</option>
+                <option value="1">Q1</option>
+                <option value="2">Q2</option>
+                <option value="3">Q3</option>
+                <option value="4">Q4</option>
+                <option value="OT">OT</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-white/50 text-[10px] font-semibold uppercase tracking-wider mb-1">Status</label>
+              <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="w-full bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm focus:outline-none focus:border-red">
+                <option value="">No change</option>
+                <option value="live">Live</option>
+                <option value="final">Final</option>
+                <option value="scheduled">Scheduled</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 pt-1">
+            <button type="submit" disabled={saving} className="flex items-center gap-1.5 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors">
+              {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+              Save
+            </button>
+            <button type="button" onClick={(e) => { e.stopPropagation(); setEditing(false); }} className="flex items-center gap-1 text-white/40 hover:text-white px-3 py-2 rounded-lg text-xs transition-colors">
+              <X className="w-3 h-3" /> Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
       {/* Expanded details */}
-      {expanded && (
+      {expanded && !editing && (
         <div
           className="border-t border-white/10 px-5 py-4 space-y-4"
           onClick={(e) => e.stopPropagation()}

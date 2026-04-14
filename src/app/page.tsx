@@ -23,18 +23,18 @@ export const metadata: Metadata = {
   description:
     "Arizona's premier indoor basketball & volleyball facility. 7 courts, game film available at tournaments. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com",
+    canonical: "https://inspirecourts.com",
   },
 };
 
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
-  "@id": "https://inspirecourtsaz.com",
+  "@id": "https://inspirecourts.com",
   name: "Inspire Courts AZ",
   description:
     "Arizona's premier indoor basketball & volleyball facility. 7 regulation courts, game film available at tournaments. Home of OFF SZN HOOPS youth basketball tournaments.",
-  url: "https://inspirecourtsaz.com",
+  url: "https://inspirecourts.com",
   email: FACILITY_EMAIL,
   address: {
     "@type": "PostalAddress",

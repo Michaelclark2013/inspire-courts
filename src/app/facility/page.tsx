@@ -32,12 +32,12 @@ export const metadata: Metadata = {
   description:
     "Professional indoor basketball & volleyball court rental in Gilbert, AZ. 7 courts, climate-controlled. Book for leagues, practices, and events. $80/court/hour.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/facility",
+    canonical: "https://inspirecourts.com/facility",
   },
   openGraph: {
     images: [
       {
-        url: "https://inspirecourtsaz.com/images/hero-bg.jpg",
+        url: "https://inspirecourts.com/images/hero-bg.jpg",
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ – Indoor basketball & volleyball facility in Gilbert, AZ",
@@ -115,7 +115,7 @@ const JSON_LD = {
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
   name: "Inspire Courts AZ",
-  url: "https://inspirecourtsaz.com/facility",
+  url: "https://inspirecourts.com/facility",
   telephone: FACILITY_PHONE,
   address: {
     "@type": "PostalAddress",

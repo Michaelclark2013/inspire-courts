@@ -22,13 +22,13 @@ export const metadata: Metadata = {
   description:
     "Team Inspire competes on the MADE Hoops Circuit. 16U and 17U boys club basketball based at Inspire Courts in Gilbert, AZ. Now recruiting coaches and players.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/teams",
+    canonical: "https://inspirecourts.com/teams",
   },
   openGraph: {
     title: "Team Inspire | Club Basketball on MADE Hoops Circuit",
     description: "16U & 17U boys club basketball based at Inspire Courts in Gilbert, AZ. Now recruiting coaches and players for the MADE Hoops High School Circuit.",
-    url: "https://inspirecourtsaz.com/teams",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Team Inspire club basketball program" }],
+    url: "https://inspirecourts.com/teams",
+    images: [{ url: "https://inspirecourts.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Team Inspire club basketball program" }],
   },
 };
 

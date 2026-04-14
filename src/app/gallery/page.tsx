@@ -110,7 +110,7 @@ export default function GalleryPage() {
 
       <QuickContactBar subject="Gallery" label="Want photos from your event?" />
       <BackToTop />
-      <div className="h-20 lg:hidden" />
+      <div className="h-32 lg:hidden" />
     </>
   );
 }

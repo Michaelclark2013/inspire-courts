@@ -25,6 +25,7 @@ export async function GET() {
       name: users.name,
       role: users.role,
       phone: users.phone,
+      passwordHash: users.passwordHash,
     })
     .from(users)
     .where(eq(users.id, userId))
@@ -34,7 +35,14 @@ export async function GET() {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  return NextResponse.json(user);
+  return NextResponse.json({
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    phone: user.phone,
+    isOAuth: user.passwordHash === "google-oauth",
+  });
 }
 
 // PUT /api/portal/profile — update own profile
@@ -108,16 +116,9 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Invalid user" }, { status: 400 });
   }
 
-  // Require password confirmation
   const body = await request.json();
-  if (!body.password) {
-    return NextResponse.json(
-      { error: "Password is required to delete your account" },
-      { status: 400 }
-    );
-  }
 
-  // Verify password
+  // Fetch user to check auth method and role
   const [user] = await db
     .select({ passwordHash: users.passwordHash, role: users.role })
     .from(users)
@@ -136,9 +137,21 @@ export async function DELETE(request: NextRequest) {
     );
   }
 
-  const valid = await bcrypt.compare(body.password, user.passwordHash);
-  if (!valid) {
-    return NextResponse.json({ error: "Incorrect password" }, { status: 403 });
+  const isOAuthUser = user.passwordHash === "google-oauth";
+
+  // OAuth users: skip password check (they never set one)
+  // Credentials users: require and verify password
+  if (!isOAuthUser) {
+    if (!body.password) {
+      return NextResponse.json(
+        { error: "Password is required to delete your account" },
+        { status: 400 }
+      );
+    }
+    const valid = await bcrypt.compare(body.password, user.passwordHash);
+    if (!valid) {
+      return NextResponse.json({ error: "Incorrect password" }, { status: 403 });
+    }
   }
 
   // Nullify foreign key references (don't delete other records, just unlink)

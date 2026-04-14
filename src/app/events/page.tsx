@@ -210,7 +210,7 @@ export default function EventsPage() {
       )}
 
       <BackToTop />
-      <div className="h-16 lg:hidden" />
+      <div className="h-20 lg:hidden" />
     </>
   );
 }

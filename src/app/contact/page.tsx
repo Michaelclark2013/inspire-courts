@@ -273,7 +273,7 @@ export default function ContactPage() {
       </section>
 
       <BackToTop />
-      <div className="h-16 lg:hidden" />
+      <div className="h-32 lg:hidden" />
     </>
   );
 }

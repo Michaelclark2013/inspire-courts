@@ -43,6 +43,7 @@ export default function ProfilePage() {
   const [deleteTyped, setDeleteTyped] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [isOAuthUser, setIsOAuthUser] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -52,6 +53,7 @@ export default function ProfilePage() {
         const data = await res.json();
         if (data.name) setName(data.name);
         if (data.phone) setPhone(data.phone);
+        if (data.isOAuth) setIsOAuthUser(true);
       } else {
         setFetchError(true);
       }
@@ -97,7 +99,7 @@ export default function ProfilePage() {
   async function handleDeleteAccount(e: React.FormEvent) {
     e.preventDefault();
     if (deleteTyped !== "DELETE") return;
-    if (!deletePassword) {
+    if (!isOAuthUser && !deletePassword) {
       setDeleteError("Enter your password to confirm.");
       return;
     }
@@ -109,7 +111,7 @@ export default function ProfilePage() {
       const res = await fetch("/api/portal/profile", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: deletePassword }),
+        body: JSON.stringify(isOAuthUser ? {} : { password: deletePassword }),
       });
 
       if (res.ok) {
@@ -339,24 +341,32 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                      Enter your password
-                    </label>
-                    <input
-                      type="password"
-                      value={deletePassword}
-                      onChange={(e) => setDeletePassword(e.target.value)}
-                      className="w-full bg-navy border border-red/20 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
-                      placeholder="Your current password"
-                      autoComplete="current-password"
-                    />
-                  </div>
+                  {!isOAuthUser && (
+                    <div>
+                      <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                        Enter your password
+                      </label>
+                      <input
+                        type="password"
+                        value={deletePassword}
+                        onChange={(e) => setDeletePassword(e.target.value)}
+                        className="w-full bg-navy border border-red/20 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                        placeholder="Your current password"
+                        autoComplete="current-password"
+                      />
+                    </div>
+                  )}
+
+                  {isOAuthUser && (
+                    <p className="text-white/40 text-xs">
+                      Your account uses Google sign-in — no password needed.
+                    </p>
+                  )}
 
                   <div className="flex gap-3">
                     <button
                       type="submit"
-                      disabled={deleting || deleteTyped !== "DELETE" || !deletePassword}
+                      disabled={deleting || deleteTyped !== "DELETE" || (!isOAuthUser && !deletePassword)}
                       className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
                     >
                       {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}

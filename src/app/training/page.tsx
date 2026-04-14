@@ -353,7 +353,7 @@ export default function TrainingPage() {
       </section>
 
       <QuickContactBar subject="Private Training" label="Train with us?" />
-      <div className="h-28 lg:hidden" />
+      <div className="h-32 lg:hidden" />
     </>
   );
 }

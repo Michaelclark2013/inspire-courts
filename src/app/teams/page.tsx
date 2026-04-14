@@ -418,7 +418,7 @@ export default function TeamsPage() {
       </section>
 
       <BackToTop />
-      <div className="h-16 lg:hidden" />
+      <div className="h-20 lg:hidden" />
     </>
   );
 }

@@ -12,7 +12,7 @@ interface QuickContactBarProps {
 
 export default function QuickContactBar({ subject, label = "Interested?", formHref }: QuickContactBarProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[90] bg-navy/95 backdrop-blur-sm border-t border-white/10 py-3 px-4 lg:hidden">
+    <div className="fixed bottom-[60px] left-0 right-0 z-[90] bg-navy/95 backdrop-blur-sm border-t border-white/10 py-3 px-4 lg:hidden">
       <div className="flex items-center gap-3 max-w-lg mx-auto">
         <span className="text-white/70 text-xs font-bold uppercase tracking-wider flex-shrink-0">
           {label}

@@ -458,7 +458,7 @@ export default function MediaPage() {
 
       <QuickContactBar subject="Media Services" label="Need a quote?" />
       <BackToTop />
-      <div className="h-16 lg:hidden" />
+      <div className="h-32 lg:hidden" />
     </>
   );
 }

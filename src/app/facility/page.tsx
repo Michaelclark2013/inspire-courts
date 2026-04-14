@@ -595,7 +595,7 @@ export default function FacilityPage() {
 
       <QuickContactBar subject="Facility" label="Questions?" />
       <BackToTop />
-      <div className="h-28 lg:hidden" />
+      <div className="h-32 lg:hidden" />
     </>
   );
 }

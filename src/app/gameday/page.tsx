@@ -238,7 +238,7 @@ export default function GameDayPage() {
 
       <QuickContactBar subject="Game Day" label="Need help?" />
       <BackToTop />
-      <div className="h-16 lg:hidden" />
+      <div className="h-32 lg:hidden" />
     </>
   );
 }

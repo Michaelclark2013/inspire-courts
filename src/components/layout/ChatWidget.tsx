@@ -345,7 +345,8 @@ export default function ChatWidget() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const wasDismissed = sessionStorage.getItem("inspire-chat-dismissed") === "1";
-    if (wasDismissed || userClosed) return;
+    const isMobile = window.innerWidth < 768;
+    if (isMobile || wasDismissed || userClosed) return;
     const timer = setTimeout(() => {
       setOpen(true);
     }, 3000);

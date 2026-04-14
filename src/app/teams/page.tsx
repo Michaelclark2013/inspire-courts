@@ -268,6 +268,47 @@ export default function TeamsPage() {
         </div>
       </section>
 
+      {/* Player Highlight */}
+      <section className="py-14 lg:py-28 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <AnimateIn>
+              <div className="flex justify-center">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-light-gray w-full" style={{ maxWidth: "640px", aspectRatio: "16/9" }}>
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube.com/embed/LsB3MD2GOXA?rel=0&modestbranding=1"
+                    title="Team Inspire Player Highlight"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </AnimateIn>
+            <AnimateIn delay={150}>
+              <div>
+                <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                  Player Highlight
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)] leading-[0.95]">
+                  See Our Players <span className="text-red">In Action</span>
+                </h2>
+                <p className="text-text-muted leading-relaxed mb-6">
+                  Team Inspire players compete at the highest level on the MADE Hoops Circuit. Watch the highlights and see what our program is building.
+                </p>
+                <a
+                  href="#join"
+                  className="group inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
+                >
+                  Join the Team <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
+            </AnimateIn>
+          </div>
+        </div>
+      </section>
+
       {/* Interest Form — two-column on desktop */}
       <section id="join" className="py-20 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

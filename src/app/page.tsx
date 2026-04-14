@@ -174,6 +174,48 @@ export default function Home() {
       </section>
 
 
+      {/* ── JALEN WILLIAMS FEATURE ── */}
+      <section className="py-14 lg:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <AnimateIn>
+              <div>
+                <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                  As Seen On
+                </span>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy mb-6 font-[var(--font-chakra)] leading-[0.95]">
+                  NBA Star <span className="text-red">Jalen Williams</span> Knows Inspire Courts
+                </h2>
+                <p className="text-text-muted text-lg leading-relaxed mb-6">
+                  OKC Thunder guard and Gilbert, AZ native Jalen Williams shouts out Inspire Courts. When an NBA player from your city recognizes what you&apos;re building — you know it&apos;s real.
+                </p>
+                <Link
+                  href="/about"
+                  className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
+                >
+                  Our Story
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </AnimateIn>
+            <AnimateIn delay={150}>
+              <div className="flex justify-center">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-light-gray" style={{ width: "100%", maxWidth: "340px", aspectRatio: "9/16" }}>
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube.com/embed/hLGrKauJzLc?rel=0&modestbranding=1"
+                    title="NBA Star Jalen Williams talks about Inspire Courts"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </AnimateIn>
+          </div>
+        </div>
+      </section>
+
       {/* ── FACILITY FEATURES ── */}
       <section className="py-14 lg:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

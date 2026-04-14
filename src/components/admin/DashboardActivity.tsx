@@ -38,7 +38,7 @@ export default function DashboardActivity() {
     <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden mb-6">
       <div className="px-5 py-3 border-b border-border flex items-center gap-2">
         <Activity className="w-4 h-4 text-accent" aria-hidden="true" />
-        <h3 className="text-white font-bold text-xs uppercase tracking-wider">
+        <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
           Recent Activity
         </h3>
         {live.length > 0 && (
@@ -63,18 +63,18 @@ export default function DashboardActivity() {
             {g.status === "live" ? (
               <Radio className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" aria-label="Live" />
             ) : g.status === "final" ? (
-              <CheckCircle2 className="w-3.5 h-3.5 text-white/20 flex-shrink-0" aria-label="Final" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-navy/20 flex-shrink-0" aria-label="Final" />
             ) : (
-              <Clock className="w-3.5 h-3.5 text-white/20 flex-shrink-0" aria-label="Scheduled" />
+              <Clock className="w-3.5 h-3.5 text-navy/20 flex-shrink-0" aria-label="Scheduled" />
             )}
-            <span className="text-white text-xs font-medium flex-1 truncate">
-              {g.homeTeam} <span className="text-white/30">vs</span> {g.awayTeam}
+            <span className="text-navy text-xs font-medium flex-1 truncate">
+              {g.homeTeam} <span className="text-navy/30">vs</span> {g.awayTeam}
             </span>
             {g.division && (
               <span className="text-[10px] text-text-secondary hidden sm:block">{g.division}</span>
             )}
             {g.status !== "scheduled" && (
-              <span className="text-white font-mono font-bold text-xs tabular-nums">
+              <span className="text-navy font-mono font-bold text-xs tabular-nums">
                 {g.homeScore}–{g.awayScore}
               </span>
             )}
@@ -83,8 +83,8 @@ export default function DashboardActivity() {
                 g.status === "live"
                   ? "bg-emerald-500/20 text-emerald-400"
                   : g.status === "final"
-                  ? "bg-white/5 text-white/30"
-                  : "bg-white/5 text-white/30"
+                  ? "bg-white/5 text-navy/30"
+                  : "bg-white/5 text-navy/30"
               }`}
             >
               {g.status}

@@ -102,7 +102,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Staff</span>
             <Users className="w-4 h-4 text-text-secondary" />
           </div>
-          <p className="text-2xl font-bold text-white">{staff.length}</p>
+          <p className="text-2xl font-bold text-navy">{staff.length}</p>
           <p className="text-text-secondary text-xs mt-1">{totalShifts} total shifts</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
@@ -110,7 +110,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Referees</span>
             <Shield className="w-4 h-4 text-text-secondary" />
           </div>
-          <p className="text-2xl font-bold text-white">{refs.length}</p>
+          <p className="text-2xl font-bold text-navy">{refs.length}</p>
           <p className="text-text-secondary text-xs mt-1">{totalGames} total games</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
@@ -118,23 +118,23 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Staff Pay</span>
             <DollarSign className="w-4 h-4 text-text-secondary" />
           </div>
-          <p className="text-2xl font-bold text-white">${totalStaffPay.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-navy">${totalStaffPay.toLocaleString()}</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Ref Pay</span>
             <DollarSign className="w-4 h-4 text-text-secondary" />
           </div>
-          <p className="text-2xl font-bold text-white">${totalRefPay.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-navy">${totalRefPay.toLocaleString()}</p>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-4">
-        <button onClick={() => { setTab("staff"); setSearch(""); }} className={cn("px-4 py-2 rounded-sm text-sm font-bold uppercase tracking-wider border transition-colors", tab === "staff" ? "bg-accent/10 text-accent border-accent/30" : "bg-bg border-border text-text-secondary hover:text-white")}>
+        <button onClick={() => { setTab("staff"); setSearch(""); }} className={cn("px-4 py-2 rounded-sm text-sm font-bold uppercase tracking-wider border transition-colors", tab === "staff" ? "bg-accent/10 text-accent border-accent/30" : "bg-bg border-border text-text-secondary hover:text-navy")}>
           Event Staff ({staff.length})
         </button>
-        <button onClick={() => { setTab("refs"); setSearch(""); }} className={cn("px-4 py-2 rounded-sm text-sm font-bold uppercase tracking-wider border transition-colors", tab === "refs" ? "bg-accent/10 text-accent border-accent/30" : "bg-bg border-border text-text-secondary hover:text-white")}>
+        <button onClick={() => { setTab("refs"); setSearch(""); }} className={cn("px-4 py-2 rounded-sm text-sm font-bold uppercase tracking-wider border transition-colors", tab === "refs" ? "bg-accent/10 text-accent border-accent/30" : "bg-bg border-border text-text-secondary hover:text-navy")}>
           Referees ({refs.length})
         </button>
       </div>
@@ -142,7 +142,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
       {/* Search */}
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${tab === "staff" ? "staff" : "referees"}...`} className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50" />
+        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${tab === "staff" ? "staff" : "referees"}...`} className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50" />
       </div>
 
       {/* Table */}
@@ -156,7 +156,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
                     const labels: Record<string, string> = { name: "Name", role: "Role", shifts: "Shifts", hoursWorked: "Hours", totalPay: "Pay", payMethod: "Method", payAccount: "Account", lastShift: "Last Shift" };
                     const sortable = ["name","shifts","hoursWorked","totalPay"].includes(k);
                     return (
-                      <th key={k} onClick={sortable ? () => toggleStaffSort(k) : undefined} className={cn("text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3", sortable && "cursor-pointer hover:text-white transition-colors select-none")}>
+                      <th key={k} onClick={sortable ? () => toggleStaffSort(k) : undefined} className={cn("text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3", sortable && "cursor-pointer hover:text-navy transition-colors select-none")}>
                         {labels[k]}{sortable && <SortIcon active={staffSort.key === k} dir={staffSort.dir} />}
                       </th>
                     );
@@ -166,17 +166,17 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
               <tbody>
                 {filteredStaff.map((s, i) => (
                   <tr key={i} className="border-b border-border/50 hover:bg-bg/50 transition-colors">
-                    <td className="px-4 py-3 text-white font-medium">{s.name}</td>
+                    <td className="px-4 py-3 text-navy font-medium">{s.name}</td>
                     <td className="px-4 py-3 text-text-secondary">{s.role}</td>
-                    <td className="px-4 py-3 text-white">{s.shifts}</td>
-                    <td className="px-4 py-3 text-white">{s.hoursWorked}</td>
+                    <td className="px-4 py-3 text-navy">{s.shifts}</td>
+                    <td className="px-4 py-3 text-navy">{s.hoursWorked}</td>
                     <td className="px-4 py-3 text-accent font-medium">{s.totalPay}</td>
                     <td className="px-4 py-3 text-text-secondary">{s.payMethod}</td>
                     <td className="px-4 py-3 text-text-secondary">
                       <span className="flex items-center gap-1.5">
                         <span className="font-mono text-xs">{showAccounts.has(`s-${i}`) ? s.payAccount : maskAccount(s.payAccount)}</span>
                         {s.payAccount && s.payAccount !== "—" && (
-                          <button onClick={() => toggleAccount(`s-${i}`)} className="text-text-secondary hover:text-white" title={showAccounts.has(`s-${i}`) ? "Hide" : "Show"}>
+                          <button onClick={() => toggleAccount(`s-${i}`)} className="text-text-secondary hover:text-navy" title={showAccounts.has(`s-${i}`) ? "Hide" : "Show"}>
                             {showAccounts.has(`s-${i}`) ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                           </button>
                         )}
@@ -196,7 +196,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
                     const labels: Record<string, string> = { name: "Name", gamesReffed: "Games", totalPay: "Pay", payMethod: "Method", payAccount: "Account", court: "Court", lastGame: "Last Game" };
                     const sortable = ["name","gamesReffed","totalPay"].includes(k);
                     return (
-                      <th key={k} onClick={sortable ? () => toggleRefSort(k) : undefined} className={cn("text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3", sortable && "cursor-pointer hover:text-white transition-colors select-none")}>
+                      <th key={k} onClick={sortable ? () => toggleRefSort(k) : undefined} className={cn("text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3", sortable && "cursor-pointer hover:text-navy transition-colors select-none")}>
                         {labels[k]}{sortable && <SortIcon active={refSort.key === k} dir={refSort.dir} />}
                       </th>
                     );
@@ -206,21 +206,21 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
               <tbody>
                 {filteredRefs.map((r, i) => (
                   <tr key={i} className="border-b border-border/50 hover:bg-bg/50 transition-colors">
-                    <td className="px-4 py-3 text-white font-medium">{r.name}</td>
-                    <td className="px-4 py-3 text-white">{r.gamesReffed}</td>
+                    <td className="px-4 py-3 text-navy font-medium">{r.name}</td>
+                    <td className="px-4 py-3 text-navy">{r.gamesReffed}</td>
                     <td className="px-4 py-3 text-accent font-medium">{r.totalPay}</td>
                     <td className="px-4 py-3 text-text-secondary">{r.payMethod}</td>
                     <td className="px-4 py-3 text-text-secondary">
                       <span className="flex items-center gap-1.5">
                         <span className="font-mono text-xs">{showAccounts.has(`r-${i}`) ? r.payAccount : maskAccount(r.payAccount)}</span>
                         {r.payAccount && r.payAccount !== "—" && (
-                          <button onClick={() => toggleAccount(`r-${i}`)} className="text-text-secondary hover:text-white" title={showAccounts.has(`r-${i}`) ? "Hide" : "Show"}>
+                          <button onClick={() => toggleAccount(`r-${i}`)} className="text-text-secondary hover:text-navy" title={showAccounts.has(`r-${i}`) ? "Hide" : "Show"}>
                             {showAccounts.has(`r-${i}`) ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                           </button>
                         )}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-white">{r.court}</td>
+                    <td className="px-4 py-3 text-navy">{r.court}</td>
                     <td className="px-4 py-3 text-text-secondary">{r.lastGame}</td>
                   </tr>
                 ))}

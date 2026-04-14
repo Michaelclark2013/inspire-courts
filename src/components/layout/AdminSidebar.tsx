@@ -49,6 +49,7 @@ const OPERATIONS: NavItem[] = [
   { href: "/admin/players", label: "Players", icon: UserCheck, page: "players" },
   { href: "/admin/checkin", label: "Check-In", icon: UserCheck, page: "checkin" },
   { href: "/admin/staff", label: "Staff & Refs", icon: UserCheck, page: "staff_refs" },
+  { href: "/admin/approvals", label: "Approvals", icon: Shield, page: "approvals" },
   { href: "/admin/revenue", label: "Revenue", icon: DollarSign, page: "revenue" },
   { href: "/admin/prospects", label: "Prospects", icon: TrendingUp, page: "prospects" },
 ];
@@ -114,8 +115,8 @@ export default function AdminSidebar() {
         className={cn(
           "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors relative",
           active
-            ? "bg-accent/10 text-accent before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-accent before:rounded-full"
-            : "text-text-secondary hover:text-white hover:bg-bg"
+            ? "bg-red/10 text-red before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-red before:rounded-full"
+            : "text-text-muted hover:text-navy hover:bg-off-white"
         )}
       >
         <item.icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
@@ -127,9 +128,9 @@ export default function AdminSidebar() {
   return (
     <>
       {/* ── Desktop sidebar (lg+) ──────────────────────────────────────────── */}
-      <aside className="hidden lg:flex flex-col w-64 bg-bg-secondary border-r border-border sticky top-0 h-screen" aria-label="Admin navigation">
+      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-light-gray sticky top-0 h-screen" aria-label="Admin navigation">
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-border flex-shrink-0">
+        <div className="px-5 py-5 border-b border-light-gray flex-shrink-0">
           <Link href="/admin" className="flex items-center gap-3">
             <Image
               src="/images/inspire-athletics-logo.png"
@@ -139,10 +140,10 @@ export default function AdminSidebar() {
               className="object-contain"
             />
             <div>
-              <span className="text-white font-bold text-sm uppercase tracking-tight block">
+              <span className="text-navy font-bold text-sm uppercase tracking-tight block">
                 Inspire Courts
               </span>
-              <span className="text-text-secondary text-[10px] uppercase tracking-widest">
+              <span className="text-text-muted text-[10px] uppercase tracking-widest">
                 {ROLE_LABELS[role] || "Dashboard"}
               </span>
             </div>
@@ -150,18 +151,18 @@ export default function AdminSidebar() {
         </div>
 
         {/* User info */}
-        <div className="px-5 py-3 border-b border-border flex-shrink-0">
-          <p className="text-white text-sm font-medium truncate">
+        <div className="px-5 py-3 border-b border-light-gray flex-shrink-0">
+          <p className="text-navy text-sm font-medium truncate">
             {session?.user?.name || "Admin"}
           </p>
-          <p className="text-text-secondary text-xs truncate">{session?.user?.email}</p>
+          <p className="text-text-muted text-xs truncate">{session?.user?.email}</p>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5" aria-label="Admin pages">
           {visiblePersonal.length > 0 && (
             <div>
-              <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
                 My Dashboard
               </p>
               <div className="space-y-0.5">
@@ -174,7 +175,7 @@ export default function AdminSidebar() {
 
           {visibleOps.length > 0 && (
             <div>
-              <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
                 Operations
               </p>
               <div className="space-y-0.5">
@@ -187,7 +188,7 @@ export default function AdminSidebar() {
 
           {visibleRes.length > 0 && (
             <div>
-              <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
                 Resources
               </p>
               <div className="space-y-0.5">
@@ -200,7 +201,7 @@ export default function AdminSidebar() {
 
           {role === "admin" && (
             <div>
-              <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
                 Portals
               </p>
               <div className="space-y-0.5">
@@ -209,8 +210,8 @@ export default function AdminSidebar() {
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors",
                     pathname.startsWith("/portal")
-                      ? "bg-accent/10 text-accent"
-                      : "text-text-secondary hover:text-white hover:bg-bg"
+                      ? "bg-red/10 text-red"
+                      : "text-text-muted hover:text-navy hover:bg-off-white"
                   )}
                 >
                   <Columns3 className="w-4 h-4 flex-shrink-0" />
@@ -222,24 +223,24 @@ export default function AdminSidebar() {
         </nav>
 
         {/* Bottom actions */}
-        <div className="px-3 py-4 border-t border-border space-y-1 flex-shrink-0">
+        <div className="px-3 py-4 border-t border-light-gray space-y-1 flex-shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-secondary hover:text-white hover:bg-bg transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-muted hover:text-navy hover:bg-off-white transition-colors"
           >
             <ExternalLink className="w-4 h-4" />
             View Public Site
           </Link>
           <Link
             href="/scores"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-secondary hover:text-white hover:bg-bg transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-muted hover:text-navy hover:bg-off-white transition-colors"
           >
             <Trophy className="w-4 h-4" />
             Live Scores
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-secondary hover:text-danger hover:bg-bg transition-colors w-full text-left"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-muted hover:text-danger hover:bg-red/5 transition-colors w-full text-left"
           >
             <LogOut className="w-4 h-4" />
             Sign Out
@@ -249,7 +250,7 @@ export default function AdminSidebar() {
 
       {/* ── Mobile bottom tab bar ──────────────────────────────────────────── */}
       <nav
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-bg-secondary border-t border-border-dark flex items-stretch"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-light-gray flex items-stretch"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
         aria-label="Admin quick navigation"
       >
@@ -264,18 +265,18 @@ export default function AdminSidebar() {
               <div
                 className={cn(
                   "flex items-center justify-center w-12 h-7 rounded-full transition-colors mb-0.5",
-                  active ? "bg-accent/20" : ""
+                  active ? "bg-red/10" : ""
                 )}
               >
                 <tab.icon
-                  className={cn("w-6 h-6", active ? "text-accent" : "text-text-secondary")}
+                  className={cn("w-6 h-6", active ? "text-red" : "text-text-muted")}
                   strokeWidth={active ? 2.5 : 1.75}
                 />
               </div>
               <span
                 className={cn(
                   "text-[10px] font-semibold",
-                  active ? "text-accent" : "text-text-secondary"
+                  active ? "text-red" : "text-text-muted"
                 )}
               >
                 {tab.label}
@@ -295,23 +296,23 @@ export default function AdminSidebar() {
               className="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 min-h-[56px] transition-colors relative"
             >
               {drawerActive && !showMore && (
-                <span className="absolute top-2 right-[calc(50%-14px)] w-2 h-2 rounded-full bg-accent" />
+                <span className="absolute top-2 right-[calc(50%-14px)] w-2 h-2 rounded-full bg-red" />
               )}
               <div
                 className={cn(
                   "flex items-center justify-center w-12 h-7 rounded-full transition-colors mb-0.5",
-                  showMore || drawerActive ? "bg-accent/20" : ""
+                  showMore || drawerActive ? "bg-red/10" : ""
                 )}
               >
                 <MoreHorizontal
-                  className={cn("w-6 h-6", showMore || drawerActive ? "text-accent" : "text-text-secondary")}
+                  className={cn("w-6 h-6", showMore || drawerActive ? "text-red" : "text-text-muted")}
                   strokeWidth={showMore || drawerActive ? 2.5 : 1.75}
                 />
               </div>
               <span
                 className={cn(
                   "text-[10px] font-semibold",
-                  showMore || drawerActive ? "text-accent" : "text-text-secondary"
+                  showMore || drawerActive ? "text-red" : "text-text-muted"
                 )}
               >
                 More
@@ -331,21 +332,21 @@ export default function AdminSidebar() {
           />
           {/* Drawer */}
           <div
-            className="lg:hidden fixed bottom-0 left-0 right-0 z-[66] bg-bg-secondary border-t border-border rounded-t-2xl max-h-[82vh] overflow-y-auto"
+            className="lg:hidden fixed bottom-0 left-0 right-0 z-[66] bg-white border-t border-light-gray rounded-t-2xl max-h-[82vh] overflow-y-auto"
             style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-              <div className="w-10 h-1 bg-white/20 rounded-full" />
+              <div className="w-10 h-1 bg-light-gray rounded-full" />
             </div>
 
             {/* User info */}
-            <div className="px-5 py-3 border-b border-border flex-shrink-0">
-              <p className="text-white text-sm font-semibold">
+            <div className="px-5 py-3 border-b border-light-gray flex-shrink-0">
+              <p className="text-navy text-sm font-semibold">
                 {session?.user?.name || "Admin"}
               </p>
-              <p className="text-text-secondary text-xs">{session?.user?.email}</p>
-              <span className="text-text-secondary text-[10px] uppercase tracking-wider">
+              <p className="text-text-muted text-xs">{session?.user?.email}</p>
+              <span className="text-text-muted text-[10px] uppercase tracking-wider">
                 {ROLE_LABELS[role] || "Dashboard"}
               </span>
             </div>
@@ -354,7 +355,7 @@ export default function AdminSidebar() {
               {/* Personal */}
               {visiblePersonal.length > 0 && (
                 <div>
-                  <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
+                  <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
                     My Dashboard
                   </p>
                   <div className="grid grid-cols-2 gap-2">
@@ -373,7 +374,7 @@ export default function AdminSidebar() {
               {/* Operations */}
               {visibleOps.length > 0 && (
                 <div>
-                  <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
+                  <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
                     Operations
                   </p>
                   <div className="grid grid-cols-2 gap-2">
@@ -392,7 +393,7 @@ export default function AdminSidebar() {
               {/* Resources */}
               {visibleRes.length > 0 && (
                 <div>
-                  <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
+                  <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
                     Resources
                   </p>
                   <div className="grid grid-cols-2 gap-2">
@@ -409,11 +410,11 @@ export default function AdminSidebar() {
               )}
 
               {/* Portals + Sign out */}
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border">
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-light-gray">
                 <Link
                   href="/"
                   onClick={() => setShowMore(false)}
-                  className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-bg text-text-secondary text-sm min-h-[44px]"
+                  className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-off-white text-text-muted text-sm min-h-[44px]"
                 >
                   <ExternalLink className="w-4 h-4 flex-shrink-0" />
                   Public Site
@@ -421,14 +422,14 @@ export default function AdminSidebar() {
                 <Link
                   href="/scores"
                   onClick={() => setShowMore(false)}
-                  className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-bg text-text-secondary text-sm min-h-[44px]"
+                  className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-off-white text-text-muted text-sm min-h-[44px]"
                 >
                   <Trophy className="w-4 h-4 flex-shrink-0" />
                   Live Scores
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-danger/10 text-danger text-sm col-span-2 min-h-[44px]"
+                  className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-red/5 text-red text-sm col-span-2 min-h-[44px]"
                 >
                   <LogOut className="w-4 h-4 flex-shrink-0" />
                   Sign Out
@@ -458,8 +459,8 @@ function MoreLink({
       className={cn(
         "flex items-center gap-2.5 px-3 py-3.5 rounded-xl text-sm font-medium transition-colors min-h-[44px]",
         active
-          ? "bg-accent/15 text-accent border border-accent/25"
-          : "bg-bg text-text-secondary border border-border hover:text-white"
+          ? "bg-red/10 text-red border border-red/20"
+          : "bg-off-white text-text-muted border border-light-gray hover:text-navy"
       )}
     >
       <item.icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />

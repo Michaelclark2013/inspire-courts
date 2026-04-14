@@ -21,11 +21,13 @@ const PROGRAMS_DROPDOWN = [
   { href: "/teams", label: "Team Inspire" },
   { href: "/prep", label: "Inspire Prep" },
   { href: "/camps", label: "Camps" },
+  { href: "/open-gym", label: "Open Gym" },
 ];
 
 const MORE_DROPDOWN = [
   { href: "/about", label: "About" },
   { href: "/gameday", label: "Game Day Info" },
+  { href: "/schedule", label: "Schedule" },
   { href: "/media", label: "Media" },
   { href: "/gallery", label: "Gallery" },
   { href: "/faq", label: "FAQ" },
@@ -147,7 +149,7 @@ function MobileAccordion({
               key={item.href}
               href={item.href}
               onClick={onClose}
-              className="block px-4 py-2.5 min-h-[44px] flex items-center text-sm font-semibold uppercase tracking-wide text-white/70 hover:text-white hover:bg-navy-light rounded-lg transition-colors"
+              className="flex items-center px-4 py-2.5 min-h-[44px] text-sm font-semibold uppercase tracking-wide text-white/70 hover:text-white hover:bg-navy-light rounded-lg transition-colors"
             >
               {item.label}
             </Link>
@@ -190,27 +192,19 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-navy shadow-lg">
-      {/* Skip to main content — visible on keyboard focus */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:bg-white focus:text-navy focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold focus:text-sm focus:shadow-lg focus:outline-none"
-      >
-        Skip to main content
-      </a>
+      {/* Skip-to-content link lives in layout.tsx — no duplicate needed here */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 lg:h-[72px]">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-            <div className="flex items-center gap-3">
-              <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts logo" width={64} height={64} className="h-14 lg:h-16 w-auto object-contain drop-shadow-lg" />
-              <div className="hidden sm:block">
-                <span className="font-[var(--font-chakra)] font-bold text-white text-xl uppercase tracking-wide">
-                  Inspire Courts
-                </span>
-                <span className="text-white/80 text-[11px] block -mt-0.5 uppercase tracking-[0.2em] font-semibold">
-                  Gilbert, Arizona
-                </span>
-              </div>
+          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
+            <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts logo" width={64} height={64} className="h-12 lg:h-11 w-auto object-contain drop-shadow-lg" />
+            <div className="hidden sm:block">
+              <span className="font-[var(--font-chakra)] font-bold text-white text-base lg:text-[15px] uppercase tracking-wide">
+                Inspire Courts
+              </span>
+              <span className="text-white/60 text-[10px] block -mt-0.5 uppercase tracking-[0.15em] font-semibold">
+                Gilbert, Arizona
+              </span>
             </div>
           </Link>
 
@@ -289,14 +283,14 @@ export default function Header() {
           open ? "max-h-[85vh] opacity-100 overflow-y-auto" : "max-h-0 opacity-0"
         )}
       >
-        <nav className="px-4 py-4 space-y-1">
+        <nav aria-label="Mobile navigation" className="px-4 py-4 space-y-1">
           {/* Primary links */}
           {PRIMARY_NAV.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="block px-4 py-3 min-h-[44px] flex items-center text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-navy-light rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-navy-dark"
+              className="flex items-center px-4 py-3 min-h-[44px] text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-navy-light rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-navy-dark"
             >
               {link.label}
             </Link>

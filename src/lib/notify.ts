@@ -28,7 +28,7 @@ export async function sendLeadEmail(lead: LeadData): Promise<void> {
     return;
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL || process.env.GMAIL_USER;
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.GMAIL_USER || "mikeyclark.240@gmail.com";
   if (!adminEmail) return;
 
   const urgencyEmoji =

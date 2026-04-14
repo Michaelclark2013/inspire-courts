@@ -47,13 +47,13 @@ export default function DashboardLeads() {
       <div className="px-5 py-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Flame className="w-4 h-4 text-amber-400" />
-          <h3 className="text-white font-bold text-xs uppercase tracking-wider">
+          <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
             Leads Pipeline
           </h3>
         </div>
         <Link
           href="/admin/leads"
-          className="flex items-center gap-1 text-text-secondary hover:text-white text-xs transition-colors"
+          className="flex items-center gap-1 text-text-secondary hover:text-navy text-xs transition-colors"
         >
           View All <ArrowRight className="w-3 h-3" />
         </Link>
@@ -73,7 +73,7 @@ export default function DashboardLeads() {
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Cold</span>
           </Link>
           <div className="ml-auto text-right">
-            <span className="block text-2xl font-bold text-white tabular-nums">{counts.total}</span>
+            <span className="block text-2xl font-bold text-navy tabular-nums">{counts.total}</span>
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Total</span>
           </div>
         </div>

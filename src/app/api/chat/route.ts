@@ -150,7 +150,7 @@ Conversation style:
 FACILITY
 ═══════════════════════════════════════════
 - Name: Inspire Courts AZ
-- Type: Premium indoor sports facility — basketball, volleyball, and futsal
+- Type: Premium indoor sports facility — basketball, volleyball, futsal, and jiu-jitsu
 - Address: ${FACILITY_ADDRESS.full}
 - Size: 52,000 square feet
 - 7 hardwood basketball courts (5 are college regulation with possession arrows)
@@ -252,7 +252,7 @@ COMPLEX RULES
 FACILITY RENTAL
 ═══════════════════════════════════════════
 - Courts available for rent for: leagues, team practices, private tournaments, camps, clinics, corporate events, birthday parties, film sessions, combines
-- Also available for: volleyball leagues/practices, futsal leagues/practices
+- Also available for: volleyball leagues/practices, futsal leagues/practices, jiu-jitsu events/training
 - Pricing: $80 per court per hour
 - Corporate events, birthday parties, and private events: Email ${FACILITY_EMAIL} for info
 - General rental inquiries: Email ${FACILITY_EMAIL} or fill out the form at /contact with "Facility Rental" selected
@@ -325,7 +325,7 @@ BOOKING / HOW TO BOOK A COURT
 - Email: ${FACILITY_EMAIL}
 - Phone: (480) 221-7218
 - Pricing: $80 per court per hour
-- Available for basketball, volleyball, and futsal
+- Available for basketball, volleyball, futsal, and jiu-jitsu
 - Same-day availability when courts are open
 - Corporate events, birthday parties: email for custom packages
 - What's included: regulation hardwood, electronic scoreboards, climate control, ample parking
@@ -683,7 +683,7 @@ interface Pattern {
 const PATTERNS: Pattern[] = [
   { keywords: ["hello", "hi", "hey", "sup", "what's up", "yo", "howdy", "good morning", "good afternoon", "what up", "whats up"], response: "Hey! Welcome to Inspire Courts — 52,000 sq ft, 7 courts, Arizona's best basketball & volleyball facility. What are you looking for today? Tournaments, court rentals, training, or something else?" },
   { keywords: ["price", "cost", "fee", "how much", "pay", "rate", "pricing", "charge", "expensive", "affordable", "budget", "money", "dollar", "$"], response: `Here's a quick breakdown:\n\n🏀 Tournament entry: $350/team\n🏟️ Court rental: $80/court/hour\n🎟️ Spectator admission: $15 (kids under 5 free)\n\nWant exact pricing for your situation? Drop your name and email and I'll have someone follow up!` },
-  { keywords: ["rent", "lease", "reserve", "court time", "court rental", "available", "rental"], response: "Courts are $80/hour per court — we have 7 available! We host basketball, volleyball, and futsal. Perfect for leagues, practices, camps, birthday parties, corporate events, and more. What sport and how many courts are you looking for?" },
+  { keywords: ["rent", "lease", "reserve", "court time", "court rental", "available", "rental"], response: "Courts are $80/hour per court — we have 7 available! We host basketball, volleyball, futsal, and jiu-jitsu. Perfect for leagues, practices, camps, birthday parties, corporate events, and more. What sport and how many courts are you looking for?" },
   { keywords: ["book a court", "booking", "book court", "book online", "how to book", "make a reservation", "reservation"], response: `Booking is easy! Head to /book to fill out a request, or email ${FACILITY_EMAIL}, or call (480) 221-7218. Courts are $80/hour and include regulation hardwood, electronic scoreboards, and climate control. What sport and how many courts do you need?` },
   { keywords: ["register", "sign up", "signup", "enter", "enter team", "enroll"], response: `You can register on our Tournaments page (/events) or email ${FACILITY_EMAIL} with your team name, age group, and which event. What division are you looking at?` },
   { keywords: ["location", "address", "where", "direction", "find you", "map", "get there", "located", "navigate"], response: `We're at ${FACILITY_ADDRESS.full}. Ample parking, easy access. Here's a virtual tour: ${SOCIAL_LINKS.youtube} — Are you coming for an event or looking to rent?` },
@@ -692,6 +692,7 @@ const PATTERNS: Pattern[] = [
   { keywords: ["club", "team inspire", "made hoops", "tryout", "try out", "aau", "grassroots", "circuit"], response: "Team Inspire plays on the MADE Hoops High School Circuit — one of the top platforms in grassroots basketball. We're running 16U and 17U boys and actively recruiting coaches and players. Fill out the interest form at /teams! Are you a player or coach?" },
   { keywords: ["volleyball", "volley", "v-ball"], response: "We have 7 regulation volleyball courts! Courts are available to rent at $80/hour for leagues, practices, tournaments, and events. We host volleyball regularly. How many courts and what dates are you looking at?" },
   { keywords: ["futsal", "soccer", "futbol", "indoor soccer"], response: "Our facility is perfect for futsal! Courts available at $80/hour. We host futsal leagues and pickup regularly. What are you looking for — a league, practice time, or a one-time rental?" },
+  { keywords: ["jiu-jitsu", "jiujitsu", "jiu jitsu", "bjj", "grappling", "martial arts", "mma"], response: "We host jiu-jitsu events and training at Inspire Courts! Our 52,000 sq ft facility has plenty of space for competitions, seminars, and training sessions. Courts are $80/hour. What are you looking for — an event rental, regular training time, or a one-time booking?" },
   { keywords: ["camp", "summer camp", "basketball camp", "youth camp"], response: "Camps are coming soon! Drop your name, email, and the age of your player — we'll make sure you're first to know when registration opens. In the meantime, check out our private training at /training!" },
   { keywords: ["prep", "prep school", "inspire prep", "prep academy", "prep program"], response: "Inspire Prep is our basketball-focused prep program — elite training, competitive game schedule, film review, academic support, strength & conditioning, and recruiting guidance all under one roof. It's built for serious student-athletes who want to compete at the next level. Check out /prep for the full breakdown or email InspireCourts@gmail.com to learn more!" },
   { keywords: ["academy", "program", "year round", "year-round", "development program"], response: "We have Inspire Prep — a full basketball prep academy with daily training, competitive games, film review, academics, and recruiting support. For serious players who want structured, year-round development. Check /prep for details or give me your name and email and we'll follow up!" },
@@ -742,12 +743,12 @@ function getKeywordResponse(msg: string): string {
   if (bestMatch) return bestMatch.response;
 
   if (msg.length < 5) {
-    return "Hey! I'm here to help with anything Inspire Courts — tournaments, court rentals (basketball, volleyball, futsal), private training, our club team, or facility info. What are you looking for?";
+    return "Hey! I'm here to help with anything Inspire Courts — tournaments, court rentals (basketball, volleyball, futsal, jiu-jitsu), private training, our club team, or facility info. What are you looking for?";
   }
 
   if (msg.includes("?")) {
     return `Good question! I want to make sure I give you the right answer. Could you tell me a bit more? Are you asking about basketball tournaments, renting a court, training, or something else? You can also email ${FACILITY_EMAIL} and we'll get right back to you!`;
   }
 
-  return "I hear you! I can help with basketball tournaments, court rentals ($80/hr for basketball, volleyball, or futsal), private training, our MADE Hoops club team, facility info, or game day questions. What sounds closest to what you need?";
+  return "I hear you! I can help with basketball tournaments, court rentals ($80/hr for basketball, volleyball, futsal, or jiu-jitsu), private training, our MADE Hoops club team, facility info, or game day questions. What sounds closest to what you need?";
 }

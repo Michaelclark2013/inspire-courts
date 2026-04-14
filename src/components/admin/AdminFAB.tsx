@@ -33,7 +33,7 @@ export default function AdminFAB() {
               key={action.href}
               href={action.href}
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 bg-bg-secondary border border-border rounded-full pl-4 pr-3 py-2.5 text-white text-sm font-semibold shadow-xl"
+              className="flex items-center gap-3 bg-white border border-light-gray rounded-full pl-4 pr-3 py-2.5 text-navy text-sm font-semibold shadow-xl"
               style={{ animationDelay: `${i * 40}ms` }}
             >
               {action.label}

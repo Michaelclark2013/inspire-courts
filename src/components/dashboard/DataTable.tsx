@@ -42,7 +42,7 @@ export default function DataTable({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50"
+            className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50"
           />
         </div>
       )}
@@ -78,7 +78,7 @@ export default function DataTable({
                   className="border-b border-border/50 hover:bg-bg-secondary/50 transition-colors"
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className="px-4 py-3 text-white">
+                    <td key={col.key} className="px-4 py-3 text-navy">
                       {col.render
                         ? col.render(row[col.key], row)
                         : row[col.key] ?? "—"}

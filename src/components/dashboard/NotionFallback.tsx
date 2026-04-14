@@ -10,7 +10,7 @@ export default function NotionFallback({ type, entityName }: NotionFallbackProps
     return (
       <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
         <Database className="w-10 h-10 text-accent mx-auto mb-4" />
-        <h3 className="text-white font-bold text-lg uppercase tracking-tight mb-2">
+        <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2">
           Connect Your Notion Databases
         </h3>
         <p className="text-text-secondary text-sm max-w-lg mx-auto mb-4">
@@ -27,7 +27,7 @@ export default function NotionFallback({ type, entityName }: NotionFallbackProps
   return (
     <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
       <AlertCircle className="w-10 h-10 text-text-secondary mx-auto mb-4" />
-      <h3 className="text-white font-bold text-lg uppercase tracking-tight mb-2">
+      <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2">
         No {entityName} Yet
       </h3>
       <p className="text-text-secondary text-sm max-w-lg mx-auto">

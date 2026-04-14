@@ -22,11 +22,11 @@ export default function CollapsibleSection({
         className="flex items-center gap-2 mb-4 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 rounded-sm"
         aria-expanded={open}
       >
-        <h2 className="text-white/50 text-xs font-bold uppercase tracking-wider group-hover:text-white/70 transition-colors">
+        <h2 className="text-navy/50 text-xs font-bold uppercase tracking-wider group-hover:text-navy/70 transition-colors">
           {title}
         </h2>
         <ChevronDown
-          className={`w-3.5 h-3.5 text-white/30 transition-transform duration-200 ${open ? "" : "-rotate-90"}`}
+          className={`w-3.5 h-3.5 text-navy/30 transition-transform duration-200 ${open ? "" : "-rotate-90"}`}
         />
       </button>
       <AnimatePresence initial={false}>

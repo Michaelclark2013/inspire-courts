@@ -78,14 +78,14 @@ export default function PlayerPortalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-white">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 bg-bg/95 backdrop-blur border-b border-white/[0.06] px-4 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-light-gray px-4 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={28} height={28} className="object-contain" />
-          <span className="text-white font-bold text-sm uppercase tracking-tight">Inspire</span>
+          <span className="text-navy font-bold text-sm uppercase tracking-tight">Inspire</span>
         </Link>
-        <span className="text-text-secondary text-xs font-semibold uppercase tracking-widest">Player Portal</span>
+        <span className="text-text-muted text-xs font-semibold uppercase tracking-widest">Player Portal</span>
         <Link href="/portal/coach" className="text-red text-xs font-semibold hover:text-red-hover transition-colors">
           Coach →
         </Link>
@@ -101,43 +101,43 @@ export default function PlayerPortalPage() {
               <div className="w-16 h-16 bg-red/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Trophy className="w-8 h-8 text-red" />
               </div>
-              <h1 className="text-white text-2xl font-bold font-heading uppercase tracking-tight mb-1">Team Portal</h1>
-              <p className="text-text-secondary text-sm">Access your team info, schedule, and scores.</p>
+              <h1 className="text-navy text-2xl font-bold font-heading uppercase tracking-tight mb-1">Team Portal</h1>
+              <p className="text-text-muted text-sm">Access your team info, schedule, and scores.</p>
             </div>
 
             {/* Role cards */}
             <div className="space-y-3">
               <button
                 onClick={() => setStep("lookup")}
-                className="w-full bg-bg-secondary border border-white/[0.08] hover:border-red/40 rounded-2xl p-5 flex items-center gap-4 transition-all group text-left"
+                className="w-full bg-white border border-light-gray hover:border-red/40 rounded-2xl p-5 flex items-center gap-4 transition-all group text-left"
               >
                 <div className="w-12 h-12 bg-red/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red/20 transition-colors">
                   <User className="w-6 h-6 text-red" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-bold text-base">I&apos;m a Player</p>
-                  <p className="text-text-secondary text-sm">View your schedule, scores &amp; standings</p>
+                  <p className="text-navy font-bold text-base">I&apos;m a Player</p>
+                  <p className="text-text-muted text-sm">View your schedule, scores &amp; standings</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-white/20 group-hover:text-red transition-colors flex-shrink-0" />
+                <ChevronRight className="w-5 h-5 text-light-gray group-hover:text-red transition-colors flex-shrink-0" />
               </button>
 
               <Link
                 href="/portal/coach"
-                className="w-full bg-bg-secondary border border-white/[0.08] hover:border-blue-500/40 rounded-2xl p-5 flex items-center gap-4 transition-all group"
+                className="w-full bg-white border border-light-gray hover:border-blue-500/40 rounded-2xl p-5 flex items-center gap-4 transition-all group"
               >
                 <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
                   <Users className="w-6 h-6 text-blue-400" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-bold text-base">I&apos;m a Coach</p>
-                  <p className="text-text-secondary text-sm">Manage roster, check-in &amp; game day</p>
+                  <p className="text-navy font-bold text-base">I&apos;m a Coach</p>
+                  <p className="text-text-muted text-sm">Manage roster, check-in &amp; game day</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-white/20 group-hover:text-blue-400 transition-colors flex-shrink-0" />
+                <ChevronRight className="w-5 h-5 text-light-gray group-hover:text-blue-400 transition-colors flex-shrink-0" />
               </Link>
             </div>
 
             {/* Already have an account */}
-            <p className="text-center text-text-secondary text-xs">
+            <p className="text-center text-text-muted text-xs">
               Staff or registered coach?{" "}
               <Link href="/login" className="text-red font-semibold hover:text-red-hover">
                 Sign in here
@@ -150,35 +150,35 @@ export default function PlayerPortalPage() {
         {step === "lookup" && (
           <div className="space-y-6">
             <div className="flex items-center gap-3 pt-2">
-              <button onClick={() => setStep("select")} className="text-text-secondary hover:text-white transition-colors text-sm">← Back</button>
-              <h2 className="text-white font-bold text-lg">Find Your Info</h2>
+              <button onClick={() => setStep("select")} className="text-text-muted hover:text-navy transition-colors text-sm">← Back</button>
+              <h2 className="text-navy font-bold text-lg">Find Your Info</h2>
             </div>
 
-            <div className="bg-bg-secondary border border-white/[0.08] rounded-2xl p-5">
+            <div className="bg-white border border-light-gray rounded-2xl p-5">
               <div className="flex items-center gap-2.5 mb-5">
                 <Search className="w-4 h-4 text-red" />
-                <p className="text-white font-semibold text-sm">Enter your details below</p>
+                <p className="text-navy font-semibold text-sm">Enter your details below</p>
               </div>
               <form onSubmit={handleLookup} className="space-y-4">
                 <div>
-                  <label className="block text-text-secondary text-xs font-bold uppercase tracking-wider mb-2">Your Name</label>
+                  <label className="block text-text-muted text-xs font-bold uppercase tracking-wider mb-2">Your Name</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="First &amp; last name"
                     required
-                    className="w-full bg-bg border border-white/[0.1] rounded-xl px-4 py-3.5 text-white text-base focus:outline-none focus:border-red/60 focus:ring-1 focus:ring-red/20 transition-all placeholder:text-text-secondary/50"
+                    className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3.5 text-navy text-base focus:outline-none focus:border-red/60 focus:ring-1 focus:ring-red/20 transition-all placeholder:text-text-muted/50"
                   />
                 </div>
                 <div>
-                  <label className="block text-text-secondary text-xs font-bold uppercase tracking-wider mb-2">Team Name</label>
+                  <label className="block text-text-muted text-xs font-bold uppercase tracking-wider mb-2">Team Name</label>
                   <input
                     type="text"
                     value={team}
                     onChange={(e) => setTeam(e.target.value)}
                     placeholder="e.g. AZ Warriors 14U"
-                    className="w-full bg-bg border border-white/[0.1] rounded-xl px-4 py-3.5 text-white text-base focus:outline-none focus:border-red/60 focus:ring-1 focus:ring-red/20 transition-all placeholder:text-text-secondary/50"
+                    className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3.5 text-navy text-base focus:outline-none focus:border-red/60 focus:ring-1 focus:ring-red/20 transition-all placeholder:text-text-muted/50"
                   />
                 </div>
                 <button
@@ -190,7 +190,7 @@ export default function PlayerPortalPage() {
               </form>
             </div>
 
-            <p className="text-center text-text-secondary text-xs px-4">
+            <p className="text-center text-text-muted text-xs px-4">
               We&apos;ll match your name to your registered team. If you&apos;re not found, contact your coach.
             </p>
           </div>
@@ -201,37 +201,37 @@ export default function PlayerPortalPage() {
           <div className="space-y-5">
 
             {/* Player card */}
-            <div className="bg-gradient-to-br from-red/20 to-bg-secondary border border-red/20 rounded-2xl p-5">
+            <div className="bg-gradient-to-br from-red/10 to-white border border-red/20 rounded-2xl p-5">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-red/20 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-red font-bold text-xl font-heading">{displayName.split(" ").map(n => n[0]).join("").slice(0,2).toUpperCase()}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-bold text-lg leading-tight">{displayName}</p>
-                  <p className="text-text-secondary text-sm">{DEMO_PLAYER.team}</p>
+                  <p className="text-navy font-bold text-lg leading-tight">{displayName}</p>
+                  <p className="text-text-muted text-sm">{DEMO_PLAYER.team}</p>
                   <p className="text-red text-xs font-semibold uppercase tracking-wider mt-0.5">{DEMO_PLAYER.division} · {DEMO_PLAYER.position}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-white/20 text-xs uppercase tracking-wider">Jersey</p>
-                  <p className="text-white font-bold text-2xl font-heading">{DEMO_PLAYER.jersey}</p>
+                  <p className="text-light-gray text-xs uppercase tracking-wider">Jersey</p>
+                  <p className="text-navy font-bold text-2xl font-heading">{DEMO_PLAYER.jersey}</p>
                 </div>
               </div>
-              <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center gap-2">
-                <Users className="w-3.5 h-3.5 text-text-secondary" />
-                <span className="text-text-secondary text-xs">{DEMO_PLAYER.coach}</span>
+              <div className="mt-3 pt-3 border-t border-light-gray flex items-center gap-2">
+                <Users className="w-3.5 h-3.5 text-text-muted" />
+                <span className="text-text-muted text-xs">{DEMO_PLAYER.coach}</span>
               </div>
             </div>
 
             {/* Demo data notice */}
-            <div className="bg-amber-500/[0.08] border border-amber-500/20 rounded-xl px-4 py-3 flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-              <p className="text-amber-400/80 text-xs leading-relaxed">
+            <div className="bg-amber-50 border border-amber-500/20 rounded-xl px-4 py-3 flex items-start gap-2.5">
+              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              <p className="text-amber-600/80 text-xs leading-relaxed">
                 Showing sample data. Live player lookups will be available once your team is registered in the system.
               </p>
             </div>
 
             {/* Tab navigation */}
-            <div className="flex gap-1 bg-bg-secondary border border-white/[0.06] rounded-xl p-1 overflow-x-auto scrollbar-none">
+            <div className="flex gap-1 bg-white border border-light-gray rounded-xl p-1 overflow-x-auto scrollbar-none">
               {[
                 { key: "schedule", icon: Calendar, label: "Schedule" },
                 { key: "results", icon: Trophy, label: "Results" },
@@ -245,7 +245,7 @@ export default function PlayerPortalPage() {
                   className={`flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all text-xs font-semibold ${
                     activeTab === key
                       ? "bg-red text-white"
-                      : "text-text-secondary hover:text-white"
+                      : "text-text-muted hover:text-navy"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -257,30 +257,30 @@ export default function PlayerPortalPage() {
             {/* ── Schedule tab ── */}
             {activeTab === "schedule" && (
               <div className="space-y-3">
-                <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest px-1">Upcoming Games</h3>
+                <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest px-1">Upcoming Games</h3>
                 {DEMO_SCHEDULE.map((g, i) => (
-                  <div key={i} className="bg-bg-secondary border border-white/[0.06] rounded-2xl p-4">
+                  <div key={i} className="bg-white border border-light-gray rounded-2xl p-4">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
-                        <p className="text-white font-bold text-sm">vs {g.opponent}</p>
-                        <p className="text-text-secondary text-xs mt-0.5">{g.tournament}</p>
+                        <p className="text-navy font-bold text-sm">vs {g.opponent}</p>
+                        <p className="text-text-muted text-xs mt-0.5">{g.tournament}</p>
                       </div>
-                      <span className="bg-emerald-500/15 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                      <span className="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
                         Upcoming
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-text-secondary" />
-                        <span className="text-text-secondary text-xs">{g.date}</span>
+                        <Calendar className="w-3.5 h-3.5 text-text-muted" />
+                        <span className="text-text-muted text-xs">{g.date}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-text-secondary" />
-                        <span className="text-text-secondary text-xs">{g.time}</span>
+                        <Clock className="w-3.5 h-3.5 text-text-muted" />
+                        <span className="text-text-muted text-xs">{g.time}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-text-secondary" />
-                        <span className="text-text-secondary text-xs">{g.court}</span>
+                        <MapPin className="w-3.5 h-3.5 text-text-muted" />
+                        <span className="text-text-muted text-xs">{g.court}</span>
                       </div>
                     </div>
                   </div>
@@ -291,18 +291,18 @@ export default function PlayerPortalPage() {
             {/* ── Results tab ── */}
             {activeTab === "results" && (
               <div className="space-y-3">
-                <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest px-1">Recent Results</h3>
+                <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest px-1">Recent Results</h3>
                 {DEMO_RESULTS.map((r, i) => (
-                  <div key={i} className="bg-bg-secondary border border-white/[0.06] rounded-2xl px-4 py-3.5 flex items-center gap-4">
-                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${r.result === "W" ? "bg-emerald-500/20 text-emerald-400" : "bg-red/20 text-red"}`}>
+                  <div key={i} className="bg-white border border-light-gray rounded-2xl px-4 py-3.5 flex items-center gap-4">
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${r.result === "W" ? "bg-emerald-50 text-emerald-600" : "bg-red/20 text-red"}`}>
                       {r.result}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold text-sm truncate">vs {r.opponent}</p>
-                      <p className="text-text-secondary text-xs">{r.date}</p>
+                      <p className="text-navy font-semibold text-sm truncate">vs {r.opponent}</p>
+                      <p className="text-text-muted text-xs">{r.date}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-white font-bold font-heading tabular-nums">{r.myScore}–{r.oppScore}</p>
+                      <p className="text-navy font-bold font-heading tabular-nums">{r.myScore}–{r.oppScore}</p>
                     </div>
                   </div>
                 ))}
@@ -312,26 +312,26 @@ export default function PlayerPortalPage() {
             {/* ── Standings tab ── */}
             {activeTab === "standings" && (
               <div className="space-y-3">
-                <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest px-1">14U Elite Division</h3>
-                <div className="bg-bg-secondary border border-white/[0.06] rounded-2xl overflow-hidden">
-                  <div className="grid grid-cols-12 px-4 py-2.5 border-b border-white/[0.04]">
-                    <span className="col-span-1 text-text-secondary text-[10px] font-bold uppercase">#</span>
-                    <span className="col-span-7 text-text-secondary text-[10px] font-bold uppercase">Team</span>
-                    <span className="col-span-2 text-text-secondary text-[10px] font-bold uppercase text-center">W-L</span>
-                    <span className="col-span-2 text-text-secondary text-[10px] font-bold uppercase text-right">PCT</span>
+                <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest px-1">14U Elite Division</h3>
+                <div className="bg-white border border-light-gray rounded-2xl overflow-hidden">
+                  <div className="grid grid-cols-12 px-4 py-2.5 border-b border-light-gray">
+                    <span className="col-span-1 text-text-muted text-[10px] font-bold uppercase">#</span>
+                    <span className="col-span-7 text-text-muted text-[10px] font-bold uppercase">Team</span>
+                    <span className="col-span-2 text-text-muted text-[10px] font-bold uppercase text-center">W-L</span>
+                    <span className="col-span-2 text-text-muted text-[10px] font-bold uppercase text-right">PCT</span>
                   </div>
                   {DEMO_STANDINGS.map((row) => (
                     <div
                       key={row.rank}
-                      className={`grid grid-cols-12 px-4 py-3.5 border-b border-white/[0.04] last:border-0 ${row.rank === 1 ? "bg-red/[0.06]" : ""}`}
+                      className={`grid grid-cols-12 px-4 py-3.5 border-b border-light-gray last:border-0 ${row.rank === 1 ? "bg-red/[0.06]" : ""}`}
                     >
-                      <span className={`col-span-1 text-sm font-bold ${row.rank === 1 ? "text-red" : "text-text-secondary"}`}>{row.rank}</span>
-                      <span className={`col-span-7 text-sm font-semibold truncate ${row.rank === 1 ? "text-white" : "text-white/70"}`}>
+                      <span className={`col-span-1 text-sm font-bold ${row.rank === 1 ? "text-red" : "text-text-muted"}`}>{row.rank}</span>
+                      <span className={`col-span-7 text-sm font-semibold truncate ${row.rank === 1 ? "text-navy" : "text-text-muted"}`}>
                         {row.team}
                         {row.rank === 1 && <span className="ml-1.5 text-[10px] text-red">← You</span>}
                       </span>
-                      <span className={`col-span-2 text-sm text-center tabular-nums ${row.rank === 1 ? "text-white font-bold" : "text-text-secondary"}`}>{row.w}-{row.l}</span>
-                      <span className={`col-span-2 text-sm text-right tabular-nums ${row.rank === 1 ? "text-red font-bold" : "text-text-secondary"}`}>{row.pct}</span>
+                      <span className={`col-span-2 text-sm text-center tabular-nums ${row.rank === 1 ? "text-navy font-bold" : "text-text-muted"}`}>{row.w}-{row.l}</span>
+                      <span className={`col-span-2 text-sm text-right tabular-nums ${row.rank === 1 ? "text-red font-bold" : "text-text-muted"}`}>{row.pct}</span>
                     </div>
                   ))}
                 </div>
@@ -341,19 +341,19 @@ export default function PlayerPortalPage() {
             {/* ── Game Day tab ── */}
             {activeTab === "gameday" && (
               <div className="space-y-3">
-                <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest px-1">Game Day Checklist</h3>
+                <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest px-1">Game Day Checklist</h3>
                 {GAMEDAY_TIPS.map(({ icon: Icon, text }, i) => (
-                  <div key={i} className="bg-bg-secondary border border-white/[0.06] rounded-2xl px-4 py-4 flex items-center gap-4">
+                  <div key={i} className="bg-white border border-light-gray rounded-2xl px-4 py-4 flex items-center gap-4">
                     <div className="w-9 h-9 bg-red/10 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Icon className="w-4.5 h-4.5 text-red" />
                     </div>
-                    <p className="text-white text-sm leading-snug">{text}</p>
+                    <p className="text-navy text-sm leading-snug">{text}</p>
                   </div>
                 ))}
-                <div className="bg-bg-secondary border border-white/[0.06] rounded-2xl px-4 py-4">
-                  <p className="text-text-secondary text-xs font-bold uppercase tracking-wider mb-2">Venue</p>
-                  <p className="text-white text-sm font-semibold">Gilbert Sports Complex</p>
-                  <p className="text-text-secondary text-xs mt-0.5">2355 E Knox Rd, Gilbert, AZ 85234</p>
+                <div className="bg-white border border-light-gray rounded-2xl px-4 py-4">
+                  <p className="text-text-muted text-xs font-bold uppercase tracking-wider mb-2">Venue</p>
+                  <p className="text-navy text-sm font-semibold">Gilbert Sports Complex</p>
+                  <p className="text-text-muted text-xs mt-0.5">2355 E Knox Rd, Gilbert, AZ 85234</p>
                   <a
                     href="https://maps.apple.com/?q=Gilbert+Sports+Complex"
                     target="_blank"
@@ -369,25 +369,25 @@ export default function PlayerPortalPage() {
             {/* ── Highlights tab ── */}
             {activeTab === "highlights" && (
               <div className="space-y-3">
-                <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest px-1">AZ Finest Mixtape</h3>
+                <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest px-1">AZ Finest Mixtape</h3>
                 {HIGHLIGHTS.map((h, i) => (
                   <a
                     key={i}
                     href={h.url}
-                    className="bg-bg-secondary border border-white/[0.06] hover:border-red/30 rounded-2xl px-4 py-4 flex items-center gap-4 transition-all group"
+                    className="bg-white border border-light-gray hover:border-red/30 rounded-2xl px-4 py-4 flex items-center gap-4 transition-all group"
                   >
                     <div className="w-10 h-10 bg-red/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red/20 transition-colors">
                       <Video className="w-5 h-5 text-red" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-white font-semibold text-sm">{h.label}</p>
-                      <p className="text-text-secondary text-xs">{h.year} Season</p>
+                      <p className="text-navy font-semibold text-sm">{h.label}</p>
+                      <p className="text-text-muted text-xs">{h.year} Season</p>
                     </div>
-                    <ExternalLink className="w-4 h-4 text-white/20 group-hover:text-red transition-colors" />
+                    <ExternalLink className="w-4 h-4 text-light-gray group-hover:text-red transition-colors" />
                   </a>
                 ))}
-                <div className="bg-bg-secondary border border-white/[0.06] rounded-2xl px-4 py-4 text-center">
-                  <p className="text-text-secondary text-xs mb-3">Want to be featured in the next mixtape?</p>
+                <div className="bg-white border border-light-gray rounded-2xl px-4 py-4 text-center">
+                  <p className="text-text-muted text-xs mb-3">Want to be featured in the next mixtape?</p>
                   <a
                     href="/contact"
                     className="inline-flex items-center gap-1.5 text-red text-sm font-bold hover:text-red-hover transition-colors"
@@ -401,7 +401,7 @@ export default function PlayerPortalPage() {
             {/* Back to lookup */}
             <button
               onClick={() => setStep("lookup")}
-              className="w-full border border-white/[0.08] hover:border-white/20 text-text-secondary hover:text-white rounded-xl py-3.5 text-sm font-semibold transition-colors"
+              className="w-full border border-light-gray hover:border-light-gray text-text-muted hover:text-navy rounded-xl py-3.5 text-sm font-semibold transition-colors"
             >
               ← Not you? Look up a different player
             </button>

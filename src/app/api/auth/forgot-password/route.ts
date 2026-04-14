@@ -3,8 +3,8 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { db } from "@/lib/db";
-import { resetTokens } from "@/lib/db/schema";
-import { lt } from "drizzle-orm";
+import { resetTokens, users } from "@/lib/db/schema";
+import { eq, lt } from "drizzle-orm";
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
@@ -27,11 +27,22 @@ export async function POST(request: Request) {
       message: "If that email is associated with an account, a reset link has been sent.",
     });
 
-    // Only proceed if the email matches the admin email
+    // Look up user in DB (case-insensitive)
+    const [dbUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email.toLowerCase()))
+      .limit(1);
+
+    // Also check env-var admin
     const adminEmail = process.env.ADMIN_EMAIL;
-    if (!adminEmail || email.toLowerCase() !== adminEmail.toLowerCase()) {
-      return successResponse;
+    const isEnvAdmin = adminEmail && email.toLowerCase() === adminEmail.toLowerCase();
+
+    if (!dbUser && !isEnvAdmin) {
+      return successResponse; // Don't reveal if email exists
     }
+
+    const targetEmail = dbUser?.email || adminEmail!;
 
     // Generate a secure token
     const token = crypto.randomBytes(32).toString("hex");
@@ -41,7 +52,7 @@ export async function POST(request: Request) {
     try {
       await db.delete(resetTokens).where(lt(resetTokens.expiresAt, new Date().toISOString()));
       await db.insert(resetTokens).values({
-        email: adminEmail,
+        email: targetEmail,
         token,
         expiresAt,
       });
@@ -66,7 +77,7 @@ export async function POST(request: Request) {
 
       await transporter.sendMail({
         from: `"Inspire Courts" <${gmailUser}>`,
-        to: adminEmail,
+        to: targetEmail,
         subject: "Password Reset — Inspire Courts Dashboard",
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 500px; margin: 0 auto;">

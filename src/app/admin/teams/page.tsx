@@ -71,7 +71,7 @@ export default async function TeamsPage() {
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Teams
           </h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">
@@ -81,7 +81,7 @@ export default async function TeamsPage() {
         <div className="flex gap-2 flex-shrink-0 items-center">
           <Link
             href="/admin/teams/logos"
-            className="flex items-center gap-1.5 text-text-secondary hover:text-white border border-border hover:border-accent/40 rounded-sm px-3 py-1.5 text-xs font-semibold transition-colors"
+            className="flex items-center gap-1.5 text-text-secondary hover:text-navy border border-border hover:border-accent/40 rounded-sm px-3 py-1.5 text-xs font-semibold transition-colors"
           >
             <ImageIcon className="w-3.5 h-3.5" /> Logos
           </Link>
@@ -105,12 +105,12 @@ function SetupPrompt() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">Teams</h1>
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Teams</h1>
         <p className="text-text-secondary text-sm mt-1 hidden md:block">Master Teams & Payments</p>
       </div>
       <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
         <Users className="w-10 h-10 text-text-secondary mx-auto mb-3" />
-        <p className="text-white font-semibold mb-1">Google Sheets not connected</p>
+        <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
         <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>
       </div>
     </div>

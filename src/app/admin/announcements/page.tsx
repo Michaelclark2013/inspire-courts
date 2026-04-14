@@ -27,7 +27,7 @@ const AUDIENCE_LABELS: Record<string, string> = {
 };
 
 const AUDIENCE_STYLES: Record<string, string> = {
-  all: "bg-white/10 text-white/60",
+  all: "bg-white/10 text-navy/60",
   coaches: "bg-emerald-500/20 text-emerald-400",
   parents: "bg-cyan-500/20 text-cyan-400",
 };
@@ -107,7 +107,7 @@ export default function AnnouncementsPage() {
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Announcements
           </h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">
@@ -128,7 +128,7 @@ export default function AnnouncementsPage() {
       {!showForm && saveError && (
         <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 mb-6 flex items-center justify-between" role="alert" aria-live="assertive">
           <span>{saveError}</span>
-          <button onClick={() => setSaveError("")} className="text-red hover:text-white ml-4" aria-label="Dismiss">
+          <button onClick={() => setSaveError("")} className="text-red hover:text-navy ml-4" aria-label="Dismiss">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -140,13 +140,13 @@ export default function AnnouncementsPage() {
             {saveError && (
               <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center justify-between">
                 <span>{saveError}</span>
-                <button type="button" onClick={() => setSaveError("")} className="text-red hover:text-white ml-4">
+                <button type="button" onClick={() => setSaveError("")} className="text-red hover:text-navy ml-4">
                   <X className="w-4 h-4" />
                 </button>
               </div>
             )}
             <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Title *
               </label>
               <input
@@ -154,12 +154,12 @@ export default function AnnouncementsPage() {
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 required
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
                 placeholder="Announcement title"
               />
             </div>
             <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Message *
               </label>
               <textarea
@@ -167,11 +167,11 @@ export default function AnnouncementsPage() {
                 onChange={(e) => setForm({ ...form, body: e.target.value })}
                 required
                 rows={4}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25 resize-none"
+                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25 resize-none"
                 placeholder="Write your announcement..."
               />
             </div>
-            <div className="flex items-center justify-between text-xs text-white/30 -mt-2 mb-2">
+            <div className="flex items-center justify-between text-xs text-navy/30 -mt-2 mb-2">
               <span>{form.body.length} characters</span>
               {form.body.length > 280 && <span className="text-amber-400">Long message — consider shortening</span>}
             </div>
@@ -179,21 +179,21 @@ export default function AnnouncementsPage() {
             {/* Preview */}
             {form.title && (
               <div className="bg-navy/50 border border-white/5 rounded-lg p-4 mb-4">
-                <p className="text-white/30 text-[10px] font-bold uppercase tracking-wider mb-2">Preview</p>
-                <p className="text-white font-bold text-sm">{form.title}</p>
-                {form.body && <p className="text-white/60 text-sm mt-1 whitespace-pre-wrap">{form.body}</p>}
+                <p className="text-navy/30 text-[10px] font-bold uppercase tracking-wider mb-2">Preview</p>
+                <p className="text-navy font-bold text-sm">{form.title}</p>
+                {form.body && <p className="text-navy/60 text-sm mt-1 whitespace-pre-wrap">{form.body}</p>}
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Audience
                 </label>
                 <select
                   value={form.audience}
                   onChange={(e) => setForm({ ...form, audience: e.target.value })}
-                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red cursor-pointer"
+                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red cursor-pointer"
                 >
                   <option value="all">Everyone</option>
                   <option value="coaches">Coaches Only</option>
@@ -201,7 +201,7 @@ export default function AnnouncementsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Expires (optional)
                 </label>
                 <input
@@ -210,7 +210,7 @@ export default function AnnouncementsPage() {
                   min={new Date().toISOString().split("T")[0]}
                   title="Announcement will be hidden after this date"
                   onChange={(e) => setForm({ ...form, expiresAt: e.target.value })}
-                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
                 />
               </div>
             </div>
@@ -227,11 +227,11 @@ export default function AnnouncementsPage() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-8 md:py-16 text-white/40">
+        <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading announcements...
         </div>
       ) : list.length === 0 ? (
-        <div className="text-center py-8 md:py-14 text-white/40">
+        <div className="text-center py-8 md:py-14 text-navy/40">
           <Megaphone className="w-8 h-8 mx-auto mb-3 opacity-40" />
           <p className="text-sm mb-4">No announcements yet.</p>
           <button
@@ -251,17 +251,17 @@ export default function AnnouncementsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-white font-bold text-sm">{a.title}</h3>
+                    <h3 className="text-navy font-bold text-sm">{a.title}</h3>
                     <span
                       className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${AUDIENCE_STYLES[a.audience] || AUDIENCE_STYLES.all}`}
                     >
                       {AUDIENCE_LABELS[a.audience] || a.audience}
                     </span>
                   </div>
-                  <p className="text-white/60 text-sm whitespace-pre-wrap">
+                  <p className="text-navy/60 text-sm whitespace-pre-wrap">
                     {a.body}
                   </p>
-                  <div className="flex items-center gap-3 mt-2 text-white/30 text-xs">
+                  <div className="flex items-center gap-3 mt-2 text-navy/30 text-xs">
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {new Date(a.createdAt).toLocaleDateString("en-US", {
@@ -284,7 +284,7 @@ export default function AnnouncementsPage() {
                 </div>
                 <button
                   onClick={() => handleDelete(a.id, a.title)}
-                  className="text-white/20 hover:text-red transition-colors flex-shrink-0"
+                  className="text-navy/20 hover:text-red transition-colors flex-shrink-0"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>

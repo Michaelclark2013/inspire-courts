@@ -9,6 +9,7 @@ export type VideoItem = {
   name: string;
   subtitle: string;
   aspect?: "16/9" | "9/16";
+  start?: number;
 };
 
 export default function VideoShowcase({
@@ -41,7 +42,7 @@ export default function VideoShowcase({
               >
                 <iframe
                   className="absolute inset-0 w-full h-full"
-                  src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`}
+                  src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1${video.start ? `&start=${video.start}` : ""}`}
                   title={video.title}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen

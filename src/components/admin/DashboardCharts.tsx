@@ -41,7 +41,7 @@ export default function DashboardCharts({
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-white font-bold text-sm uppercase tracking-wider">
+              <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
                 Teams by Division
               </h3>
               <p className="text-text-secondary text-xs mt-0.5">
@@ -72,7 +72,7 @@ export default function DashboardCharts({
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-white font-bold text-sm uppercase tracking-wider">
+              <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
                 Revenue Breakdown
               </h3>
               <p className="text-text-secondary text-xs mt-0.5">
@@ -90,12 +90,12 @@ export default function DashboardCharts({
             <div className="flex items-center gap-4 mb-4 px-1">
               <div>
                 <span className="text-[10px] text-text-secondary uppercase tracking-wider block">Registration</span>
-                <span className="text-lg font-bold text-white">${registrationRevenue.toLocaleString()}</span>
+                <span className="text-lg font-bold text-navy">${registrationRevenue.toLocaleString()}</span>
               </div>
               <div className="h-8 w-px bg-border" />
               <div>
                 <span className="text-[10px] text-text-secondary uppercase tracking-wider block">Walk-In / Cash</span>
-                <span className="text-lg font-bold text-white">${revenueData.reduce((s, d) => s + d.value, 0).toLocaleString()}</span>
+                <span className="text-lg font-bold text-navy">${revenueData.reduce((s, d) => s + d.value, 0).toLocaleString()}</span>
               </div>
             </div>
           )}
@@ -121,7 +121,7 @@ export default function DashboardCharts({
         <div className="px-5 py-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trophy className="w-4 h-4 text-accent" aria-hidden="true" />
-            <h2 className="text-white font-bold text-sm uppercase tracking-tight">
+            <h2 className="text-navy font-bold text-sm uppercase tracking-tight">
               Recent Game Scores
             </h2>
           </div>
@@ -135,11 +135,11 @@ export default function DashboardCharts({
 
         {divisions.length > 1 && (
           <div className="flex gap-1.5 px-4 py-2 border-b border-border overflow-x-auto no-scrollbar" role="tablist" aria-label="Filter games by division">
-            <button role="tab" aria-selected={!selectedDivision} onClick={() => setSelectedDivision(null)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${!selectedDivision ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
+            <button role="tab" aria-selected={!selectedDivision} onClick={() => setSelectedDivision(null)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${!selectedDivision ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-navy"}`}>
               All
             </button>
             {divisions.map(d => (
-              <button role="tab" aria-selected={selectedDivision === d} key={d} onClick={() => setSelectedDivision(d)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${selectedDivision === d ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
+              <button role="tab" aria-selected={selectedDivision === d} key={d} onClick={() => setSelectedDivision(d)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${selectedDivision === d ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-navy"}`}>
                 {d}
               </button>
             ))}
@@ -201,7 +201,7 @@ export default function DashboardCharts({
                       >
                         <td
                           className={`px-4 py-3 font-medium ${
-                            homeWon ? "text-white" : "text-text-secondary"
+                            homeWon ? "text-navy" : "text-text-secondary"
                           }`}
                         >
                           {game.home}
@@ -212,7 +212,7 @@ export default function DashboardCharts({
                           )}
                         </td>
                         <td className="px-4 py-3 text-center">
-                          <span className="font-mono font-bold text-white">
+                          <span className="font-mono font-bold text-navy">
                             {game.homeScore !== "—" && game.awayScore !== "—"
                               ? `${game.homeScore} – ${game.awayScore}`
                               : "—"}
@@ -220,7 +220,7 @@ export default function DashboardCharts({
                         </td>
                         <td
                           className={`px-4 py-3 font-medium ${
-                            awayWon ? "text-white" : "text-text-secondary"
+                            awayWon ? "text-navy" : "text-text-secondary"
                           }`}
                         >
                           {game.away}
@@ -249,10 +249,10 @@ export default function DashboardCharts({
                         <tr key={`${i}-detail`}>
                           <td colSpan={7} className="px-4 py-3 bg-white/[0.02] border-b border-white/5">
                             <div className="flex items-center gap-6 text-xs text-text-secondary">
-                              <span><strong className="text-white/60">Court:</strong> {game.court}</span>
-                              <span><strong className="text-white/60">Division:</strong> {game.division}</span>
-                              <span><strong className="text-white/60">Time:</strong> {game.time}</span>
-                              <span><strong className="text-white/60">Winner:</strong> <span className="text-emerald-400">{game.winner}</span></span>
+                              <span><strong className="text-navy/60">Court:</strong> {game.court}</span>
+                              <span><strong className="text-navy/60">Division:</strong> {game.division}</span>
+                              <span><strong className="text-navy/60">Time:</strong> {game.time}</span>
+                              <span><strong className="text-navy/60">Winner:</strong> <span className="text-emerald-400">{game.winner}</span></span>
                             </div>
                           </td>
                         </tr>

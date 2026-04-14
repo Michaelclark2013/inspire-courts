@@ -50,10 +50,16 @@ export const HERO_BG_IMAGE = "/images/courts-bg.jpg";
 // ─── Inquiry Types (contact form) ────────────────────────────────────────────
 
 export const INQUIRY_TYPES = [
+  "Court Rental / Booking",
   "Tournament Registration",
-  "Club Interest - Player",
-  "Club Interest - Coach",
-  "Facility Rental",
+  "Private Training",
+  "Inspire Prep",
+  "Team Inspire / Club",
+  "Open Gym",
+  "Camps & Clinics",
+  "Jiu-Jitsu Event",
+  "Futsal Event",
+  "Birthday Party / Private Event",
   "Sponsorship Inquiry",
   "Referee Application",
   "General Question",
@@ -64,10 +70,16 @@ export type InquiryType = (typeof INQUIRY_TYPES)[number];
 
 /** Maps contact-form inquiry type → CRM interest category. */
 export const INQUIRY_INTEREST_MAP: Record<string, string> = {
+  "Court Rental / Booking": "Rental",
   "Tournament Registration": "Tournament",
-  "Club Interest - Player": "Club",
-  "Club Interest - Coach": "Club",
-  "Facility Rental": "Rental",
+  "Private Training": "Training",
+  "Inspire Prep": "Prep",
+  "Team Inspire / Club": "Club",
+  "Open Gym": "Open Gym",
+  "Camps & Clinics": "Camps",
+  "Jiu-Jitsu Event": "Rental",
+  "Futsal Event": "Rental",
+  "Birthday Party / Private Event": "Rental",
   "Sponsorship Inquiry": "General",
   "Referee Application": "General",
   "General Question": "General",
@@ -93,7 +105,8 @@ export type EventType = (typeof EVENT_TYPES)[number];
 export const SPORT_TYPES = [
   "Basketball",
   "Volleyball",
-  "Both Basketball & Volleyball",
+  "Futsal",
+  "Jiu-Jitsu",
   "Other",
 ] as const;
 

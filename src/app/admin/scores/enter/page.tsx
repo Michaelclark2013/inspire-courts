@@ -27,7 +27,7 @@ type Game = {
 };
 
 const STATUS_STYLES = {
-  scheduled: "bg-white/10 text-white/60",
+  scheduled: "bg-white/10 text-navy/60",
   live: "bg-emerald-500/20 text-emerald-400 animate-pulse",
   final: "bg-red/20 text-red",
 };
@@ -172,7 +172,7 @@ export default function ScoreEntryPage() {
       {/* Header */}
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Score Entry
           </h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">
@@ -185,7 +185,7 @@ export default function ScoreEntryPage() {
               value={tournamentFilter}
               aria-label="Filter by tournament"
               onChange={(e) => setTournamentFilter(e.target.value)}
-              className="bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-red cursor-pointer"
+              className="bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-navy text-xs focus:outline-none focus:border-red cursor-pointer"
             >
               <option value="">All Games</option>
               {tournamentOptions.map((t) => (
@@ -219,13 +219,13 @@ export default function ScoreEntryPage() {
       {/* New game form */}
       {showForm && (
         <div className="bg-card border border-white/10 rounded-xl p-6 mb-8">
-          <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+          <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
             <Plus className="w-4 h-4 text-red" /> Create Game
           </h2>
           {formError && (
             <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 mb-4 flex items-center justify-between">
               <span>{formError}</span>
-              <button type="button" onClick={() => setFormError("")} className="ml-4 text-red hover:text-white">
+              <button type="button" onClick={() => setFormError("")} className="ml-4 text-red hover:text-navy">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -233,32 +233,32 @@ export default function ScoreEntryPage() {
           <form onSubmit={handleCreateGame}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Home Team</label>
-                <input type="text" value={form.homeTeam} onChange={(e) => setForm({ ...form, homeTeam: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Team name" />
+                <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Home Team</label>
+                <input type="text" value={form.homeTeam} onChange={(e) => setForm({ ...form, homeTeam: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25" placeholder="Team name" />
               </div>
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Away Team</label>
-                <input type="text" value={form.awayTeam} onChange={(e) => setForm({ ...form, awayTeam: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Team name" />
+                <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Away Team</label>
+                <input type="text" value={form.awayTeam} onChange={(e) => setForm({ ...form, awayTeam: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25" placeholder="Team name" />
               </div>
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Division</label>
-                <input type="text" value={form.division} onChange={(e) => setForm({ ...form, division: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="e.g. 14U" />
+                <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Division</label>
+                <input type="text" value={form.division} onChange={(e) => setForm({ ...form, division: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25" placeholder="e.g. 14U" />
               </div>
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Court</label>
-                <input type="text" value={form.court} onChange={(e) => setForm({ ...form, court: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="e.g. Court 1" />
+                <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Court</label>
+                <input type="text" value={form.court} onChange={(e) => setForm({ ...form, court: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25" placeholder="e.g. Court 1" />
               </div>
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Event / Tournament</label>
+                <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Event / Tournament</label>
                 {tournamentOptions.length > 0 ? (
-                  <select value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all cursor-pointer">
+                  <select value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all cursor-pointer">
                     <option value="">— Select tournament —</option>
                     {tournamentOptions.map((t) => (
                       <option key={t.id} value={t.name}>{t.name}</option>
                     ))}
                   </select>
                 ) : (
-                  <input type="text" value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Tournament name" />
+                  <input type="text" value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25" placeholder="Tournament name" />
                 )}
               </div>
               {/* Desktop submit — inline in grid */}
@@ -270,7 +270,7 @@ export default function ScoreEntryPage() {
               </div>
             </div>
             {/* Mobile sticky submit */}
-            <div className="md:hidden sticky bottom-20 -mx-6 px-6 py-3 bg-bg/95 backdrop-blur border-t border-white/10">
+            <div className="md:hidden sticky bottom-20 -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-white/10">
               <button type="submit" disabled={saving} className="w-full flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                 Create Game
@@ -288,8 +288,8 @@ export default function ScoreEntryPage() {
             <p className="text-emerald-400/60 text-xs font-semibold uppercase tracking-wider mt-1">Live</p>
           </div>
           <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
-            <p className="text-white text-2xl font-bold font-heading">{scheduledGames.length}</p>
-            <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mt-1">Scheduled</p>
+            <p className="text-navy text-2xl font-bold font-heading">{scheduledGames.length}</p>
+            <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mt-1">Scheduled</p>
           </div>
           <div className="bg-card border border-red/20 rounded-xl p-4 text-center">
             <p className="text-red text-2xl font-bold font-heading">{finalGames.length}</p>
@@ -299,7 +299,7 @@ export default function ScoreEntryPage() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-8 md:py-16 text-white/40">
+        <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading games...
         </div>
       ) : (
@@ -311,7 +311,7 @@ export default function ScoreEntryPage() {
 
           {/* Scheduled */}
           {scheduledGames.length > 0 && (
-            <GameSection title="Scheduled" icon={<Trophy className="w-4 h-4 text-white/40" />} games={scheduledGames} onUpdate={startScoreUpdate} updatingId={updatingId} scoreForm={scoreForm} setScoreForm={setScoreForm} onSaveScore={handleUpdateScore} onCancelUpdate={() => { setUpdatingId(null); setScoreError(""); }} saving={saving} scoreError={scoreError} onClearScoreError={() => setScoreError("")} />
+            <GameSection title="Scheduled" icon={<Trophy className="w-4 h-4 text-navy/40" />} games={scheduledGames} onUpdate={startScoreUpdate} updatingId={updatingId} scoreForm={scoreForm} setScoreForm={setScoreForm} onSaveScore={handleUpdateScore} onCancelUpdate={() => { setUpdatingId(null); setScoreError(""); }} saving={saving} scoreError={scoreError} onClearScoreError={() => setScoreError("")} />
           )}
 
           {/* Final */}
@@ -320,7 +320,7 @@ export default function ScoreEntryPage() {
           )}
 
           {gameList.length === 0 && (
-            <div className="text-center py-16 text-white/40">
+            <div className="text-center py-16 text-navy/40">
               <Trophy className="w-8 h-8 mx-auto mb-3 opacity-40" />
               <p className="text-sm">No games yet. Create your first game to start entering scores.</p>
             </div>
@@ -362,7 +362,7 @@ function GameSection({
     <div>
       <div className="flex items-center gap-2 mb-3">
         {icon}
-        <h2 className="text-white font-bold text-sm uppercase tracking-wider">{title}</h2>
+        <h2 className="text-navy font-bold text-sm uppercase tracking-wider">{title}</h2>
         <span className="text-text-secondary text-xs">{games.length}</span>
       </div>
       <div className="space-y-2">
@@ -371,11 +371,11 @@ function GameSection({
             <div className="flex items-center justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 text-sm">
-                  <span className="text-white font-semibold truncate">{game.homeTeam}</span>
-                  <span className="text-white font-bold text-lg tabular-nums">{game.homeScore}</span>
-                  <span className="text-white/30">—</span>
-                  <span className="text-white font-bold text-lg tabular-nums">{game.awayScore}</span>
-                  <span className="text-white font-semibold truncate">{game.awayTeam}</span>
+                  <span className="text-navy font-semibold truncate">{game.homeTeam}</span>
+                  <span className="text-navy font-bold text-lg tabular-nums">{game.homeScore}</span>
+                  <span className="text-navy/30">—</span>
+                  <span className="text-navy font-bold text-lg tabular-nums">{game.awayScore}</span>
+                  <span className="text-navy font-semibold truncate">{game.awayTeam}</span>
                 </div>
                 <div className="flex items-center gap-3 mt-1 text-xs text-text-secondary">
                   {game.division && <span>{game.division}</span>}
@@ -390,7 +390,7 @@ function GameSection({
                 </span>
                 <button
                   onClick={() => onUpdate(game)}
-                  className="text-xs text-white/40 hover:text-white border border-white/10 hover:border-white/30 px-3 py-1.5 rounded-lg transition-colors"
+                  className="text-xs text-navy/40 hover:text-navy border border-white/10 hover:border-white/30 px-3 py-1.5 rounded-lg transition-colors"
                 >
                   Update
                 </button>
@@ -404,29 +404,29 @@ function GameSection({
                   <div className="flex items-center gap-2 bg-red/10 border border-red/30 text-red text-xs rounded-lg px-3 py-2">
                     <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                     <span className="flex-1">{scoreError}</span>
-                    <button type="button" onClick={onClearScoreError} className="text-red hover:text-white"><X className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={onClearScoreError} className="text-red hover:text-navy"><X className="w-3.5 h-3.5" /></button>
                   </div>
                 )}
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
                 <div>
-                  <label className="block text-white/60 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.homeTeam} Score</label>
+                  <label className="block text-navy/60 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.homeTeam} Score</label>
                   <div className="flex items-center gap-1">
-                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, homeScore: Math.max(0, scoreForm.homeScore - 1) })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors">−</button>
-                    <input type="number" min={0} value={scoreForm.homeScore} onChange={(e) => setScoreForm({ ...scoreForm, homeScore: Number(e.target.value) })} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm text-center focus:outline-none focus:border-red tabular-nums" />
-                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, homeScore: scoreForm.homeScore + 1 })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors">+</button>
+                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, homeScore: Math.max(0, scoreForm.homeScore - 1) })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-navy font-bold transition-colors">−</button>
+                    <input type="number" min={0} value={scoreForm.homeScore} onChange={(e) => setScoreForm({ ...scoreForm, homeScore: Number(e.target.value) })} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-navy text-sm text-center focus:outline-none focus:border-red tabular-nums" />
+                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, homeScore: scoreForm.homeScore + 1 })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-navy font-bold transition-colors">+</button>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-white/60 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.awayTeam} Score</label>
+                  <label className="block text-navy/60 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.awayTeam} Score</label>
                   <div className="flex items-center gap-1">
-                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, awayScore: Math.max(0, scoreForm.awayScore - 1) })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors">−</button>
-                    <input type="number" min={0} value={scoreForm.awayScore} onChange={(e) => setScoreForm({ ...scoreForm, awayScore: Number(e.target.value) })} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm text-center focus:outline-none focus:border-red tabular-nums" />
-                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, awayScore: scoreForm.awayScore + 1 })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors">+</button>
+                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, awayScore: Math.max(0, scoreForm.awayScore - 1) })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-navy font-bold transition-colors">−</button>
+                    <input type="number" min={0} value={scoreForm.awayScore} onChange={(e) => setScoreForm({ ...scoreForm, awayScore: Number(e.target.value) })} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-navy text-sm text-center focus:outline-none focus:border-red tabular-nums" />
+                    <button type="button" onClick={() => setScoreForm({ ...scoreForm, awayScore: scoreForm.awayScore + 1 })} className="w-9 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-navy font-bold transition-colors">+</button>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-white/60 text-[10px] font-semibold uppercase tracking-wider mb-1">Quarter</label>
-                  <select value={scoreForm.quarter} onChange={(e) => setScoreForm({ ...scoreForm, quarter: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-red">
+                  <label className="block text-navy/60 text-[10px] font-semibold uppercase tracking-wider mb-1">Quarter</label>
+                  <select value={scoreForm.quarter} onChange={(e) => setScoreForm({ ...scoreForm, quarter: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-red">
                     <option value="">—</option>
                     <option value="1">Q1</option>
                     <option value="2">Q2</option>
@@ -436,8 +436,8 @@ function GameSection({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-white/60 text-[10px] font-semibold uppercase tracking-wider mb-1">Status</label>
-                  <select value={scoreForm.status} onChange={(e) => setScoreForm({ ...scoreForm, status: e.target.value as "" | "scheduled" | "live" | "final" })} className="w-full bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-red">
+                  <label className="block text-navy/60 text-[10px] font-semibold uppercase tracking-wider mb-1">Status</label>
+                  <select value={scoreForm.status} onChange={(e) => setScoreForm({ ...scoreForm, status: e.target.value as "" | "scheduled" | "live" | "final" })} className="w-full bg-navy border border-white/10 rounded-lg px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-red">
                     <option value="">No change</option>
                     <option value="live">Live</option>
                     <option value="final">Final</option>
@@ -449,7 +449,7 @@ function GameSection({
                     {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
                     Save
                   </button>
-                  <button type="button" onClick={onCancelUpdate} className="text-white/40 hover:text-white px-3 py-2.5 rounded-lg text-xs transition-colors">
+                  <button type="button" onClick={onCancelUpdate} className="text-navy/40 hover:text-navy px-3 py-2.5 rounded-lg text-xs transition-colors">
                     Cancel
                   </button>
                 </div>

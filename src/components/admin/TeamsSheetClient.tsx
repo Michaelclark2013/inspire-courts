@@ -106,7 +106,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
       {/* Division chart */}
       {divisionData.length > 0 && (
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
             Teams per Division
           </h3>
           <AdminBarChart
@@ -128,13 +128,13 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search teams, coaches, email..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
           />
         </div>
         <select
           value={divFilter}
           onChange={(e) => setDivFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
         >
           {divisions.map((d) => (
             <option key={d} value={d}>
@@ -145,7 +145,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
         <select
           value={payFilter}
           onChange={(e) => setPayFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
         >
           {payStatuses.map((s) => (
             <option key={s} value={s}>
@@ -159,7 +159,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
       <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
         <div className="px-4 py-3 border-b border-border flex items-center justify-between">
           <p className="text-text-secondary text-xs">
-            Showing <span className="text-white font-semibold">{filtered.length}</span> of {teams.length} teams
+            Showing <span className="text-navy font-semibold">{filtered.length}</span> of {teams.length} teams
           </p>
         </div>
 
@@ -180,7 +180,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                     <div className="flex items-center gap-2.5 flex-1 min-w-0">
                       <TeamLogo teamName={team.teamName} logoUrl={logos[team.teamName]} size={32} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-white font-semibold text-sm truncate">
+                        <p className="text-navy font-semibold text-sm truncate">
                           {team.teamName}
                         </p>
                         <p className="text-text-secondary text-xs mt-0.5">{team.coach}</p>
@@ -234,7 +234,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                     {team.notes && (
                       <div>
                         <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-1">Notes</p>
-                        <p className="text-white text-sm">{team.notes}</p>
+                        <p className="text-navy text-sm">{team.notes}</p>
                       </div>
                     )}
                   </div>
@@ -260,7 +260,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                 ).map(([key, label]) => (
                   <th
                     key={key}
-                    className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider cursor-pointer hover:text-white transition-colors select-none"
+                    className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider cursor-pointer hover:text-navy transition-colors select-none"
                     onClick={() => toggleSort(key)}
                   >
                     {label}
@@ -290,7 +290,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
                           <TeamLogo teamName={team.teamName} logoUrl={logos[team.teamName]} size={28} />
-                          <span className="font-semibold text-white">{team.teamName}</span>
+                          <span className="font-semibold text-navy">{team.teamName}</span>
                           <LogoUploader
                             teamName={team.teamName}
                             currentLogoUrl={logos[team.teamName]}
@@ -318,7 +318,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                         {team.amount || "—"}
                       </td>
                       <td className="px-4 py-3">
-                        <button className="text-text-secondary hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+                        <button className="text-text-secondary hover:text-navy transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
                           {expanded === i ? (
                             <ChevronUp className="w-4 h-4" />
                           ) : (
@@ -342,7 +342,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                             </div>
                             <div>
                               <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Email</p>
-                              <p className="text-white">{team.email !== "—" ? (
+                              <p className="text-navy">{team.email !== "—" ? (
                                 <a href={`mailto:${team.email}`} className="text-accent hover:underline flex items-center gap-1">
                                   {team.email}
                                   <ExternalLink className="w-3 h-3" />
@@ -351,7 +351,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                             </div>
                             <div>
                               <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Phone</p>
-                              <p className="text-white">{team.phone !== "—" ? (
+                              <p className="text-navy">{team.phone !== "—" ? (
                                 <a href={`tel:${team.phone}`} className="text-accent hover:underline">
                                   {team.phone}
                                 </a>
@@ -360,7 +360,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                             {team.notes && (
                               <div>
                                 <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Notes</p>
-                                <p className="text-white">{team.notes}</p>
+                                <p className="text-navy">{team.notes}</p>
                               </div>
                             )}
                           </div>

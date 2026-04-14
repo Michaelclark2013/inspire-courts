@@ -109,7 +109,7 @@ export default function DashboardAlerts() {
   if (error && !data) {
     return (
       <div className="bg-red/5 border border-red/20 rounded-xl p-5 mb-8 text-center">
-        <p className="text-white/60 text-sm mb-2">Unable to load alerts</p>
+        <p className="text-navy/60 text-sm mb-2">Unable to load alerts</p>
         <button onClick={() => { setError(false); fetchAlerts(); }} className="text-red text-xs font-bold uppercase tracking-wider hover:text-red-hover transition-colors">
           Retry
         </button>
@@ -170,16 +170,16 @@ export default function DashboardAlerts() {
       {/* Keyboard shortcuts modal */}
       {showShortcuts && (
         <>
-          <div className="fixed inset-0 z-[70] bg-black/60" onClick={() => setShowShortcuts(false)} />
+          <div className="fixed inset-0 z-[70] bg-black/20" onClick={() => setShowShortcuts(false)} />
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[71] bg-bg-secondary border border-border rounded-xl p-6 w-full max-w-sm shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-bold text-sm uppercase tracking-wider">Keyboard Shortcuts</h3>
-              <button onClick={() => setShowShortcuts(false)} className="text-text-secondary hover:text-white transition-colors" aria-label="Close shortcuts">✕</button>
+              <h3 className="text-navy font-bold text-sm uppercase tracking-wider">Keyboard Shortcuts</h3>
+              <button onClick={() => setShowShortcuts(false)} className="text-text-secondary hover:text-navy transition-colors" aria-label="Close shortcuts">✕</button>
             </div>
             <div className="space-y-2">
               {SHORTCUTS.map((s) => (
                 <div key={s.key} className="flex items-center gap-3">
-                  <kbd className="bg-bg border border-border rounded px-2 py-1 text-xs font-mono text-white font-bold min-w-[2.5rem] text-center">{s.key}</kbd>
+                  <kbd className="bg-bg border border-border rounded px-2 py-1 text-xs font-mono text-navy font-bold min-w-[2.5rem] text-center">{s.key}</kbd>
                   <span className="text-text-secondary text-sm">{s.desc}</span>
                 </div>
               ))}
@@ -222,7 +222,7 @@ export default function DashboardAlerts() {
         >
           <Trophy className="w-5 h-5 group-hover:scale-110 transition-transform" />
           <span className="text-sm font-bold uppercase tracking-wider">Create New Tournament</span>
-          <kbd className="hidden lg:inline-block text-[9px] text-white/40 bg-white/10 px-1.5 py-0.5 rounded font-mono ml-2">T</kbd>
+          <kbd className="hidden lg:inline-block text-[9px] text-navy/40 bg-white/10 px-1.5 py-0.5 rounded font-mono ml-2">T</kbd>
           <ArrowRight className="w-4 h-4 opacity-60 group-hover:translate-x-1 transition-transform" />
         </Link>
         <div className="grid grid-cols-2 gap-3">
@@ -279,11 +279,11 @@ function QuickAction({
       className="flex items-center gap-2.5 bg-card border border-white/10 hover:border-white/20 rounded-xl px-4 py-3 transition-all group hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
     >
       <Icon className={`w-4 h-4 ${color} group-hover:scale-110 transition-transform`} />
-      <span className="text-white text-xs font-semibold uppercase tracking-wider">
+      <span className="text-navy text-xs font-semibold uppercase tracking-wider">
         {label}
       </span>
       {shortcutHint && (
-        <kbd className="hidden lg:inline-block ml-auto text-[9px] text-white/20 bg-white/5 px-1.5 py-0.5 rounded font-mono">
+        <kbd className="hidden lg:inline-block ml-auto text-[9px] text-navy/20 bg-white/5 px-1.5 py-0.5 rounded font-mono">
           {shortcutHint}
         </kbd>
       )}

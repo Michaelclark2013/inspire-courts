@@ -64,7 +64,7 @@ function FileGrid({ files }: { files: EnrichedFile[] }) {
             <FileIcon mimeType={file.mimeType} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-white text-sm font-medium truncate group-hover:text-accent transition-colors">
+            <p className="text-navy text-sm font-medium truncate group-hover:text-accent transition-colors">
               {file.name}
             </p>
             <div className="flex items-center gap-3 mt-0.5">
@@ -102,7 +102,7 @@ export default function FilesClient({ rootFiles, responsesFiles }: Props) {
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${
             activeTab === "root"
               ? "bg-accent text-white"
-              : "text-text-secondary hover:text-white"
+              : "text-text-secondary hover:text-navy"
           }`}
         >
           <FolderOpen className="w-3.5 h-3.5" />
@@ -113,7 +113,7 @@ export default function FilesClient({ rootFiles, responsesFiles }: Props) {
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${
             activeTab === "responses"
               ? "bg-accent text-white"
-              : "text-text-secondary hover:text-white"
+              : "text-text-secondary hover:text-navy"
           }`}
         >
           <FileSpreadsheet className="w-3.5 h-3.5" />
@@ -157,7 +157,7 @@ export default function FilesClient({ rootFiles, responsesFiles }: Props) {
               key={s.label}
               className="bg-bg-secondary border border-border rounded-sm p-3 text-center"
             >
-              <p className="text-white font-bold text-xl">{s.value}</p>
+              <p className="text-navy font-bold text-xl">{s.value}</p>
               <p className="text-text-secondary text-xs uppercase tracking-wider mt-0.5">
                 {s.label}
               </p>

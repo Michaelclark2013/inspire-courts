@@ -109,7 +109,7 @@ export default function DashboardDBStats() {
     return (
       <div className="bg-red/5 border border-red/20 rounded-sm p-6 mb-8 text-center">
         <AlertTriangle className="w-8 h-8 text-red/60 mx-auto mb-2" />
-        <p className="text-white font-semibold text-sm mb-1">Failed to load dashboard data</p>
+        <p className="text-navy font-semibold text-sm mb-1">Failed to load dashboard data</p>
         <p className="text-text-secondary text-xs mb-4">Check your connection and try again</p>
         <button onClick={() => { setError(false); fetchData(); }} className="bg-red hover:bg-red-hover text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors">
           Retry
@@ -154,7 +154,7 @@ export default function DashboardDBStats() {
         </span>
         <button
           onClick={() => fetchData()}
-          className="text-text-secondary hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 rounded p-1 min-h-[44px] min-w-[44px] flex items-center justify-center lg:min-h-0 lg:min-w-0 lg:p-0"
+          className="text-text-secondary hover:text-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 rounded p-1 min-h-[44px] min-w-[44px] flex items-center justify-center lg:min-h-0 lg:min-w-0 lg:p-0"
           title="Refresh now"
         >
           <RefreshCw className="w-4 h-4 lg:w-3.5 lg:h-3.5" />
@@ -170,9 +170,9 @@ export default function DashboardDBStats() {
           </span>
           {liveGamesDetail.map((g) => (
             <div key={g.id} className="flex-shrink-0 bg-red/5 border border-red/20 rounded-lg px-3 py-1.5 flex items-center gap-2">
-              <span className="text-white text-xs font-bold whitespace-nowrap">{g.homeTeam}</span>
+              <span className="text-navy text-xs font-bold whitespace-nowrap">{g.homeTeam}</span>
               <span className="text-red text-sm font-bold tabular-nums">{g.homeScore}-{g.awayScore}</span>
-              <span className="text-white text-xs font-bold whitespace-nowrap">{g.awayTeam}</span>
+              <span className="text-navy text-xs font-bold whitespace-nowrap">{g.awayTeam}</span>
               {g.quarter && <span className="text-text-secondary text-[10px] ml-1">{g.quarter}</span>}
             </div>
           ))}
@@ -215,7 +215,7 @@ export default function DashboardDBStats() {
       {/* Tournament Status + Upcoming Schedule row */}
       {isNew ? (
         <div className="bg-bg-secondary border border-border rounded-sm p-6">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Getting Started</h3>
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Getting Started</h3>
           <p className="text-text-secondary text-xs mb-4">Set up your facility in 3 steps</p>
           <div className="space-y-3">
             {[
@@ -225,7 +225,7 @@ export default function DashboardDBStats() {
             ].map((step) => (
               <Link key={step.num} href={step.href} className="flex items-center gap-3 px-4 py-3 bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 rounded-lg transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
                 <span className="w-7 h-7 rounded-full bg-red/20 text-red flex items-center justify-center text-xs font-bold">{step.num}</span>
-                <span className="text-white text-sm font-medium group-hover:text-white/80">{step.label}</span>
+                <span className="text-navy text-sm font-medium group-hover:text-navy/80">{step.label}</span>
                 <ArrowRight className="w-3.5 h-3.5 text-text-secondary ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
               </Link>
             ))}
@@ -238,13 +238,13 @@ export default function DashboardDBStats() {
           <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Trophy className="w-4 h-4 text-red" />
-              <h3 className="text-white font-bold text-xs uppercase tracking-wider">
+              <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
                 Active Tournaments
               </h3>
             </div>
             <Link
               href="/admin/tournaments/manage"
-              className="text-text-secondary hover:text-white text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
+              className="text-text-secondary hover:text-navy text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
             >
               View All
             </Link>
@@ -254,7 +254,7 @@ export default function DashboardDBStats() {
               <div className="w-12 h-12 bg-red/10 rounded-xl flex items-center justify-center mx-auto mb-3">
                 <Trophy className="w-6 h-6 text-red/60" />
               </div>
-              <p className="text-white font-semibold text-sm mb-1">No Active Tournaments</p>
+              <p className="text-navy font-semibold text-sm mb-1">No Active Tournaments</p>
               <p className="text-text-secondary text-xs mb-4">Create your first tournament — it takes less than 60 seconds with templates</p>
               <Link href="/admin/tournaments/manage" className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
                 <Trophy className="w-3.5 h-3.5" /> Create Tournament
@@ -277,7 +277,7 @@ export default function DashboardDBStats() {
                     className="block px-5 py-3 hover:bg-white/[0.02] transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-white text-sm font-semibold truncate mr-2">
+                      <span className="text-navy text-sm font-semibold truncate mr-2">
                         {t.name}
                       </span>
                       <div className="flex items-center gap-2 flex-shrink-0">
@@ -286,7 +286,7 @@ export default function DashboardDBStats() {
                             Open
                           </span>
                         ) : (
-                          <span className="text-[10px] bg-white/10 text-white/40 px-2 py-0.5 rounded font-bold">
+                          <span className="text-[10px] bg-white/10 text-navy/40 px-2 py-0.5 rounded font-bold">
                             Closed
                           </span>
                         )}
@@ -330,11 +330,11 @@ export default function DashboardDBStats() {
                       </span>
                     )}
                     <div className="flex items-center gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link href={`/admin/tournaments/${t.id}/registrations`} className="text-text-secondary hover:text-white text-[10px] font-semibold uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50" onClick={e => e.stopPropagation()}>
+                      <Link href={`/admin/tournaments/${t.id}/registrations`} className="text-text-secondary hover:text-navy text-[10px] font-semibold uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50" onClick={e => e.stopPropagation()}>
                         Registrations
                       </Link>
-                      <span className="text-white/10">&middot;</span>
-                      <Link href="/admin/scores/enter" className="text-text-secondary hover:text-white text-[10px] font-semibold uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50" onClick={e => e.stopPropagation()}>
+                      <span className="text-navy/10">&middot;</span>
+                      <Link href="/admin/scores/enter" className="text-text-secondary hover:text-navy text-[10px] font-semibold uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50" onClick={e => e.stopPropagation()}>
                         Enter Scores
                       </Link>
                     </div>
@@ -350,7 +350,7 @@ export default function DashboardDBStats() {
           <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-cyan-400" />
-              <h3 className="text-white font-bold text-xs uppercase tracking-wider">
+              <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
                 Upcoming Games
               </h3>
             </div>
@@ -369,9 +369,9 @@ export default function DashboardDBStats() {
               <div className="w-12 h-12 bg-cyan-500/10 rounded-xl flex items-center justify-center mx-auto mb-3">
                 <Clock className="w-6 h-6 text-cyan-400/60" />
               </div>
-              <p className="text-white font-semibold text-sm mb-1">No Games Scheduled</p>
+              <p className="text-navy font-semibold text-sm mb-1">No Games Scheduled</p>
               <p className="text-text-secondary text-xs mb-4">Games will appear here once you create a tournament and set up the bracket</p>
-              <Link href="/admin/scores/enter" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
+              <Link href="/admin/scores/enter" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-navy text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
                 <ClipboardList className="w-3.5 h-3.5" /> Add a Game
               </Link>
             </div>
@@ -395,7 +395,7 @@ export default function DashboardDBStats() {
                       key={g.id}
                       className={`border-b border-white/5 hover:bg-white/[0.02] transition-colors ${isSoon ? "bg-amber-500/5" : ""}`}
                     >
-                      <td className={`px-4 py-2 text-xs whitespace-nowrap ${isSoon ? "text-amber-400 font-semibold" : "text-white/60"}`}>
+                      <td className={`px-4 py-2 text-xs whitespace-nowrap ${isSoon ? "text-amber-400 font-semibold" : "text-navy/60"}`}>
                         {isSoon
                           ? `In ${minutesUntil} min`
                           : g.scheduledTime
@@ -405,13 +405,13 @@ export default function DashboardDBStats() {
                               )
                             : "TBD"}
                       </td>
-                      <td className="px-4 py-2 text-white text-xs font-semibold whitespace-nowrap">
+                      <td className="px-4 py-2 text-navy text-xs font-semibold whitespace-nowrap">
                         {g.homeTeam} vs {g.awayTeam}
                       </td>
-                      <td className="px-4 py-2 text-white/60 text-xs">
+                      <td className="px-4 py-2 text-navy/60 text-xs">
                         {g.court || "—"}
                       </td>
-                      <td className="px-4 py-2 text-white/60 text-xs">
+                      <td className="px-4 py-2 text-navy/60 text-xs">
                         {g.division || "—"}
                       </td>
                     </tr>

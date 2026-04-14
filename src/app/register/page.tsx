@@ -60,6 +60,15 @@ const STAFF_ROLES = [
     activeColor: "border-amber-400 bg-amber-500/20 ring-1 ring-amber-500/30",
     iconColor: "text-amber-400",
   },
+  {
+    value: "front_desk",
+    label: "Front Desk",
+    icon: Shield,
+    description: "Check-in, scores, schedules — requires admin approval",
+    color: "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]",
+    activeColor: "border-purple-400 bg-purple-500/20 ring-1 ring-purple-500/30",
+    iconColor: "text-purple-400",
+  },
 ];
 
 export default function RegisterPage() {

@@ -1,0 +1,190 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { UserCheck, Loader2, CheckCircle2, XCircle, Clock, Shield } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface PendingUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  phone: string | null;
+  createdAt: string;
+}
+
+const ROLE_COLORS: Record<string, string> = {
+  staff: "bg-blue-500/20 text-blue-400",
+  ref: "bg-amber-500/20 text-amber-400",
+  front_desk: "bg-purple-500/20 text-purple-400",
+};
+
+const ROLE_LABELS: Record<string, string> = {
+  staff: "Staff",
+  ref: "Referee",
+  front_desk: "Front Desk",
+};
+
+export default function ApprovalsPage() {
+  const [pending, setPending] = useState<PendingUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<number | null>(null);
+  const [message, setMessage] = useState("");
+
+  const fetchPending = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/approvals");
+      if (res.ok) {
+        const data = await res.json();
+        setPending(data.users || []);
+      }
+    } catch {
+      console.error("Failed to fetch approvals");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPending();
+  }, [fetchPending]);
+
+  async function handleAction(userId: number, action: "approve" | "reject") {
+    setActionLoading(userId);
+    setMessage("");
+
+    try {
+      const res = await fetch("/api/admin/approvals", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, action }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage(data.message);
+        setPending((prev) => prev.filter((u) => u.id !== userId));
+      } else {
+        setMessage(data.error || "Action failed");
+      }
+    } catch {
+      setMessage("Something went wrong");
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  function formatDate(iso: string) {
+    return new Date(iso).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "America/Phoenix",
+    });
+  }
+
+  return (
+    <div className="p-3 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="mb-4 md:mb-8">
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
+          Approvals
+        </h1>
+        <p className="text-text-secondary text-sm mt-1 hidden md:block">
+          Approve or reject staff, referee, and front desk registrations
+        </p>
+      </div>
+
+      {/* Status message */}
+      {message && (
+        <div className="mb-4 bg-accent/10 border border-accent/20 rounded-sm px-4 py-3 text-accent text-sm">
+          {message}
+        </div>
+      )}
+
+      {/* Loading */}
+      {loading && (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-6 h-6 text-text-secondary animate-spin" />
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loading && pending.length === 0 && (
+        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
+          <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
+          <p className="text-navy font-semibold mb-1">All caught up</p>
+          <p className="text-text-secondary text-sm">
+            No pending approvals right now.
+          </p>
+        </div>
+      )}
+
+      {/* Pending users */}
+      {!loading && pending.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-text-secondary text-xs uppercase tracking-widest font-bold">
+            {pending.length} pending {pending.length === 1 ? "request" : "requests"}
+          </p>
+
+          {pending.map((user) => (
+            <div
+              key={user.id}
+              className="bg-bg-secondary border border-border rounded-sm p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4"
+            >
+              {/* User info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-navy font-semibold text-sm truncate">
+                    {user.name}
+                  </p>
+                  <span
+                    className={cn(
+                      "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full",
+                      ROLE_COLORS[user.role] || "bg-white/10 text-navy/60"
+                    )}
+                  >
+                    {ROLE_LABELS[user.role] || user.role}
+                  </span>
+                </div>
+                <p className="text-text-secondary text-xs truncate">{user.email}</p>
+                {user.phone && (
+                  <p className="text-text-secondary text-xs">{user.phone}</p>
+                )}
+                <div className="flex items-center gap-1 mt-1.5 text-text-secondary text-xs">
+                  <Clock className="w-3 h-3" />
+                  Registered {formatDate(user.createdAt)}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 flex-shrink-0">
+                <button
+                  onClick={() => handleAction(user.id, "approve")}
+                  disabled={actionLoading === user.id}
+                  className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wide px-4 py-2.5 rounded-sm transition-colors"
+                >
+                  {actionLoading === user.id ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  )}
+                  Approve
+                </button>
+                <button
+                  onClick={() => handleAction(user.id, "reject")}
+                  disabled={actionLoading === user.id}
+                  className="inline-flex items-center gap-1.5 bg-danger/20 hover:bg-danger/30 disabled:opacity-50 text-danger text-xs font-bold uppercase tracking-wide px-4 py-2.5 rounded-sm transition-colors"
+                >
+                  <XCircle className="w-3.5 h-3.5" />
+                  Reject
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

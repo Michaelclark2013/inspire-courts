@@ -9,7 +9,7 @@ export default async function SchoolsPage() {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Schools</h1>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Schools</h1>
           <p className="text-text-secondary text-sm mt-1">School Basketball Programs from Notion</p>
         </div>
         <NotionFallback type="no-key" entityName="schools" />
@@ -23,7 +23,7 @@ export default async function SchoolsPage() {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Schools</h1>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Schools</h1>
           <p className="text-text-secondary text-sm mt-1">School Basketball Programs from Notion</p>
         </div>
         <NotionFallback type="empty" entityName="schools" />
@@ -54,7 +54,7 @@ export default async function SchoolsPage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Schools</h1>
+        <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Schools</h1>
         <p className="text-text-secondary text-sm mt-1">School Basketball Programs from Notion</p>
       </div>
 

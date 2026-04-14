@@ -6,7 +6,7 @@ import { FACILITY_EMAIL } from "@/lib/constants";
 import { INPUT_CLASS_LG, LABEL_CLASS, SELECT_CLASS, TEXTAREA_CLASS } from "@/lib/form-styles";
 import { trackConversion } from "@/lib/analytics";
 
-const SPORT_OPTIONS = ["Basketball", "Volleyball", "Other"];
+const SPORT_OPTIONS = ["Basketball", "Volleyball", "Futsal", "Jiu-Jitsu", "Other"];
 
 const EVENT_TYPE_OPTIONS = ["Practice", "Tournament", "Party / Event", "Open Gym", "Other"];
 
@@ -94,9 +94,11 @@ export default function BookingForm() {
       } else {
         const json = await res.json();
         setError(json.error || "Something went wrong. Please try again.");
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     } catch {
       setError("Something went wrong. Please try again or email us directly.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setLoading(false);
     }
@@ -136,7 +138,9 @@ export default function BookingForm() {
               id="name"
               name="name"
               required
+              aria-required="true"
               autoComplete="name"
+              maxLength={200}
               className={INPUT_CLASS_LG}
               placeholder="Your name"
             />
@@ -149,6 +153,7 @@ export default function BookingForm() {
               id="phone"
               name="phone"
               required
+              aria-required="true"
               autoComplete="tel"
               value={phone}
               onChange={(e) => setPhone(formatPhone(e.target.value))}
@@ -166,6 +171,7 @@ export default function BookingForm() {
               id="email"
               name="email"
               required
+              aria-required="true"
               autoComplete="email"
               className={INPUT_CLASS_LG}
               placeholder="you@example.com"

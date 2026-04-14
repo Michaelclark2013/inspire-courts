@@ -18,18 +18,18 @@
   --color-off-white: #F5F6F8;
   --color-light-gray: #E8ECF1;
   --color-border: #D1D5DB;
-  --color-border-dark: #2A3A55;
+  --color-border-dark: #D1D5DB;
   --color-text-dark: #1A1A1A;
   --color-text-muted: #5A6577;
   --color-success: #22C55E;
   --color-warning: #EAB308;
   --color-danger: #EF4444;
-  /* ── Admin Dark Theme ── */
-  --color-bg: #0B1D3A;
-  --color-bg-secondary: #132B52;
+  /* ── Admin Light Theme ── */
+  --color-bg: #FFFFFF;
+  --color-bg-secondary: #F5F6F8;
   --color-accent: #CC0000;
   --color-accent-hover: #E31B23;
-  --color-text-secondary: #8B95B1;
+  --color-text-secondary: #5A6577;
 
   --font-heading: var(--font-chakra);
   --font-body: var(--font-work-sans);
@@ -60,6 +60,12 @@ html {
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px) scale(0.95); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
 }
 
 /* Only apply animations when user has no motion preference */
@@ -166,5 +172,47 @@ html, body {
   /* Stats/numbers display — used in stat bars */
   .stats-number {
     @apply text-4xl sm:text-5xl md:text-7xl lg:text-8xl;
+  }
+}
+
+/* ── Print styles ── */
+@media print {
+  header, footer, aside, nav,
+  [data-no-print],
+  .fixed {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Clean table printing */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    text-align: left;
+  }
+
+  /* Remove shadows and borders on cards for clean print */
+  .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl {
+    box-shadow: none !important;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
   }
 }

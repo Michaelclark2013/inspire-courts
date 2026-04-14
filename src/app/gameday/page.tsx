@@ -141,7 +141,7 @@ export default function GameDayPage() {
               >
                 <div className="flex-shrink-0">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    className={`w-12 h-12 rounded-full flex items-center justify-center ${
                       section.highlight
                         ? "bg-red/20 text-red"
                         : "bg-navy text-white"
@@ -192,7 +192,7 @@ export default function GameDayPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimateIn>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-red rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 bg-red rounded-full flex items-center justify-center flex-shrink-0">
                 <Car className="w-5 h-5 text-white" aria-hidden="true" />
               </div>
               <h2 className="text-white font-bold text-sm uppercase tracking-[0.15em] font-[var(--font-chakra)]">

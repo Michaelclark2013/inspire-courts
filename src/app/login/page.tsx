@@ -60,36 +60,30 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-navy flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-off-white flex flex-col items-center justify-center px-4">
       <title>Sign In | Inspire Courts AZ</title>
       <meta name="description" content="Sign in to your Inspire Courts AZ account. Coaches, parents, staff, and referees." />
       <link rel="canonical" href="https://inspirecourtsaz.com/login" />
-      {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy-dark to-navy pointer-events-none" />
-      {/* Decorative orbs */}
-      <div className="absolute top-1/4 -left-24 w-72 h-72 bg-red/10 rounded-full blur-[80px] pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-24 w-56 h-56 bg-red/8 rounded-full blur-[60px] pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-32 bg-gradient-to-b from-red/20 to-transparent pointer-events-none" />
 
       <div className="relative w-full max-w-sm z-10">
         {/* Logo & Header */}
         <div className="text-center mb-10">
           <Image src="/images/inspire-athletics-logo.png" alt="Inspire Athletics" width={80} height={80} className="object-contain mx-auto mb-5" priority />
-          <h1 className="text-white text-xl font-bold uppercase tracking-widest mb-1">
+          <h1 className="text-navy text-xl font-bold uppercase tracking-widest mb-1">
             Inspire Courts
           </h1>
-          <p className="text-white/40 text-xs uppercase tracking-[0.2em]">
+          <p className="text-text-muted text-xs uppercase tracking-[0.2em]">
             Dashboard
           </p>
         </div>
 
         {/* Login Card */}
         <div
-          className={`bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-7 shadow-2xl ${shake ? "animate-[shake_0.5s_ease-in-out]" : ""}`}
+          className={`bg-white border border-light-gray rounded-xl p-7 shadow-lg ${shake ? "animate-[shake_0.5s_ease-in-out]" : ""}`}
         >
           <div className="flex items-center gap-2 mb-6">
             <Lock className="w-4 h-4 text-red" aria-hidden="true" />
-            <h2 className="text-white text-sm font-bold uppercase tracking-wider">
+            <h2 className="text-navy text-sm font-bold uppercase tracking-wider">
               Sign In
             </h2>
           </div>
@@ -99,7 +93,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => signIn("google", { callbackUrl: "/login" })}
-              className="flex items-center justify-center gap-3 w-full bg-white hover:bg-gray-100 text-gray-800 py-3.5 rounded-lg font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+              className="flex items-center justify-center gap-3 w-full bg-off-white hover:bg-light-gray text-navy py-3.5 rounded-lg font-semibold text-sm border border-light-gray transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:ring-offset-off-white"
               aria-label="Continue with Google"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
@@ -114,10 +108,10 @@ export default function LoginPage() {
 
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10"></div>
+              <div className="w-full border-t border-light-gray"></div>
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-navy-light/80 px-3 text-white/30 uppercase tracking-wider">or sign in with email</span>
+              <span className="bg-white px-3 text-text-muted uppercase tracking-wider">or sign in with email</span>
             </div>
           </div>
 
@@ -131,7 +125,7 @@ export default function LoginPage() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-2">
+              <label htmlFor="email" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-2">
                 Email Address
               </label>
               <input
@@ -141,7 +135,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3.5 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-text-muted/50"
                 placeholder="Admin email"
               />
             </div>
@@ -149,7 +143,7 @@ export default function LoginPage() {
             {/* Password */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="text-white/60 text-xs font-semibold uppercase tracking-wider">
+                <label htmlFor="password" className="text-text-muted text-xs font-semibold uppercase tracking-wider">
                   Password
                 </label>
                 <Link
@@ -167,13 +161,13 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3.5 pr-12 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25"
+                  className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3.5 pr-12 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-text-muted/50"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-navy transition-colors"
                   tabIndex={-1}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
@@ -186,7 +180,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || !email || !password}
-              className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-all shadow-lg shadow-red/20 hover:shadow-red/30 focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:ring-offset-navy focus-visible:outline-none"
+              className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-all shadow-lg shadow-red/20 hover:shadow-red/30 focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:ring-offset-off-white focus-visible:outline-none"
             >
               {loading ? (
                 <>
@@ -204,33 +198,24 @@ export default function LoginPage() {
         </div>
 
         {/* Security note */}
-        <p className="text-center text-white/20 text-[10px] mt-4 flex items-center justify-center gap-1.5">
+        <p className="text-center text-text-muted text-[10px] mt-4 flex items-center justify-center gap-1.5">
           <Lock className="w-2.5 h-2.5" aria-hidden="true" />
           Secure sign-in for Inspire Courts staff &amp; coaches
         </p>
 
         {/* Register link */}
         <div className="mt-3 text-center">
-          <span className="text-white/30 text-xs">Don&apos;t have an account? </span>
+          <span className="text-text-muted text-xs">Don&apos;t have an account? </span>
           <Link href="/register" className="text-red text-xs hover:text-red-hover transition-colors font-semibold">
             Create Account
           </Link>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-white/20 text-xs mt-6 uppercase tracking-widest">
+        <p className="text-center text-text-muted text-xs mt-6 uppercase tracking-widest">
           Inspire Courts AZ &bull; Gilbert, Arizona
         </p>
       </div>
-
-      {/* Shake animation */}
-      <style jsx>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-          20%, 40%, 60%, 80% { transform: translateX(4px); }
-        }
-      `}</style>
     </div>
   );
 }

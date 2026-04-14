@@ -14,12 +14,12 @@ export default async function RevenuePage() {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">Revenue</h1>
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Revenue</h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">Mom Money — Revenue Tracking</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
           <DollarSign className="w-10 h-10 text-text-secondary mx-auto mb-3" />
-          <p className="text-white font-semibold mb-1">Google Sheets not connected</p>
+          <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
           <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>
         </div>
       </div>
@@ -84,7 +84,7 @@ export default async function RevenuePage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           Revenue
         </h1>
         <p className="text-text-secondary text-sm mt-1 hidden md:block">
@@ -109,7 +109,7 @@ export default async function RevenuePage() {
             }`}
           >
             <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">{k.label}</p>
-            <p className={`font-bold text-xl md:text-2xl ${k.highlight ? "text-accent" : "text-white"}`}>
+            <p className={`font-bold text-xl md:text-2xl ${k.highlight ? "text-accent" : "text-navy"}`}>
               {k.value}
             </p>
           </div>

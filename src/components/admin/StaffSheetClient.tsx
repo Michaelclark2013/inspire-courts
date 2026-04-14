@@ -47,7 +47,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
             Hours Worked (Top Staff)
           </h3>
           {staffHoursData.length > 0 ? (
@@ -60,7 +60,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
           )}
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
             Games Officiated (Top Refs)
           </h3>
           {refGamesData.length > 0 ? (
@@ -82,7 +82,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
               key={t}
               onClick={() => setTab(t)}
               className={`px-4 py-1.5 rounded text-sm font-medium capitalize transition-colors ${
-                tab === t ? "bg-accent text-white" : "text-text-secondary hover:text-white"
+                tab === t ? "bg-accent text-white" : "text-text-secondary hover:text-navy"
               }`}
             >
               {t === "staff" ? `Staff (${staff.length})` : `Refs (${refs.length})`}
@@ -96,7 +96,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
           />
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
               filteredStaff.map((s, i) => (
                 <div key={i} className="px-4 py-3">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="text-white font-semibold text-sm">{s.name}</span>
+                    <span className="text-navy font-semibold text-sm">{s.name}</span>
                     {s.pay > 0 && <span className="text-success font-mono font-bold text-sm">${s.pay.toFixed(0)}</span>}
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -129,7 +129,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
               <div className="px-4 py-3 bg-bg/30 flex items-center justify-between">
                 <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Totals</span>
                 <div className="flex items-center gap-4">
-                  <span className="font-mono font-bold text-white text-sm">{filteredStaff.reduce((s, r) => s + r.hours, 0).toFixed(1)}h</span>
+                  <span className="font-mono font-bold text-navy text-sm">{filteredStaff.reduce((s, r) => s + r.hours, 0).toFixed(1)}h</span>
                   {(() => { const t = filteredStaff.reduce((s, r) => s + r.pay, 0); return t > 0 ? <span className="font-mono font-bold text-success text-sm">${t.toFixed(0)}</span> : null; })()}
                 </div>
               </div>
@@ -155,10 +155,10 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                 ) : (
                   filteredStaff.map((s, i) => (
                     <tr key={i} className="hover:bg-bg/40 transition-colors">
-                      <td className="px-4 py-3 font-medium text-white">{s.name}</td>
+                      <td className="px-4 py-3 font-medium text-navy">{s.name}</td>
                       <td className="px-4 py-3 text-text-secondary">{s.role}</td>
                       <td className="px-4 py-3 text-text-secondary text-xs">{s.date}</td>
-                      <td className="px-4 py-3 font-mono text-white font-semibold">
+                      <td className="px-4 py-3 font-mono text-navy font-semibold">
                         {s.hours > 0 ? `${s.hours}h` : "—"}
                       </td>
                       <td className="px-4 py-3 text-text-secondary font-mono text-xs">
@@ -182,7 +182,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                     <td colSpan={3} className="px-4 py-3 text-text-secondary text-xs font-bold uppercase tracking-wider">
                       Totals
                     </td>
-                    <td className="px-4 py-3 font-mono font-bold text-white">
+                    <td className="px-4 py-3 font-mono font-bold text-navy">
                       {filteredStaff.reduce((s, r) => s + r.hours, 0).toFixed(1)}h
                     </td>
                     <td />
@@ -212,7 +212,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
               filteredRefs.map((r, i) => (
                 <div key={i} className="px-4 py-3">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="text-white font-semibold text-sm">{r.name}</span>
+                    <span className="text-navy font-semibold text-sm">{r.name}</span>
                     {r.pay > 0 && <span className="text-success font-mono font-bold text-sm">${r.pay.toFixed(0)}</span>}
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -229,7 +229,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
               <div className="px-4 py-3 bg-bg/30 flex items-center justify-between">
                 <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Totals</span>
                 <div className="flex items-center gap-4">
-                  <span className="font-mono font-bold text-white text-sm">{filteredRefs.reduce((s, r) => s + r.games, 0)} games</span>
+                  <span className="font-mono font-bold text-navy text-sm">{filteredRefs.reduce((s, r) => s + r.games, 0)} games</span>
                   {(() => { const t = filteredRefs.reduce((s, r) => s + r.pay, 0); return t > 0 ? <span className="font-mono font-bold text-success text-sm">${t.toFixed(0)}</span> : null; })()}
                 </div>
               </div>
@@ -255,9 +255,9 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                 ) : (
                   filteredRefs.map((r, i) => (
                     <tr key={i} className="hover:bg-bg/40 transition-colors">
-                      <td className="px-4 py-3 font-medium text-white">{r.name}</td>
+                      <td className="px-4 py-3 font-medium text-navy">{r.name}</td>
                       <td className="px-4 py-3 text-text-secondary text-xs">{r.date}</td>
-                      <td className="px-4 py-3 font-mono font-bold text-white">
+                      <td className="px-4 py-3 font-mono font-bold text-navy">
                         {r.games > 0 ? r.games : "—"}
                       </td>
                       <td className="px-4 py-3 text-text-secondary text-xs">{r.courts}</td>
@@ -282,7 +282,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                     <td colSpan={2} className="px-4 py-3 text-text-secondary text-xs font-bold uppercase tracking-wider">
                       Totals
                     </td>
-                    <td className="px-4 py-3 font-mono font-bold text-white">
+                    <td className="px-4 py-3 font-mono font-bold text-navy">
                       {filteredRefs.reduce((s, r) => s + r.games, 0)} games
                     </td>
                     <td colSpan={2} />

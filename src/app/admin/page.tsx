@@ -114,7 +114,7 @@ export default async function AdminDashboard() {
     return (
       <div className="p-6 lg:p-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Dashboard
           </h1>
           <p className="text-text-secondary text-sm mt-1">
@@ -126,7 +126,7 @@ export default async function AdminDashboard() {
           <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <Activity className="w-6 h-6 text-accent" />
           </div>
-          <h2 className="text-white font-bold text-lg mb-2">
+          <h2 className="text-navy font-bold text-lg mb-2">
             Connect Google Sheets
           </h2>
           <p className="text-text-secondary text-sm max-w-md mx-auto mb-6">
@@ -192,11 +192,11 @@ export default async function AdminDashboard() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-bg/95 backdrop-blur-sm border-b border-border/50 -mx-3 sm:-mx-6 lg:-mx-8 px-3 sm:px-6 lg:px-8 py-3 lg:py-4 mb-4 lg:mb-8">
+      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-border/50 -mx-3 sm:-mx-6 lg:-mx-8 px-3 sm:px-6 lg:px-8 py-3 lg:py-4 mb-4 lg:mb-8">
         <div className="flex items-center justify-between gap-2">
           <div>
             <p className="text-text-secondary text-[10px] lg:text-xs mb-0.5">{greeting}</p>
-            <h1 className="text-xl lg:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+            <h1 className="text-xl lg:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
               Dashboard
             </h1>
           </div>

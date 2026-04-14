@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Calendar, Loader2, AlertTriangle, RefreshCw, Radio } from "lucide-react";
+import ExportBar from "@/components/ui/ExportBar";
+import { exportCSV } from "@/lib/export";
 
 type Game = {
   id: number;
@@ -73,12 +75,12 @@ export default function SchedulePage() {
     return (
       <div className="p-6 lg:p-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">Schedule</h1>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">Schedule</h1>
         </div>
         <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
           <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
-          <h3 className="text-white font-semibold mb-1">Failed to Load Schedule</h3>
-          <p className="text-text-secondary text-sm mb-4">Could not load the schedule. Check your connection and try again.</p>
+          <h3 className="text-navy font-semibold mb-1">Failed to Load Schedule</h3>
+          <p className="text-text-muted text-sm mb-4">Could not load the schedule. Check your connection and try again.</p>
           <button
             onClick={() => { setLoading(true); fetchGames(); }}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
@@ -95,23 +97,24 @@ export default function SchedulePage() {
       <div className="mb-8 flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+            <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">
               Schedule
             </h1>
+            <ExportBar onExportCSV={() => exportCSV("schedule", ["Date/Time", "Home Team", "Away Team", "Division", "Court", "Status", "Score"], games.map(g => [g.scheduledTime || "", g.homeTeam, g.awayTeam, g.division || "", g.court || "", g.status, `${g.homeScore}-${g.awayScore}`]))} />
             {live.length > 0 && (
-              <span className="flex items-center gap-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+              <span className="flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
                 <Radio className="w-3 h-3 animate-pulse" /> Live
               </span>
             )}
           </div>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-text-muted text-sm mt-1">
             Upcoming games and results
           </p>
         </div>
         {lastUpdated && (
           <button
             onClick={fetchGames}
-            className="flex items-center gap-1.5 text-[11px] font-medium text-text-secondary bg-white/[0.03] hover:bg-white/[0.06] px-2.5 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 text-[11px] font-medium text-text-muted bg-off-white hover:bg-navy/[0.04] px-2.5 py-1.5 rounded-lg transition-colors"
             title="Click to refresh"
           >
             <RefreshCw className="w-3 h-3" />
@@ -128,7 +131,7 @@ export default function SchedulePage() {
             className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${
               selectedDivision === "all"
                 ? "bg-red text-white"
-                : "bg-white/[0.06] text-white/60 hover:text-white hover:bg-white/10"
+                : "bg-off-white text-text-muted hover:text-navy hover:bg-off-white"
             }`}
           >
             All
@@ -140,7 +143,7 @@ export default function SchedulePage() {
               className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${
                 selectedDivision === d
                   ? "bg-red text-white"
-                  : "bg-white/[0.06] text-white/60 hover:text-white hover:bg-white/10"
+                  : "bg-off-white text-text-muted hover:text-navy hover:bg-off-white"
               }`}
             >
               {d}
@@ -150,18 +153,18 @@ export default function SchedulePage() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-white/40">
+        <div className="flex items-center justify-center py-16 text-text-muted">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading schedule...
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-card border border-white/10 rounded-xl p-10 text-center">
-          <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-            <Calendar className="w-7 h-7 text-white/20" />
+        <div className="bg-card border border-light-gray rounded-xl p-10 text-center">
+          <div className="w-14 h-14 rounded-full bg-off-white flex items-center justify-center mx-auto mb-4">
+            <Calendar className="w-7 h-7 text-light-gray" />
           </div>
-          <p className="text-white font-semibold mb-1">
+          <p className="text-navy font-semibold mb-1">
             {selectedDivision !== "all" ? `No Games in ${selectedDivision}` : "No Games Scheduled"}
           </p>
-          <p className="text-text-secondary text-sm mb-4">
+          <p className="text-text-muted text-sm mb-4">
             {selectedDivision !== "all"
               ? "Try selecting a different division or check back later."
               : "Your schedule will appear here once games are set up for your team."}
@@ -173,9 +176,9 @@ export default function SchedulePage() {
       ) : (
         <div className="space-y-6">
           {[
-            { label: "Live", items: live, color: "text-emerald-400" },
-            { label: "Upcoming", items: upcoming, color: "text-white/60" },
-            { label: "Completed", items: completed, color: "text-white/40" },
+            { label: "Live", items: live, color: "text-emerald-600" },
+            { label: "Upcoming", items: upcoming, color: "text-text-muted" },
+            { label: "Completed", items: completed, color: "text-text-muted" },
           ]
             .filter((s) => s.items.length > 0)
             .map((section) => (
@@ -194,35 +197,35 @@ export default function SchedulePage() {
                         key={game.id}
                         className={`bg-card border rounded-xl px-5 py-4 ${
                           relTime?.isSoon
-                            ? "border-amber-500/30 bg-amber-500/[0.03]"
-                            : "border-white/10"
+                            ? "border-amber-500/30 bg-amber-50"
+                            : "border-light-gray"
                         }`}
                       >
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex items-center gap-3 text-sm min-w-0">
-                            <span className="text-white font-semibold truncate">{game.homeTeam}</span>
+                            <span className="text-navy font-semibold truncate">{game.homeTeam}</span>
                             {game.status !== "scheduled" && (
                               <>
-                                <span className="text-white font-bold tabular-nums">{game.homeScore}</span>
-                                <span className="text-white/30">—</span>
-                                <span className="text-white font-bold tabular-nums">{game.awayScore}</span>
+                                <span className="text-navy font-bold tabular-nums">{game.homeScore}</span>
+                                <span className="text-light-gray">—</span>
+                                <span className="text-navy font-bold tabular-nums">{game.awayScore}</span>
                               </>
                             )}
-                            {game.status === "scheduled" && <span className="text-white/30">vs</span>}
-                            <span className="text-white font-semibold truncate">{game.awayTeam}</span>
+                            {game.status === "scheduled" && <span className="text-light-gray">vs</span>}
+                            <span className="text-navy font-semibold truncate">{game.awayTeam}</span>
                           </div>
-                          <div className="flex items-center gap-3 text-xs text-text-secondary flex-shrink-0">
+                          <div className="flex items-center gap-3 text-xs text-text-muted flex-shrink-0">
                             {relTime && (
-                              <span className={`font-semibold ${relTime.isSoon ? "text-amber-400" : "text-white/60"}`}>
+                              <span className={`font-semibold ${relTime.isSoon ? "text-amber-600" : "text-text-muted"}`}>
                                 {relTime.label}
                               </span>
                             )}
                             {game.division && <span>{game.division}</span>}
-                            {game.court && <span className="bg-white/5 px-2 py-0.5 rounded">{game.court}</span>}
+                            {game.court && <span className="bg-off-white px-2 py-0.5 rounded">{game.court}</span>}
                           </div>
                         </div>
                         {(game.scheduledTime || game.court) && !relTime && (
-                          <div className="flex items-center gap-3 mt-2 text-xs text-white/40">
+                          <div className="flex items-center gap-3 mt-2 text-xs text-text-muted">
                             {game.scheduledTime && (
                               <span>
                                 {new Date(game.scheduledTime).toLocaleString("en-US", {
@@ -238,7 +241,7 @@ export default function SchedulePage() {
                           </div>
                         )}
                         {relTime && game.scheduledTime && (
-                          <div className="flex items-center gap-3 mt-2 text-xs text-white/40">
+                          <div className="flex items-center gap-3 mt-2 text-xs text-text-muted">
                             <span>
                               {new Date(game.scheduledTime).toLocaleString("en-US", {
                                 hour: "numeric",

@@ -76,7 +76,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
             className={`px-4 py-1.5 rounded text-sm font-medium capitalize transition-colors ${
               tab === t
                 ? "bg-accent text-white"
-                : "text-text-secondary hover:text-white"
+                : "text-text-secondary hover:text-navy"
             }`}
           >
             {t}
@@ -97,7 +97,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search teams..."
                   aria-label="Search teams"
-                  className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
+                  className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
                 />
               </div>
               {/* Desktop division select */}
@@ -105,7 +105,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                 value={divFilter}
                 onChange={(e) => setDivFilter(e.target.value)}
                 aria-label="Filter by division"
-                className="hidden md:block bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
+                className="hidden md:block bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
               >
                 {divisions.map((d) => (
                   <option key={d} value={d}>
@@ -158,14 +158,14 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                     <div key={i} className="px-4 py-3">
                       {/* Score display */}
                       <div className="flex items-center gap-2 mb-2">
-                        <span className={`flex-1 text-sm font-semibold truncate ${homeWon ? "text-white" : "text-text-secondary"}`}>
+                        <span className={`flex-1 text-sm font-semibold truncate ${homeWon ? "text-navy" : "text-text-secondary"}`}>
                           {game.home}
                           {homeWon && <span className="ml-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">W</span>}
                         </span>
-                        <span className="font-mono font-bold text-white text-base px-2">
+                        <span className="font-mono font-bold text-navy text-base px-2">
                           {game.homeScore !== "—" && game.awayScore !== "—" ? `${game.homeScore}–${game.awayScore}` : "vs"}
                         </span>
-                        <span className={`flex-1 text-sm font-semibold truncate text-right ${awayWon ? "text-white" : "text-text-secondary"}`}>
+                        <span className={`flex-1 text-sm font-semibold truncate text-right ${awayWon ? "text-navy" : "text-text-secondary"}`}>
                           {awayWon && <span className="mr-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">W</span>}
                           {game.away}
                         </span>
@@ -219,16 +219,16 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                       return (
                         <tr key={i} className="hover:bg-bg/40 transition-colors">
                           <td className="px-4 py-3 text-text-secondary text-xs">{game.date}</td>
-                          <td className={`px-4 py-3 font-medium ${homeWon ? "text-white" : "text-text-secondary"}`}>
+                          <td className={`px-4 py-3 font-medium ${homeWon ? "text-navy" : "text-text-secondary"}`}>
                             {game.home}
                             {homeWon && <span className="ml-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">W</span>}
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <span className="font-mono font-bold text-white text-sm">
+                            <span className="font-mono font-bold text-navy text-sm">
                               {game.homeScore !== "—" && game.awayScore !== "—" ? `${game.homeScore} – ${game.awayScore}` : "—"}
                             </span>
                           </td>
-                          <td className={`px-4 py-3 font-medium ${awayWon ? "text-white" : "text-text-secondary"}`}>
+                          <td className={`px-4 py-3 font-medium ${awayWon ? "text-navy" : "text-text-secondary"}`}>
                             {game.away}
                             {awayWon && <span className="ml-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">W</span>}
                           </td>
@@ -252,7 +252,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
         <div id="standings-panel" role="tabpanel" aria-labelledby="standings-tab" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Win leaderboard */}
           <div className="bg-bg-secondary border border-border rounded-sm p-5">
-            <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+            <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
               Win Leaderboard
             </h3>
             {standingsData.length > 0 ? (
@@ -270,7 +270,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
           {/* Full standings table */}
           <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-border">
-              <h3 className="text-white font-bold text-sm uppercase tracking-wider">
+              <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
                 Win / Loss Records
               </h3>
             </div>
@@ -294,7 +294,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                       <td className="px-4 py-2.5 text-text-secondary text-xs">
                         {i + 1}
                       </td>
-                      <td className="px-4 py-2.5 font-medium text-white">
+                      <td className="px-4 py-2.5 font-medium text-navy">
                         {s.team}
                       </td>
                       <td className="px-4 py-2.5 text-success font-bold">

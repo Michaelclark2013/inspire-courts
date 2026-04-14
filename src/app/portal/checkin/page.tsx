@@ -17,6 +17,8 @@ import {
   XCircle,
   Shield,
 } from "lucide-react";
+import ExportBar from "@/components/ui/ExportBar";
+import { exportCSV } from "@/lib/export";
 
 type Player = {
   id: number;
@@ -211,14 +213,14 @@ export default function CoachCheckInPage() {
     return (
       <div className="p-6 lg:p-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Team Check-In
           </h1>
         </div>
         <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
           <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
-          <h3 className="text-white font-semibold mb-1">Failed to Load Roster</h3>
-          <p className="text-text-secondary text-sm mb-4">
+          <h3 className="text-navy font-semibold mb-1">Failed to Load Roster</h3>
+          <p className="text-text-muted text-sm mb-4">
             Could not load your roster. Check your connection and try again.
           </p>
           <button
@@ -236,10 +238,13 @@ export default function CoachCheckInPage() {
     <div className="p-6 lg:p-8">
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
-            Team Check-In
-          </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">
+              Team Check-In
+            </h1>
+            <ExportBar onExportCSV={() => exportCSV("checkin", ["Player Name", "Check-In Time"], checkedIn.map(c => [c.name, c.time]))} />
+          </div>
+          <p className="text-text-muted text-sm mt-1">
             {teamName ? `Check in players for ${teamName}` : "Check in your players for game day"}
           </p>
         </div>
@@ -247,7 +252,7 @@ export default function CoachCheckInPage() {
         {uncheckedCount > 0 && !bulkChecking && (
           <button
             onClick={handleBulkCheckIn}
-            className="flex items-center gap-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+            className="flex items-center gap-2 bg-emerald-50 hover:bg-emerald-500/30 text-emerald-600 px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
             <UsersRound className="w-4 h-4" />
             <span className="hidden sm:inline">Check In All</span>
@@ -258,14 +263,14 @@ export default function CoachCheckInPage() {
 
       {/* Bulk progress */}
       {bulkChecking && (
-        <div className="mb-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
+        <div className="mb-6 bg-emerald-50 border border-emerald-500/20 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Loader2 className="w-4 h-4 text-emerald-400 animate-spin" />
-            <span className="text-emerald-400 text-sm font-semibold">
+            <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
+            <span className="text-emerald-600 text-sm font-semibold">
               Checking in {bulkProgress} of {roster.filter((p) => !checkedIn.some((c) => c.name === p.name)).length + bulkProgress}...
             </span>
           </div>
-          <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+          <div className="w-full h-1.5 bg-navy/[0.04] rounded-full overflow-hidden">
             <div
               className="h-full bg-emerald-400 rounded-full transition-all duration-300"
               style={{ width: `${(bulkProgress / roster.length) * 100}%` }}
@@ -283,21 +288,21 @@ export default function CoachCheckInPage() {
 
       {/* Duplicate warning */}
       {duplicateWarning && (
-        <div className="mb-4 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 flex items-center gap-2 text-sm text-amber-400">
+        <div className="mb-4 bg-amber-50 border border-amber-500/20 rounded-xl px-4 py-3 flex items-center gap-2 text-sm text-amber-600">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" /> {duplicateWarning}
         </div>
       )}
 
       {/* Undo toast */}
       {undoPlayer && (
-        <div className="mb-4 bg-white/[0.06] border border-white/10 rounded-xl px-4 py-3 flex items-center justify-between">
-          <span className="text-white text-sm">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 inline mr-1.5" />
+        <div className="mb-4 bg-navy/[0.04] border border-light-gray rounded-xl px-4 py-3 flex items-center justify-between">
+          <span className="text-navy text-sm">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 inline mr-1.5" />
             {undoPlayer} checked in
           </span>
           <button
             onClick={undoLastCheckIn}
-            className="flex items-center gap-1.5 text-white/60 hover:text-white text-xs font-semibold uppercase tracking-wider transition-colors"
+            className="flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider transition-colors"
           >
             <Undo2 className="w-3.5 h-3.5" /> Undo
           </button>
@@ -306,17 +311,17 @@ export default function CoachCheckInPage() {
 
       {/* Quick stats */}
       <div className="grid gap-4 md:grid-cols-2 mb-8">
-        <div className="bg-card border border-white/10 rounded-xl p-5">
-          <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-wider mb-2">
+        <div className="bg-card border border-light-gray rounded-xl p-5">
+          <div className="flex items-center gap-2 text-text-muted text-xs uppercase tracking-wider mb-2">
             <Users className="w-3.5 h-3.5" /> Roster
           </div>
-          <p className="text-white text-2xl font-bold">{roster.length} <span className="text-sm text-white/40 font-normal">players</span></p>
+          <p className="text-navy text-2xl font-bold">{roster.length} <span className="text-sm text-text-muted font-normal">players</span></p>
         </div>
         <div className="bg-card border border-emerald-500/20 rounded-xl p-5">
-          <div className="flex items-center gap-2 text-emerald-400 text-xs uppercase tracking-wider mb-2">
+          <div className="flex items-center gap-2 text-emerald-600 text-xs uppercase tracking-wider mb-2">
             <CheckCircle2 className="w-3.5 h-3.5" /> Checked In
           </div>
-          <p className="text-emerald-400 text-2xl font-bold">{checkedIn.length} <span className="text-sm text-emerald-400/50 font-normal">of {roster.length}</span></p>
+          <p className="text-emerald-600 text-2xl font-bold">{checkedIn.length} <span className="text-sm text-emerald-600/50 font-normal">of {roster.length}</span></p>
         </div>
       </div>
 
@@ -324,8 +329,8 @@ export default function CoachCheckInPage() {
       <div className="bg-card border border-amber-500/20 rounded-xl p-5 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-amber-400" />
-            <h2 className="text-amber-400 font-bold text-sm uppercase tracking-wider">
+            <Shield className="w-4 h-4 text-amber-600" />
+            <h2 className="text-amber-600 font-bold text-sm uppercase tracking-wider">
               Coach Check-In
             </h2>
           </div>
@@ -333,13 +338,13 @@ export default function CoachCheckInPage() {
             {coachesCheckedIn.map((c, i) => (
               <span
                 key={i}
-                className="bg-amber-500/20 text-amber-400 text-[10px] font-bold px-2.5 py-1 rounded-full"
+                className="bg-amber-50 text-amber-600 text-[10px] font-bold px-2.5 py-1 rounded-full"
               >
                 {c.name}
               </span>
             ))}
             <span className={`text-xs font-semibold tabular-nums ${
-              coachSlotsRemaining === 0 ? "text-red" : "text-amber-400/60"
+              coachSlotsRemaining === 0 ? "text-red" : "text-amber-600/60"
             }`}>
               {coachSlotsRemaining === 0
                 ? "No bands left"
@@ -356,7 +361,7 @@ export default function CoachCheckInPage() {
               className={`flex-1 h-2 rounded-full transition-all duration-300 ${
                 i < coachesCheckedIn.length
                   ? "bg-amber-400"
-                  : "bg-white/[0.06]"
+                  : "bg-navy/[0.04]"
               }`}
             />
           ))}
@@ -365,14 +370,14 @@ export default function CoachCheckInPage() {
         {coachSlotsRemaining > 0 ? (
           <form onSubmit={handleCoachCheckIn} className="flex gap-3 items-end">
             <div className="flex-1">
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Coach Name
               </label>
               <input
                 type="text"
                 value={coachName}
                 onChange={(e) => setCoachName(e.target.value)}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500 placeholder:text-white/25"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-amber-500 placeholder:text-text-muted/50"
                 placeholder="Enter coach name for band..."
                 aria-label="Coach name for coaching band"
               />
@@ -380,7 +385,7 @@ export default function CoachCheckInPage() {
             <button
               type="submit"
               disabled={!coachName.trim() || coachCheckingIn}
-              className="flex items-center gap-2 bg-amber-500/20 hover:bg-amber-500/30 disabled:opacity-40 text-amber-400 px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              className="flex items-center gap-2 bg-amber-50 hover:bg-amber-500/30 disabled:opacity-40 text-amber-600 px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
             >
               {coachCheckingIn ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -401,16 +406,16 @@ export default function CoachCheckInPage() {
 
         {/* Checked-in coaches detail */}
         {coachesCheckedIn.length > 0 && (
-          <div className="mt-3 divide-y divide-white/5">
+          <div className="mt-3 divide-y divide-light-gray">
             {coachesCheckedIn.map((c, i) => (
               <div key={i} className="flex items-center justify-between py-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 bg-amber-500/20 rounded-full flex items-center justify-center text-amber-400 text-[10px] font-bold">
+                  <span className="w-6 h-6 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 text-[10px] font-bold">
                     {i + 1}
                   </span>
-                  <span className="text-white text-sm font-medium">{c.name}</span>
+                  <span className="text-navy text-sm font-medium">{c.name}</span>
                 </div>
-                <span className="flex items-center gap-1.5 text-white/30 text-xs">
+                <span className="flex items-center gap-1.5 text-light-gray text-xs">
                   <Clock className="w-3 h-3" />
                   {c.time}
                 </span>
@@ -421,19 +426,19 @@ export default function CoachCheckInPage() {
       </div>
 
       {/* Manual check-in */}
-      <div className="bg-card border border-white/10 rounded-xl p-5 mb-6">
+      <div className="bg-card border border-light-gray rounded-xl p-5 mb-6">
         <form onSubmit={handleManualCheckIn} className="flex gap-3 items-end">
           <div className="flex-1">
-            <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+            <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
               Manual Check-In
             </label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-light-gray" />
               <input
                 type="text"
                 value={manualName}
                 onChange={(e) => setManualName(e.target.value)}
-                className="w-full bg-navy border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                className="w-full bg-off-white border border-light-gray rounded-lg pl-10 pr-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                 placeholder="Type player name not on roster..."
                 aria-label="Manual player check-in name"
               />
@@ -447,35 +452,35 @@ export default function CoachCheckInPage() {
 
       {/* Roster check-in list */}
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-white/40">
+        <div className="flex items-center justify-center py-16 text-text-muted">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading roster...
         </div>
       ) : roster.length === 0 ? (
-        <div className="bg-card border border-white/10 rounded-xl p-8 text-center">
-          <Users className="w-8 h-8 text-white/30 mx-auto mb-3" />
-          <p className="text-white font-semibold mb-1">No roster found</p>
-          <p className="text-text-secondary text-sm">Add players to your roster first, or use manual check-in above.</p>
+        <div className="bg-card border border-light-gray rounded-xl p-8 text-center">
+          <Users className="w-8 h-8 text-light-gray mx-auto mb-3" />
+          <p className="text-navy font-semibold mb-1">No roster found</p>
+          <p className="text-text-muted text-sm">Add players to your roster first, or use manual check-in above.</p>
         </div>
       ) : (
-        <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between gap-3">
-            <h2 className="text-white font-bold text-sm uppercase tracking-wider flex-shrink-0">Tap to Check In</h2>
+        <div className="bg-card border border-light-gray rounded-xl overflow-hidden">
+          <div className="px-6 py-4 border-b border-light-gray flex items-center justify-between gap-3">
+            <h2 className="text-navy font-bold text-sm uppercase tracking-wider flex-shrink-0">Tap to Check In</h2>
             {/* Search filter */}
             {roster.length > 5 && (
               <div className="relative max-w-xs flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-light-gray" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-navy/50 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-white text-xs focus:outline-none focus:border-red placeholder:text-white/25"
+                  className="w-full bg-off-white border border-light-gray rounded-lg pl-9 pr-3 py-2 text-navy text-xs focus:outline-none focus:border-red placeholder:text-text-muted/50"
                   placeholder="Search player..."
                   aria-label="Search roster"
                 />
               </div>
             )}
           </div>
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-light-gray">
             {filteredRoster.map((player) => {
               const done = isCheckedIn(player.name);
               const isLoading = checkingIn === player.id;
@@ -485,29 +490,29 @@ export default function CoachCheckInPage() {
                   onClick={() => !done && checkIn(player.name, player.id)}
                   disabled={done || isLoading || bulkChecking}
                   className={`w-full px-6 py-4 flex items-center justify-between text-left transition-colors ${
-                    done ? "bg-emerald-500/5" : "hover:bg-white/[0.02]"
+                    done ? "bg-emerald-50" : "hover:bg-off-white"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-white/40 font-mono text-sm w-8">
+                    <span className="text-text-muted font-mono text-sm w-8">
                       {player.jerseyNumber || "—"}
                     </span>
-                    <span className={`text-sm font-medium ${done ? "text-emerald-400" : "text-white"}`}>
+                    <span className={`text-sm font-medium ${done ? "text-emerald-600" : "text-navy"}`}>
                       {player.name}
                     </span>
                   </div>
                   {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-white/40" />
+                    <Loader2 className="w-4 h-4 animate-spin text-text-muted" />
                   ) : done ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                   ) : (
-                    <span className="text-xs text-white/30 uppercase tracking-wider">Tap to check in</span>
+                    <span className="text-xs text-light-gray uppercase tracking-wider">Tap to check in</span>
                   )}
                 </button>
               );
             })}
             {filteredRoster.length === 0 && searchQuery && (
-              <div className="px-6 py-8 text-center text-white/40 text-sm">
+              <div className="px-6 py-8 text-center text-text-muted text-sm">
                 No players match &ldquo;{searchQuery}&rdquo;
               </div>
             )}
@@ -523,19 +528,19 @@ export default function CoachCheckInPage() {
             className="w-full px-6 py-4 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <h2 className="text-emerald-400 font-bold text-sm uppercase tracking-wider">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <h2 className="text-emerald-600 font-bold text-sm uppercase tracking-wider">
                 Recently Checked In ({checkedIn.length})
               </h2>
             </div>
-            <ChevronDown className={`w-4 h-4 text-emerald-400/50 transition-transform ${showSummary ? "" : "-rotate-90"}`} />
+            <ChevronDown className={`w-4 h-4 text-emerald-600/50 transition-transform ${showSummary ? "" : "-rotate-90"}`} />
           </button>
           {showSummary && (
-            <div className="divide-y divide-white/5 border-t border-emerald-500/10">
+            <div className="divide-y divide-light-gray border-t border-emerald-500/10">
               {checkedIn.map((c, i) => (
                 <div key={i} className="px-6 py-3 flex items-center justify-between">
-                  <span className="text-emerald-400 text-sm font-medium">{c.name}</span>
-                  <span className="flex items-center gap-1.5 text-white/30 text-xs">
+                  <span className="text-emerald-600 text-sm font-medium">{c.name}</span>
+                  <span className="flex items-center gap-1.5 text-light-gray text-xs">
                     <Clock className="w-3 h-3" />
                     {c.time}
                   </span>

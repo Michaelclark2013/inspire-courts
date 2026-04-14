@@ -94,17 +94,17 @@ export default function PortalSidebar() {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-[58] bg-bg-secondary/95 backdrop-blur-sm border-b border-white/[0.06] px-4 h-14 flex items-center justify-between">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-[58] bg-white/95 shadow-sm backdrop-blur-sm border-b border-light-gray px-4 h-14 flex items-center justify-between">
         <button
           onClick={() => setOpen(!open)}
-          className="text-white p-1.5"
+          className="text-navy p-1.5"
           aria-label="Toggle sidebar"
         >
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
         <Link href="/portal" className="flex items-center gap-2" onClick={() => setOpen(false)}>
           <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={28} height={28} className="object-contain" />
-          <span className="text-white font-bold text-sm uppercase tracking-tight">Inspire</span>
+          <span className="text-navy font-bold text-sm uppercase tracking-tight">Inspire</span>
         </Link>
         <Link href="/portal/profile" onClick={() => setOpen(false)} className="w-8 h-8 bg-red/20 rounded-full flex items-center justify-center text-red text-xs font-bold">
           {initials}
@@ -117,7 +117,7 @@ export default function PortalSidebar() {
       {/* Overlay */}
       {open && (
         <div
-          className="lg:hidden fixed inset-0 z-[55] bg-black/60 backdrop-blur-sm"
+          className="lg:hidden fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm"
           onClick={() => setOpen(false)}
         />
       )}
@@ -125,17 +125,20 @@ export default function PortalSidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-[56] h-full w-[260px] bg-bg-secondary flex flex-col transition-transform duration-300 ease-out",
+          "fixed top-0 left-0 z-[56] h-full w-[260px] bg-white border-r border-light-gray flex flex-col transition-transform duration-300 ease-out",
           "lg:translate-x-0 lg:static lg:z-auto",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
+        {/* Red accent stripe */}
+        <div className="h-1 bg-red" />
+
         {/* Logo area */}
         <div className="px-5 py-5 flex items-center gap-3">
           <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={32} height={32} className="object-contain" />
           <div className="flex-1 min-w-0">
-            <span className="text-white font-bold text-sm block leading-tight">Inspire Courts</span>
-            <span className="text-text-secondary text-[10px] uppercase tracking-widest">{roleLabel} Portal</span>
+            <span className="text-navy font-bold text-sm block leading-tight">Inspire Courts</span>
+            <span className="text-text-muted text-[10px] uppercase tracking-widest">{roleLabel} Portal</span>
           </div>
         </div>
 
@@ -143,28 +146,28 @@ export default function PortalSidebar() {
         <Link
           href="/portal/profile"
           onClick={() => setOpen(false)}
-          className="mx-3 mb-2 p-3 bg-white/[0.03] hover:bg-white/[0.06] rounded-xl flex items-center gap-3 transition-colors"
+          className="mx-3 mb-2 p-3 bg-off-white hover:bg-navy/[0.04] rounded-xl flex items-center gap-3 transition-colors"
         >
           <div className="w-9 h-9 bg-red/20 rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-red text-xs font-bold">{initials}</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-white text-sm font-medium truncate">{session?.user?.name || "User"}</p>
-            <p className="text-text-secondary text-[11px] truncate">{session?.user?.email}</p>
+            <p className="text-navy text-sm font-medium truncate">{session?.user?.name || "User"}</p>
+            <p className="text-text-muted text-[11px] truncate">{session?.user?.email}</p>
           </div>
         </Link>
 
         {/* View As (admin only) */}
         {isAdmin && (
-          <div className="mx-3 mb-2 p-3 bg-amber-500/[0.06] border border-amber-500/15 rounded-xl">
+          <div className="mx-3 mb-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
             <div className="flex items-center gap-2 mb-2">
-              <Eye className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-amber-400 text-[10px] font-bold uppercase tracking-widest">View As</span>
+              <Eye className="w-3.5 h-3.5 text-amber-600" />
+              <span className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">View As</span>
             </div>
             <select
               value={viewAsRole || "admin"}
               onChange={(e) => setViewAsRole(e.target.value === "admin" ? null : e.target.value)}
-              className="w-full bg-navy/80 border border-white/10 rounded-lg px-3 py-2 text-white text-xs font-medium focus:outline-none focus:border-amber-500/50 cursor-pointer appearance-none"
+              className="w-full bg-white border border-light-gray rounded-lg px-3 py-2 text-navy text-xs font-medium focus:outline-none focus:border-amber-500/50 cursor-pointer appearance-none"
               style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center" }}
             >
               <option value="admin">Admin (default)</option>
@@ -176,7 +179,7 @@ export default function PortalSidebar() {
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-3 px-3" aria-label="Portal navigation">
-          <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-3 mb-2">Menu</p>
+          <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-2">Menu</p>
           <div className="space-y-0.5">
             {navItems.map((item) => {
               const active = item.href === "/portal" ? pathname === "/portal" : pathname.startsWith(item.href);
@@ -192,7 +195,7 @@ export default function PortalSidebar() {
                     "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
                     active
                       ? "bg-red/10 text-red"
-                      : "text-text-secondary hover:text-white hover:bg-white/[0.04]"
+                      : "text-text-muted hover:text-navy hover:bg-off-white"
                   )}
                 >
                   <div className="relative flex-shrink-0">
@@ -213,8 +216,8 @@ export default function PortalSidebar() {
           </div>
 
           {/* Profile link */}
-          <div className="mt-4 pt-3 border-t border-white/[0.04]">
-            <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-3 mb-2">Account</p>
+          <div className="mt-4 pt-3 border-t border-light-gray">
+            <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-2">Account</p>
             <Link
               href="/portal/profile"
               onClick={() => setOpen(false)}
@@ -222,7 +225,7 @@ export default function PortalSidebar() {
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
                 pathname === "/portal/profile"
                   ? "bg-red/10 text-red"
-                  : "text-text-secondary hover:text-white hover:bg-white/[0.04]"
+                  : "text-text-muted hover:text-navy hover:bg-off-white"
               )}
             >
               <UserCircle className={cn("w-[18px] h-[18px] flex-shrink-0", pathname === "/portal/profile" && "text-red")} />
@@ -232,14 +235,14 @@ export default function PortalSidebar() {
         </nav>
 
         {/* Bottom */}
-        <div className="px-3 py-4 border-t border-white/[0.04] space-y-0.5">
+        <div className="px-3 py-4 border-t border-light-gray space-y-0.5">
           {role === "admin" && (
-            <Link href="/admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-secondary hover:text-white hover:bg-white/[0.04] transition-all">
+            <Link href="/admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all">
               <ChevronLeft className="w-[18px] h-[18px]" />
               Admin Dashboard
             </Link>
           )}
-          <Link href="/scores" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-secondary hover:text-white hover:bg-white/[0.04] transition-all">
+          <Link href="/scores" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all">
             <div className="relative">
               <ExternalLink className="w-[18px] h-[18px]" />
               {hasLiveGames && (
@@ -250,7 +253,7 @@ export default function PortalSidebar() {
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-secondary hover:text-danger hover:bg-danger/[0.06] transition-all w-full text-left"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-danger hover:bg-danger/[0.06] transition-all w-full text-left"
           >
             <LogOut className="w-[18px] h-[18px]" />
             Sign Out

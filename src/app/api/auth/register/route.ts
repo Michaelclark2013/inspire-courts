@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const allowedRoles = ["parent", "coach", "staff", "ref"];
+    const allowedRoles = ["parent", "coach", "staff", "ref", "front_desk"];
     if (!allowedRoles.includes(role)) {
       return NextResponse.json(
         { error: "Invalid role selected" },
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
-    const needsApproval = ["staff", "ref"].includes(role);
+    const needsApproval = ["staff", "ref", "front_desk"].includes(role);
 
     await db.insert(users).values({
       email: email.toLowerCase(),

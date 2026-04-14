@@ -25,7 +25,7 @@ export default async function LinksPage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white">
+        <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">
           Quick Links
         </h1>
         <p className="text-text-secondary text-sm mt-1">
@@ -36,7 +36,7 @@ export default async function LinksPage() {
       <div className="space-y-8">
         {LINK_SECTIONS.map((section) => (
           <div key={section.title}>
-            <h2 className="text-white/50 text-xs font-bold uppercase tracking-wider mb-3">{section.title}</h2>
+            <h2 className="text-navy/50 text-xs font-bold uppercase tracking-wider mb-3">{section.title}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {section.links.map((link) => (
                 <a
@@ -47,7 +47,7 @@ export default async function LinksPage() {
                   className="bg-bg-secondary border border-border rounded-sm p-5 hover:border-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-all group hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-white font-bold text-sm group-hover:text-accent transition-colors">
+                    <h3 className="text-navy font-bold text-sm group-hover:text-accent transition-colors">
                       {link.name}
                     </h3>
                     <ExternalLink className="w-4 h-4 text-text-secondary group-hover:text-accent transition-colors flex-shrink-0" aria-hidden="true" />

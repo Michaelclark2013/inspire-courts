@@ -15,6 +15,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/tournaments", label: "Tournaments" },
   { href: "/scores", label: "Scores" },
+  { href: "/schedule", label: "Schedule" },
   { href: "/facility", label: "Facility" },
   { href: "/gameday", label: "Game Day Info" },
   { href: "/faq", label: "FAQ" },
@@ -27,7 +28,7 @@ const PROGRAM_LINKS = [
   { href: "/teams", label: "Team Inspire" },
   { href: "/prep", label: "Inspire Prep" },
   { href: "/camps", label: "Basketball Camps" },
-  { href: "/book", label: "Open Gym" },
+  { href: "/open-gym", label: "Open Gym" },
 ];
 
 export default function Footer() {
@@ -115,12 +116,12 @@ export default function Footer() {
             <h3 className="text-white text-xs font-semibold uppercase tracking-wider">
               Connect
             </h3>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
               <a
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2.5 text-white/60 hover:text-white text-sm transition-colors"
+                className="flex items-center gap-2.5 min-h-[44px] text-white/60 hover:text-white text-sm transition-colors"
                 aria-label="@inspirecourts on Instagram"
               >
                 <Camera className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
@@ -130,7 +131,7 @@ export default function Footer() {
                 href={SOCIAL_LINKS.instagramMixtape}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2.5 text-white/60 hover:text-white text-sm transition-colors"
+                className="flex items-center gap-2.5 min-h-[44px] text-white/60 hover:text-white text-sm transition-colors"
                 aria-label="@azfinestmixtape on Instagram"
               >
                 <Camera className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
@@ -139,7 +140,7 @@ export default function Footer() {
               <a
                 href={`mailto:${FACILITY_EMAIL}`}
                 onClick={() => trackConversion("email_click")}
-                className="flex items-center gap-2.5 text-white/60 hover:text-white text-sm transition-colors"
+                className="flex items-center gap-2.5 min-h-[44px] text-white/60 hover:text-white text-sm transition-colors"
                 aria-label="Email Inspire Courts"
               >
                 <Mail className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
@@ -148,7 +149,7 @@ export default function Footer() {
               <a
                 href={`tel:${FACILITY_PHONE.replace(/\D/g, "")}`}
                 onClick={() => trackConversion("phone_click")}
-                className="flex items-center gap-2.5 text-white/60 hover:text-white text-sm transition-colors"
+                className="flex items-center gap-2.5 min-h-[44px] text-white/60 hover:text-white text-sm transition-colors"
                 aria-label="Call Inspire Courts"
               >
                 <Phone className="w-4 h-4 flex-shrink-0" aria-hidden="true" />

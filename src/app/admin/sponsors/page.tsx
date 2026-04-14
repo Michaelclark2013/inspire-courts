@@ -10,7 +10,7 @@ export default async function SponsorsPage() {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Sponsorships</h1>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Sponsorships</h1>
           <p className="text-text-secondary text-sm mt-1">Sponsorship Pipeline from Notion</p>
         </div>
         <NotionFallback type="no-key" entityName="sponsorships" />
@@ -24,7 +24,7 @@ export default async function SponsorsPage() {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Sponsorships</h1>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Sponsorships</h1>
           <p className="text-text-secondary text-sm mt-1">Sponsorship Pipeline from Notion</p>
         </div>
         <NotionFallback type="empty" entityName="sponsors" />
@@ -75,7 +75,7 @@ export default async function SponsorsPage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Sponsorships</h1>
+        <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Sponsorships</h1>
         <p className="text-text-secondary text-sm mt-1">Sponsorship Pipeline from Notion</p>
       </div>
 

@@ -12,10 +12,10 @@ export default async function CheckInPage() {
   if (!isGoogleConfigured()) {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading mb-4">
+        <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading mb-4">
           Game Day Check-In
         </h1>
-        <div className="bg-card border border-white/10 rounded-xl p-6 text-white/60 text-sm">
+        <div className="bg-card border border-white/10 rounded-xl p-6 text-navy/60 text-sm">
           Google Sheets not configured. Add your service account credentials to enable check-in.
         </div>
       </div>

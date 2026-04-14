@@ -15,7 +15,7 @@ export default function AdminError({
         <div className="w-16 h-16 bg-red/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-8 h-8 text-red" />
         </div>
-        <h2 className="text-white font-bold text-xl mb-2">Dashboard Error</h2>
+        <h2 className="text-navy font-bold text-xl mb-2">Dashboard Error</h2>
         <p className="text-text-secondary text-sm mb-6">
           Something went wrong loading this page. Try refreshing or contact support if the problem persists.
         </p>

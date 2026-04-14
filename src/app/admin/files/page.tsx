@@ -99,7 +99,7 @@ export default async function FilesPage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           Files
         </h1>
         <p className="text-text-secondary text-sm mt-1">
@@ -111,7 +111,7 @@ export default async function FilesPage() {
       <div className="bg-bg-secondary border border-border rounded-sm mb-6">
         <div className="px-5 py-4 border-b border-border flex items-center gap-2">
           <FileSpreadsheet className="w-4 h-4 text-accent" />
-          <h2 className="text-white font-bold text-sm uppercase tracking-tight">
+          <h2 className="text-navy font-bold text-sm uppercase tracking-tight">
             Key Spreadsheets
           </h2>
         </div>
@@ -128,7 +128,7 @@ export default async function FilesPage() {
                 <FileSpreadsheet className="w-4 h-4 text-success" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white text-xs font-medium truncate group-hover:text-accent transition-colors">
+                <p className="text-navy text-xs font-medium truncate group-hover:text-accent transition-colors">
                   {link.name}
                 </p>
                 <p className="text-text-secondary text-[10px]">{link.type}</p>
@@ -143,7 +143,7 @@ export default async function FilesPage() {
       {!isGoogleConfigured() ? (
         <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
           <FolderOpen className="w-10 h-10 text-text-secondary mx-auto mb-3" />
-          <p className="text-white font-semibold mb-1">
+          <p className="text-navy font-semibold mb-1">
             Connect Google Drive
           </p>
           <p className="text-text-secondary text-sm max-w-sm mx-auto">

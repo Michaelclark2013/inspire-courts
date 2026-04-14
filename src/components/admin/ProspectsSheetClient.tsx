@@ -95,7 +95,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pipeline funnel (as horizontal bars) */}
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Pipeline Status</h3>
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Pipeline Status</h3>
           <p className="text-text-secondary text-xs mb-4">Prospects by stage</p>
           {funnelData.length > 0 ? (
             <HorizontalBarList
@@ -112,7 +112,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
 
         {/* By division */}
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Prospects by Division</h3>
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Prospects by Division</h3>
           <p className="text-text-secondary text-xs mb-4">Target age groups</p>
           {divData.length > 0 ? (
             <HorizontalBarList
@@ -134,13 +134,13 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search teams, coaches, notes..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
         >
           {statuses.map((s) => (
             <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>
@@ -149,7 +149,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
         <select
           value={divFilter}
           onChange={(e) => setDivFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
         >
           {divisions.map((d) => (
             <option key={d} value={d}>{d === "All" ? "All Divisions" : d}</option>
@@ -158,7 +158,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
         <button
           onClick={() => downloadProspectsCSV(filtered, "prospects.csv")}
           title="Download CSV"
-          className="flex items-center gap-1.5 bg-bg-secondary border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-white hover:border-accent/50 text-xs transition-colors flex-shrink-0"
+          className="flex items-center gap-1.5 bg-bg-secondary border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-navy hover:border-accent/50 text-xs transition-colors flex-shrink-0"
         >
           <Download className="w-3.5 h-3.5" /> CSV
         </button>
@@ -168,7 +168,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
       <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
         <div className="px-4 py-3 border-b border-border">
           <p className="text-text-secondary text-xs">
-            <span className="text-white font-semibold">{filtered.length}</span> prospects
+            <span className="text-navy font-semibold">{filtered.length}</span> prospects
           </p>
         </div>
         <div className="overflow-x-auto">
@@ -190,7 +190,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
               ) : (
                 filtered.map((p, i) => (
                   <tr key={i} className="hover:bg-bg/40 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-white max-w-[160px] truncate">{p.team}</td>
+                    <td className="px-4 py-3 font-semibold text-navy max-w-[160px] truncate">{p.team}</td>
                     <td className="px-4 py-3 text-text-secondary">{p.coach}</td>
                     <td className="px-4 py-3">
                       {p.division !== "—" && (

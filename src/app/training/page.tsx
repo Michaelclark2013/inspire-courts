@@ -119,8 +119,8 @@ export default function TrainingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-4">
             {[
-              { label: "#1 Recruit", sub: "Koa Peat Trains Here" },
-              { label: "NBA Players", sub: "Multiple pros on these courts" },
+              { label: "10+ Years", sub: "Building Arizona basketball" },
+              { label: "Pro-Level Training", sub: "Same floor, same results" },
               { label: "7 Courts", sub: "Regulation hardwood" },
               { label: "Gilbert, AZ", sub: "52,000 sq ft facility" },
             ].map(({ label, sub }, i) => (
@@ -244,8 +244,93 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      {/* Koa Peat Headline Training Video */}
+      {/* Meet the Trainers */}
       <section className="py-14 lg:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            eyebrow="Coaching Staff"
+            title="Meet the Trainers"
+            description="Our trainers bring years of playing and coaching experience to every session."
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Trainer 1",
+                role: "Head Skills Trainer",
+                credentials: [
+                  "10+ years coaching experience",
+                  "Former collegiate athlete",
+                  "Specializes in guard development",
+                ],
+                photo: null,
+              },
+              {
+                name: "Trainer 2",
+                role: "Strength & Conditioning",
+                credentials: [
+                  "Certified strength & conditioning specialist",
+                  "Youth athletic development focus",
+                  "Speed and agility training",
+                ],
+                photo: null,
+              },
+              {
+                name: "Trainer 3",
+                role: "Skills Development Coach",
+                credentials: [
+                  "Former professional player",
+                  "Shooting and footwork specialist",
+                  "Works with all age groups",
+                ],
+                photo: null,
+              },
+            ].map((trainer, i) => (
+              <AnimateIn key={trainer.name} delay={i * 100}>
+                <div className="bg-off-white border border-light-gray rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <div className="aspect-[4/3] bg-navy/10 flex items-center justify-center">
+                    {trainer.photo ? (
+                      <Image
+                        src={trainer.photo}
+                        alt={trainer.name}
+                        width={400}
+                        height={300}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-center">
+                        <Users className="w-12 h-12 text-navy/20 mx-auto mb-2" />
+                        <span className="text-navy/30 text-xs uppercase tracking-wider font-semibold">Photo Coming Soon</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-navy font-bold text-lg uppercase tracking-tight font-[var(--font-chakra)] mb-1">
+                      {trainer.name}
+                    </h3>
+                    <p className="text-red text-xs font-bold uppercase tracking-[0.15em] font-[var(--font-chakra)] mb-4">
+                      {trainer.role}
+                    </p>
+                    <ul className="space-y-2">
+                      {trainer.credentials.map((cred) => (
+                        <li key={cred} className="flex items-start gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <span className="text-text-muted text-sm">{cred}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </AnimateIn>
+            ))}
+          </div>
+          <p className="text-text-muted text-xs text-center mt-6">
+            Trainer profiles are placeholders — real names, photos, and credentials coming soon.
+          </p>
+        </div>
+      </section>
+
+      {/* Koa Peat Headline Training Video */}
+      <section className="py-14 lg:py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <AnimateIn>

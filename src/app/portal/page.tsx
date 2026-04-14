@@ -155,17 +155,17 @@ export default function PortalDashboard() {
     return (
       <div className="p-5 lg:p-8 max-w-5xl">
         <div className="mb-6">
-          <p className="text-text-secondary text-xs uppercase tracking-widest mb-1">
+          <p className="text-text-muted text-xs uppercase tracking-widest mb-1">
             {role === "coach" ? "Coach Portal" : role === "parent" ? "Parent Portal" : "Portal"}
           </p>
-          <h1 className="text-white text-xl lg:text-2xl font-bold font-heading">
+          <h1 className="text-navy text-xl lg:text-2xl font-bold font-heading">
             {greeting}, {name}
           </h1>
         </div>
         <div className="bg-red/10 border border-red/20 rounded-2xl p-8 text-center">
           <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
-          <h3 className="text-white font-semibold mb-1">Failed to Load Dashboard</h3>
-          <p className="text-text-secondary text-sm mb-4">
+          <h3 className="text-navy font-semibold mb-1">Failed to Load Dashboard</h3>
+          <p className="text-text-muted text-sm mb-4">
             Could not connect to the server. Check your connection and try again.
           </p>
           <button
@@ -183,7 +183,7 @@ export default function PortalDashboard() {
     <div className="p-5 lg:p-8 max-w-5xl">
       {/* View-As Banner */}
       {actualRole === "admin" && viewAsRole && (
-        <div className="mb-4 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2.5 flex items-center gap-2 text-amber-400 text-xs font-semibold">
+        <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 flex items-center gap-2 text-amber-600 text-xs font-semibold">
           <Eye className="w-3.5 h-3.5" />
           Viewing as {viewAsRole === "coach" ? "Coach" : "Parent"} — This is what a {viewAsRole} sees on their dashboard.
         </div>
@@ -192,10 +192,10 @@ export default function PortalDashboard() {
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <p className="text-text-secondary text-xs uppercase tracking-widest mb-1">
+          <p className="text-text-muted text-xs uppercase tracking-widest mb-1">
             {role === "coach" ? "Coach Portal" : role === "parent" ? "Parent Portal" : "Portal"}
           </p>
-          <h1 className="text-white text-xl lg:text-2xl font-bold font-heading">
+          <h1 className="text-navy text-xl lg:text-2xl font-bold font-heading">
             {greeting}, {name}
           </h1>
         </div>
@@ -204,8 +204,8 @@ export default function PortalDashboard() {
             onClick={fetchData}
             className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1.5 rounded-lg transition-colors ${
               secondsAgo > 60
-                ? "text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
-                : "text-text-secondary bg-white/[0.03] hover:bg-white/[0.06]"
+                ? "text-amber-600 bg-amber-50 hover:bg-amber-100"
+                : "text-text-muted bg-off-white hover:bg-navy/[0.04]"
             }`}
             title="Click to refresh"
           >
@@ -221,15 +221,15 @@ export default function PortalDashboard() {
           {portalAnnouncements.slice(0, 3).map((a) => (
             <div
               key={a.id}
-              className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4"
+              className="bg-amber-50 border border-amber-200 rounded-2xl p-4"
             >
               <div className="flex items-start gap-3">
-                <Megaphone className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                <Megaphone className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-amber-400 text-xs font-bold uppercase tracking-wider mb-0.5">
+                  <p className="text-amber-600 text-xs font-bold uppercase tracking-wider mb-0.5">
                     {a.title}
                   </p>
-                  <p className="text-white/70 text-sm">{a.body}</p>
+                  <p className="text-navy/70 text-sm">{a.body}</p>
                 </div>
               </div>
             </div>
@@ -239,10 +239,10 @@ export default function PortalDashboard() {
 
       {/* Live Games Banner */}
       {liveNow.length > 0 && (
-        <div className="mb-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 lg:p-5">
+        <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 lg:p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
-            <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">
+            <Radio className="w-4 h-4 text-emerald-600 animate-pulse" />
+            <span className="text-emerald-600 text-xs font-bold uppercase tracking-wider">
               Live Now
             </span>
           </div>
@@ -250,19 +250,19 @@ export default function PortalDashboard() {
             {liveNow.map((game) => (
               <div
                 key={game.id}
-                className="flex items-center justify-between bg-navy/40 rounded-xl px-4 py-3"
+                className="flex items-center justify-between bg-white border border-light-gray rounded-xl px-4 py-3"
               >
                 <div className="flex items-center gap-3 text-sm min-w-0">
-                  <span className="text-white font-semibold truncate">{game.homeTeam}</span>
+                  <span className="text-navy font-semibold truncate">{game.homeTeam}</span>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-white font-bold text-lg tabular-nums">{game.homeScore}</span>
-                    <span className="text-white/20 text-xs">vs</span>
-                    <span className="text-white font-bold text-lg tabular-nums">{game.awayScore}</span>
+                    <span className="text-navy font-bold text-lg tabular-nums">{game.homeScore}</span>
+                    <span className="text-light-gray text-xs">vs</span>
+                    <span className="text-navy font-bold text-lg tabular-nums">{game.awayScore}</span>
                   </div>
-                  <span className="text-white font-semibold truncate">{game.awayTeam}</span>
+                  <span className="text-navy font-semibold truncate">{game.awayTeam}</span>
                 </div>
                 {game.quarter && (
-                  <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                  <span className="bg-emerald-500/20 text-emerald-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase">
                     Q{game.quarter}
                   </span>
                 )}
@@ -274,26 +274,26 @@ export default function PortalDashboard() {
 
       {/* Coach Registration Progress */}
       {role === "coach" && (
-        <div className="mb-6 bg-gradient-to-br from-bg-secondary to-bg-secondary/60 border border-white/[0.06] rounded-2xl p-5 lg:p-6">
+        <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl p-5 lg:p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
                 <Zap className="w-4 h-4 text-red" />
               </div>
               <div>
-                <h2 className="text-white font-bold text-sm">Event Registration</h2>
-                <p className="text-text-secondary text-xs">
+                <h2 className="text-navy font-bold text-sm">Event Registration</h2>
+                <p className="text-text-muted text-xs">
                   {completedSteps === totalSteps
                     ? "All set! You're fully registered."
                     : `${completedSteps} of ${totalSteps} steps complete`}
                 </p>
               </div>
             </div>
-            <span className="text-white font-bold text-lg tabular-nums">{progressPercent}%</span>
+            <span className="text-navy font-bold text-lg tabular-nums">{progressPercent}%</span>
           </div>
 
           {/* Progress bar */}
-          <div className="w-full h-2 bg-white/[0.06] rounded-full mb-5 overflow-hidden">
+          <div className="w-full h-2 bg-light-gray rounded-full mb-5 overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-700 ease-out"
               style={{
@@ -315,22 +315,22 @@ export default function PortalDashboard() {
                   href={step.href}
                   className={`flex items-center gap-3 p-3 rounded-xl transition-all group ${
                     step.done
-                      ? "bg-emerald-500/[0.06] hover:bg-emerald-500/10"
-                      : "bg-white/[0.03] hover:bg-white/[0.06]"
+                      ? "bg-emerald-50 hover:bg-emerald-100"
+                      : "bg-off-white hover:bg-navy/[0.04]"
                   }`}
                 >
                   {step.done ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                   ) : (
-                    <Circle className="w-5 h-5 text-white/20 flex-shrink-0" />
+                    <Circle className="w-5 h-5 text-light-gray flex-shrink-0" />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-semibold ${step.done ? "text-emerald-400" : "text-white"}`}>
+                    <p className={`text-sm font-semibold ${step.done ? "text-emerald-600" : "text-navy"}`}>
                       {step.label}
                     </p>
-                    <p className="text-text-secondary text-xs truncate">{step.description}</p>
+                    <p className="text-text-muted text-xs truncate">{step.description}</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/40 transition-colors flex-shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-navy/40 transition-colors flex-shrink-0" />
                 </Link>
               );
             })}
@@ -340,12 +340,12 @@ export default function PortalDashboard() {
 
       {/* My Registrations */}
       {myRegistrations.length === 0 && (
-        <div className="mb-6 bg-gradient-to-br from-bg-secondary to-bg-secondary/60 border border-white/[0.06] rounded-2xl p-6 text-center">
-          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
-            <Trophy className="w-6 h-6 text-white/20" />
+        <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl p-6 text-center">
+          <div className="w-12 h-12 rounded-full bg-off-white flex items-center justify-center mx-auto mb-3">
+            <Trophy className="w-6 h-6 text-light-gray" />
           </div>
-          <h3 className="text-white font-semibold text-sm mb-1">No Tournaments Yet</h3>
-          <p className="text-text-secondary text-xs mb-4 max-w-xs mx-auto">
+          <h3 className="text-navy font-semibold text-sm mb-1">No Tournaments Yet</h3>
+          <p className="text-text-muted text-xs mb-4 max-w-xs mx-auto">
             Register for an upcoming tournament to see your events here.
           </p>
           <Link
@@ -357,28 +357,28 @@ export default function PortalDashboard() {
         </div>
       )}
       {myRegistrations.length > 0 && (
-        <div className="mb-6 bg-gradient-to-br from-bg-secondary to-bg-secondary/60 border border-white/[0.06] rounded-2xl overflow-hidden">
+        <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl overflow-hidden">
           <div className="px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
                 <Trophy className="w-4 h-4 text-red" />
               </div>
-              <h2 className="text-white font-bold text-sm">My Tournaments</h2>
+              <h2 className="text-navy font-bold text-sm">My Tournaments</h2>
             </div>
             <Link href="/tournaments" className="text-red text-xs font-semibold hover:text-red-hover transition-colors flex items-center gap-1">
               Browse <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="divide-y divide-white/[0.04]">
+          <div className="divide-y divide-light-gray">
             {myRegistrations.map((reg) => (
               <Link
                 key={reg.id}
                 href={`/tournaments/${reg.tournamentId}`}
-                className="px-5 py-3 flex items-center justify-between hover:bg-white/[0.02] transition-colors"
+                className="px-5 py-3 flex items-center justify-between hover:bg-off-white transition-colors"
               >
                 <div className="min-w-0">
-                  <p className="text-white text-sm font-semibold truncate">{reg.tournamentName}</p>
-                  <p className="text-text-secondary text-xs">{reg.teamName}{reg.division ? ` · ${reg.division}` : ""}</p>
+                  <p className="text-navy text-sm font-semibold truncate">{reg.tournamentName}</p>
+                  <p className="text-text-muted text-xs">{reg.teamName}{reg.division ? ` · ${reg.division}` : ""}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
@@ -442,38 +442,38 @@ export default function PortalDashboard() {
 
       {/* Recent Games */}
       {liveGames.filter((g) => g.status === "final").length > 0 && (
-        <div className="bg-bg-secondary/60 border border-white/[0.06] rounded-2xl overflow-hidden">
+        <div className="bg-white shadow-sm border border-light-gray rounded-2xl overflow-hidden">
           <div className="px-5 py-4 flex items-center justify-between">
-            <h2 className="text-white font-bold text-sm">Recent Results</h2>
+            <h2 className="text-navy font-bold text-sm">Recent Results</h2>
             <Link href="/portal/scores" className="text-red text-xs font-semibold hover:text-red-hover transition-colors flex items-center gap-1">
               View All <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="divide-y divide-white/[0.04]">
+          <div className="divide-y divide-light-gray">
             {liveGames
               .filter((g) => g.status === "final")
               .slice(0, 5)
               .map((game) => (
                 <div key={game.id} className="px-5 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-3 min-w-0 text-sm">
-                    <span className={`font-semibold truncate ${game.homeScore > game.awayScore ? "text-white" : "text-white/50"}`}>
+                    <span className={`font-semibold truncate ${game.homeScore > game.awayScore ? "text-navy" : "text-text-muted"}`}>
                       {game.homeTeam}
                     </span>
                     <div className="flex items-center gap-1.5 flex-shrink-0 tabular-nums">
-                      <span className={`font-bold ${game.homeScore > game.awayScore ? "text-white" : "text-white/50"}`}>
+                      <span className={`font-bold ${game.homeScore > game.awayScore ? "text-navy" : "text-text-muted"}`}>
                         {game.homeScore}
                       </span>
-                      <span className="text-white/15">-</span>
-                      <span className={`font-bold ${game.awayScore > game.homeScore ? "text-white" : "text-white/50"}`}>
+                      <span className="text-light-gray">-</span>
+                      <span className={`font-bold ${game.awayScore > game.homeScore ? "text-navy" : "text-text-muted"}`}>
                         {game.awayScore}
                       </span>
                     </div>
-                    <span className={`font-semibold truncate ${game.awayScore > game.homeScore ? "text-white" : "text-white/50"}`}>
+                    <span className={`font-semibold truncate ${game.awayScore > game.homeScore ? "text-navy" : "text-text-muted"}`}>
                       {game.awayTeam}
                     </span>
                   </div>
                   {game.division && (
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase">{game.division}</span>
+                    <span className="text-text-muted text-[10px] font-semibold uppercase">{game.division}</span>
                   )}
                 </div>
               ))}
@@ -485,10 +485,10 @@ export default function PortalDashboard() {
 }
 
 const COLOR_MAP = {
-  cyan: { bg: "bg-cyan-500/[0.08]", border: "border-cyan-500/20 hover:border-cyan-500/30", icon: "text-cyan-400", count: "text-cyan-400" },
-  blue: { bg: "bg-blue-500/[0.08]", border: "border-blue-500/20 hover:border-blue-500/30", icon: "text-blue-400", count: "text-blue-400" },
-  amber: { bg: "bg-amber-500/[0.08]", border: "border-amber-500/20 hover:border-amber-500/30", icon: "text-amber-400", count: "text-amber-400" },
-  emerald: { bg: "bg-emerald-500/[0.08]", border: "border-emerald-500/20 hover:border-emerald-500/30", icon: "text-emerald-400", count: "text-emerald-400" },
+  cyan: { bg: "bg-cyan-50", border: "border-cyan-200 hover:border-cyan-300", icon: "text-cyan-600", count: "text-cyan-600" },
+  blue: { bg: "bg-blue-50", border: "border-blue-200 hover:border-blue-300", icon: "text-blue-600", count: "text-blue-600" },
+  amber: { bg: "bg-amber-50", border: "border-amber-200 hover:border-amber-300", icon: "text-amber-600", count: "text-amber-600" },
+  emerald: { bg: "bg-emerald-50", border: "border-emerald-200 hover:border-emerald-300", icon: "text-emerald-600", count: "text-emerald-600" },
   red: { bg: "bg-red/[0.08]", border: "border-red/20 hover:border-red/30", icon: "text-red", count: "text-red" },
 };
 
@@ -516,10 +516,10 @@ function ActionCard({
           <Icon className={`w-5 h-5 ${c.icon}`} />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-white font-semibold text-sm">{title}</h3>
-          <p className="text-text-secondary text-xs">{desc}</p>
+          <h3 className="text-navy font-semibold text-sm">{title}</h3>
+          <p className="text-text-muted text-xs">{desc}</p>
         </div>
-        <ChevronRight className="w-4 h-4 text-white/15 group-hover:text-white/30 transition-colors" />
+        <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-navy/30 transition-colors" />
       </div>
     </Link>
   );

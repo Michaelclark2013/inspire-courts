@@ -7,7 +7,7 @@ export default async function ContactsPage() {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Contacts</h1>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Contacts</h1>
           <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Submissions</p>
         </div>
         <NotionFallback type="no-key" entityName="contacts" />
@@ -37,7 +37,7 @@ export default async function ContactsPage() {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Contacts</h1>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Contacts</h1>
           <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Submissions</p>
         </div>
         <NotionFallback type="empty" entityName="contacts" />
@@ -48,7 +48,7 @@ export default async function ContactsPage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Contacts</h1>
+        <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Contacts</h1>
         <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Submissions — captured automatically from chatbot and contact form</p>
       </div>
       <LeadsClient leads={leads} />

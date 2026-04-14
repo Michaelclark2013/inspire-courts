@@ -8,7 +8,7 @@ export default function AdminNotFound() {
         <div className="w-16 h-16 bg-white/[0.04] rounded-full flex items-center justify-center mx-auto mb-4">
           <Search className="w-8 h-8 text-text-secondary" />
         </div>
-        <h2 className="text-white font-bold text-xl mb-2">Page Not Found</h2>
+        <h2 className="text-navy font-bold text-xl mb-2">Page Not Found</h2>
         <p className="text-text-secondary text-sm mb-6">
           This admin page doesn&apos;t exist or may have been moved.
         </p>

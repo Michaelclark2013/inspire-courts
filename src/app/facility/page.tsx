@@ -21,6 +21,8 @@ import {
   PartyPopper,
   Volleyball,
   CheckCircle2,
+  Goal,
+  Swords,
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
@@ -31,7 +33,7 @@ import { FACILITY_ADDRESS, FACILITY_PHONE, FACILITY_EMAIL, SOCIAL_LINKS } from "
 export const metadata: Metadata = {
   title: "Indoor Court Rental Gilbert AZ | Inspire Courts",
   description:
-    "Professional indoor basketball & volleyball court rental in Gilbert, AZ. 7 courts, climate-controlled. Book for leagues, practices, and events. $80/court/hour.",
+    "Professional indoor court rental for basketball, volleyball, futsal, and jiu-jitsu in Gilbert, AZ. 7 courts, climate-controlled. Book for leagues, practices, and events. $80/court/hour.",
   alternates: {
     canonical: "https://inspirecourtsaz.com/facility",
   },
@@ -83,6 +85,8 @@ const FEATURES = [
 const RENTAL_USES = [
   { icon: Trophy, label: "Basketball Leagues" },
   { icon: Volleyball, label: "Volleyball Leagues" },
+  { icon: Goal, label: "Futsal Leagues" },
+  { icon: Swords, label: "Jiu-Jitsu Events" },
   { icon: Users, label: "Team Practices" },
   { icon: CalendarDays, label: "Private Tournaments" },
   { icon: Zap, label: "Youth Camps & Clinics" },
@@ -168,7 +172,7 @@ export default function FacilityPage() {
                 <p className="text-white/70 text-lg max-w-xl leading-relaxed mb-8">
                   {page
                     ? getField(page, "Hero", "description")
-                    : "A premium indoor basketball & volleyball facility built from the ground up for serious competition. Every detail is intentional."}
+                    : "A premium indoor sports facility built from the ground up for serious competition. Basketball, volleyball, futsal, jiu-jitsu — every detail is intentional."}
                 </p>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 text-sm text-white/60">
                   <div className="flex items-center gap-2">
@@ -201,7 +205,7 @@ export default function FacilityPage() {
                 </div>
                 <div className="space-y-3 mb-8">
                   {[
-                    "Basketball, volleyball & futsal",
+                    "Basketball, volleyball, futsal & jiu-jitsu",
                     "Regulation hardwood courts",
                     "Electronic scoreboards included",
                     "Climate-controlled year-round",
@@ -322,6 +326,107 @@ export default function FacilityPage() {
         </div>
       </section>
 
+      {/* Our History */}
+      <section className="py-16 lg:py-28 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 lg:mb-16">
+            <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-3 font-[var(--font-chakra)]">
+              Our Story
+            </p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy font-[var(--font-chakra)] leading-[0.95]">
+              Built by the <span className="text-red">Culture</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-14 lg:mb-20">
+            {/* Photo gallery */}
+            <AnimateIn>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Main photo — Team Inspire trophy */}
+                <div className="col-span-2 relative rounded-2xl overflow-hidden shadow-xl border border-light-gray">
+                  <Image
+                    src="/images/history-team-inspire.jpg"
+                    alt="Team Inspire basketball team posing with championship trophy"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto object-cover"
+                  />
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-navy/80 to-transparent px-5 py-3">
+                    <p className="text-white text-xs font-semibold uppercase tracking-wider font-[var(--font-chakra)]">
+                      Team Inspire — Where It All Started
+                    </p>
+                  </div>
+                </div>
+                {/* Marvin Bagley banner */}
+                <div className="relative rounded-xl overflow-hidden shadow-lg border border-light-gray aspect-square">
+                  <Image
+                    src="/images/history-bagley-banner.jpg"
+                    alt="Marvin Bagley III banner hanging at Inspire Courts"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-navy/80 to-transparent px-3 py-2">
+                    <p className="text-white text-[10px] font-semibold uppercase tracking-wider font-[var(--font-chakra)]">
+                      Marvin Bagley III Banner
+                    </p>
+                  </div>
+                </div>
+                {/* Marvin Bagley visit */}
+                <div className="relative rounded-xl overflow-hidden shadow-lg border border-light-gray aspect-square">
+                  <Image
+                    src="/images/history-bagley-visit.jpg"
+                    alt="Marvin Bagley III visiting Inspire Courts"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-navy/80 to-transparent px-3 py-2">
+                    <p className="text-white text-[10px] font-semibold uppercase tracking-wider font-[var(--font-chakra)]">
+                      Bagley Visits the Facility
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </AnimateIn>
+
+            {/* Story text */}
+            <AnimateIn delay={150}>
+              <div>
+                <div className="space-y-4 text-text-muted leading-relaxed">
+                  <p>
+                    Inspire Courts didn&apos;t start as a facility — it started as a team. Team Inspire was built on the belief that Arizona basketball deserved better: better coaching, better competition, and a real home court to call their own.
+                  </p>
+                  <p>
+                    What began as a group of young athletes grinding in local gyms grew into something bigger. The trophies stacked up. The talent developed. Players like Marvin Bagley III came through the doors — and their banners still hang from the rafters today.
+                  </p>
+                  <p>
+                    The vision became clear — build a world-class facility where the next generation could train, compete, and grow under one roof. Today, Inspire Courts is a 52,000 sq ft, 7-court complex in Gilbert, AZ — but the mission hasn&apos;t changed.
+                  </p>
+                  <p>
+                    Every court, every tournament, and every training session is powered by the same energy that started it all: a commitment to elevating youth basketball in Arizona.
+                  </p>
+                </div>
+                <div className="mt-8 flex items-center gap-4">
+                  <Link
+                    href="/training"
+                    className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
+                  >
+                    Train With Us <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <a
+                    href="https://www.instagram.com/p/CMLrxpGJ5CVhNQuwDndtmqzEc_ZRX_HWD-FXYI0/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-red text-sm font-bold uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
+                  >
+                    See More &rarr;
+                  </a>
+                </div>
+              </div>
+            </AnimateIn>
+          </div>
+        </div>
+      </section>
+
       {/* Book a Court — full-width CTA with use cases */}
       <section id="rentals" className="py-16 lg:py-24 bg-navy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -344,7 +449,7 @@ export default function FacilityPage() {
                 <p className="text-white/60 leading-relaxed mb-8 max-w-md">
                   {page
                     ? getField(page, "Rental CTA", "description")
-                    : "Host your league, practice, or private event at Arizona's premier indoor facility. Basketball, volleyball, and futsal — we've got the court for you."}
+                    : "Host your league, practice, or private event at Arizona's premier indoor facility. Basketball, volleyball, futsal, and jiu-jitsu — we've got the space for you."}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link

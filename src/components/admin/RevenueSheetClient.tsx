@@ -93,7 +93,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Revenue by Source</h3>
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Revenue by Source</h3>
           <p className="text-text-secondary text-xs mb-4">Cash vs Card vs Square/Digital</p>
           {sourceData.length > 0 ? (
             <AdminDonutChart
@@ -108,7 +108,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
           )}
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Revenue by Entry</h3>
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Revenue by Entry</h3>
           <p className="text-text-secondary text-xs mb-4">Total per day/event</p>
           {revenueOverTime.length > 0 ? (
             <AdminBarChart
@@ -136,7 +136,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
                 className={`px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider transition-colors ${
                   timeRange === opt.value
                     ? "bg-accent text-white"
-                    : "bg-bg border border-border text-text-secondary hover:text-white hover:border-accent/50"
+                    : "bg-bg border border-border text-text-secondary hover:text-navy hover:border-accent/50"
                 }`}
               >
                 {opt.label}
@@ -150,7 +150,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search transactions..."
-              className="w-full bg-bg border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
+              className="w-full bg-bg border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
             />
           </div>
           <p className="text-text-secondary text-xs flex-shrink-0">
@@ -159,7 +159,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
           <button
             onClick={() => downloadTransactionsCSV(filtered, "revenue.csv")}
             title="Download CSV"
-            className="flex items-center gap-1.5 bg-bg border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-white hover:border-accent/50 text-xs transition-colors flex-shrink-0"
+            className="flex items-center gap-1.5 bg-bg border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-navy hover:border-accent/50 text-xs transition-colors flex-shrink-0"
           >
             <Download className="w-3.5 h-3.5" /> CSV
           </button>
@@ -174,10 +174,10 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
                 <div key={i} className="px-4 py-3">
                   <div className="flex items-start justify-between gap-3 mb-1.5">
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm font-medium truncate">{t.description || "—"}</p>
+                      <p className="text-navy text-sm font-medium truncate">{t.description || "—"}</p>
                       <p className="text-text-secondary text-xs mt-0.5">{t.date}</p>
                     </div>
-                    <span className="font-mono font-bold text-white text-sm flex-shrink-0">
+                    <span className="font-mono font-bold text-navy text-sm flex-shrink-0">
                       {t.total > 0 ? `$${t.total.toFixed(0)}` : "—"}
                     </span>
                   </div>
@@ -192,7 +192,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
               <div className="px-4 py-3 bg-bg/30 border-t-2 border-border">
                 <div className="flex items-center justify-between">
                   <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total ({filtered.length})</span>
-                  <span className="font-mono font-bold text-white">${filtered.reduce((s, t) => s + t.total, 0).toFixed(0)}</span>
+                  <span className="font-mono font-bold text-navy">${filtered.reduce((s, t) => s + t.total, 0).toFixed(0)}</span>
                 </div>
                 <div className="flex gap-4 mt-1">
                   <span className="text-xs text-success font-mono">Cash ${filtered.reduce((s, t) => s + t.cash, 0).toFixed(0)}</span>
@@ -214,7 +214,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
                     key={k}
                     onClick={() => (k === "date" || k === "total" || k === "description") && toggleSort(k as any)}
                     className={`px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider ${
-                      k === "date" || k === "total" || k === "description" ? "cursor-pointer hover:text-white transition-colors" : ""
+                      k === "date" || k === "total" || k === "description" ? "cursor-pointer hover:text-navy transition-colors" : ""
                     }`}
                   >
                     {k === "square" ? "Square/Digital" : k.charAt(0).toUpperCase() + k.slice(1)}
@@ -234,7 +234,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
                 filtered.map((t, i) => (
                   <tr key={i} className="hover:bg-bg/40 transition-colors">
                     <td className="px-4 py-3 text-text-secondary text-xs whitespace-nowrap">{t.date}</td>
-                    <td className="px-4 py-3 text-white max-w-[200px] truncate" title={t.description}>{t.description}</td>
+                    <td className="px-4 py-3 text-navy max-w-[200px] truncate" title={t.description}>{t.description}</td>
                     <td className="px-4 py-3 font-mono text-sm">
                       {t.cash > 0 ? <span className="text-success">${t.cash.toFixed(0)}</span> : <span className="text-text-secondary/30">—</span>}
                     </td>
@@ -244,7 +244,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
                     <td className="px-4 py-3 font-mono text-sm">
                       {t.square > 0 ? <span className="text-purple-400">${t.square.toFixed(0)}</span> : <span className="text-text-secondary/30">—</span>}
                     </td>
-                    <td className="px-4 py-3 font-mono font-bold text-white">
+                    <td className="px-4 py-3 font-mono font-bold text-navy">
                       {t.total > 0 ? `$${t.total.toFixed(0)}` : "—"}
                     </td>
                   </tr>
@@ -264,7 +264,7 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
                   <td className="px-4 py-3 font-mono font-bold text-purple-400">
                     ${filtered.reduce((s, t) => s + t.square, 0).toFixed(0)}
                   </td>
-                  <td className="px-4 py-3 font-mono font-bold text-white text-base">
+                  <td className="px-4 py-3 font-mono font-bold text-navy text-base">
                     ${filtered.reduce((s, t) => s + t.total, 0).toFixed(0)}
                   </td>
                 </tr>

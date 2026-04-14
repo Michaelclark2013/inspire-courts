@@ -96,15 +96,15 @@ export default function CoachPortalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-white">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 bg-bg/95 backdrop-blur border-b border-white/[0.06] px-4 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-light-gray px-4 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={28} height={28} className="object-contain" />
-          <span className="text-white font-bold text-sm uppercase tracking-tight">Inspire</span>
+          <span className="text-navy font-bold text-sm uppercase tracking-tight">Inspire</span>
         </Link>
-        <span className="text-text-secondary text-xs font-semibold uppercase tracking-widest">Coach Portal</span>
-        <Link href="/portal/player" className="text-blue-400 text-xs font-semibold hover:text-blue-300 transition-colors">
+        <span className="text-text-muted text-xs font-semibold uppercase tracking-widest">Coach Portal</span>
+        <Link href="/portal/player" className="text-blue-600 text-xs font-semibold hover:text-blue-500 transition-colors">
           Player →
         </Link>
       </header>
@@ -115,38 +115,38 @@ export default function CoachPortalPage() {
         {step === "lookup" && (
           <div className="space-y-6">
             <div className="text-center pt-4 pb-2">
-              <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-blue-400" />
+              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-blue-600" />
               </div>
-              <h1 className="text-white text-2xl font-bold font-heading uppercase tracking-tight mb-1">Coach Portal</h1>
-              <p className="text-text-secondary text-sm">Access your team roster, schedule &amp; game day tools.</p>
+              <h1 className="text-navy text-2xl font-bold font-heading uppercase tracking-tight mb-1">Coach Portal</h1>
+              <p className="text-text-muted text-sm">Access your team roster, schedule &amp; game day tools.</p>
             </div>
 
-            <div className="bg-bg-secondary border border-white/[0.08] rounded-2xl p-5">
+            <div className="bg-white border border-light-gray rounded-2xl p-5">
               <div className="flex items-center gap-2.5 mb-5">
-                <Search className="w-4 h-4 text-blue-400" />
-                <p className="text-white font-semibold text-sm">Enter your details to get started</p>
+                <Search className="w-4 h-4 text-blue-600" />
+                <p className="text-navy font-semibold text-sm">Enter your details to get started</p>
               </div>
               <form onSubmit={handleLookup} className="space-y-4">
                 <div>
-                  <label className="block text-text-secondary text-xs font-bold uppercase tracking-wider mb-2">Your Name</label>
+                  <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2">Your Name</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Coach first &amp; last name"
                     required
-                    className="w-full bg-bg border border-white/[0.1] rounded-xl px-4 py-3.5 text-white text-base focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/20 transition-all placeholder:text-text-secondary/50"
+                    className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3.5 text-navy text-base focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/20 transition-all placeholder:text-text-muted/50"
                   />
                 </div>
                 <div>
-                  <label className="block text-text-secondary text-xs font-bold uppercase tracking-wider mb-2">Team Name</label>
+                  <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2">Team Name</label>
                   <input
                     type="text"
                     value={team}
                     onChange={(e) => setTeam(e.target.value)}
                     placeholder="e.g. AZ Warriors 14U"
-                    className="w-full bg-bg border border-white/[0.1] rounded-xl px-4 py-3.5 text-white text-base focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/20 transition-all placeholder:text-text-secondary/50"
+                    className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3.5 text-navy text-base focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/20 transition-all placeholder:text-text-muted/50"
                   />
                 </div>
                 <button
@@ -158,22 +158,22 @@ export default function CoachPortalPage() {
               </form>
             </div>
 
-            <div className="bg-bg-secondary border border-white/[0.06] rounded-2xl p-4">
-              <p className="text-text-secondary text-xs font-bold uppercase tracking-wider mb-3">Quick Links</p>
+            <div className="bg-white border border-light-gray rounded-2xl p-4">
+              <p className="text-text-muted text-xs font-bold uppercase tracking-wider mb-3">Quick Links</p>
               <div className="space-y-2">
-                <Link href="/portal" className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/[0.04] transition-colors group">
+                <Link href="/portal" className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-off-white transition-colors group">
                   <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
                     <ClipboardList className="w-4 h-4 text-red" />
                   </div>
-                  <span className="text-white text-sm font-medium">Registered Coach Login</span>
-                  <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/40 ml-auto" />
+                  <span className="text-navy text-sm font-medium">Registered Coach Login</span>
+                  <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-text-muted ml-auto" />
                 </Link>
-                <a href="mailto:info@inspirecourtsaz.com" className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/[0.04] transition-colors group">
-                  <div className="w-8 h-8 bg-white/[0.04] rounded-lg flex items-center justify-center">
-                    <Mail className="w-4 h-4 text-text-secondary" />
+                <a href="mailto:info@inspirecourtsaz.com" className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-off-white transition-colors group">
+                  <div className="w-8 h-8 bg-off-white rounded-lg flex items-center justify-center">
+                    <Mail className="w-4 h-4 text-text-muted" />
                   </div>
-                  <span className="text-white text-sm font-medium">Contact Admin</span>
-                  <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/40 ml-auto" />
+                  <span className="text-navy text-sm font-medium">Contact Admin</span>
+                  <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-text-muted ml-auto" />
                 </a>
               </div>
             </div>
@@ -185,17 +185,17 @@ export default function CoachPortalPage() {
           <div className="space-y-5">
 
             {/* Coach card */}
-            <div className="bg-gradient-to-br from-blue-600/20 to-bg-secondary border border-blue-500/20 rounded-2xl p-5">
+            <div className="bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-2xl p-5">
               <div className="flex items-center gap-4 mb-3">
-                <div className="w-14 h-14 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-blue-400 font-bold text-xl font-heading">
+                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-blue-600 font-bold text-xl font-heading">
                     {displayName.replace("Coach ", "").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-bold text-lg leading-tight">{displayName}</p>
-                  <p className="text-text-secondary text-sm">{DEMO_COACH.team}</p>
-                  <p className="text-blue-400 text-xs font-semibold uppercase tracking-wider mt-0.5">{DEMO_COACH.division}</p>
+                  <p className="text-navy font-bold text-lg leading-tight">{displayName}</p>
+                  <p className="text-text-muted text-sm">{DEMO_COACH.team}</p>
+                  <p className="text-blue-600 text-xs font-semibold uppercase tracking-wider mt-0.5">{DEMO_COACH.division}</p>
                 </div>
               </div>
               {/* Registration status row */}
@@ -203,26 +203,26 @@ export default function CoachPortalPage() {
                 {DEMO_REGISTRATIONS.map((r, i) => (
                   <div key={i} className="flex items-center gap-1.5">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                      r.payment === "paid" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"
+                      r.payment === "paid" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
                     }`}>
                       {r.payment === "paid" ? "Paid" : "Payment Pending"}
                     </span>
-                    <span className="text-white/20 text-xs">{i < DEMO_REGISTRATIONS.length - 1 ? "·" : ""}</span>
+                    <span className="text-light-gray text-xs">{i < DEMO_REGISTRATIONS.length - 1 ? "·" : ""}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Demo notice */}
-            <div className="bg-amber-500/[0.08] border border-amber-500/20 rounded-xl px-4 py-3 flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-              <p className="text-amber-400/80 text-xs leading-relaxed">
+            <div className="bg-amber-50 border border-amber-500/20 rounded-xl px-4 py-3 flex items-start gap-2.5">
+              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              <p className="text-amber-600/80 text-xs leading-relaxed">
                 Showing sample data. Live coach lookups will be available once your team is registered.
               </p>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 bg-bg-secondary border border-white/[0.06] rounded-xl p-1 overflow-x-auto scrollbar-none">
+            <div className="flex gap-1 bg-white border border-light-gray rounded-xl p-1 overflow-x-auto scrollbar-none">
               {[
                 { key: "roster", icon: Users, label: "Roster" },
                 { key: "schedule", icon: Calendar, label: "Schedule" },
@@ -236,7 +236,7 @@ export default function CoachPortalPage() {
                   className={`flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all text-xs font-semibold ${
                     activeTab === key
                       ? "bg-blue-600 text-white"
-                      : "text-text-secondary hover:text-white"
+                      : "text-text-muted hover:text-navy"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -249,14 +249,14 @@ export default function CoachPortalPage() {
             {activeTab === "roster" && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
-                  <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest">Team Roster</h3>
-                  <span className="text-text-secondary text-xs">{DEMO_ROSTER.length} players</span>
+                  <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest">Team Roster</h3>
+                  <span className="text-text-muted text-xs">{DEMO_ROSTER.length} players</span>
                 </div>
                 {/* Waiver summary */}
-                <div className="bg-bg-secondary border border-white/[0.06] rounded-xl px-4 py-3 flex items-center justify-between">
+                <div className="bg-white border border-light-gray rounded-xl px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <span className="text-white text-sm font-semibold">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span className="text-navy text-sm font-semibold">
                       {DEMO_ROSTER.filter((p) => p.waiverSigned).length}/{DEMO_ROSTER.length} waivers signed
                     </span>
                   </div>
@@ -266,18 +266,18 @@ export default function CoachPortalPage() {
                 </div>
                 {/* Player list */}
                 {DEMO_ROSTER.map((player, i) => (
-                  <div key={i} className="bg-bg-secondary border border-white/[0.06] rounded-2xl px-4 py-3.5 flex items-center gap-4">
-                    <div className="w-9 h-9 bg-white/[0.04] rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-white/60 text-xs font-bold">#{player.jersey}</span>
+                  <div key={i} className="bg-white border border-light-gray rounded-2xl px-4 py-3.5 flex items-center gap-4">
+                    <div className="w-9 h-9 bg-off-white rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-text-muted text-xs font-bold">#{player.jersey}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold text-sm">{player.name}</p>
-                      <p className="text-text-secondary text-xs">{player.position} · Age {player.age}</p>
+                      <p className="text-navy font-semibold text-sm">{player.name}</p>
+                      <p className="text-text-muted text-xs">{player.position} · Age {player.age}</p>
                     </div>
                     {player.waiverSigned ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                     ) : (
-                      <span title="Waiver missing"><AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" /></span>
+                      <span title="Waiver missing"><AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" /></span>
                     )}
                   </div>
                 ))}
@@ -287,26 +287,26 @@ export default function CoachPortalPage() {
             {/* ── Schedule tab ── */}
             {activeTab === "schedule" && (
               <div className="space-y-3">
-                <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest px-1">Upcoming Games</h3>
+                <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest px-1">Upcoming Games</h3>
                 {DEMO_SCHEDULE.map((g, i) => (
-                  <div key={i} className="bg-bg-secondary border border-white/[0.06] rounded-2xl p-4">
+                  <div key={i} className="bg-white border border-light-gray rounded-2xl p-4">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
-                        <p className="text-white font-bold text-sm">vs {g.opponent}</p>
-                        <p className="text-text-secondary text-xs mt-0.5">{g.tournament}</p>
+                        <p className="text-navy font-bold text-sm">vs {g.opponent}</p>
+                        <p className="text-text-muted text-xs mt-0.5">{g.tournament}</p>
                       </div>
-                      <span className="bg-blue-500/15 text-blue-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                      <span className="bg-blue-100 text-blue-600 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
                         {g.court}
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-text-secondary" />
-                        <span className="text-text-secondary text-xs">{g.date}</span>
+                        <Calendar className="w-3.5 h-3.5 text-text-muted" />
+                        <span className="text-text-muted text-xs">{g.date}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-text-secondary" />
-                        <span className="text-text-secondary text-xs">{g.time}</span>
+                        <Clock className="w-3.5 h-3.5 text-text-muted" />
+                        <span className="text-text-muted text-xs">{g.time}</span>
                       </div>
                     </div>
                   </div>
@@ -317,23 +317,23 @@ export default function CoachPortalPage() {
             {/* ── Results tab ── */}
             {activeTab === "results" && (
               <div className="space-y-3">
-                <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest px-1">Recent Results</h3>
+                <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest px-1">Recent Results</h3>
                 {DEMO_RESULTS.map((r, i) => (
-                  <div key={i} className="bg-bg-secondary border border-white/[0.06] rounded-2xl px-4 py-3.5 flex items-center gap-4">
-                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${r.result === "W" ? "bg-emerald-500/20 text-emerald-400" : "bg-red/20 text-red"}`}>
+                  <div key={i} className="bg-white border border-light-gray rounded-2xl px-4 py-3.5 flex items-center gap-4">
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${r.result === "W" ? "bg-emerald-50 text-emerald-600" : "bg-red/20 text-red"}`}>
                       {r.result}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold text-sm truncate">vs {r.opponent}</p>
-                      <p className="text-text-secondary text-xs">{r.date}</p>
+                      <p className="text-navy font-semibold text-sm truncate">vs {r.opponent}</p>
+                      <p className="text-text-muted text-xs">{r.date}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-white font-bold font-heading tabular-nums">{r.myScore}–{r.oppScore}</p>
+                      <p className="text-navy font-bold font-heading tabular-nums">{r.myScore}–{r.oppScore}</p>
                     </div>
                   </div>
                 ))}
-                <div className="bg-bg-secondary border border-white/[0.06] rounded-xl px-4 py-3 text-center">
-                  <p className="text-text-secondary text-xs">Season record: <span className="text-white font-bold">2–1</span></p>
+                <div className="bg-white border border-light-gray rounded-xl px-4 py-3 text-center">
+                  <p className="text-text-muted text-xs">Season record: <span className="text-navy font-bold">2–1</span></p>
                 </div>
               </div>
             )}
@@ -342,27 +342,27 @@ export default function CoachPortalPage() {
             {activeTab === "lineup" && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
-                  <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest">Submit Lineup</h3>
-                  <span className="text-text-secondary text-xs">Next: Jan 20 · 10:30 AM</span>
+                  <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest">Submit Lineup</h3>
+                  <span className="text-text-muted text-xs">Next: Jan 20 · 10:30 AM</span>
                 </div>
 
                 {lineupSubmitted ? (
-                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 text-center">
-                    <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
-                    <p className="text-white font-bold mb-1">Lineup Submitted!</p>
-                    <p className="text-text-secondary text-sm mb-4">
+                  <div className="bg-emerald-50 border border-emerald-500/20 rounded-2xl p-6 text-center">
+                    <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto mb-3" />
+                    <p className="text-navy font-bold mb-1">Lineup Submitted!</p>
+                    <p className="text-text-muted text-sm mb-4">
                       {starters.length} starters · {lineup.length} active players
                     </p>
                     <button
                       onClick={() => { setLineupSubmitted(false); setLineup([]); setStarters([]); }}
-                      className="text-text-secondary text-xs font-semibold hover:text-white transition-colors"
+                      className="text-text-muted text-xs font-semibold hover:text-navy transition-colors"
                     >
                       Edit lineup
                     </button>
                   </div>
                 ) : (
                   <>
-                    <div className="bg-bg-secondary border border-white/[0.06] rounded-xl px-4 py-3 text-xs text-text-secondary">
+                    <div className="bg-white border border-light-gray rounded-xl px-4 py-3 text-xs text-text-muted">
                       Tap players to add to lineup. Long-press to mark as starter.
                     </div>
                     <div className="space-y-2">
@@ -374,21 +374,21 @@ export default function CoachPortalPage() {
                           className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl border transition-all text-left ${
                             lineup.includes(i)
                               ? starters.includes(i)
-                                ? "bg-amber-500/10 border-amber-500/30"
-                                : "bg-blue-600/10 border-blue-500/30"
-                              : "bg-bg-secondary border-white/[0.06]"
+                                ? "bg-amber-50 border-amber-300"
+                                : "bg-blue-50 border-blue-300"
+                              : "bg-white border-light-gray"
                           }`}
                         >
-                          <div className="w-8 h-8 bg-white/[0.04] rounded-full flex items-center justify-center flex-shrink-0">
-                            <span className="text-white/60 text-xs font-bold">#{player.jersey}</span>
+                          <div className="w-8 h-8 bg-off-white rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-text-muted text-xs font-bold">#{player.jersey}</span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className={`text-sm font-semibold ${lineup.includes(i) ? "text-white" : "text-white/60"}`}>{player.name}</p>
-                            <p className="text-text-secondary text-xs">{player.position}</p>
+                            <p className={`text-sm font-semibold ${lineup.includes(i) ? "text-navy" : "text-text-muted"}`}>{player.name}</p>
+                            <p className="text-text-muted text-xs">{player.position}</p>
                           </div>
                           {lineup.includes(i) && (
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                              starters.includes(i) ? "bg-amber-500/20 text-amber-400" : "bg-blue-600/20 text-blue-400"
+                              starters.includes(i) ? "bg-amber-50 text-amber-600" : "bg-blue-100 text-blue-600"
                             }`}>
                               {starters.includes(i) ? "Starter" : "Active"}
                             </span>
@@ -397,9 +397,9 @@ export default function CoachPortalPage() {
                       ))}
                     </div>
 
-                    <div className="flex items-center justify-between bg-bg-secondary border border-white/[0.06] rounded-xl px-4 py-3">
-                      <span className="text-text-secondary text-xs">{lineup.length} selected · {starters.length} starters</span>
-                      <div className="flex items-center gap-1.5 text-text-secondary text-[10px]">
+                    <div className="flex items-center justify-between bg-white border border-light-gray rounded-xl px-4 py-3">
+                      <span className="text-text-muted text-xs">{lineup.length} selected · {starters.length} starters</span>
+                      <div className="flex items-center gap-1.5 text-text-muted text-[10px]">
                         <span>Long-press = starter</span>
                       </div>
                     </div>
@@ -419,43 +419,43 @@ export default function CoachPortalPage() {
             {/* ── Game Day tab ── */}
             {activeTab === "gameday" && (
               <div className="space-y-3">
-                <h3 className="text-text-secondary text-xs font-bold uppercase tracking-widest px-1">Coach Checklist</h3>
+                <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest px-1">Coach Checklist</h3>
                 {GAMEDAY_RULES.map(({ icon: Icon, text }, i) => (
-                  <div key={i} className="bg-bg-secondary border border-white/[0.06] rounded-2xl px-4 py-4 flex items-center gap-4">
-                    <div className="w-9 h-9 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-4 h-4 text-blue-400" />
+                  <div key={i} className="bg-white border border-light-gray rounded-2xl px-4 py-4 flex items-center gap-4">
+                    <div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-4 h-4 text-blue-600" />
                     </div>
-                    <p className="text-white text-sm leading-snug">{text}</p>
+                    <p className="text-navy text-sm leading-snug">{text}</p>
                   </div>
                 ))}
 
                 {/* Contact Admin */}
-                <div className="bg-bg-secondary border border-white/[0.06] rounded-2xl p-4">
-                  <p className="text-text-secondary text-xs font-bold uppercase tracking-wider mb-3">Contact Admin</p>
+                <div className="bg-white border border-light-gray rounded-2xl p-4">
+                  <p className="text-text-muted text-xs font-bold uppercase tracking-wider mb-3">Contact Admin</p>
                   <div className="space-y-2">
-                    <a href="mailto:info@inspirecourtsaz.com" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.04] transition-colors group">
-                      <Mail className="w-4 h-4 text-text-secondary" />
-                      <span className="text-white text-sm">info@inspirecourtsaz.com</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-white/20 group-hover:text-white/40 ml-auto" />
+                    <a href="mailto:info@inspirecourtsaz.com" className="flex items-center gap-3 p-3 rounded-xl hover:bg-off-white transition-colors group">
+                      <Mail className="w-4 h-4 text-text-muted" />
+                      <span className="text-navy text-sm">info@inspirecourtsaz.com</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-light-gray group-hover:text-text-muted ml-auto" />
                     </a>
-                    <a href="tel:+14806001000" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.04] transition-colors group">
-                      <Phone className="w-4 h-4 text-text-secondary" />
-                      <span className="text-white text-sm">(480) 600-1000</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-white/20 group-hover:text-white/40 ml-auto" />
+                    <a href="tel:+14806001000" className="flex items-center gap-3 p-3 rounded-xl hover:bg-off-white transition-colors group">
+                      <Phone className="w-4 h-4 text-text-muted" />
+                      <span className="text-navy text-sm">(480) 600-1000</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-light-gray group-hover:text-text-muted ml-auto" />
                     </a>
                   </div>
                 </div>
 
                 {/* Venue */}
-                <div className="bg-bg-secondary border border-white/[0.06] rounded-2xl px-4 py-4">
-                  <p className="text-text-secondary text-xs font-bold uppercase tracking-wider mb-2">Venue</p>
-                  <p className="text-white text-sm font-semibold">Gilbert Sports Complex</p>
-                  <p className="text-text-secondary text-xs mt-0.5">2355 E Knox Rd, Gilbert, AZ 85234</p>
+                <div className="bg-white border border-light-gray rounded-2xl px-4 py-4">
+                  <p className="text-text-muted text-xs font-bold uppercase tracking-wider mb-2">Venue</p>
+                  <p className="text-navy text-sm font-semibold">Gilbert Sports Complex</p>
+                  <p className="text-text-muted text-xs mt-0.5">2355 E Knox Rd, Gilbert, AZ 85234</p>
                   <a
                     href="https://maps.apple.com/?q=Gilbert+Sports+Complex"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-blue-400 text-xs font-semibold mt-3 hover:text-blue-300 transition-colors"
+                    className="inline-flex items-center gap-1.5 text-blue-600 text-xs font-semibold mt-3 hover:text-blue-300 transition-colors"
                   >
                     Open in Maps <ExternalLink className="w-3 h-3" />
                   </a>
@@ -466,7 +466,7 @@ export default function CoachPortalPage() {
             {/* Back to lookup */}
             <button
               onClick={() => setStep("lookup")}
-              className="w-full border border-white/[0.08] hover:border-white/20 text-text-secondary hover:text-white rounded-xl py-3.5 text-sm font-semibold transition-colors"
+              className="w-full border border-light-gray hover:border-light-gray text-text-muted hover:text-navy rounded-xl py-3.5 text-sm font-semibold transition-colors"
             >
               ← Not you? Look up a different coach
             </button>

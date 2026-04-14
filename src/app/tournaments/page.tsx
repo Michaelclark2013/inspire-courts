@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -12,6 +13,37 @@ import {
   Shield,
   Clock,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Basketball Tournaments in Gilbert, AZ | Inspire Courts AZ",
+  description:
+    "Register for youth basketball tournaments at Inspire Courts AZ in Gilbert, Arizona. 10U–17U boys & girls divisions, 3+ game guarantee, professional game film available.",
+  alternates: {
+    canonical: "https://inspirecourtsaz.com/tournaments",
+  },
+  openGraph: {
+    title: "Basketball Tournaments | Inspire Courts AZ",
+    description:
+      "Youth basketball tournaments for 10U–17U boys & girls in Gilbert, AZ. Every team gets 3+ games, live scoring, and game film available.",
+    url: "https://inspirecourtsaz.com/tournaments",
+    images: [
+      {
+        url: "https://inspirecourtsaz.com/images/hero-bg.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Inspire Courts AZ basketball tournaments",
+      },
+    ],
+    siteName: "Inspire Courts AZ",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Basketball Tournaments | Inspire Courts AZ",
+    description: "Youth basketball tournaments 10U–17U in Gilbert, AZ. Register now at Inspire Courts AZ.",
+    images: ["https://inspirecourtsaz.com/images/hero-bg.jpg"],
+  },
+};
 import AnimateIn from "@/components/ui/AnimateIn";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 import BackToTop from "@/components/ui/BackToTop";

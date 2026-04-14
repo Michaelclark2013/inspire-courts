@@ -21,6 +21,8 @@ import {
   Snowflake,
   CalendarDays,
   Tv,
+  Users,
+  GraduationCap,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import AnimateIn from "@/components/ui/AnimateIn";
@@ -72,7 +74,7 @@ const localBusinessSchema = {
     "https://www.instagram.com/inspirecourts",
     "https://www.youtube.com/@AZFinestMixtape",
   ],
-  sport: ["Basketball", "Volleyball"],
+  sport: ["Basketball", "Volleyball", "Futsal", "Jiu-Jitsu"],
   amenityFeature: [
     { "@type": "LocationFeatureSpecification", name: "Indoor Courts", value: true },
     { "@type": "LocationFeatureSpecification", name: "Air Conditioning", value: true },
@@ -221,52 +223,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ── QUICK NAV ── */}
-      <section className="py-10 lg:py-14 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            {[
-              { href: "/training", title: "Private Training", desc: "1-on-1 and small group sessions", icon: "Target" },
-              { href: "/teams", title: "Team Inspire", desc: "Club basketball on MADE Hoops", icon: "Users" },
-              { href: "/prep", title: "Inspire Prep", desc: "Basketball prep school program", icon: "GraduationCap" },
-              { href: "https://inspirecourts.leagueapps.com/tournaments", title: "Tournaments", desc: "Register for OFF SZN HOOPS", icon: "Trophy", external: true },
-            ].map((item, i) => (
-              <AnimateIn key={item.title} delay={i * 80} className="h-full">
-                {item.external ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col bg-off-white border border-light-gray rounded-2xl p-5 lg:p-6 hover:border-red/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full"
-                  >
-                    <h3 className="text-navy font-[var(--font-chakra)] font-bold text-sm lg:text-base uppercase tracking-tight mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-text-muted text-xs lg:text-sm leading-relaxed flex-1">
-                      {item.desc}
-                    </p>
-                    <ArrowRight className="w-4 h-4 text-red mt-3 group-hover:translate-x-1 transition-transform" />
-                  </a>
-                ) : (
-                  <Link
-                    href={item.href}
-                    className="group flex flex-col bg-off-white border border-light-gray rounded-2xl p-5 lg:p-6 hover:border-red/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full"
-                  >
-                    <h3 className="text-navy font-[var(--font-chakra)] font-bold text-sm lg:text-base uppercase tracking-tight mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-text-muted text-xs lg:text-sm leading-relaxed flex-1">
-                      {item.desc}
-                    </p>
-                    <ArrowRight className="w-4 h-4 text-red mt-3 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                )}
-              </AnimateIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── JALEN WILLIAMS FEATURE ── */}
       <section className="py-14 lg:py-20 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -296,7 +252,7 @@ export default async function Home() {
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-light-gray" style={{ width: "100%", maxWidth: "340px", aspectRatio: "9/16" }}>
                   <iframe
                     className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/hLGrKauJzLc?rel=0&modestbranding=1"
+                    src="https://www.youtube.com/embed/hLGrKauJzLc?rel=0&modestbranding=1&start=37"
                     title="Jalen Williams grew up at Inspire Courts"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
@@ -344,8 +300,43 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ── UPCOMING TOURNAMENTS ── */}
+      {/* ── PROGRAMS ── */}
       <section className="py-14 lg:py-20 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            eyebrow="Programs"
+            title="Train. Compete. Grow."
+            description="From open runs to prep school — there's a place for every player at Inspire."
+          />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {[
+              { href: "/prep", icon: GraduationCap, title: "Inspire Prep", sub: "Prep School", desc: "Elite development meets academics. Daily training, national competition, college placement." },
+              { href: "/teams", icon: Users, title: "Team Inspire", sub: "Club Basketball", desc: "Competitive club ball on the MADE Hoops circuit. Where it all started." },
+              { href: "/open-gym", icon: CalendarDays, title: "Open Gym", sub: "Drop-In Runs", desc: "No team needed. Weekdays 10 AM – 3:30 PM on regulation hardwood." },
+              { href: "/training", icon: Zap, title: "Private Training", sub: "Skill Development", desc: "1-on-1 and small group sessions with experienced coaches." },
+            ].map((item, i) => (
+              <AnimateIn key={item.title} delay={i * 80}>
+                <Link href={item.href} className="group bg-white border border-light-gray rounded-2xl p-5 lg:p-6 hover:border-red/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+                  <div className="w-10 h-10 bg-navy rounded-lg flex items-center justify-center mb-4">
+                    <item.icon className="w-5 h-5 text-red" />
+                  </div>
+                  <h3 className="text-navy font-[var(--font-chakra)] font-bold text-sm uppercase tracking-tight mb-0.5">
+                    {item.title}
+                  </h3>
+                  <p className="text-text-muted text-[10px] uppercase tracking-wider mb-3">{item.sub}</p>
+                  <p className="text-text-muted text-xs leading-relaxed flex-1">
+                    {item.desc}
+                  </p>
+                  <ArrowRight className="w-4 h-4 text-red mt-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </AnimateIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── UPCOMING TOURNAMENTS ── */}
+      <section className="py-14 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Compete"
@@ -549,7 +540,7 @@ export default async function Home() {
           />
           <VideoShowcase
             videos={[
-              { id: "hLGrKauJzLc", title: "Jalen Williams grew up at Inspire Courts", name: "Jalen Williams", subtitle: "NBA — OKC Thunder", aspect: "9/16" },
+              { id: "hLGrKauJzLc", title: "Jalen Williams grew up at Inspire Courts", name: "Jalen Williams", subtitle: "NBA — OKC Thunder", aspect: "9/16", start: 37 },
               { id: "zYIBPJeUjGU", title: "Marvin Bagley III at Inspire Courts", name: "Marvin Bagley III", subtitle: "NBA — 8th Grade at Inspire" },
               { id: "FmcgFmICrf4", title: "Koa Peat training at Inspire Courts", name: "Koa Peat", subtitle: "#1 Recruit · Training at Inspire" },
               { id: "S8HgOlyWnDg", title: "Cody Williams training at Inspire Courts", name: "Cody Williams", subtitle: "NBA · Training at Inspire" },
@@ -569,7 +560,7 @@ export default async function Home() {
             <AnimateIn>
               <div className="rounded-2xl overflow-hidden shadow-lg border border-light-gray aspect-video lg:aspect-[4/3]">
                 <iframe
-                  src="https://maps.google.com/maps?q=1090+N+Fiesta+Blvd+Ste+101+%26+102+Gilbert+AZ+85233&output=embed&z=16"
+                  src="https://maps.google.com/maps?q=33.3579,-111.7890&output=embed&z=16"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

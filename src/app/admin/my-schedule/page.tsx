@@ -43,7 +43,7 @@ export default function MySchedulePage() {
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             My Schedule
           </h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">
@@ -60,7 +60,7 @@ export default function MySchedulePage() {
           <button
             onClick={() => loadGames(true)}
             disabled={refreshing}
-            className="flex items-center gap-1.5 border border-white/10 hover:border-white/20 text-text-secondary hover:text-white px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors disabled:opacity-40"
+            className="flex items-center gap-1.5 border border-white/10 hover:border-white/20 text-text-secondary hover:text-navy px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors disabled:opacity-40"
             title="Refresh"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
@@ -69,13 +69,13 @@ export default function MySchedulePage() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-8 md:py-16 text-white/40">
+        <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading schedule...
         </div>
       ) : games.length === 0 ? (
         <div className="bg-card border border-white/10 rounded-xl p-5 text-center">
-          <Calendar className="w-8 h-8 text-white/30 mx-auto mb-3" />
-          <p className="text-white font-semibold mb-1">No games on the schedule</p>
+          <Calendar className="w-8 h-8 text-navy/30 mx-auto mb-3" />
+          <p className="text-navy font-semibold mb-1">No games on the schedule</p>
           <p className="text-text-secondary text-sm mb-4">Games will appear here once they&apos;re created.</p>
           <Link
             href="/admin/scores/enter"
@@ -101,7 +101,7 @@ export default function MySchedulePage() {
 
           {upcoming.length > 0 && (
             <section>
-              <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-3">
+              <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-3">
                 Upcoming <span className="text-text-secondary font-normal">({upcoming.length})</span>
               </h2>
               <div className="space-y-2">
@@ -112,7 +112,7 @@ export default function MySchedulePage() {
 
           {recent.length > 0 && (
             <section>
-              <h2 className="text-white/50 font-bold text-sm uppercase tracking-wider mb-3">Recent</h2>
+              <h2 className="text-navy/50 font-bold text-sm uppercase tracking-wider mb-3">Recent</h2>
               <div className="space-y-2">
                 {recent.map((g) => <GameRow key={g.id} game={g} />)}
               </div>
@@ -147,17 +147,17 @@ function GameRow({ game }: { game: Game }) {
     <div className="bg-card border border-white/10 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 text-sm min-w-0">
-          <span className="text-white font-semibold truncate">{game.homeTeam}</span>
+          <span className="text-navy font-semibold truncate">{game.homeTeam}</span>
           {game.status !== "scheduled" ? (
             <>
-              <span className="text-white font-bold tabular-nums">{game.homeScore}</span>
-              <span className="text-white/30">—</span>
-              <span className="text-white font-bold tabular-nums">{game.awayScore}</span>
+              <span className="text-navy font-bold tabular-nums">{game.homeScore}</span>
+              <span className="text-navy/30">—</span>
+              <span className="text-navy font-bold tabular-nums">{game.awayScore}</span>
             </>
           ) : (
-            <span className="text-white/30">vs</span>
+            <span className="text-navy/30">vs</span>
           )}
-          <span className="text-white font-semibold truncate">{game.awayTeam}</span>
+          <span className="text-navy font-semibold truncate">{game.awayTeam}</span>
         </div>
         {(game.eventName || game.division) && (
           <p className="text-text-secondary text-xs mt-0.5 truncate">
@@ -168,7 +168,7 @@ function GameRow({ game }: { game: Game }) {
       <div className="flex items-center gap-3 text-xs text-text-secondary flex-shrink-0">
         {timeLabel && <span className="text-xs text-text-secondary">{timeLabel}</span>}
         {game.court && <span>{game.court}</span>}
-        <span className={`font-bold uppercase ${game.status === "live" ? "text-emerald-400" : game.status === "final" ? "text-white/40" : "text-white/30"}`}>
+        <span className={`font-bold uppercase ${game.status === "live" ? "text-emerald-400" : game.status === "final" ? "text-navy/40" : "text-navy/30"}`}>
           {game.status}
         </span>
       </div>

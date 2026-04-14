@@ -51,11 +51,11 @@ export default function LogoManagementPage() {
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Link href="/admin/teams" className="text-text-secondary hover:text-white transition-colors text-xs flex items-center gap-1">
+            <Link href="/admin/teams" className="text-text-secondary hover:text-navy transition-colors text-xs flex items-center gap-1">
               <ArrowLeft className="w-3 h-3" /> Teams
             </Link>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Team Logos
           </h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">
@@ -64,7 +64,7 @@ export default function LogoManagementPage() {
         </div>
         <button
           onClick={fetchLogos}
-          className="flex items-center gap-2 text-text-secondary hover:text-white transition-colors text-xs border border-border rounded-sm px-3 py-2"
+          className="flex items-center gap-2 text-text-secondary hover:text-navy transition-colors text-xs border border-border rounded-sm px-3 py-2"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
@@ -81,7 +81,7 @@ export default function LogoManagementPage() {
               value={customTeam}
               onChange={(e) => setCustomTeam(e.target.value)}
               placeholder="Enter exact team name..."
-              className="w-full bg-bg border border-border rounded-sm px-3 py-2.5 text-white text-sm focus:outline-none focus:border-accent placeholder:text-text-secondary/50"
+              className="w-full bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent placeholder:text-text-secondary/50"
             />
           </div>
           {customTeam.trim() && (
@@ -106,7 +106,7 @@ export default function LogoManagementPage() {
       ) : entries.length === 0 ? (
         <div className="bg-bg-secondary border border-border rounded-sm p-10 text-center">
           <ImageIcon className="w-10 h-10 text-text-secondary/30 mx-auto mb-3" />
-          <p className="text-white font-semibold mb-1">No logos uploaded yet</p>
+          <p className="text-navy font-semibold mb-1">No logos uploaded yet</p>
           <p className="text-text-secondary text-sm mb-4">
             Upload logos from the Teams page by expanding any team row, or use the form above.
           </p>
@@ -125,7 +125,7 @@ export default function LogoManagementPage() {
               className="bg-bg-secondary border border-border rounded-sm p-4 flex flex-col items-center gap-3 group"
             >
               <TeamLogo teamName={teamName} logoUrl={url} size={64} />
-              <p className="text-white text-xs font-semibold text-center leading-tight line-clamp-2">
+              <p className="text-navy text-xs font-semibold text-center leading-tight line-clamp-2">
                 {teamName}
               </p>
               <p className="text-text-secondary text-[10px] text-center truncate w-full" title={url}>

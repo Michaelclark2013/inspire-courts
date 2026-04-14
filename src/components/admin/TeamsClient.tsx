@@ -88,7 +88,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total</span>
             <Users className="w-4 h-4 text-text-secondary" />
           </div>
-          <p className="text-2xl font-bold text-white">{teams.length}</p>
+          <p className="text-2xl font-bold text-navy">{teams.length}</p>
         </div>
         <div className="bg-bg-secondary border border-red-500/20 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
@@ -122,19 +122,19 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search teams or coaches..."
-            className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50"
+            className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50"
           />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-white text-sm focus:outline-none focus:border-accent">
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent">
           {statuses.map((s) => <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>)}
         </select>
-        <select value={ageFilter} onChange={(e) => setAgeFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-white text-sm focus:outline-none focus:border-accent">
+        <select value={ageFilter} onChange={(e) => setAgeFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent">
           {ages.map((a) => <option key={a} value={a}>{a === "All" ? "All Ages" : a}</option>)}
         </select>
         <button
           onClick={() => downloadCSV(filtered, "teams.csv")}
           title="Download all filtered (CSV)"
-          className="flex items-center gap-2 bg-bg border border-border rounded-sm px-3 py-2.5 text-text-secondary hover:text-white hover:border-accent/50 text-sm transition-colors flex-shrink-0"
+          className="flex items-center gap-2 bg-bg border border-border rounded-sm px-3 py-2.5 text-text-secondary hover:text-navy hover:border-accent/50 text-sm transition-colors flex-shrink-0"
         >
           <Download className="w-4 h-4" />
           <span className="hidden sm:inline">CSV</span>
@@ -153,7 +153,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
           </button>
           <button
             onClick={() => setSelectedIndices(new Set())}
-            className="text-text-secondary hover:text-white text-xs ml-auto transition-colors"
+            className="text-text-secondary hover:text-navy text-xs ml-auto transition-colors"
           >
             Clear
           </button>
@@ -198,7 +198,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                       className="accent-accent cursor-pointer"
                     />
                   </td>
-                  <td className="px-4 py-3 text-white font-medium">{t.teamName}</td>
+                  <td className="px-4 py-3 text-navy font-medium">{t.teamName}</td>
                   <td className="px-4 py-3 text-text-secondary">{t.coach}</td>
                   <td className="px-4 py-3">
                     {t.phone && t.phone !== "—" ? (
@@ -214,8 +214,8 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                       <span className="text-text-secondary/30 text-xs">—</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-white">{t.age}</td>
-                  <td className="px-4 py-3 text-white">{t.gender}</td>
+                  <td className="px-4 py-3 text-navy">{t.age}</td>
+                  <td className="px-4 py-3 text-navy">{t.gender}</td>
                   <td className="px-4 py-3">
                     <span className={cn("inline-block px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider border", STATUS_COLORS[t.status] || "bg-bg text-text-secondary border-border")}>
                       {t.status}

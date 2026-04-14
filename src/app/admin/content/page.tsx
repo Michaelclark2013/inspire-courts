@@ -371,7 +371,7 @@ export default function ContentEditorPage() {
           <div className="flex gap-3">
             <button
               onClick={discard}
-              className="text-white/50 hover:text-white text-xs font-bold uppercase tracking-wide transition-colors"
+              className="text-navy/50 hover:text-navy text-xs font-bold uppercase tracking-wide transition-colors"
             >
               Discard
             </button>
@@ -388,10 +388,10 @@ export default function ContentEditorPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4 md:mb-8">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-[var(--font-chakra)]">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-[var(--font-chakra)]">
             Content Editor
           </h1>
-          <p className="text-white/60 text-sm mt-1 hidden md:block">
+          <p className="text-navy/60 text-sm mt-1 hidden md:block">
             Edit all text, images, and content across the website
           </p>
         </div>
@@ -442,7 +442,7 @@ export default function ContentEditorPage() {
                 className={`relative px-3 md:px-4 py-2 md:py-2.5 rounded-full text-xs font-bold uppercase tracking-wide transition-colors whitespace-nowrap ${
                   activePage === id
                     ? "bg-red text-white"
-                    : "bg-white/10 text-white/60 hover:text-white hover:bg-white/20"
+                    : "bg-white/10 text-navy/60 hover:text-navy hover:bg-white/20"
                 }`}
               >
                 {content.pages[id].label}
@@ -455,7 +455,7 @@ export default function ContentEditorPage() {
         </div>
         <button
           onClick={toggleAllSections}
-          className="flex items-center gap-1.5 text-white/40 hover:text-white text-xs font-bold uppercase tracking-wide transition-colors flex-shrink-0"
+          className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide transition-colors flex-shrink-0"
           title="Expand/collapse all sections"
         >
           <ChevronsUpDown className="w-4 h-4" />
@@ -487,14 +487,14 @@ export default function ContentEditorPage() {
               >
                 <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
                   {isExpanded ? (
-                    <ChevronDown className="w-4 h-4 text-white/40 flex-shrink-0" />
+                    <ChevronDown className="w-4 h-4 text-navy/40 flex-shrink-0" />
                   ) : (
-                    <ChevronRight className="w-4 h-4 text-white/40 flex-shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-navy/40 flex-shrink-0" />
                   )}
-                  <span className="text-white font-bold text-sm uppercase tracking-wide truncate">
+                  <span className="text-navy font-bold text-sm uppercase tracking-wide truncate">
                     {section.name}
                   </span>
-                  <span className="text-white/30 text-xs flex-shrink-0">
+                  <span className="text-navy/30 text-xs flex-shrink-0">
                     {Object.keys(section.fields).length}f
                     {section.list ? ` +${section.list.items.length}` : ""}
                   </span>
@@ -503,7 +503,7 @@ export default function ContentEditorPage() {
                   )}
                 </div>
                 {lastEdited && !isSectionDirty && (
-                  <span className="hidden sm:flex items-center gap-1 text-white/25 text-[10px] flex-shrink-0 ml-2">
+                  <span className="hidden sm:flex items-center gap-1 text-navy/25 text-[10px] flex-shrink-0 ml-2">
                     <Clock className="w-3 h-3" />
                     {timeAgo(lastEdited)}
                   </span>
@@ -515,18 +515,18 @@ export default function ContentEditorPage() {
                 <div className="px-4 md:px-6 pb-4 md:pb-6 space-y-4 md:space-y-5">
                   {/* Section name editor */}
                   <div className="flex items-center gap-2 md:gap-3 pb-3 md:pb-4 border-b border-white/10">
-                    <label className="text-white/40 text-xs font-bold uppercase tracking-wider whitespace-nowrap">
+                    <label className="text-navy/40 text-xs font-bold uppercase tracking-wider whitespace-nowrap">
                       Name:
                     </label>
                     <input
                       type="text"
                       value={section.name}
                       onChange={(e) => updateSectionName(activePage, sIdx, e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors flex-1"
+                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors flex-1"
                     />
                     <button
                       onClick={() => removeSection(activePage, sIdx)}
-                      className="text-white/30 hover:text-red-400 p-1 transition-colors flex-shrink-0"
+                      className="text-navy/30 hover:text-red-400 p-1 transition-colors flex-shrink-0"
                       title="Remove section"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -542,7 +542,7 @@ export default function ContentEditorPage() {
                         ) : field.type === "textarea" ? (
                           <AlignLeft className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
                         ) : (
-                          <Type className="w-3.5 h-3.5 text-white/40 flex-shrink-0" />
+                          <Type className="w-3.5 h-3.5 text-navy/40 flex-shrink-0" />
                         )}
                         <input
                           type="text"
@@ -550,11 +550,11 @@ export default function ContentEditorPage() {
                           onChange={(e) =>
                             updateFieldLabel(activePage, sIdx, key, e.target.value)
                           }
-                          className="bg-transparent text-white/70 text-xs font-bold uppercase tracking-wider focus:outline-none focus:text-white border-b border-transparent focus:border-white/20 pb-0.5 flex-1 min-w-0"
+                          className="bg-transparent text-navy/70 text-xs font-bold uppercase tracking-wider focus:outline-none focus:text-navy border-b border-transparent focus:border-white/20 pb-0.5 flex-1 min-w-0"
                         />
                         <button
                           onClick={() => removeField(activePage, sIdx, key)}
-                          className="text-white/20 hover:text-red-400 transition-colors flex-shrink-0"
+                          className="text-navy/20 hover:text-red-400 transition-colors flex-shrink-0"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -564,7 +564,7 @@ export default function ContentEditorPage() {
                           value={field.value}
                           onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
                           rows={3}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
+                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
                         />
                       ) : field.type === "image" ? (
                         <div className="space-y-2">
@@ -572,7 +572,7 @@ export default function ContentEditorPage() {
                             type="text"
                             value={field.value}
                             onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
                             placeholder="https://example.com/image.jpg"
                           />
                           {field.value && (
@@ -591,7 +591,7 @@ export default function ContentEditorPage() {
                           type="text"
                           value={field.value}
                           onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
+                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
                         />
                       )}
                     </div>
@@ -601,19 +601,19 @@ export default function ContentEditorPage() {
                   <div className="flex flex-wrap gap-2 pt-2">
                     <button
                       onClick={() => addField(activePage, sIdx, "text")}
-                      className="flex items-center gap-1.5 text-white/40 hover:text-white text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
                     >
                       <Type className="w-3 h-3" /> Text
                     </button>
                     <button
                       onClick={() => addField(activePage, sIdx, "textarea")}
-                      className="flex items-center gap-1.5 text-white/40 hover:text-white text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
                     >
                       <AlignLeft className="w-3 h-3" /> Paragraph
                     </button>
                     <button
                       onClick={() => addField(activePage, sIdx, "image")}
-                      className="flex items-center gap-1.5 text-white/40 hover:text-white text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
                     >
                       <Image className="w-3 h-3" /> Image
                     </button>
@@ -624,7 +624,7 @@ export default function ContentEditorPage() {
                     <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-white/10">
                       <div className="flex items-center gap-2 mb-3 md:mb-4">
                         <List className="w-4 h-4 text-red" />
-                        <span className="text-white font-bold text-xs uppercase tracking-wider">
+                        <span className="text-navy font-bold text-xs uppercase tracking-wider">
                           {section.list.label} ({section.list.items.length})
                         </span>
                       </div>
@@ -635,12 +635,12 @@ export default function ContentEditorPage() {
                             className="bg-white/5 border border-white/10 rounded-lg p-3 md:p-4"
                           >
                             <div className="flex items-center justify-between mb-2 md:mb-3">
-                              <span className="text-white/40 text-xs font-bold uppercase">
+                              <span className="text-navy/40 text-xs font-bold uppercase">
                                 Item {iIdx + 1}
                               </span>
                               <button
                                 onClick={() => removeListItem(activePage, sIdx, iIdx)}
-                                className="text-white/20 hover:text-red-400 transition-colors"
+                                className="text-navy/20 hover:text-red-400 transition-colors"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -648,7 +648,7 @@ export default function ContentEditorPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                               {section.list!.itemFields.map((fieldName) => (
                                 <div key={fieldName}>
-                                  <label className="block text-white/40 text-[10px] font-bold uppercase tracking-wider mb-1">
+                                  <label className="block text-navy/40 text-[10px] font-bold uppercase tracking-wider mb-1">
                                     {fieldName}
                                   </label>
                                   {fieldName === "description" || fieldName === "features" ? (
@@ -664,7 +664,7 @@ export default function ContentEditorPage() {
                                         )
                                       }
                                       rows={2}
-                                      className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
+                                      className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
                                     />
                                   ) : (
                                     <input
@@ -679,7 +679,7 @@ export default function ContentEditorPage() {
                                           e.target.value
                                         )
                                       }
-                                      className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
+                                      className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
                                     />
                                   )}
                                 </div>
@@ -702,7 +702,7 @@ export default function ContentEditorPage() {
                   {!section.list && (
                     <button
                       onClick={() => addListToSection(activePage, sIdx)}
-                      className="flex items-center gap-1.5 text-white/30 hover:text-white text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 text-navy/30 hover:text-navy text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
                     >
                       <List className="w-3 h-3" /> Add List
                     </button>
@@ -717,7 +717,7 @@ export default function ContentEditorPage() {
       {/* Add Section */}
       <button
         onClick={() => addSection(activePage)}
-        className="flex items-center gap-2 text-white/40 hover:text-white text-sm font-bold uppercase tracking-wide mt-4 md:mt-6 bg-white/5 hover:bg-white/10 px-5 py-3 rounded-xl transition-colors w-full justify-center border border-dashed border-white/10 hover:border-white/20"
+        className="flex items-center gap-2 text-navy/40 hover:text-navy text-sm font-bold uppercase tracking-wide mt-4 md:mt-6 bg-white/5 hover:bg-white/10 px-5 py-3 rounded-xl transition-colors w-full justify-center border border-dashed border-white/10 hover:border-white/20"
       >
         <Plus className="w-4 h-4" /> Add Section to {currentPage.label}
       </button>
@@ -731,7 +731,7 @@ export default function ContentEditorPage() {
           </span>
           <button
             onClick={discard}
-            className="flex items-center gap-1.5 text-white/50 hover:text-white text-xs font-bold uppercase tracking-wide px-3 py-2 rounded-full hover:bg-white/10 transition-colors"
+            className="flex items-center gap-1.5 text-navy/50 hover:text-navy text-xs font-bold uppercase tracking-wide px-3 py-2 rounded-full hover:bg-white/10 transition-colors"
           >
             <X className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Discard</span>

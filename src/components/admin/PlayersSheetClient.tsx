@@ -74,7 +74,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
             Players by Division
           </h3>
           {divData.length > 0 ? (
@@ -87,7 +87,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
           )}
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
-          <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+          <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
             Top Teams by Player Count
           </h3>
           {teamData.length > 0 ? (
@@ -110,13 +110,13 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search players, parents, teams..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
           />
         </div>
         <select
           value={divFilter}
           onChange={(e) => setDivFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
         >
           {divisions.map((d) => (
             <option key={d} value={d}>{d === "All" ? "All Divisions" : d}</option>
@@ -125,7 +125,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
         <select
           value={teamFilter}
           onChange={(e) => setTeamFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
         >
           {teams.slice(0, 50).map((t) => (
             <option key={t} value={t}>{t === "All" ? "All Teams" : t}</option>
@@ -134,7 +134,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
         <button
           onClick={() => downloadPlayersCSV(filtered, "players.csv")}
           title="Download CSV"
-          className="flex items-center gap-1.5 bg-bg-secondary border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-white hover:border-accent/50 text-xs transition-colors flex-shrink-0"
+          className="flex items-center gap-1.5 bg-bg-secondary border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-navy hover:border-accent/50 text-xs transition-colors flex-shrink-0"
         >
           <Download className="w-3.5 h-3.5" /> CSV
         </button>
@@ -144,7 +144,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
       <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
         <div className="px-4 py-3 border-b border-border">
           <p className="text-text-secondary text-xs">
-            <span className="text-white font-semibold">{filtered.length}</span> players
+            <span className="text-navy font-semibold">{filtered.length}</span> players
           </p>
         </div>
         <div className="overflow-x-auto">
@@ -166,7 +166,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
               ) : (
                 filtered.map((p, i) => (
                   <tr key={i} className="hover:bg-bg/40 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-white">{p.name}</td>
+                    <td className="px-4 py-3 font-semibold text-navy">{p.name}</td>
                     <td className="px-4 py-3 text-text-secondary">{p.parent}</td>
                     <td className="px-4 py-3 text-text-secondary text-xs max-w-[140px] truncate">{p.team}</td>
                     <td className="px-4 py-3">

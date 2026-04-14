@@ -22,7 +22,7 @@ export default async function PortalLayout({
   // Public player/coach portal pages — no auth required, no sidebar
   if (isPublic) {
     return (
-      <div className="min-h-screen bg-bg">
+      <div className="min-h-screen bg-off-white">
         {children}
       </div>
     );
@@ -40,7 +40,7 @@ export default async function PortalLayout({
   return (
     <SessionProvider>
       <PortalViewProvider>
-        <div className="min-h-screen bg-bg flex">
+        <div className="min-h-screen bg-off-white flex">
           <PortalSidebar />
           <div className="flex-1 min-w-0">{children}</div>
         </div>

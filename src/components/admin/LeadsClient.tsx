@@ -71,7 +71,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total Leads</span>
-          <p className="text-2xl font-bold text-white mt-2">{leads.length}</p>
+          <p className="text-2xl font-bold text-navy mt-2">{leads.length}</p>
         </div>
         <div className="bg-bg-secondary border border-red-500/20 rounded-sm p-4">
           <span className="text-red-400 text-xs font-bold uppercase tracking-wider">New</span>
@@ -82,14 +82,14 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
             <MessageSquare className="w-3.5 h-3.5 text-text-secondary" />
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Chat</span>
           </div>
-          <p className="text-2xl font-bold text-white mt-2">{chatCount}</p>
+          <p className="text-2xl font-bold text-navy mt-2">{chatCount}</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center gap-1.5">
             <Mail className="w-3.5 h-3.5 text-text-secondary" />
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Contact Form</span>
           </div>
-          <p className="text-2xl font-bold text-white mt-2">{formCount}</p>
+          <p className="text-2xl font-bold text-navy mt-2">{formCount}</p>
         </div>
       </div>
 
@@ -97,12 +97,12 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search leads..." className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50" />
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search leads..." className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50" />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-white text-sm focus:outline-none focus:border-accent">
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent">
           {statuses.map((s) => <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>)}
         </select>
-        <select value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-white text-sm focus:outline-none focus:border-accent">
+        <select value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent">
           {sources.map((s) => <option key={s} value={s}>{s === "All" ? "All Sources" : s}</option>)}
         </select>
       </div>
@@ -119,7 +119,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                 {lead.source === "Contact Form" ? <Mail className="w-3.5 h-3.5 text-accent" /> : <MessageSquare className="w-3.5 h-3.5 text-accent" />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white font-medium truncate">{lead.name}</p>
+                <p className="text-navy font-medium truncate">{lead.name}</p>
                 <p className="text-text-secondary text-xs truncate">{lead.email} {lead.phone && lead.phone !== "—" ? `• ${lead.phone}` : ""}</p>
               </div>
               <span title={STATUS_TITLES[lead.status]} className={cn("text-xs px-2 py-0.5 rounded-sm border font-bold uppercase tracking-wider flex-shrink-0 cursor-help", STATUS_COLORS[lead.status] || "bg-bg text-text-secondary border-border")}>
@@ -139,27 +139,27 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                   <div>
                     <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Email</p>
-                    <p className="text-white">{lead.email || "—"}</p>
+                    <p className="text-navy">{lead.email || "—"}</p>
                   </div>
                   <div>
                     <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Phone</p>
-                    <p className="text-white">{lead.phone || "—"}</p>
+                    <p className="text-navy">{lead.phone || "—"}</p>
                   </div>
                   <div>
                     <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Source</p>
-                    <p className="text-white">{lead.source}</p>
+                    <p className="text-navy">{lead.source}</p>
                   </div>
                 </div>
                 {lead.summary && lead.summary !== "—" && (
                   <div>
                     <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Summary</p>
-                    <p className="text-white text-sm">{lead.summary}</p>
+                    <p className="text-navy text-sm">{lead.summary}</p>
                   </div>
                 )}
                 {lead.transcript && lead.transcript !== "—" && (
                   <div>
                     <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Chat Transcript</p>
-                    <pre className="text-white/80 text-xs bg-bg rounded-sm p-3 whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto">{lead.transcript}</pre>
+                    <pre className="text-navy/80 text-xs bg-bg rounded-sm p-3 whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto">{lead.transcript}</pre>
                   </div>
                 )}
               </div>

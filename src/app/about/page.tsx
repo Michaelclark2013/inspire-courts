@@ -61,7 +61,7 @@ const sportsOrgSchema = {
     "https://www.instagram.com/inspirecourts",
     "https://www.youtube.com/@AZFinestMixtape",
   ],
-  sport: ["Basketball", "Volleyball"],
+  sport: ["Basketball", "Volleyball", "Futsal", "Jiu-Jitsu"],
 };
 
 export default function AboutPage() {

@@ -195,10 +195,10 @@ export default function PrepPage() {
                   Inspire Prep Alumni
                 </span>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy mb-6 font-[var(--font-chakra)] leading-[0.95]">
-                  Adan Diggs <span className="text-red">Came Up Here</span>
+                  Adan Diggs <span className="text-red">Started Here</span>
                 </h2>
                 <p className="text-text-muted text-lg leading-relaxed mb-6">
-                  Adan Diggs developed his game through Inspire Prep — training daily, competing against top talent, and earning his opportunity. This is what the program builds.
+                  Before the offers and the highlights, it started right here — on these courts. Adan Diggs built his game through Inspire Prep, training daily and competing against top talent. This is where the foundation was laid.
                 </p>
                 <Link
                   href="/contact?type=Inspire+Prep"
@@ -216,11 +216,12 @@ export default function PrepPage() {
               >
                 <iframe
                   className="absolute inset-0 w-full h-full"
-                  src="https://www.youtube.com/embed/HXmJvuzzPxg?rel=0&modestbranding=1"
-                  title="Adan Diggs — Inspire Prep"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  src="https://www.instagram.com/reel/CwLx4IPspHf/embed/"
+                  title="Adan Diggs — Inspire Prep Highlights"
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                   allowFullScreen
                   loading="lazy"
+                  style={{ border: "none" }}
                 />
               </div>
             </AnimateIn>

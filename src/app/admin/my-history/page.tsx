@@ -49,7 +49,7 @@ export default function MyHistoryPage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           My Work History
         </h1>
         <p className="text-text-secondary text-sm mt-1 hidden md:block">
@@ -60,28 +60,28 @@ export default function MyHistoryPage() {
       {/* Summary cards */}
       <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mb-4 md:mb-8">
         <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
-          <div className="flex items-center gap-1.5 text-white/50 text-[10px] uppercase tracking-wider mb-1.5">
+          <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
             <History className="w-3 h-3" /> Shifts
           </div>
-          <p className="text-white text-xl md:text-2xl font-bold">{shifts.length}</p>
+          <p className="text-navy text-xl md:text-2xl font-bold">{shifts.length}</p>
         </div>
         <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
-          <div className="flex items-center gap-1.5 text-white/50 text-[10px] uppercase tracking-wider mb-1.5">
+          <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
             <Clock className="w-3 h-3" /> Hours
           </div>
-          <p className="text-white text-xl md:text-2xl font-bold">{totalHours.toFixed(1)}</p>
+          <p className="text-navy text-xl md:text-2xl font-bold">{totalHours.toFixed(1)}</p>
         </div>
         <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
-          <div className="flex items-center gap-1.5 text-white/50 text-[10px] uppercase tracking-wider mb-1.5">
+          <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
             <DollarSign className="w-3 h-3" /> Earned
           </div>
-          <p className="text-white text-xl md:text-2xl font-bold">${totalPay.toFixed(2)}</p>
+          <p className="text-navy text-xl md:text-2xl font-bold">${totalPay.toFixed(2)}</p>
         </div>
         <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
-          <div className="flex items-center gap-1.5 text-white/50 text-[10px] uppercase tracking-wider mb-1.5">
+          <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
             <DollarSign className="w-3 h-3" /> Avg
           </div>
-          <p className="text-white text-xl md:text-2xl font-bold">
+          <p className="text-navy text-xl md:text-2xl font-bold">
             {shifts.length > 0 ? `$${(totalPay / shifts.length).toFixed(2)}` : "—"}
           </p>
         </div>
@@ -91,25 +91,25 @@ export default function MyHistoryPage() {
       <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
         <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3 flex-wrap">
           <History className="w-4 h-4 text-red flex-shrink-0" />
-          <h2 className="text-white font-bold text-sm uppercase tracking-wider flex-1">Shift History</h2>
+          <h2 className="text-navy font-bold text-sm uppercase tracking-wider flex-1">Shift History</h2>
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-navy/30" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search events or notes..."
-              className="bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-white text-xs focus:outline-none focus:border-red placeholder:text-white/25 w-48"
+              className="bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-navy text-xs focus:outline-none focus:border-red placeholder:text-navy/25 w-48"
             />
           </div>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-8 md:py-16 text-white/40">
+          <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
             <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading history...
           </div>
         ) : shifts.length === 0 ? (
-          <div className="text-center py-16 text-white/40">
+          <div className="text-center py-16 text-navy/40">
             <History className="w-8 h-8 mx-auto mb-3 opacity-40" />
             <p className="text-sm">No shifts found. Your check-out records will appear here.</p>
           </div>
@@ -117,7 +117,7 @@ export default function MyHistoryPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
+                <tr className="border-b border-white/10 text-navy/50 text-xs uppercase tracking-wider">
                   <th className="text-left px-6 py-3 font-semibold">Date</th>
                   <th className="text-left px-6 py-3 font-semibold">Event</th>
                   <th className="text-center px-6 py-3 font-semibold">Hours</th>
@@ -128,16 +128,16 @@ export default function MyHistoryPage() {
               <tbody>
                 {filteredShifts.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-white/40 text-sm">
+                    <td colSpan={5} className="px-6 py-8 text-center text-navy/40 text-sm">
                       No shifts match &ldquo;{search}&rdquo;
                     </td>
                   </tr>
                 ) : (
                   filteredShifts.map((s, i) => (
                     <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                      <td className="px-6 py-3 text-white">{s.date}</td>
+                      <td className="px-6 py-3 text-navy">{s.date}</td>
                       <td className="px-6 py-3 text-text-secondary">{s.event || "—"}</td>
-                      <td className="px-6 py-3 text-center text-white tabular-nums">{s.hoursWorked || "—"}</td>
+                      <td className="px-6 py-3 text-center text-navy tabular-nums">{s.hoursWorked || "—"}</td>
                       <td className="px-6 py-3 text-right text-emerald-400 tabular-nums">{s.amount || "—"}</td>
                       <td className="px-6 py-3 text-text-secondary text-xs">{s.notes || "—"}</td>
                     </tr>

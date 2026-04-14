@@ -74,10 +74,10 @@ const FORMAT_LABELS: Record<string, string> = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  draft: "bg-white/10 text-white/60",
+  draft: "bg-white/10 text-navy/60",
   published: "bg-blue-500/20 text-blue-400",
   active: "bg-emerald-500/20 text-emerald-400",
-  completed: "bg-white/10 text-white/40",
+  completed: "bg-white/10 text-navy/40",
 };
 
 const TABS = ["teams", "bracket", "schedule", "standings"] as const;
@@ -182,7 +182,7 @@ export default function TournamentDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16 text-white/40">
+      <div className="flex items-center justify-center py-16 text-navy/40">
         <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading tournament details...
       </div>
     );
@@ -190,7 +190,7 @@ export default function TournamentDetailPage() {
 
   if (!data) {
     return (
-      <div className="p-6 text-white/40 text-sm">Tournament not found.</div>
+      <div className="p-6 text-navy/40 text-sm">Tournament not found.</div>
     );
   }
 
@@ -202,7 +202,7 @@ export default function TournamentDetailPage() {
       {/* Back link + Header */}
       <Link
         href="/admin/tournaments/manage"
-        className="text-text-secondary text-xs hover:text-white flex items-center gap-1 mb-4 transition-colors"
+        className="text-text-secondary text-xs hover:text-navy flex items-center gap-1 mb-4 transition-colors"
       >
         <ChevronLeft className="w-3 h-3" /> Back to Tournaments
       </Link>
@@ -210,7 +210,7 @@ export default function TournamentDetailPage() {
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl font-bold text-white font-heading">
+            <h1 className="text-2xl font-bold text-navy font-heading">
               {data.name}
             </h1>
             <span
@@ -237,7 +237,7 @@ export default function TournamentDetailPage() {
         <div className="flex items-center gap-2">
           <Link
             href={`/admin/tournaments/${id}/registrations`}
-            className="flex items-center gap-2 text-white/50 hover:text-white text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-white/10 rounded-lg hover:border-white/20 transition-colors"
+            className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-white/10 rounded-lg hover:border-white/20 transition-colors"
           >
             <Users className="w-4 h-4" /> Registrations
           </Link>
@@ -266,7 +266,7 @@ export default function TournamentDetailPage() {
           {data.status === "active" && (
             <button
               onClick={() => updateStatus("completed")}
-              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-navy px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
             >
               <CheckCircle2 className="w-4 h-4" /> Complete
             </button>
@@ -277,23 +277,23 @@ export default function TournamentDetailPage() {
       {/* KPI Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
+          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
             Teams
           </p>
-          <p className="text-white text-2xl font-bold font-heading">
+          <p className="text-navy text-2xl font-bold font-heading">
             {data.teams.length}
           </p>
         </div>
         <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
+          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
             Games
           </p>
-          <p className="text-white text-2xl font-bold font-heading">
+          <p className="text-navy text-2xl font-bold font-heading">
             {data.bracket.length}
           </p>
         </div>
         <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
+          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
             Live
           </p>
           <p className="text-emerald-400 text-2xl font-bold font-heading">
@@ -301,12 +301,12 @@ export default function TournamentDetailPage() {
           </p>
         </div>
         <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
+          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
             Complete
           </p>
-          <p className="text-white text-2xl font-bold font-heading">
+          <p className="text-navy text-2xl font-bold font-heading">
             {finalGames}
-            <span className="text-white/30 text-lg">
+            <span className="text-navy/30 text-lg">
               /{data.bracket.length}
             </span>
           </p>
@@ -322,7 +322,7 @@ export default function TournamentDetailPage() {
             className={`flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
               tab === t
                 ? "bg-red text-white"
-                : "text-white/40 hover:text-white hover:bg-white/5"
+                : "text-navy/40 hover:text-navy hover:bg-white/5"
             }`}
           >
             {t === "teams" && <Users className="w-3.5 h-3.5 inline mr-1.5" />}
@@ -349,7 +349,7 @@ export default function TournamentDetailPage() {
               onSubmit={addTeam}
               className="bg-card border border-white/10 rounded-xl p-5"
             >
-              <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+              <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
                 <Plus className="w-4 h-4 text-red" /> Add Team
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -359,7 +359,7 @@ export default function TournamentDetailPage() {
                   onChange={(e) => setTeamName(e.target.value)}
                   placeholder="Team name *"
                   required
-                  className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                  className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
                 />
                 <input
                   type="number"
@@ -367,7 +367,7 @@ export default function TournamentDetailPage() {
                   value={teamSeed}
                   onChange={(e) => setTeamSeed(e.target.value)}
                   placeholder="Seed #"
-                  className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                  className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
                 />
                 {data.format === "pool_play" && (
                   <input
@@ -375,14 +375,14 @@ export default function TournamentDetailPage() {
                     value={teamPool}
                     onChange={(e) => setTeamPool(e.target.value)}
                     placeholder="Pool (A, B...)"
-                    className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
                   />
                 )}
                 {data.divisions.length > 0 && (
                   <select
                     value={teamDivision}
                     onChange={(e) => setTeamDivision(e.target.value)}
-                    className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red cursor-pointer"
+                    className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red cursor-pointer"
                   >
                     <option value="">Division</option>
                     {data.divisions.map((d) => (
@@ -412,12 +412,12 @@ export default function TournamentDetailPage() {
           <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
             <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2">
               <Users className="w-4 h-4 text-red" />
-              <h3 className="text-white font-bold text-sm uppercase tracking-wider">
+              <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
                 Teams ({data.teams.length})
               </h3>
             </div>
             {data.teams.length === 0 ? (
-              <div className="px-5 py-8 text-center text-white/30 text-sm">
+              <div className="px-5 py-8 text-center text-navy/30 text-sm">
                 No teams added yet
               </div>
             ) : (
@@ -428,11 +428,11 @@ export default function TournamentDetailPage() {
                     className="px-5 py-3 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-white/30 text-xs font-bold w-6 text-center tabular-nums">
+                      <span className="text-navy/30 text-xs font-bold w-6 text-center tabular-nums">
                         #{team.seed ?? "—"}
                       </span>
                       <span
-                        className={`text-sm font-semibold ${team.eliminated ? "text-white/30 line-through" : "text-white"}`}
+                        className={`text-sm font-semibold ${team.eliminated ? "text-navy/30 line-through" : "text-navy"}`}
                       >
                         {team.teamName}
                       </span>
@@ -450,7 +450,7 @@ export default function TournamentDetailPage() {
                     {data.status === "draft" && (
                       <button
                         onClick={() => removeTeam(team.id)}
-                        className="text-white/20 hover:text-red transition-colors"
+                        className="text-navy/20 hover:text-red transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

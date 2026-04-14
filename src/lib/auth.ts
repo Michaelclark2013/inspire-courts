@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
           const [user] = await db
             .select()
             .from(users)
-            .where(eq(users.email, credentials.email))
+            .where(eq(users.email, credentials.email.toLowerCase()))
             .limit(1);
 
           if (user) {
@@ -66,7 +66,7 @@ export const authOptions: NextAuthOptions = {
         const adminEmail = process.env.ADMIN_EMAIL;
         const adminHash = process.env.ADMIN_PASSWORD_HASH;
 
-        if (adminEmail && adminHash && credentials.email === adminEmail) {
+        if (adminEmail && adminHash && credentials.email.toLowerCase() === adminEmail.toLowerCase()) {
           const isValid = await bcrypt.compare(
             credentials.password,
             adminHash

@@ -14,12 +14,12 @@ export default async function ProspectsPage() {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">Prospects</h1>
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Prospects</h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">Team Prospect Pipeline</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
           <TrendingUp className="w-10 h-10 text-text-secondary mx-auto mb-3" />
-          <p className="text-white font-semibold mb-1">Google Sheets not connected</p>
+          <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
           <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default async function ProspectsPage() {
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Prospects
           </h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">
@@ -108,7 +108,7 @@ export default async function ProspectsPage() {
             <p className="text-success/70 text-[10px] uppercase tracking-wider mt-0.5">Committed</p>
           </div>
           <div className="bg-bg-secondary border border-border rounded-sm px-2.5 py-1.5 text-center min-w-[44px]">
-            <p className="text-white font-bold text-base leading-none">{prospects.length - committed}</p>
+            <p className="text-navy font-bold text-base leading-none">{prospects.length - committed}</p>
             <p className="text-text-secondary text-[10px] uppercase tracking-wider mt-0.5">Pipeline</p>
           </div>
         </div>

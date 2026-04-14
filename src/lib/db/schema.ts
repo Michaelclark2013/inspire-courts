@@ -241,7 +241,10 @@ export const checkins = sqliteTable("checkins", {
   timestamp: text("timestamp")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => [
+  index("checkins_team_idx").on(table.teamName),
+  index("checkins_timestamp_idx").on(table.timestamp),
+]);
 
 // ── Waivers ─────────────────────────────────────────────────────────────────
 
@@ -256,7 +259,10 @@ export const waivers = sqliteTable("waivers", {
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
   driveDocId: text("drive_doc_id"),
-});
+}, (table) => [
+  index("waivers_email_idx").on(table.email),
+  index("waivers_team_idx").on(table.teamName),
+]);
 
 // ── Announcements ───────────────────────────────────────────────────────────
 
@@ -270,4 +276,6 @@ export const announcements = sqliteTable("announcements", {
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => [
+  index("announcements_audience_idx").on(table.audience),
+]);

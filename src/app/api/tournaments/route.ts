@@ -48,8 +48,11 @@ export async function GET() {
       })
     );
 
-    return NextResponse.json(result);
-  } catch {
-    return NextResponse.json([]);
+    return NextResponse.json(result, {
+      headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=120" },
+    });
+  } catch (err) {
+    console.error("[api/tournaments] Failed to fetch tournaments:", err);
+    return NextResponse.json([], { status: 500 });
   }
 }

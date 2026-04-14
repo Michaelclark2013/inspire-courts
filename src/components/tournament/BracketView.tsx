@@ -270,7 +270,8 @@ export default function BracketView({
                                         homeScore: Number(e.target.value),
                                       })
                                     }
-                                    className="bg-navy border border-white/10 rounded px-2 py-1.5 text-white text-xs text-center focus:outline-none focus:border-red"
+                                    aria-label={`${game.homeTeam} score`}
+                                    className="bg-navy border border-white/10 rounded px-2 py-1.5 text-white text-xs text-center focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                                   />
                                   <input
                                     type="number"
@@ -282,7 +283,8 @@ export default function BracketView({
                                         awayScore: Number(e.target.value),
                                       })
                                     }
-                                    className="bg-navy border border-white/10 rounded px-2 py-1.5 text-white text-xs text-center focus:outline-none focus:border-red"
+                                    aria-label={`${game.awayTeam} score`}
+                                    className="bg-navy border border-white/10 rounded px-2 py-1.5 text-white text-xs text-center focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                                   />
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">

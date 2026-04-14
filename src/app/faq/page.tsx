@@ -218,7 +218,7 @@ export default function FAQPage() {
                 Contact Us <ArrowRight className="w-4 h-4" />
               </Link>
               <a
-                href="https://offsznhoops.leagueapps.com/tournaments"
+                href="https://inspirecourts.leagueapps.com/tournaments"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackConversion("register_click")}

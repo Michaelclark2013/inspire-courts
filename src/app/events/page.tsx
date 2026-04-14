@@ -118,7 +118,7 @@ function NoNotionFallback() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a
-                href="https://offsznhoops.leagueapps.com/tournaments"
+                href="https://inspirecourts.leagueapps.com/tournaments"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
@@ -181,7 +181,7 @@ export default function EventsPage() {
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <a
-                  href="https://offsznhoops.leagueapps.com/tournaments"
+                  href="https://inspirecourts.leagueapps.com/tournaments"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg shadow-red/30"

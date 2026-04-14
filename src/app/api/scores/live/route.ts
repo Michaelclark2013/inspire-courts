@@ -83,8 +83,8 @@ export async function GET() {
     return NextResponse.json(gamesWithScores, {
       headers: { "Cache-Control": "public, max-age=15" },
     });
-  } catch {
-    // DB not configured — return empty
-    return NextResponse.json([]);
+  } catch (err) {
+    console.error("[api/scores/live] Failed to fetch live scores:", err);
+    return NextResponse.json([], { status: 500 });
   }
 }

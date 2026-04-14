@@ -152,7 +152,7 @@ export default function Home() {
           <AnimateIn delay={300}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://offsznhoops.leagueapps.com/tournaments"
+                href="https://inspirecourts.leagueapps.com/tournaments"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
@@ -208,7 +208,7 @@ export default function Home() {
               { href: "/training", title: "Private Training", desc: "1-on-1 and small group sessions", icon: "Target" },
               { href: "/teams", title: "Team Inspire", desc: "Club basketball on MADE Hoops", icon: "Users" },
               { href: "/prep", title: "Inspire Prep", desc: "Basketball prep school program", icon: "GraduationCap" },
-              { href: "https://offsznhoops.leagueapps.com/tournaments", title: "Tournaments", desc: "Register for OFF SZN HOOPS", icon: "Trophy", external: true },
+              { href: "https://inspirecourts.leagueapps.com/tournaments", title: "Tournaments", desc: "Register for OFF SZN HOOPS", icon: "Trophy", external: true },
             ].map((item, i) => (
               <AnimateIn key={item.title} delay={i * 80}>
                 {item.external ? (
@@ -580,7 +580,7 @@ export default function Home() {
               </p>
             </div>
             <a
-              href="https://offsznhoops.leagueapps.com/tournaments"
+              href="https://inspirecourts.leagueapps.com/tournaments"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white hover:bg-off-white text-red px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors flex-shrink-0 font-[var(--font-chakra)]"

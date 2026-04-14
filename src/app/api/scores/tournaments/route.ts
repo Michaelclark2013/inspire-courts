@@ -64,7 +64,8 @@ export async function GET() {
     return NextResponse.json(result, {
       headers: { "Cache-Control": "public, max-age=30" },
     });
-  } catch {
-    return NextResponse.json([]);
+  } catch (err) {
+    console.error("[api/scores/tournaments] Failed to fetch tournaments:", err);
+    return NextResponse.json([], { status: 500 });
   }
 }

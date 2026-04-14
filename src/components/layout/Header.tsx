@@ -243,7 +243,7 @@ export default function Header() {
               <Calendar className="w-4 h-4" /> Book
             </Link>
             <a
-              href="https://offsznhoops.leagueapps.com/tournaments"
+              href="https://inspirecourts.leagueapps.com/tournaments"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => trackConversion("register_click")}
@@ -319,7 +319,7 @@ export default function Header() {
               <Calendar className="w-4 h-4" /> Book Facility
             </Link>
             <a
-              href="https://offsznhoops.leagueapps.com/tournaments"
+              href="https://inspirecourts.leagueapps.com/tournaments"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => { setOpen(false); trackConversion("register_click"); }}

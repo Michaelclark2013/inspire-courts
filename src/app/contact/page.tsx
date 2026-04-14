@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { MapPin, Mail, Camera, ArrowRight, Check } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import BackToTop from "@/components/ui/BackToTop";
 import { trackConversion } from "@/lib/analytics";
 import {
   INQUIRY_TYPES,
@@ -271,6 +272,7 @@ export default function ContactPage() {
         </div>
       </section>
 
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

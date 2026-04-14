@@ -17,6 +17,8 @@ export const FACILITY_PHONE = "(480) 221-7218";
 
 // ─── Social / External Links ─────────────────────────────────────────────────
 
+export const LEAGUEAPPS_URL = "https://inspirecourts.leagueapps.com/tournaments";
+
 export const SOCIAL_LINKS = {
   instagram: "https://instagram.com/inspirecourts",
   instagramHandle: "@inspirecourts",

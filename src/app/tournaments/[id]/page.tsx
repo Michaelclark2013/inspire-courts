@@ -177,7 +177,7 @@ export default function PublicTournamentPage() {
               </div>
             </div>
             <a
-              href="https://offsznhoops.leagueapps.com/tournaments"
+              href="https://inspirecourts.leagueapps.com/tournaments"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"

@@ -27,7 +27,7 @@ export default function ScoresPageClient() {
               href="/admin/scores/enter"
               className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-red/20 to-red/10 border border-red/30 hover:border-red/50 text-red hover:text-white rounded-xl py-3 text-sm font-bold uppercase tracking-wider transition-all hover:bg-red/30"
             >
-              <Settings2 className="w-4 h-4" />
+              <Settings2 className="w-4 h-4" aria-hidden="true" />
               Update Scores — Admin Panel
             </Link>
           </div>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 import GalleryPageClient from "./GalleryPageClient";
 
 export const metadata: Metadata = {
@@ -107,8 +108,9 @@ export default function GalleryPage() {
         </div>
       </section>
 
+      <QuickContactBar subject="Gallery" label="Want photos from your event?" />
       <BackToTop />
-      <div className="h-16 lg:hidden" />
+      <div className="h-20 lg:hidden" />
     </>
   );
 }

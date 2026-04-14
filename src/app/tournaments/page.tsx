@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import QuickContactBar from "@/components/ui/QuickContactBar";
+import BackToTop from "@/components/ui/BackToTop";
 
 type TournamentPublic = {
   id: number;
@@ -87,6 +88,12 @@ export default function TournamentsPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <title>Tournament Registration | Inspire Courts AZ</title>
+      <meta name="description" content="Register your team for OFF SZN HOOPS tournaments at Inspire Courts AZ in Gilbert, Arizona. 52,000 sq ft, 7 courts, game film, live scores." />
+      <link rel="canonical" href="https://inspirecourtsaz.com/tournaments" />
+      <meta property="og:title" content="Tournament Registration | Inspire Courts AZ" />
+      <meta property="og:description" content="Register your team for youth basketball tournaments at Arizona's premier facility. 3+ game guarantee, game film, electronic scoreboards." />
+      <meta property="og:url" content="https://inspirecourtsaz.com/tournaments" />
       {/* ── HERO ── */}
       <section className="relative overflow-hidden">
         <Image
@@ -127,7 +134,7 @@ export default function TournamentsPage() {
               </a>
             ) : (
               <a
-                href="https://offsznhoops.leagueapps.com/tournaments"
+                href="https://inspirecourts.leagueapps.com/tournaments"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg shadow-red/30 font-heading"
@@ -154,7 +161,7 @@ export default function TournamentsPage() {
               return (
                 <div key={f.title} className="flex items-start gap-3">
                   <div className="w-10 h-10 bg-red/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-5 h-5 text-red" />
+                    <Icon className="w-5 h-5 text-red" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="text-navy font-bold text-sm mb-0.5">
@@ -336,7 +343,8 @@ export default function TournamentsPage() {
       </section>
 
       <QuickContactBar subject="Tournament Registration" label="Questions?" />
-      <div className="h-16 lg:hidden" />
+      <BackToTop />
+      <div className="h-20 lg:hidden" />
     </div>
   );
 }
@@ -475,7 +483,7 @@ function TournamentCard({
               </Link>
               {canRegister && (
                 <a
-                  href="https://offsznhoops.leagueapps.com/tournaments"
+                  href="https://inspirecourts.leagueapps.com/tournaments"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-red hover:bg-red-hover text-white text-xs font-semibold uppercase tracking-wider px-5 py-2.5 rounded-lg transition-colors"

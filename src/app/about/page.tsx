@@ -91,7 +91,7 @@ export default function AboutPage() {
               {page ? getField(page, "Hero", "badge") : "Our Story"}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg">
-              {page ? getField(page, "Hero", "headline") : "The Story"}
+              {page ? getField(page, "Hero", "headline") : <>Arizona&apos;s Home for<br /><span className="text-red">Serious Ballers</span></>}
             </h1>
             <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
               {page ? getField(page, "Hero", "description") : "Founded to give Arizona's youth athletes a professional-level experience. Basketball. Volleyball. No more dusty rec centers. No more outdoor courts in 115-degree heat."}
@@ -136,7 +136,7 @@ export default function AboutPage() {
                 <div className="pt-4 border-t border-light-gray space-y-4">
                   <div className="flex gap-3">
                     <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center flex-shrink-0">
-                      <Target className="w-4 h-4 text-white" />
+                      <Target className="w-4 h-4 text-white" aria-hidden="true" />
                     </div>
                     <p className="text-text-muted text-sm">
                       Professional-grade experience for every team, every game
@@ -144,7 +144,7 @@ export default function AboutPage() {
                   </div>
                   <div className="flex gap-3">
                     <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center flex-shrink-0">
-                      <Users className="w-4 h-4 text-white" />
+                      <Users className="w-4 h-4 text-white" aria-hidden="true" />
                     </div>
                     <p className="text-text-muted text-sm">
                       Community of competitors from 10U through 17U
@@ -152,7 +152,7 @@ export default function AboutPage() {
                   </div>
                   <div className="flex gap-3">
                     <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center flex-shrink-0">
-                      <Flame className="w-4 h-4 text-white" />
+                      <Flame className="w-4 h-4 text-white" aria-hidden="true" />
                     </div>
                     <p className="text-text-muted text-sm">
                       Raising the standard for youth sports in AZ

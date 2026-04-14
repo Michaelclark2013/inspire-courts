@@ -414,22 +414,19 @@ export default async function Home() {
             </div>
           ) : (
             <AnimateIn>
-              <div className="text-center bg-white border border-light-gray rounded-2xl p-8 max-w-lg mx-auto">
-                <div className="w-14 h-14 bg-red/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Trophy className="w-7 h-7 text-red" aria-hidden="true" />
+              <div className="bg-white border border-light-gray rounded-2xl p-8 lg:p-12 max-w-2xl mx-auto">
+                <div className="text-center mb-8">
+                  <div className="w-14 h-14 bg-red/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="w-7 h-7 text-red" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-navy font-bold text-base uppercase tracking-tight font-[var(--font-chakra)] mb-2">
+                    New Tournaments Coming
+                  </h3>
+                  <p className="text-text-muted text-sm">
+                    Get early access to registration before spots fill up.
+                  </p>
                 </div>
-                <h3 className="text-navy font-bold text-base uppercase tracking-tight font-[var(--font-chakra)] mb-2">
-                  Tournaments Coming Soon
-                </h3>
-                <p className="text-text-muted text-sm mb-5">
-                  New events are announced regularly. Follow us on Instagram to be the first to know.
-                </p>
-                <Link
-                  href="/contact?type=Tournament+Registration"
-                  className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
-                >
-                  Contact Us <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                <EmailSignup variant="light" />
               </div>
             </AnimateIn>
           )}

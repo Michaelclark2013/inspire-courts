@@ -16,6 +16,8 @@ const NAV_LINKS = [
   { href: "/tournaments", label: "Tournaments" },
   { href: "/scores", label: "Scores" },
   { href: "/facility", label: "Facility" },
+  { href: "/gameday", label: "Game Day Info" },
+  { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
   { href: "/book", label: "Book" },
 ];

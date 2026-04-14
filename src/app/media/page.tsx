@@ -15,6 +15,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
 import BackToTop from "@/components/ui/BackToTop";
 import QuickContactBar from "@/components/ui/QuickContactBar";
@@ -281,6 +282,37 @@ export default function MediaPage() {
         </div>
       </section>
 
+      {/* Sample Work — Video Showcase */}
+      <section className="py-14 lg:py-28 bg-navy">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimateIn>
+            <div className="text-center mb-10">
+              <span className="inline-block bg-red/20 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                Sample Work
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-white font-[var(--font-chakra)] leading-[0.95]">
+                See What We <span className="text-red">Produce</span>
+              </h2>
+              <p className="text-white/60 mt-4 max-w-xl mx-auto">
+                Mixtapes, player highlights, and tournament coverage from @AZFinestMixtape — this is the quality you&apos;re booking.
+              </p>
+            </div>
+          </AnimateIn>
+          <VideoShowcase
+            videos={[
+              { id: "ENl-hXQbEo8", title: "Thompson Twins mixtape", name: "Thompson Twins", subtitle: "NBA · AZFinestMixtape" },
+              { id: "5WFbsqEQxDE", title: "Team Inspire headline video", name: "Team Inspire", subtitle: "Tournament Highlight" },
+              { id: "cOD4jknl2-E", title: "Team Inspire highlights", name: "Team Inspire", subtitle: "Game Highlights" },
+              { id: "mmbKaoOHzn4", title: "Player training highlight", name: "Player Highlight", subtitle: "Training at Inspire" },
+              { id: "X3okI0F8RDE", title: "Inspire Prep — Oba", name: "Inspire Prep — Oba", subtitle: "Player Feature", aspect: "9/16" },
+              { id: "HXmJvuzzPxg", title: "Inspire Prep 2030", name: "Inspire Prep 2030", subtitle: "Program Highlight", aspect: "9/16" },
+            ]}
+            initialCount={4}
+            theme="dark"
+          />
+        </div>
+      </section>
+
       {/* Beyond Basketball — Wedding & Event Videography */}
       <section className="py-14 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -302,7 +334,7 @@ export default function MediaPage() {
                 <div className="space-y-3 mb-8">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-red/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Heart className="w-4 h-4 text-red" />
+                      <Heart className="w-4 h-4 text-red" aria-hidden="true" />
                     </div>
                     <span className="text-navy text-sm font-semibold">
                       Wedding Films & Highlight Reels
@@ -310,15 +342,15 @@ export default function MediaPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-red/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <PartyPopper className="w-4 h-4 text-red" />
+                      <PartyPopper className="w-4 h-4 text-red" aria-hidden="true" />
                     </div>
                     <span className="text-navy text-sm font-semibold">
-                      Quincea&ntilde;eras, Birthdays & Private Events
+                      Quinceañeras, Birthdays & Private Events
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-red/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Video className="w-4 h-4 text-red" />
+                      <Video className="w-4 h-4 text-red" aria-hidden="true" />
                     </div>
                     <span className="text-navy text-sm font-semibold">
                       Corporate & Promotional Video
@@ -338,7 +370,7 @@ export default function MediaPage() {
               <div className="relative">
                 <div className="bg-off-white border border-light-gray rounded-2xl p-10 text-center">
                   <div className="w-20 h-20 bg-gradient-to-br from-red to-red-hover rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                    <Camera className="w-10 h-10 text-white" />
+                    <Camera className="w-10 h-10 text-white" aria-hidden="true" />
                   </div>
                   <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2 font-[var(--font-chakra)]">
                     Same Team. Different Stage.
@@ -369,7 +401,7 @@ export default function MediaPage() {
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <AnimateIn>
             <div className="w-16 h-16 bg-red/20 rounded-xl flex items-center justify-center mx-auto mb-6 border border-red/30">
-              <Camera className="w-8 h-8 text-red" />
+              <Camera className="w-8 h-8 text-red" aria-hidden="true" />
             </div>
             <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
               See Our <span className="text-red">Work</span>

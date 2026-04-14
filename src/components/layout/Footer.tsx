@@ -95,13 +95,18 @@ export default function Footer() {
         </div>
 
         {/* Copyright line */}
-        <div className="mt-4 pt-3 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-1">
+        <div className="mt-4 pt-3 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-2">
           <p className="text-white/30 text-[11px]">
             &copy; {new Date().getFullYear()} Inspire Courts AZ. All rights reserved.
           </p>
-          <p className="text-white/30 text-[11px]">
-            {FACILITY_ADDRESS.city}, {FACILITY_ADDRESS.state} &mdash; Built for competitors.
-          </p>
+          <a
+            href="https://www.google.com/maps/dir//1090+N+Fiesta+Blvd+Ste+101+%26+102+Gilbert+AZ+85233"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/30 hover:text-white/60 text-[11px] transition-colors"
+          >
+            {FACILITY_ADDRESS.full}
+          </a>
         </div>
       </div>
     </footer>

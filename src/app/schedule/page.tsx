@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://inspirecourtsaz.com/schedule",
   },
+  openGraph: {
+    title: "Schedules & Brackets | Inspire Courts AZ",
+    description: "Live tournament schedules, brackets, and results for Inspire Courts AZ events. Game schedules drop 48 hours before tip-off.",
+    url: "https://inspirecourtsaz.com/schedule",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ tournament schedules" }],
+  },
 };
 
 export default function SchedulePage() {

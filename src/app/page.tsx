@@ -25,6 +25,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://inspirecourtsaz.com",
   },
+  openGraph: {
+    title: "Inspire Courts AZ | Indoor Basketball & Volleyball Facility",
+    description: "Arizona's premier indoor basketball & volleyball facility. 7 courts, game film, tournaments. Gilbert, AZ.",
+    url: "https://inspirecourtsaz.com",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ indoor basketball facility in Gilbert, Arizona" }],
+  },
 };
 
 const localBusinessSchema = {
@@ -36,6 +42,7 @@ const localBusinessSchema = {
     "Arizona's premier indoor basketball & volleyball facility. 7 regulation courts, game film available at tournaments. Home of OFF SZN HOOPS youth basketball tournaments.",
   url: "https://inspirecourtsaz.com",
   email: FACILITY_EMAIL,
+  telephone: FACILITY_PHONE,
   address: {
     "@type": "PostalAddress",
     streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
@@ -349,7 +356,7 @@ export default function Home() {
                       <Phone className="w-5 h-5 text-red" />
                     </div>
                     <div>
-                      <p className="font-bold text-navy">{FACILITY_PHONE}</p>
+                      <a href={`tel:${FACILITY_PHONE.replace(/\D/g, "")}`} className="font-bold text-navy hover:text-red transition-colors">{FACILITY_PHONE}</a>
                       <p className="text-text-muted text-sm">Call or text</p>
                     </div>
                   </div>

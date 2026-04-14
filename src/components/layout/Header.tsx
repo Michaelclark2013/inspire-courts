@@ -169,6 +169,16 @@ export default function Header() {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
+  // Close mobile nav on Escape key
+  useEffect(() => {
+    if (!open) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [open]);
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-navy shadow-lg">
       {/* Skip to main content — visible on keyboard focus */}

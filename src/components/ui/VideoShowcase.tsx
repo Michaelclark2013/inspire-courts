@@ -36,11 +36,8 @@ export default function VideoShowcase({
               <div
                 className={`relative rounded-2xl overflow-hidden shadow-2xl border ${
                   isDark ? "border-white/10" : "border-light-gray"
-                } ${isShort ? "mx-auto" : ""}`}
-                style={{
-                  aspectRatio: video.aspect || "16/9",
-                  ...(isShort ? { maxWidth: "360px" } : {}),
-                }}
+                } ${isShort ? "mx-auto w-full max-w-[260px] sm:max-w-[340px]" : ""}`}
+                style={{ aspectRatio: video.aspect || "16/9" }}
               >
                 <iframe
                   className="absolute inset-0 w-full h-full"

@@ -84,7 +84,7 @@ export default function PrepPage() {
         <Image src="/images/courts-bg.jpg" alt="Inspire Prep basketball academy" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-14 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-6 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
               Prep School
@@ -101,14 +101,14 @@ export default function PrepPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact?type=Inspire+Prep"
-                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
               >
                 Apply Now{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/contact"
-                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
+                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
               >
                 Learn More{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -119,7 +119,7 @@ export default function PrepPage() {
       </section>
 
       {/* What is Inspire Prep — improved desktop two-column */}
-      <section className="py-14 lg:py-28 bg-white">
+      <section className="py-10 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <AnimateIn>
@@ -153,7 +153,7 @@ export default function PrepPage() {
               </div>
             </AnimateIn>
             <AnimateIn delay={200}>
-              <div className="bg-navy rounded-2xl p-8 lg:p-10 text-white relative overflow-hidden">
+              <div className="bg-navy rounded-2xl p-5 sm:p-8 lg:p-10 text-white relative overflow-hidden">
                 <div
                   className="absolute inset-0 opacity-10 bg-cover bg-center"
                   style={{
@@ -186,7 +186,7 @@ export default function PrepPage() {
       </section>
 
       {/* Adan Diggs — Flagship Player */}
-      <section className="py-14 lg:py-24 bg-off-white">
+      <section className="py-10 lg:py-24 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <AnimateIn>
@@ -211,8 +211,8 @@ export default function PrepPage() {
             </AnimateIn>
             <AnimateIn delay={150}>
               <div
-                className="relative rounded-2xl overflow-hidden shadow-2xl border border-light-gray mx-auto"
-                style={{ aspectRatio: "9/16", maxWidth: "360px" }}
+                className="relative rounded-2xl overflow-hidden shadow-2xl border border-light-gray mx-auto w-full max-w-[260px] sm:max-w-[340px]"
+                style={{ aspectRatio: "9/16" }}
               >
                 <iframe
                   className="absolute inset-0 w-full h-full"
@@ -229,7 +229,7 @@ export default function PrepPage() {
       </section>
 
       {/* More Inspire Prep Videos */}
-      <section className="py-12 lg:py-20 bg-white">
+      <section className="py-10 lg:py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimateIn>
             <div className="text-center mb-10">
@@ -253,7 +253,7 @@ export default function PrepPage() {
       </section>
 
       {/* Instagram Reel — See Us In Action */}
-      <section className="py-14 lg:py-24 bg-navy">
+      <section className="py-10 lg:py-24 bg-navy">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <AnimateIn>
             <span className="inline-block bg-red/20 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
@@ -272,8 +272,8 @@ export default function PrepPage() {
               ].map((reel) => (
                 <div
                   key={reel.src}
-                  className="w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-                  style={{ maxWidth: "360px", aspectRatio: "9/16", position: "relative" }}
+                  className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-auto w-full max-w-[260px] sm:max-w-[340px]"
+                  style={{ aspectRatio: "9/16" }}
                 >
                   <iframe
                     className="absolute inset-0 w-full h-full"
@@ -292,7 +292,7 @@ export default function PrepPage() {
       </section>
 
       {/* Program Highlights — featured card + grid layout for desktop */}
-      <section className="py-14 lg:py-24 bg-off-white">
+      <section className="py-10 lg:py-24 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Why Inspire Prep"
@@ -306,14 +306,14 @@ export default function PrepPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
               {PROGRAM_HIGHLIGHTS.slice(0, 2).map((item, i) => (
                 <AnimateIn key={item.title} delay={i * 80}>
-                  <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
+                  <div className="group relative bg-white border border-light-gray rounded-2xl p-5 sm:p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="flex items-start gap-5 lg:gap-6">
-                      <div className="w-16 h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md" aria-hidden="true">
-                        <item.icon className="w-7 h-7 text-white" />
+                    <div className="flex items-start gap-4 sm:gap-5 lg:gap-6">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md" aria-hidden="true">
+                        <item.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg lg:text-xl uppercase tracking-tight mb-2">
+                        <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-base sm:text-lg lg:text-xl uppercase tracking-tight mb-2">
                           {item.title}
                         </h3>
                         <p className="text-text-muted text-sm lg:text-base leading-relaxed">
@@ -327,18 +327,18 @@ export default function PrepPage() {
             </div>
 
             {/* Bottom row: 4 cards in a grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {PROGRAM_HIGHLIGHTS.slice(2).map((item, i) => (
                 <AnimateIn key={item.title} delay={(i + 2) * 80}>
-                  <div className="group relative bg-white border border-light-gray rounded-2xl p-6 lg:p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
+                  <div className="group relative bg-white border border-light-gray rounded-2xl p-4 sm:p-6 lg:p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-12 h-12 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-4 shadow-md" aria-hidden="true">
-                      <item.icon className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-3 shadow-md" aria-hidden="true">
+                      <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
-                    <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-base lg:text-lg uppercase tracking-tight mb-2">
+                    <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-sm sm:text-base lg:text-lg uppercase tracking-tight mb-1.5">
                       {item.title}
                     </h3>
-                    <p className="text-text-muted text-sm leading-relaxed">
+                    <p className="text-text-muted text-xs sm:text-sm leading-relaxed">
                       {item.desc}
                     </p>
                   </div>
@@ -364,10 +364,10 @@ export default function PrepPage() {
                   <div className="w-12 h-12 bg-red/20 rounded-xl flex items-center justify-center mx-auto mb-3" aria-hidden="true">
                     <stat.icon className="w-6 h-6 text-red" />
                   </div>
-                  <p className="text-white font-bold text-lg lg:text-xl font-[var(--font-chakra)] uppercase tracking-tight">
+                  <p className="text-white font-bold text-sm sm:text-lg lg:text-xl font-[var(--font-chakra)] uppercase tracking-tight leading-tight">
                     {stat.value}
                   </p>
-                  <p className="text-white/50 text-xs uppercase tracking-wider mt-1">
+                  <p className="text-white/50 text-[10px] sm:text-xs uppercase tracking-wider mt-1">
                     {stat.label}
                   </p>
                 </div>
@@ -399,7 +399,7 @@ export default function PrepPage() {
                 </p>
                 <Link
                   href="/contact?type=Inspire+Prep"
-                  className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
+                  className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
                 >
                   Apply Now{" "}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -433,7 +433,7 @@ export default function PrepPage() {
       </section>
 
       {/* Related Pages */}
-      <section className="py-16 bg-off-white">
+      <section className="py-10 lg:py-16 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-6 text-center font-[var(--font-chakra)]">
             You Might Also Like
@@ -481,7 +481,7 @@ export default function PrepPage() {
 
       <QuickContactBar subject="Inspire Prep" label="Questions about Prep?" />
       <BackToTop />
-      <div className="h-16 lg:hidden" />
+      <div className="h-32 lg:hidden" />
     </>
   );
 }

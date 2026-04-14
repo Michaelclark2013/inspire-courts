@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Calendar, Loader2 } from "lucide-react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { Calendar, Loader2, AlertTriangle, RefreshCw, Radio } from "lucide-react";
 
 type Game = {
   id: number;
@@ -16,44 +16,156 @@ type Game = {
   status: "scheduled" | "live" | "final";
 };
 
+function getRelativeTime(scheduledTime: string): { label: string; isSoon: boolean } | null {
+  const diff = new Date(scheduledTime).getTime() - Date.now();
+  if (diff < 0 || diff > 60 * 60 * 1000) return null; // past or > 60 min
+  const mins = Math.round(diff / 60_000);
+  return { label: `In ${mins} min`, isSoon: mins <= 15 };
+}
+
 export default function SchedulePage() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [selectedDivision, setSelectedDivision] = useState<string>("all");
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    fetch("/api/scores/live")
-      .then((r) => r.json())
-      .then(setGames)
-      .catch(() => {})
-      .finally(() => setLoading(false));
+  const fetchGames = useCallback(async () => {
+    try {
+      setError(false);
+      const res = await fetch("/api/scores/live");
+      if (res.ok) {
+        const data = await res.json();
+        setGames(data);
+        setLastUpdated(new Date());
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const upcoming = games.filter((g) => g.status === "scheduled");
-  const live = games.filter((g) => g.status === "live");
-  const completed = games.filter((g) => g.status === "final");
+  useEffect(() => {
+    fetchGames();
+    // 60s polling
+    intervalRef.current = setInterval(fetchGames, 60_000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [fetchGames]);
+
+  // Division filter
+  const divisions = Array.from(new Set(games.map((g) => g.division).filter(Boolean))) as string[];
+  const filtered = selectedDivision === "all"
+    ? games
+    : games.filter((g) => g.division === selectedDivision);
+
+  const upcoming = filtered.filter((g) => g.status === "scheduled");
+  const live = filtered.filter((g) => g.status === "live");
+  const completed = filtered.filter((g) => g.status === "final");
+
+  // Error state
+  if (error && !loading && games.length === 0) {
+    return (
+      <div className="p-6 lg:p-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">Schedule</h1>
+        </div>
+        <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <h3 className="text-white font-semibold mb-1">Failed to Load Schedule</h3>
+          <p className="text-text-secondary text-sm mb-4">Could not load the schedule. Check your connection and try again.</p>
+          <button
+            onClick={() => { setLoading(true); fetchGames(); }}
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" /> Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
-          Schedule
-        </h1>
-        <p className="text-text-secondary text-sm mt-1">
-          Upcoming games and results
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+              Schedule
+            </h1>
+            {live.length > 0 && (
+              <span className="flex items-center gap-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                <Radio className="w-3 h-3 animate-pulse" /> Live
+              </span>
+            )}
+          </div>
+          <p className="text-text-secondary text-sm mt-1">
+            Upcoming games and results
+          </p>
+        </div>
+        {lastUpdated && (
+          <button
+            onClick={fetchGames}
+            className="flex items-center gap-1.5 text-[11px] font-medium text-text-secondary bg-white/[0.03] hover:bg-white/[0.06] px-2.5 py-1.5 rounded-lg transition-colors"
+            title="Click to refresh"
+          >
+            <RefreshCw className="w-3 h-3" />
+            Refresh
+          </button>
+        )}
       </div>
+
+      {/* Division filter pills */}
+      {divisions.length > 1 && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          <button
+            onClick={() => setSelectedDivision("all")}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${
+              selectedDivision === "all"
+                ? "bg-red text-white"
+                : "bg-white/[0.06] text-white/60 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            All
+          </button>
+          {divisions.map((d) => (
+            <button
+              key={d}
+              onClick={() => setSelectedDivision(d)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${
+                selectedDivision === d
+                  ? "bg-red text-white"
+                  : "bg-white/[0.06] text-white/60 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              {d}
+            </button>
+          ))}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-16 text-white/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading schedule...
         </div>
-      ) : games.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className="bg-card border border-white/10 rounded-xl p-10 text-center">
           <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
             <Calendar className="w-7 h-7 text-white/20" />
           </div>
-          <p className="text-white font-semibold mb-1">No Games Scheduled</p>
-          <p className="text-text-secondary text-sm mb-4">Your schedule will appear here once games are set up for your team.</p>
+          <p className="text-white font-semibold mb-1">
+            {selectedDivision !== "all" ? `No Games in ${selectedDivision}` : "No Games Scheduled"}
+          </p>
+          <p className="text-text-secondary text-sm mb-4">
+            {selectedDivision !== "all"
+              ? "Try selecting a different division or check back later."
+              : "Your schedule will appear here once games are set up for your team."}
+          </p>
           <a href="/scores" className="text-red text-xs font-semibold hover:text-red-hover transition-colors">
             View Live Scores &rarr;
           </a>
@@ -70,49 +182,75 @@ export default function SchedulePage() {
               <div key={section.label}>
                 <h2 className={`text-sm font-bold uppercase tracking-wider mb-3 ${section.color}`}>
                   {section.label}
+                  {section.label === "Live" && (
+                    <Radio className="w-3.5 h-3.5 inline ml-1.5 animate-pulse" />
+                  )}
                 </h2>
                 <div className="space-y-2">
-                  {section.items.map((game) => (
-                    <div
-                      key={game.id}
-                      className="bg-card border border-white/10 rounded-xl px-5 py-4"
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-3 text-sm min-w-0">
-                          <span className="text-white font-semibold truncate">{game.homeTeam}</span>
-                          {game.status !== "scheduled" && (
-                            <>
-                              <span className="text-white font-bold tabular-nums">{game.homeScore}</span>
-                              <span className="text-white/30">—</span>
-                              <span className="text-white font-bold tabular-nums">{game.awayScore}</span>
-                            </>
-                          )}
-                          {game.status === "scheduled" && <span className="text-white/30">vs</span>}
-                          <span className="text-white font-semibold truncate">{game.awayTeam}</span>
+                  {section.items.map((game) => {
+                    const relTime = game.scheduledTime ? getRelativeTime(game.scheduledTime) : null;
+                    return (
+                      <div
+                        key={game.id}
+                        className={`bg-card border rounded-xl px-5 py-4 ${
+                          relTime?.isSoon
+                            ? "border-amber-500/30 bg-amber-500/[0.03]"
+                            : "border-white/10"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 text-sm min-w-0">
+                            <span className="text-white font-semibold truncate">{game.homeTeam}</span>
+                            {game.status !== "scheduled" && (
+                              <>
+                                <span className="text-white font-bold tabular-nums">{game.homeScore}</span>
+                                <span className="text-white/30">—</span>
+                                <span className="text-white font-bold tabular-nums">{game.awayScore}</span>
+                              </>
+                            )}
+                            {game.status === "scheduled" && <span className="text-white/30">vs</span>}
+                            <span className="text-white font-semibold truncate">{game.awayTeam}</span>
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-text-secondary flex-shrink-0">
+                            {relTime && (
+                              <span className={`font-semibold ${relTime.isSoon ? "text-amber-400" : "text-white/60"}`}>
+                                {relTime.label}
+                              </span>
+                            )}
+                            {game.division && <span>{game.division}</span>}
+                            {game.court && <span className="bg-white/5 px-2 py-0.5 rounded">{game.court}</span>}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-text-secondary flex-shrink-0">
-                          {game.division && <span>{game.division}</span>}
-                          {game.court && <span className="bg-white/5 px-2 py-0.5 rounded">{game.court}</span>}
-                        </div>
-                      </div>
-                      {(game.scheduledTime || game.court) && (
-                        <div className="flex items-center gap-3 mt-2 text-xs text-white/40">
-                          {game.scheduledTime && (
+                        {(game.scheduledTime || game.court) && !relTime && (
+                          <div className="flex items-center gap-3 mt-2 text-xs text-white/40">
+                            {game.scheduledTime && (
+                              <span>
+                                {new Date(game.scheduledTime).toLocaleString("en-US", {
+                                  weekday: "short",
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                })}
+                              </span>
+                            )}
+                            {game.eventName && <span>{game.eventName}</span>}
+                          </div>
+                        )}
+                        {relTime && game.scheduledTime && (
+                          <div className="flex items-center gap-3 mt-2 text-xs text-white/40">
                             <span>
                               {new Date(game.scheduledTime).toLocaleString("en-US", {
-                                weekday: "short",
-                                month: "short",
-                                day: "numeric",
                                 hour: "numeric",
                                 minute: "2-digit",
                               })}
                             </span>
-                          )}
-                          {game.eventName && <span>{game.eventName}</span>}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                            {game.eventName && <span>{game.eventName}</span>}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}

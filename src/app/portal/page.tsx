@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   Trophy,
   Users,
@@ -16,6 +16,8 @@ import {
   ArrowRight,
   Zap,
   Megaphone,
+  AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -49,30 +51,55 @@ export default function PortalDashboard() {
   const [myRegistrations, setMyRegistrations] = useState<
     { id: number; tournamentId: number; tournamentName: string; tournamentDate: string; teamName: string; division: string | null; paymentStatus: string; status: string }[]
   >([]);
+  const [error, setError] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [secondsAgo, setSecondsAgo] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const role = session?.user?.role;
   const name = session?.user?.name?.split(" ")[0] || "there";
   const liveNow = liveGames.filter((g) => g.status === "live");
 
+  const fetchData = useCallback(async () => {
+    try {
+      const [gamesRes, announcementsRes, registrationsRes] = await Promise.allSettled([
+        fetch("/api/scores/live").then((r) => r.json()),
+        fetch("/api/portal/announcements").then((r) => r.json()),
+        fetch("/api/portal/registrations").then((r) => r.json()),
+      ]);
+
+      if (gamesRes.status === "fulfilled") setLiveGames(gamesRes.value);
+      if (announcementsRes.status === "fulfilled") setPortalAnnouncements(announcementsRes.value);
+      if (registrationsRes.status === "fulfilled" && Array.isArray(registrationsRes.value)) setMyRegistrations(registrationsRes.value);
+
+      setLastUpdated(new Date());
+      setSecondsAgo(0);
+      setError(false);
+    } catch {
+      setError(true);
+    }
+  }, []);
+
   useEffect(() => {
-    fetch("/api/scores/live")
-      .then((r) => r.json())
-      .then(setLiveGames)
-      .catch(() => {});
+    fetchData();
 
-    // Fetch announcements
-    fetch("/api/portal/announcements")
-      .then((r) => r.json())
-      .then(setPortalAnnouncements)
-      .catch(() => {});
+    // 30s polling for live games
+    intervalRef.current = setInterval(fetchData, 30_000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [fetchData]);
 
-    // Fetch registrations
-    fetch("/api/portal/registrations")
-      .then((r) => r.json())
-      .then((data) => { if (Array.isArray(data)) setMyRegistrations(data); })
-      .catch(() => {});
+  // Seconds-ago ticker
+  useEffect(() => {
+    const tick = setInterval(() => {
+      if (lastUpdated) setSecondsAgo(Math.floor((Date.now() - lastUpdated.getTime()) / 1000));
+    }, 1000);
+    return () => clearInterval(tick);
+  }, [lastUpdated]);
 
-    // Check roster count for coaches
+  // Fetch roster count for coaches
+  useEffect(() => {
     if (role === "coach") {
       fetch("/api/portal/roster")
         .then((r) => r.json())
@@ -125,16 +152,61 @@ export default function PortalDashboard() {
     ? "Good afternoon"
     : "Good evening";
 
+  // Error state
+  if (error && liveGames.length === 0 && myRegistrations.length === 0) {
+    return (
+      <div className="p-5 lg:p-8 max-w-5xl">
+        <div className="mb-6">
+          <p className="text-text-secondary text-xs uppercase tracking-widest mb-1">
+            {role === "coach" ? "Coach Portal" : role === "parent" ? "Parent Portal" : "Portal"}
+          </p>
+          <h1 className="text-white text-xl lg:text-2xl font-bold font-heading">
+            {greeting}, {name}
+          </h1>
+        </div>
+        <div className="bg-red/10 border border-red/20 rounded-2xl p-8 text-center">
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <h3 className="text-white font-semibold mb-1">Failed to Load Dashboard</h3>
+          <p className="text-text-secondary text-sm mb-4">
+            Could not connect to the server. Check your connection and try again.
+          </p>
+          <button
+            onClick={() => { setError(false); fetchData(); }}
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" /> Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-5 lg:p-8 max-w-5xl">
       {/* Header */}
-      <div className="mb-6">
-        <p className="text-text-secondary text-xs uppercase tracking-widest mb-1">
-          {role === "coach" ? "Coach Portal" : role === "parent" ? "Parent Portal" : "Portal"}
-        </p>
-        <h1 className="text-white text-xl lg:text-2xl font-bold font-heading">
-          {greeting}, {name}
-        </h1>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <p className="text-text-secondary text-xs uppercase tracking-widest mb-1">
+            {role === "coach" ? "Coach Portal" : role === "parent" ? "Parent Portal" : "Portal"}
+          </p>
+          <h1 className="text-white text-xl lg:text-2xl font-bold font-heading">
+            {greeting}, {name}
+          </h1>
+        </div>
+        {lastUpdated && (
+          <button
+            onClick={fetchData}
+            className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1.5 rounded-lg transition-colors ${
+              secondsAgo > 60
+                ? "text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
+                : "text-text-secondary bg-white/[0.03] hover:bg-white/[0.06]"
+            }`}
+            title="Click to refresh"
+          >
+            <RefreshCw className="w-3 h-3" />
+            {secondsAgo < 5 ? "Just now" : `${secondsAgo}s ago`}
+          </button>
+        )}
       </div>
 
       {/* Announcements */}

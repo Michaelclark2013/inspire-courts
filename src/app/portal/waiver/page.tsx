@@ -1,8 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { FileCheck, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length === 0) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
 
 export default function WaiverPage() {
   const { data: session } = useSession();
@@ -20,6 +28,17 @@ export default function WaiverPage() {
   const [saving, setSaving] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+
+  // Pre-fill from session
+  useEffect(() => {
+    if (session?.user) {
+      setForm((prev) => ({
+        ...prev,
+        parentName: prev.parentName || session.user?.name || "",
+        parentEmail: prev.parentEmail || session.user?.email || "",
+      }));
+    }
+  }, [session]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -62,7 +81,17 @@ export default function WaiverPage() {
           <button
             onClick={() => {
               setSubmitted(false);
-              setForm({ playerName: "", parentName: "", parentEmail: "", parentPhone: "", emergencyContact: "", emergencyPhone: "", allergies: "", eventName: "", agreed: false });
+              setForm((prev) => ({
+                playerName: "",
+                parentName: session?.user?.name || "",
+                parentEmail: session?.user?.email || "",
+                parentPhone: prev.parentPhone,
+                emergencyContact: prev.emergencyContact,
+                emergencyPhone: prev.emergencyPhone,
+                allergies: "",
+                eventName: prev.eventName,
+                agreed: false,
+              }));
             }}
             className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
@@ -111,7 +140,7 @@ export default function WaiverPage() {
             {/* Player info */}
             <div>
               <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Player Full Name
+                Player Full Name <span className="text-red">*</span>
               </label>
               <input type="text" value={form.playerName} onChange={(e) => setForm({ ...form, playerName: e.target.value })} required autoComplete="name" className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="Player's full name" />
             </div>
@@ -120,13 +149,13 @@ export default function WaiverPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                  Parent/Guardian Name
+                  Parent/Guardian Name <span className="text-red">*</span>
                 </label>
                 <input type="text" value={form.parentName} onChange={(e) => setForm({ ...form, parentName: e.target.value })} required autoComplete="name" className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="Parent's full name" />
               </div>
               <div>
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                  Parent Email
+                  Parent Email <span className="text-red">*</span>
                 </label>
                 <input type="email" value={form.parentEmail} onChange={(e) => setForm({ ...form, parentEmail: e.target.value })} required autoComplete="email" className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="parent@email.com" />
               </div>
@@ -135,9 +164,17 @@ export default function WaiverPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                  Parent Phone
+                  Parent Phone <span className="text-red">*</span>
                 </label>
-                <input type="tel" value={form.parentPhone} onChange={(e) => setForm({ ...form, parentPhone: e.target.value })} required autoComplete="tel" className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="(555) 123-4567" />
+                <input
+                  type="tel"
+                  value={form.parentPhone}
+                  onChange={(e) => setForm({ ...form, parentPhone: formatPhone(e.target.value) })}
+                  required
+                  autoComplete="tel"
+                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                  placeholder="(555) 123-4567"
+                />
               </div>
               <div>
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -151,15 +188,22 @@ export default function WaiverPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                  Emergency Contact Name
+                  Emergency Contact Name <span className="text-red">*</span>
                 </label>
                 <input type="text" value={form.emergencyContact} onChange={(e) => setForm({ ...form, emergencyContact: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="Emergency contact" />
               </div>
               <div>
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                  Emergency Contact Phone
+                  Emergency Contact Phone <span className="text-red">*</span>
                 </label>
-                <input type="tel" value={form.emergencyPhone} onChange={(e) => setForm({ ...form, emergencyPhone: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="(555) 123-4567" />
+                <input
+                  type="tel"
+                  value={form.emergencyPhone}
+                  onChange={(e) => setForm({ ...form, emergencyPhone: formatPhone(e.target.value) })}
+                  required
+                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                  placeholder="(555) 123-4567"
+                />
               </div>
             </div>
 

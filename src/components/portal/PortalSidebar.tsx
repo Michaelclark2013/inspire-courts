@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -18,6 +18,7 @@ import {
   UserCheck,
   FileCheck,
   ChevronLeft,
+  Radio,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -53,6 +54,25 @@ export default function PortalSidebar() {
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
   const role = session?.user?.role;
+  const [announcementCount, setAnnouncementCount] = useState(0);
+  const [hasLiveGames, setHasLiveGames] = useState(false);
+
+  // Fetch announcement count + live game status
+  useEffect(() => {
+    fetch("/api/portal/announcements")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setAnnouncementCount(data.length);
+      })
+      .catch(() => {});
+
+    fetch("/api/scores/live")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setHasLiveGames(data.some((g: { status: string }) => g.status === "live"));
+      })
+      .catch(() => {});
+  }, []);
 
   const navItems = role === "parent" ? PARENT_NAV : role === "admin" ? ADMIN_NAV : COACH_NAV;
   const roleLabel = role === "coach" ? "Coach" : role === "parent" ? "Parent" : "Admin";
@@ -62,6 +82,9 @@ export default function PortalSidebar() {
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
+  // Items that should show live game indicator
+  const liveIndicatorItems = ["/portal/schedule", "/portal/scores"];
 
   return (
     <>
@@ -132,6 +155,9 @@ export default function PortalSidebar() {
           <div className="space-y-0.5">
             {navItems.map((item) => {
               const active = item.href === "/portal" ? pathname === "/portal" : pathname.startsWith(item.href);
+              const showLiveDot = hasLiveGames && liveIndicatorItems.includes(item.href);
+              const showAnnouncementBadge = item.href === "/portal" && announcementCount > 0;
+
               return (
                 <Link
                   key={item.href}
@@ -144,8 +170,18 @@ export default function PortalSidebar() {
                       : "text-text-secondary hover:text-white hover:bg-white/[0.04]"
                   )}
                 >
-                  <item.icon className={cn("w-[18px] h-[18px] flex-shrink-0", active && "text-red")} />
-                  {item.label}
+                  <div className="relative flex-shrink-0">
+                    <item.icon className={cn("w-[18px] h-[18px]", active && "text-red")} />
+                    {showLiveDot && (
+                      <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                    )}
+                  </div>
+                  <span className="flex-1">{item.label}</span>
+                  {showAnnouncementBadge && (
+                    <span className="min-w-[18px] h-[18px] bg-red rounded-full flex items-center justify-center text-white text-[10px] font-bold px-1">
+                      {announcementCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -179,7 +215,12 @@ export default function PortalSidebar() {
             </Link>
           )}
           <Link href="/scores" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-secondary hover:text-white hover:bg-white/[0.04] transition-all">
-            <ExternalLink className="w-[18px] h-[18px]" />
+            <div className="relative">
+              <ExternalLink className="w-[18px] h-[18px]" />
+              {hasLiveGames && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+              )}
+            </div>
             Live Scores
           </Link>
           <button

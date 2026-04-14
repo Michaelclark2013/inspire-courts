@@ -1,8 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { UserCircle, Save, Loader2, CheckCircle2 } from "lucide-react";
+import { UserCircle, Save, Loader2, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length === 0) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+function getPasswordStrength(pw: string): { label: string; color: string; width: string } {
+  if (!pw) return { label: "", color: "", width: "0%" };
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+
+  if (score <= 2) return { label: "Weak", color: "bg-red", width: "33%" };
+  if (score <= 3) return { label: "Medium", color: "bg-amber-500", width: "66%" };
+  return { label: "Strong", color: "bg-emerald-500", width: "100%" };
+}
 
 export default function ProfilePage() {
   const { data: session } = useSession();
@@ -14,17 +36,29 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [fetchError, setFetchError] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/portal/profile")
-      .then((r) => r.json())
-      .then((data) => {
+  const fetchProfile = useCallback(async () => {
+    try {
+      setFetchError(false);
+      const res = await fetch("/api/portal/profile");
+      if (res.ok) {
+        const data = await res.json();
         if (data.name) setName(data.name);
         if (data.phone) setPhone(data.phone);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      } else {
+        setFetchError(true);
+      }
+    } catch {
+      setFetchError(true);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -55,6 +89,29 @@ export default function ProfilePage() {
   }
 
   const isEnvAdmin = session?.user?.id === "admin-env";
+  const pwStrength = getPasswordStrength(newPassword);
+
+  // Fetch error state
+  if (fetchError && !loading) {
+    return (
+      <div className="p-6 lg:p-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">Profile</h1>
+        </div>
+        <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <h3 className="text-white font-semibold mb-1">Failed to Load Profile</h3>
+          <p className="text-text-secondary text-sm mb-4">Could not load your profile. Check your connection and try again.</p>
+          <button
+            onClick={() => { setLoading(true); fetchProfile(); }}
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" /> Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 lg:p-8">
@@ -89,8 +146,8 @@ export default function ProfilePage() {
           </div>
 
           {error && (
-            <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4">
-              {error}
+            <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" /> {error}
             </div>
           )}
 
@@ -131,7 +188,7 @@ export default function ProfilePage() {
               <input
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(formatPhone(e.target.value))}
                 className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
                 placeholder="(555) 123-4567"
               />
@@ -161,6 +218,24 @@ export default function ProfilePage() {
                 placeholder="New password"
                 minLength={8}
               />
+              {/* Password strength indicator */}
+              {newPassword && (
+                <div className="mt-2">
+                  <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-300 ${pwStrength.color}`}
+                      style={{ width: pwStrength.width }}
+                    />
+                  </div>
+                  <p className={`text-xs mt-1 font-medium ${
+                    pwStrength.label === "Weak" ? "text-red" :
+                    pwStrength.label === "Medium" ? "text-amber-400" :
+                    "text-emerald-400"
+                  }`}>
+                    {pwStrength.label}
+                  </p>
+                </div>
+              )}
             </div>
             <button
               type="submit"

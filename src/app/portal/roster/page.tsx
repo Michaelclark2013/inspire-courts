@@ -2,7 +2,18 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { Users, Plus, Trash2, Loader2, AlertCircle } from "lucide-react";
+import {
+  Users,
+  Plus,
+  Trash2,
+  Loader2,
+  AlertCircle,
+  AlertTriangle,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
+  ArrowUpDown,
+} from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
 
 type Player = {
@@ -20,26 +31,43 @@ type Team = {
   season: string | null;
 };
 
+type SortField = "name" | "jersey";
+
 export default function RosterPage() {
   const { data: session } = useSession();
   const [team, setTeam] = useState<Team | null>(null);
   const [roster, setRoster] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ name: "", jerseyNumber: "" });
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [sortField, setSortField] = useState<SortField>("name");
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const isCoach = session?.user?.role === "coach";
+
+  // Clear feedback after 3s
+  useEffect(() => {
+    if (feedback) {
+      const t = setTimeout(() => setFeedback(null), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [feedback]);
 
   const fetchRoster = useCallback(async () => {
     try {
+      setError(false);
       const res = await fetch("/api/portal/roster");
       if (res.ok) {
         const data = await res.json();
         setTeam(data.team);
         setRoster(data.players);
+      } else {
+        setError(true);
       }
     } catch {
-      // API not available
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -52,23 +80,74 @@ export default function RosterPage() {
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const res = await fetch("/api/portal/roster", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    if (res.ok) {
-      setForm({ name: "", jerseyNumber: "" });
-      setShowAdd(false);
-      fetchRoster();
+    try {
+      const res = await fetch("/api/portal/roster", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setForm({ name: "", jerseyNumber: "" });
+        setShowAdd(false);
+        setFeedback({ type: "success", message: `${form.name} added to roster` });
+        fetchRoster();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setFeedback({ type: "error", message: data.error || "Failed to add player" });
+      }
+    } catch {
+      setFeedback({ type: "error", message: "Failed to add player. Check your connection." });
     }
     setSaving(false);
   }
 
   async function handleRemove(id: number, name: string) {
     if (!confirm(`Remove ${name} from roster?`)) return;
-    await fetch(`/api/portal/roster?id=${id}`, { method: "DELETE" });
-    fetchRoster();
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/portal/roster?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setFeedback({ type: "success", message: `${name} removed from roster` });
+        fetchRoster();
+      } else {
+        setFeedback({ type: "error", message: `Failed to remove ${name}` });
+      }
+    } catch {
+      setFeedback({ type: "error", message: `Failed to remove ${name}. Check your connection.` });
+    }
+    setDeletingId(null);
+  }
+
+  // Sort roster
+  const sortedRoster = [...roster].sort((a, b) => {
+    if (sortField === "jersey") {
+      const aNum = parseInt(a.jerseyNumber || "999", 10);
+      const bNum = parseInt(b.jerseyNumber || "999", 10);
+      return aNum - bNum;
+    }
+    return a.name.localeCompare(b.name);
+  });
+
+  // Error state
+  if (error && !loading) {
+    return (
+      <div className="p-6 lg:p-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">My Roster</h1>
+        </div>
+        <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <h3 className="text-white font-semibold mb-1">Failed to Load Roster</h3>
+          <p className="text-text-secondary text-sm mb-4">Could not load your roster. Check your connection and try again.</p>
+          <button
+            onClick={() => { setLoading(true); fetchRoster(); }}
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" /> Retry
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -92,6 +171,22 @@ export default function RosterPage() {
           </button>
         )}
       </div>
+
+      {/* Feedback banner */}
+      {feedback && (
+        <div className={`mb-4 rounded-xl px-4 py-3 flex items-center gap-2 text-sm ${
+          feedback.type === "success"
+            ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
+            : "bg-red/10 border border-red/20 text-red"
+        }`}>
+          {feedback.type === "success" ? (
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+          ) : (
+            <XCircle className="w-4 h-4 flex-shrink-0" />
+          )}
+          {feedback.message}
+        </div>
+      )}
 
       {/* Add player form */}
       {showAdd && (
@@ -166,14 +261,28 @@ export default function RosterPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
-                    <th className="text-left px-6 py-3 font-semibold">#</th>
-                    <th className="text-left px-6 py-3 font-semibold">Player</th>
+                    <th className="text-left px-6 py-3 font-semibold">
+                      <button
+                        onClick={() => setSortField("jersey")}
+                        className={`flex items-center gap-1 hover:text-white transition-colors ${sortField === "jersey" ? "text-white" : ""}`}
+                      >
+                        # <ArrowUpDown className="w-3 h-3" />
+                      </button>
+                    </th>
+                    <th className="text-left px-6 py-3 font-semibold">
+                      <button
+                        onClick={() => setSortField("name")}
+                        className={`flex items-center gap-1 hover:text-white transition-colors ${sortField === "name" ? "text-white" : ""}`}
+                      >
+                        Player <ArrowUpDown className="w-3 h-3" />
+                      </button>
+                    </th>
                     <th className="text-left px-6 py-3 font-semibold">Division</th>
                     {isCoach && <th className="px-6 py-3"></th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {roster.map((p) => (
+                  {sortedRoster.map((p) => (
                     <tr key={p.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                       <td className="px-6 py-4 text-white/60 font-mono">
                         {p.jerseyNumber || "—"}
@@ -187,9 +296,14 @@ export default function RosterPage() {
                         <td className="px-6 py-4 text-right">
                           <button
                             onClick={() => handleRemove(p.id, p.name)}
-                            className="text-white/30 hover:text-red transition-colors"
+                            disabled={deletingId === p.id}
+                            className="text-white/30 hover:text-red disabled:opacity-40 transition-colors"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            {deletingId === p.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
                           </button>
                         </td>
                       )}

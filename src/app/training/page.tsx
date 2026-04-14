@@ -92,16 +92,47 @@ export default function TrainingPage() {
               {page ? getField(page, "Hero", "headline") : "Private Training"}
             </h1>
             <p className="text-white/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-              {page ? getField(page, "Hero", "description") : "1-on-1 and small group basketball training at a pro-level facility. Every session is designed to make you better."}
+              {page ? getField(page, "Hero", "description") : "Koa Peat. Saben Lee. Cody Williams. They train here. So can you — same courts, same environment, same standard."}
             </p>
-            <Link
-              href="/contact?type=Private+Training"
-              className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
-            >
-              Book a Session{" "}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact?type=Private+Training"
+                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+              >
+                Book a Session{" "}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <a
+                href="#videos"
+                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
+              >
+                See Training Videos{" "}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
           </AnimateIn>
+        </div>
+      </section>
+
+      {/* Social Proof Bar */}
+      <section className="bg-navy border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4">
+            {[
+              { label: "#1 Recruit", sub: "Koa Peat Trains Here" },
+              { label: "NBA Players", sub: "Multiple pros on these courts" },
+              { label: "7 Courts", sub: "Regulation hardwood" },
+              { label: "Gilbert, AZ", sub: "52,000 sq ft facility" },
+            ].map(({ label, sub }, i) => (
+              <div
+                key={label}
+                className={`flex flex-col items-center justify-center py-5 px-4 text-center ${i < 3 ? "border-r border-white/10" : ""}`}
+              >
+                <span className="text-red font-bold text-sm font-[var(--font-chakra)] uppercase tracking-wide">{label}</span>
+                <span className="text-white/50 text-[10px] uppercase tracking-wider mt-0.5">{sub}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -254,7 +285,7 @@ export default function TrainingPage() {
       </section>
 
       {/* More Training Videos */}
-      <section className="py-14 lg:py-28 bg-off-white">
+      <section id="videos" className="py-14 lg:py-28 bg-off-white scroll-mt-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimateIn>
             <div className="text-center mb-10">
@@ -290,9 +321,11 @@ export default function TrainingPage() {
             <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
               Ready to <span className="text-red">Level Up</span>?
             </h2>
-            <p className="text-white/70 text-lg mb-10 max-w-xl mx-auto">
-              Book your first session and see why players across Arizona train at
-              Inspire Courts.
+            <p className="text-white/70 text-lg mb-4 max-w-xl mx-auto">
+              Koa Peat, Saben Lee, Cody Williams, and Zylan Cheatham have all put in work on these courts. Your session starts here.
+            </p>
+            <p className="text-white/40 text-sm mb-10 max-w-md mx-auto">
+              All ages and skill levels welcome. 1-on-1, small group, and shooting sessions available.
             </p>
             <Link
               href="/contact?type=Private+Training"

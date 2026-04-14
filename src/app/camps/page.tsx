@@ -19,6 +19,7 @@ import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 import BackToTop from "@/components/ui/BackToTop";
 import QuickContactBar from "@/components/ui/QuickContactBar";
+import EmailSignup from "@/components/ui/EmailSignup";
 import {
   FACILITY_ADDRESS,
   FACILITY_EMAIL,
@@ -490,16 +491,12 @@ export default function CampsPage() {
             ))}
           </div>
           <AnimateIn delay={100}>
-            <p className="text-center text-text-muted text-sm mt-6">
-              More camps will be added throughout the year.{" "}
-              <Link
-                href="/contact"
-                className="text-red font-semibold hover:underline"
-              >
-                Contact us
-              </Link>{" "}
-              to be notified when new camps are announced.
-            </p>
+            <div className="mt-10 bg-off-white border border-light-gray rounded-2xl p-8 lg:p-10">
+              <p className="text-center text-text-muted text-sm mb-6">
+                More camps are being added throughout the year. Get on the list for early access.
+              </p>
+              <EmailSignup variant="light" />
+            </div>
           </AnimateIn>
         </div>
       </section>

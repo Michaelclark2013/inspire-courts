@@ -34,7 +34,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
       }
 
       setStatus("success");
-      setMessage("You're in. Watch your inbox.");
+      setMessage("You're in! Check your inbox — and your spam folder just in case.");
       setEmail("");
       trackConversion("newsletter_signup");
     } catch {

@@ -393,10 +393,24 @@ export default function PrepPage() {
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
                   Join <span className="text-red">Inspire Prep</span>
                 </h2>
-                <p className="text-white/70 text-lg mb-8 max-w-xl leading-relaxed">
-                  Spots are limited. Contact us to learn about tryouts, enrollment,
-                  and what Inspire Prep can do for your student-athlete.
+                <p className="text-white/70 text-lg mb-6 max-w-xl leading-relaxed">
+                  Spots are limited. High school athletes serious about their basketball future — this is your path.
                 </p>
+                <div className="flex flex-col gap-3 mb-8">
+                  {[
+                    { step: "01", label: "Inquire", desc: "Submit the contact form — we'll reach out within 24 hrs" },
+                    { step: "02", label: "Tryout", desc: "Attend a tryout session at Inspire Courts" },
+                    { step: "03", label: "Enroll", desc: "Secure your spot and get on the season schedule" },
+                  ].map((s) => (
+                    <div key={s.step} className="flex items-start gap-4">
+                      <span className="text-red font-bold text-xs font-[var(--font-chakra)] uppercase tracking-widest mt-0.5 w-6 flex-shrink-0">{s.step}</span>
+                      <div>
+                        <p className="text-white font-semibold text-sm uppercase tracking-tight font-[var(--font-chakra)]">{s.label}</p>
+                        <p className="text-white/60 text-xs leading-relaxed">{s.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 <Link
                   href="/contact?type=Inspire+Prep"
                   className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"

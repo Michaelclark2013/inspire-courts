@@ -24,6 +24,7 @@ const PROGRAM_LINKS = [
   { href: "/training", label: "Private Training" },
   { href: "/teams", label: "Team Inspire" },
   { href: "/prep", label: "Inspire Prep" },
+  { href: "/camps", label: "Basketball Camps" },
   { href: "/book", label: "Open Gym" },
 ];
 

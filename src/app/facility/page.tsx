@@ -172,14 +172,14 @@ export default function FacilityPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 text-sm text-white/60">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-red flex-shrink-0" />
+                    <MapPin className="w-4 h-4 text-red flex-shrink-0" aria-hidden="true" />
                     <span>Gilbert, AZ</span>
                   </div>
                   <a
                     href={`tel:+1${FACILITY_PHONE.replace(/\D/g, "")}`}
                     className="flex items-center gap-2 hover:text-white transition-colors"
                   >
-                    <Phone className="w-4 h-4 text-red flex-shrink-0" />
+                    <Phone className="w-4 h-4 text-red flex-shrink-0" aria-hidden="true" />
                     {FACILITY_PHONE}
                   </a>
                 </div>
@@ -219,8 +219,15 @@ export default function FacilityPage() {
                 >
                   Book Now <ArrowRight className="w-4 h-4" />
                 </Link>
-                <p className="text-text-muted text-xs text-center mt-4">
-                  Or email{" "}
+                <p className="text-text-muted text-xs text-center mt-3">
+                  We&apos;ll confirm your booking within 24 hours.
+                </p>
+                <p className="text-text-muted text-xs text-center mt-2">
+                  Call{" "}
+                  <a href={`tel:${FACILITY_PHONE.replace(/\D/g, "")}`} className="text-red hover:underline font-medium">
+                    {FACILITY_PHONE}
+                  </a>
+                  {" "}or email{" "}
                   <a href={`mailto:${FACILITY_EMAIL}`} className="text-red hover:underline font-medium">
                     {FACILITY_EMAIL}
                   </a>
@@ -365,7 +372,7 @@ export default function FacilityPage() {
                     className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-4 lg:px-5 lg:py-5 hover:bg-white/10 transition-colors"
                   >
                     <div className="w-10 h-10 bg-red/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-5 h-5 text-red" />
+                      <Icon className="w-5 h-5 text-red" aria-hidden="true" />
                     </div>
                     <span className="text-white text-sm font-semibold font-[var(--font-chakra)] uppercase tracking-wide leading-tight">
                       {label}
@@ -444,7 +451,7 @@ export default function FacilityPage() {
                 <div className="bg-off-white border border-light-gray rounded-xl p-7 flex flex-col gap-4 h-full">
                   <div className="flex gap-0.5">
                     {Array.from({ length: 5 }).map((_, idx) => (
-                      <Star key={idx} className="w-4 h-4 fill-red text-red" />
+                      <Star key={idx} className="w-4 h-4 fill-red text-red" aria-hidden="true" />
                     ))}
                   </div>
                   <p className="text-text-muted leading-relaxed text-sm flex-1">

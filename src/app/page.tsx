@@ -184,10 +184,10 @@ export default async function Home() {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
               <Link
-                href="/facility"
+                href="/book"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
               >
-                {page ? getField(page, "Hero", "ctaSecondary") : "Book the Facility"}{" "}
+                {page ? getField(page, "Hero", "ctaSecondary") : "Book a Court"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>

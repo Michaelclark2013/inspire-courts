@@ -46,6 +46,24 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [ageFilter, setAgeFilter] = useState("All");
+  const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
+
+  function toggleRow(i: number) {
+    setSelectedIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    if (selectedIndices.size === filtered.length) {
+      setSelectedIndices(new Set());
+    } else {
+      setSelectedIndices(new Set(filtered.map((_, i) => i)));
+    }
+  }
 
   const statuses = ["All", ...new Set(teams.map((t) => t.status))];
   const ages = ["All", ...new Set(teams.map((t) => t.age).sort())];
@@ -115,7 +133,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
         </select>
         <button
           onClick={() => downloadCSV(filtered, "teams.csv")}
-          title="Download CSV"
+          title="Download all filtered (CSV)"
           className="flex items-center gap-2 bg-bg border border-border rounded-sm px-3 py-2.5 text-text-secondary hover:text-white hover:border-accent/50 text-sm transition-colors flex-shrink-0"
         >
           <Download className="w-4 h-4" />
@@ -123,12 +141,41 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
         </button>
       </div>
 
+      {/* Bulk action bar */}
+      {selectedIndices.size > 0 && (
+        <div className="flex items-center gap-3 bg-accent/10 border border-accent/30 rounded-sm px-4 py-2.5 mb-3">
+          <span className="text-accent text-sm font-semibold">{selectedIndices.size} selected</span>
+          <button
+            onClick={() => downloadCSV(filtered.filter((_, i) => selectedIndices.has(i)), `teams-selected.csv`)}
+            className="flex items-center gap-1.5 bg-accent/20 hover:bg-accent/30 text-accent text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" /> Export selected
+          </button>
+          <button
+            onClick={() => setSelectedIndices(new Set())}
+            className="text-text-secondary hover:text-white text-xs ml-auto transition-colors"
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
       {/* Table */}
       <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
+                <th className="px-3 py-3 w-8">
+                  <input
+                    type="checkbox"
+                    checked={filtered.length > 0 && selectedIndices.size === filtered.length}
+                    ref={(el) => { if (el) el.indeterminate = selectedIndices.size > 0 && selectedIndices.size < filtered.length; }}
+                    onChange={toggleAll}
+                    aria-label="Select all"
+                    className="accent-accent cursor-pointer"
+                  />
+                </th>
                 <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Team</th>
                 <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Coach</th>
                 <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Phone</th>
@@ -141,7 +188,16 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
             </thead>
             <tbody>
               {filtered.map((t, i) => (
-                <tr key={i} className="border-b border-border/50 hover:bg-bg/50 transition-colors">
+                <tr key={i} className={`border-b border-border/50 hover:bg-bg/50 transition-colors ${selectedIndices.has(i) ? "bg-accent/5" : ""}`}>
+                  <td className="px-3 py-3 w-8">
+                    <input
+                      type="checkbox"
+                      checked={selectedIndices.has(i)}
+                      onChange={() => toggleRow(i)}
+                      aria-label={`Select ${t.teamName}`}
+                      className="accent-accent cursor-pointer"
+                    />
+                  </td>
                   <td className="px-4 py-3 text-white font-medium">{t.teamName}</td>
                   <td className="px-4 py-3 text-text-secondary">{t.coach}</td>
                   <td className="px-4 py-3">
@@ -170,7 +226,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="px-4 py-8 text-center text-text-secondary">No teams found</td></tr>
+                <tr><td colSpan={9} className="px-4 py-8 text-center text-text-secondary">No teams found</td></tr>
               )}
             </tbody>
           </table>

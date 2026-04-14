@@ -24,6 +24,7 @@ type AlertData = {
 export default function DashboardAlerts() {
   const [data, setData] = useState<AlertData | null>(null);
   const [error, setError] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const router = useRouter();
 
   const fetchAlerts = useCallback(async () => {
@@ -92,6 +93,12 @@ export default function DashboardAlerts() {
         case "a":
           router.push("/admin/announcements");
           break;
+        case "?":
+          setShowShortcuts((v) => !v);
+          break;
+        case "escape":
+          setShowShortcuts(false);
+          break;
       }
     }
 
@@ -149,8 +156,38 @@ export default function DashboardAlerts() {
     red: "bg-red/10 border-red/20 text-red",
   };
 
+  const SHORTCUTS = [
+    { key: "T", desc: "Create / manage tournaments" },
+    { key: "S", desc: "Enter scores" },
+    { key: "C", desc: "Game day check-in" },
+    { key: "A", desc: "Post announcement" },
+    { key: "?", desc: "Toggle this shortcuts panel" },
+    { key: "Esc", desc: "Close shortcuts panel" },
+  ];
+
   return (
     <div className="space-y-4 mb-8">
+      {/* Keyboard shortcuts modal */}
+      {showShortcuts && (
+        <>
+          <div className="fixed inset-0 z-[70] bg-black/60" onClick={() => setShowShortcuts(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[71] bg-bg-secondary border border-border rounded-xl p-6 w-full max-w-sm shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-white font-bold text-sm uppercase tracking-wider">Keyboard Shortcuts</h3>
+              <button onClick={() => setShowShortcuts(false)} className="text-text-secondary hover:text-white transition-colors" aria-label="Close shortcuts">✕</button>
+            </div>
+            <div className="space-y-2">
+              {SHORTCUTS.map((s) => (
+                <div key={s.key} className="flex items-center gap-3">
+                  <kbd className="bg-bg border border-border rounded px-2 py-1 text-xs font-mono text-white font-bold min-w-[2.5rem] text-center">{s.key}</kbd>
+                  <span className="text-text-secondary text-sm">{s.desc}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-text-secondary text-xs mt-4">Shortcuts only active when not focused on an input field.</p>
+          </div>
+        </>
+      )}
       {/* Alert Cards */}
       {alerts.length > 0 && (
         <div className="space-y-2">

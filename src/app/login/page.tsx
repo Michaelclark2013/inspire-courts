@@ -66,6 +66,10 @@ export default function LoginPage() {
       <link rel="canonical" href="https://inspirecourtsaz.com/login" />
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy-dark to-navy pointer-events-none" />
+      {/* Decorative orbs */}
+      <div className="absolute top-1/4 -left-24 w-72 h-72 bg-red/10 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-24 w-56 h-56 bg-red/8 rounded-full blur-[60px] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-32 bg-gradient-to-b from-red/20 to-transparent pointer-events-none" />
 
       <div className="relative w-full max-w-sm z-10">
         {/* Logo & Header */}
@@ -199,8 +203,14 @@ export default function LoginPage() {
           </form>
         </div>
 
+        {/* Security note */}
+        <p className="text-center text-white/20 text-[10px] mt-4 flex items-center justify-center gap-1.5">
+          <Lock className="w-2.5 h-2.5" aria-hidden="true" />
+          Secure sign-in for Inspire Courts staff &amp; coaches
+        </p>
+
         {/* Register link */}
-        <div className="mt-5 text-center">
+        <div className="mt-3 text-center">
           <span className="text-white/30 text-xs">Don&apos;t have an account? </span>
           <Link href="/register" className="text-red text-xs hover:text-red-hover transition-colors font-semibold">
             Create Account

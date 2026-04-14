@@ -16,6 +16,7 @@ import DashboardCharts from "@/components/admin/DashboardCharts";
 import DashboardAlerts from "@/components/admin/DashboardAlerts";
 import DashboardDBStats from "@/components/admin/DashboardDBStats";
 import DashboardLeads from "@/components/admin/DashboardLeads";
+import DashboardActivity from "@/components/admin/DashboardActivity";
 import {
   fetchSheetWithHeaders,
   getCol,
@@ -203,6 +204,9 @@ export default async function AdminDashboard() {
           </p>
         </div>
       </div>
+
+      {/* Recent Activity feed */}
+      <DashboardActivity />
 
       {/* Tournament & Registration Overview (DB-powered) + Alerts */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 mb-8">

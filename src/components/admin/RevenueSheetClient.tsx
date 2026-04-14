@@ -39,13 +39,38 @@ interface Props {
   revenueOverTime: { label: string; value: number }[];
 }
 
+type TimeRange = "7d" | "30d" | "90d" | "all";
+
+const TIME_RANGE_OPTIONS: { label: string; value: TimeRange }[] = [
+  { label: "7d", value: "7d" },
+  { label: "30d", value: "30d" },
+  { label: "90d", value: "90d" },
+  { label: "All", value: "all" },
+];
+
+function parseDate(dateStr: string): Date | null {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 export default function RevenueSheetClient({ transactions, sourceData, revenueOverTime }: Props) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<"date" | "total" | "description">("date");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [timeRange, setTimeRange] = useState<TimeRange>("all");
 
   const filtered = useMemo(() => {
     let list = transactions;
+    if (timeRange !== "all") {
+      const days = timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90;
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - days);
+      list = list.filter((t) => {
+        const d = parseDate(t.date);
+        return d && d >= cutoff;
+      });
+    }
     if (search) {
       const q = search.toLowerCase();
       list = list.filter((t) => t.description.toLowerCase().includes(q) || t.date.toLowerCase().includes(q) || t.notes.toLowerCase().includes(q));
@@ -102,6 +127,22 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
       {/* Table */}
       <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
         <div className="px-4 py-3 border-b border-border flex flex-wrap items-center gap-3">
+          {/* Time range pills */}
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {TIME_RANGE_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setTimeRange(opt.value)}
+                className={`px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider transition-colors ${
+                  timeRange === opt.value
+                    ? "bg-accent text-white"
+                    : "bg-bg border border-border text-text-secondary hover:text-white hover:border-accent/50"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" />
             <input

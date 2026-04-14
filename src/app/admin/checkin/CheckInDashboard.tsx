@@ -42,6 +42,7 @@ export default function CheckInDashboard({
   const [division, setDivision] = useState("");
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [checkInError, setCheckInError] = useState("");
   const [recentCheckins, setRecentCheckins] = useState<
     { name: string; team: string; time: string }[]
   >([]);
@@ -55,6 +56,7 @@ export default function CheckInDashboard({
     e.preventDefault();
     setSaving(true);
     setSuccess(false);
+    setCheckInError("");
 
     const res = await fetch("/api/admin/checkin", {
       method: "POST",
@@ -74,6 +76,9 @@ export default function CheckInDashboard({
       setPlayerName("");
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2000);
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setCheckInError(data.error || "Check-in failed — please try again");
     }
     setSaving(false);
   }
@@ -152,6 +157,24 @@ export default function CheckInDashboard({
           </p>
         </div>
       </div>
+
+      {/* Check-in progress bar */}
+      {totalTeams > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between text-xs mb-1.5">
+            <span className="text-white/40 font-semibold uppercase tracking-wider">Check-in Progress</span>
+            <span className="text-white font-bold tabular-nums">
+              {checkedInTeamCount}/{totalTeams} teams &middot; {Math.round((checkedInTeamCount / totalTeams) * 100)}%
+            </span>
+          </div>
+          <div className="h-2.5 bg-white/5 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${checkedInTeamCount === totalTeams ? "bg-emerald-400" : "bg-red"}`}
+              style={{ width: `${Math.round((checkedInTeamCount / totalTeams) * 100)}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Two columns: Team Status + Check-In Form */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -303,6 +326,12 @@ export default function CheckInDashboard({
             </div>
 
             <form onSubmit={handleCheckIn} className="space-y-3">
+              {checkInError && (
+                <div className="bg-red/10 border border-red/30 text-red text-xs rounded-lg px-3 py-2.5 flex items-center justify-between" role="alert">
+                  <span>{checkInError}</span>
+                  <button type="button" onClick={() => setCheckInError("")} className="ml-2 text-red/60 hover:text-red">✕</button>
+                </div>
+              )}
               <div>
                 <label className="block text-white/60 text-[11px] font-semibold uppercase tracking-wider mb-1">
                   Player Name

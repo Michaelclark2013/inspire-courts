@@ -9,6 +9,7 @@ import {
   Trophy,
   X,
   AlertCircle,
+  Check,
 } from "lucide-react";
 
 type Game = {
@@ -40,6 +41,7 @@ export default function ScoreEntryPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [scoreError, setScoreError] = useState("");
+  const [createSuccess, setCreateSuccess] = useState("");
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [tournamentFilter, setTournamentFilter] = useState<string>("");
   const [tournamentOptions, setTournamentOptions] = useState<TournamentOption[]>([]);
@@ -99,6 +101,8 @@ export default function ScoreEntryPage() {
         setForm({ homeTeam: "", awayTeam: "", division: "", court: "", eventName: "" });
         setShowForm(false);
         fetchGames();
+        setCreateSuccess(`Game created successfully`);
+        setTimeout(() => setCreateSuccess(""), 4000);
       } else {
         const data = await res.json().catch(() => ({}));
         setFormError(data.error || "Failed to create game");
@@ -200,6 +204,17 @@ export default function ScoreEntryPage() {
           </button>
         </div>
       </div>
+
+      {/* Success toast */}
+      {createSuccess && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-emerald-500/90 backdrop-blur text-white px-4 py-3 rounded-xl shadow-xl animate-in slide-in-from-bottom-2 duration-300">
+          <Check className="w-4 h-4 flex-shrink-0" />
+          <span className="text-sm font-semibold">{createSuccess}</span>
+          <button type="button" onClick={() => setCreateSuccess("")} className="ml-2 text-white/60 hover:text-white">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* New game form */}
       {showForm && (

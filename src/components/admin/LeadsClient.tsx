@@ -25,10 +25,24 @@ const STATUS_COLORS: Record<string, string> = {
   Converted: "bg-accent/10 text-accent border-accent/20",
 };
 
+const STATUS_TITLES: Record<string, string> = {
+  New: "New lead — not yet reviewed",
+  Reviewed: "Lead has been reviewed but not yet contacted",
+  Responded: "Lead has responded to outreach",
+  Contacted: "Lead has been contacted",
+  Converted: "Lead converted to registered team",
+};
+
 const URGENCY_COLORS: Record<string, string> = {
   Hot: "bg-red-500/10 text-red-400 border-red-500/20",
   Warm: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
   Cold: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+};
+
+const URGENCY_TITLES: Record<string, string> = {
+  Hot: "Hot — contact immediately, high interest",
+  Warm: "Warm — interested, follow up soon",
+  Cold: "Cold — low priority or unresponsive",
 };
 
 export default function LeadsClient({ leads }: { leads: Lead[] }) {
@@ -108,10 +122,10 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                 <p className="text-white font-medium truncate">{lead.name}</p>
                 <p className="text-text-secondary text-xs truncate">{lead.email} {lead.phone && lead.phone !== "—" ? `• ${lead.phone}` : ""}</p>
               </div>
-              <span className={cn("text-xs px-2 py-0.5 rounded-sm border font-bold uppercase tracking-wider flex-shrink-0", STATUS_COLORS[lead.status] || "bg-bg text-text-secondary border-border")}>
+              <span title={STATUS_TITLES[lead.status]} className={cn("text-xs px-2 py-0.5 rounded-sm border font-bold uppercase tracking-wider flex-shrink-0 cursor-help", STATUS_COLORS[lead.status] || "bg-bg text-text-secondary border-border")}>
                 {lead.status}
               </span>
-              <span className={cn("text-xs px-2 py-0.5 rounded-sm border font-bold uppercase tracking-wider flex-shrink-0", URGENCY_COLORS[lead.urgency] || "bg-bg text-text-secondary border-border")}>
+              <span title={URGENCY_TITLES[lead.urgency]} className={cn("text-xs px-2 py-0.5 rounded-sm border font-bold uppercase tracking-wider flex-shrink-0 cursor-help", URGENCY_COLORS[lead.urgency] || "bg-bg text-text-secondary border-border")}>
                 {lead.urgency}
               </span>
               <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-sm flex-shrink-0 hidden sm:block">

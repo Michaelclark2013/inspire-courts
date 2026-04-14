@@ -54,6 +54,7 @@ export default function TournamentManagePage() {
   const [saving, setSaving] = useState(false);
 
   const [successMsg, setSuccessMsg] = useState("");
+  const [createError, setCreateError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -144,6 +145,7 @@ export default function TournamentManagePage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+    setCreateError("");
 
     const divisions = form.divisions
       .split(",")
@@ -197,6 +199,9 @@ export default function TournamentManagePage() {
       setSuccessMsg(createdName);
       setTimeout(() => setSuccessMsg(""), 4000);
       fetchTournaments();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setCreateError(data.error || "Failed to create tournament — please try again");
     }
     setSaving(false);
   }
@@ -242,6 +247,13 @@ export default function TournamentManagePage() {
           <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-6 flex items-center gap-2">
             <Plus className="w-4 h-4 text-red" /> Create Tournament
           </h2>
+
+          {createError && (
+            <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 mb-4 flex items-center justify-between" role="alert">
+              <span>{createError}</span>
+              <button type="button" onClick={() => setCreateError("")} className="ml-4 text-red/60 hover:text-red text-xs font-bold">✕</button>
+            </div>
+          )}
 
           {/* Quick-Start Template Presets */}
           <div className="mb-6">

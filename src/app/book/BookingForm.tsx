@@ -51,6 +51,14 @@ export default function BookingForm() {
     const form = e.currentTarget;
     const fd = new FormData(form);
 
+    // Honeypot: if filled, silently "succeed" without submitting
+    const honeypot = fd.get("website") as string;
+    if (honeypot) {
+      setSubmitted(true);
+      setLoading(false);
+      return;
+    }
+
     const data = {
       name: fd.get("name") as string,
       email: fd.get("email") as string,
@@ -240,6 +248,12 @@ export default function BookingForm() {
               className={TEXTAREA_CLASS}
               placeholder="Any special requests, questions, or details…"
             />
+          </div>
+
+          {/* Honeypot — hidden from real users, catches bots */}
+          <div className="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true">
+            <label htmlFor="website">Website</label>
+            <input type="text" id="website" name="website" tabIndex={-1} autoComplete="off" />
           </div>
 
           {error && (

@@ -16,6 +16,8 @@ import {
   Flag,
   ClipboardList,
   Heart,
+  Check,
+  X,
 } from "lucide-react";
 
 const PRIMARY_ROLES = [
@@ -371,6 +373,7 @@ export default function RegisterPage() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+                {form.password.length > 0 && <PasswordStrength password={form.password} />}
               </div>
 
               <div>
@@ -443,6 +446,47 @@ export default function RegisterPage() {
         <p className="text-center text-white/20 text-xs mt-8 uppercase tracking-widest">
           Inspire Courts AZ &bull; Gilbert, Arizona
         </p>
+      </div>
+    </div>
+  );
+}
+
+function PasswordStrength({ password }: { password: string }) {
+  const checks = [
+    { label: "8+ characters", pass: password.length >= 8 },
+    { label: "Uppercase letter", pass: /[A-Z]/.test(password) },
+    { label: "Number", pass: /\d/.test(password) },
+    { label: "Special character", pass: /[^A-Za-z0-9]/.test(password) },
+  ];
+  const passed = checks.filter((c) => c.pass).length;
+  const colors = ["bg-red", "bg-red", "bg-amber-500", "bg-emerald-500"];
+  const barColor = passed === 0 ? "bg-white/10" : colors[passed - 1];
+
+  return (
+    <div className="mt-2 space-y-2">
+      <div className="flex gap-1">
+        {[0, 1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className={`h-1 flex-1 rounded-full transition-colors ${
+              i < passed ? barColor : "bg-white/10"
+            }`}
+          />
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
+        {checks.map((c) => (
+          <div key={c.label} className="flex items-center gap-1.5 text-[10px]">
+            {c.pass ? (
+              <Check className="w-3 h-3 text-emerald-400" />
+            ) : (
+              <X className="w-3 h-3 text-white/20" />
+            )}
+            <span className={c.pass ? "text-emerald-400" : "text-white/30"}>
+              {c.label}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );

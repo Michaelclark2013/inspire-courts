@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { X, Camera, ArrowRight } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
@@ -24,6 +24,14 @@ const GALLERY_ITEMS = [
 export default function GalleryPageClient() {
   const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("All");
   const [lightbox, setLightbox] = useState<number | null>(null);
+
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (lightbox !== null) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [lightbox]);
 
   const filtered =
     activeTab === "All"
@@ -108,6 +116,10 @@ export default function GalleryPageClient() {
         <div
           className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4"
           onClick={() => setLightbox(null)}
+          onKeyDown={(e) => { if (e.key === "Escape") setLightbox(null); }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Photo lightbox"
         >
           <button
             onClick={() => setLightbox(null)}

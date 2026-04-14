@@ -116,27 +116,39 @@ export default function UsersPage() {
   }
 
   async function handleRoleChange(id: number, newRole: string) {
-    await fetch("/api/admin/users", {
+    const res = await fetch("/api/admin/users", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, role: newRole }),
     });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || "Failed to update role");
+    }
     setEditingId(null);
     fetchUsers();
   }
 
   async function handleApproval(id: number, approved: boolean) {
-    await fetch("/api/admin/users", {
+    const res = await fetch("/api/admin/users", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, approved }),
     });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || `Failed to ${approved ? "approve" : "deny"} user`);
+    }
     fetchUsers();
   }
 
   async function handleDelete(id: number, name: string) {
     if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
-    await fetch(`/api/admin/users?id=${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/users?id=${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || "Failed to delete user");
+    }
     fetchUsers();
   }
 
@@ -169,6 +181,16 @@ export default function UsersPage() {
           )}
         </button>
       </div>
+
+      {/* Global error banner (visible even when form is closed) */}
+      {!showForm && error && (
+        <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-6 flex items-center justify-between" role="alert">
+          <span>{error}</span>
+          <button onClick={() => setError("")} className="text-red-hover hover:text-white ml-4" aria-label="Dismiss error">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Create form */}
       {showForm && (

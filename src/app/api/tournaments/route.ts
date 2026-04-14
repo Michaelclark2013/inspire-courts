@@ -5,7 +5,7 @@ import {
   tournamentTeams,
   tournamentRegistrations,
 } from "@/lib/db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { inArray, sql } from "drizzle-orm";
 
 // GET /api/tournaments — public tournament listing
 export async function GET() {
@@ -16,37 +16,53 @@ export async function GET() {
       .where(inArray(tournaments.status, ["published", "active", "completed"]))
       .orderBy(tournaments.startDate);
 
-    const result = await Promise.all(
-      allTournaments.map(async (t) => {
-        const teams = await db
-          .select()
-          .from(tournamentTeams)
-          .where(eq(tournamentTeams.tournamentId, t.id));
+    if (allTournaments.length === 0) {
+      return NextResponse.json([], {
+        headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=120" },
+      });
+    }
 
-        const regs = await db
-          .select()
-          .from(tournamentRegistrations)
-          .where(eq(tournamentRegistrations.tournamentId, t.id));
+    const ids = allTournaments.map((t) => t.id);
 
-        return {
-          id: t.id,
-          name: t.name,
-          startDate: t.startDate,
-          endDate: t.endDate,
-          location: t.location,
-          format: t.format,
-          status: t.status,
-          divisions: t.divisions ? JSON.parse(t.divisions) : [],
-          entryFee: t.entryFee,
-          registrationOpen: t.registrationOpen,
-          registrationDeadline: t.registrationDeadline,
-          maxTeamsPerDivision: t.maxTeamsPerDivision,
-          description: t.description,
-          teamCount: teams.length,
-          registrationCount: regs.length,
-        };
+    // Batch counts in 2 queries instead of 2N
+    const teamCounts = await db
+      .select({
+        tournamentId: tournamentTeams.tournamentId,
+        count: sql<number>`count(*)`,
       })
-    );
+      .from(tournamentTeams)
+      .where(inArray(tournamentTeams.tournamentId, ids))
+      .groupBy(tournamentTeams.tournamentId);
+
+    const regCounts = await db
+      .select({
+        tournamentId: tournamentRegistrations.tournamentId,
+        count: sql<number>`count(*)`,
+      })
+      .from(tournamentRegistrations)
+      .where(inArray(tournamentRegistrations.tournamentId, ids))
+      .groupBy(tournamentRegistrations.tournamentId);
+
+    const teamMap = new Map(teamCounts.map((r) => [r.tournamentId, r.count]));
+    const regMap = new Map(regCounts.map((r) => [r.tournamentId, r.count]));
+
+    const result = allTournaments.map((t) => ({
+      id: t.id,
+      name: t.name,
+      startDate: t.startDate,
+      endDate: t.endDate,
+      location: t.location,
+      format: t.format,
+      status: t.status,
+      divisions: t.divisions ? JSON.parse(t.divisions) : [],
+      entryFee: t.entryFee,
+      registrationOpen: t.registrationOpen,
+      registrationDeadline: t.registrationDeadline,
+      maxTeamsPerDivision: t.maxTeamsPerDivision,
+      description: t.description,
+      teamCount: teamMap.get(t.id) ?? 0,
+      registrationCount: regMap.get(t.id) ?? 0,
+    }));
 
     return NextResponse.json(result, {
       headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=120" },

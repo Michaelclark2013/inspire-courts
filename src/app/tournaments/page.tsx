@@ -1,6 +1,3 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -18,6 +15,15 @@ import {
 import AnimateIn from "@/components/ui/AnimateIn";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 import BackToTop from "@/components/ui/BackToTop";
+import { db } from "@/lib/db";
+import {
+  tournaments,
+  tournamentTeams,
+  tournamentRegistrations,
+} from "@/lib/db/schema";
+import { inArray, eq, sql } from "drizzle-orm";
+
+export const revalidate = 60; // ISR: revalidate every 60 seconds
 
 type TournamentPublic = {
   id: number;
@@ -67,33 +73,127 @@ const FEATURES = [
   },
 ];
 
-export default function TournamentsPage() {
-  const [tournaments, setTournaments] = useState<TournamentPublic[]>([]);
-  const [loading, setLoading] = useState(true);
+async function getTournaments(): Promise<TournamentPublic[]> {
+  try {
+    const allTournaments = await db
+      .select()
+      .from(tournaments)
+      .where(inArray(tournaments.status, ["published", "active", "completed"]))
+      .orderBy(tournaments.startDate);
 
-  useEffect(() => {
-    fetch("/api/tournaments")
-      .then((r) => r.json())
-      .then(setTournaments)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+    if (allTournaments.length === 0) return [];
 
-  const activeTournaments = tournaments.filter(
+    const ids = allTournaments.map((t) => t.id);
+
+    // Batch: get all team counts in one query
+    const teamCounts = await db
+      .select({
+        tournamentId: tournamentTeams.tournamentId,
+        count: sql<number>`count(*)`,
+      })
+      .from(tournamentTeams)
+      .where(inArray(tournamentTeams.tournamentId, ids))
+      .groupBy(tournamentTeams.tournamentId);
+
+    // Batch: get all registration counts in one query
+    const regCounts = await db
+      .select({
+        tournamentId: tournamentRegistrations.tournamentId,
+        count: sql<number>`count(*)`,
+      })
+      .from(tournamentRegistrations)
+      .where(inArray(tournamentRegistrations.tournamentId, ids))
+      .groupBy(tournamentRegistrations.tournamentId);
+
+    const teamMap = new Map(teamCounts.map((r) => [r.tournamentId, r.count]));
+    const regMap = new Map(regCounts.map((r) => [r.tournamentId, r.count]));
+
+    return allTournaments.map((t) => ({
+      id: t.id,
+      name: t.name,
+      startDate: t.startDate,
+      endDate: t.endDate,
+      location: t.location,
+      format: t.format,
+      status: t.status,
+      divisions: t.divisions ? JSON.parse(t.divisions) : [],
+      entryFee: t.entryFee,
+      registrationOpen: t.registrationOpen ?? false,
+      registrationDeadline: t.registrationDeadline,
+      maxTeamsPerDivision: t.maxTeamsPerDivision,
+      description: t.description,
+      teamCount: teamMap.get(t.id) ?? 0,
+      registrationCount: regMap.get(t.id) ?? 0,
+    }));
+  } catch (err) {
+    console.error("[tournaments] Failed to fetch:", err);
+    return [];
+  }
+}
+
+export default async function TournamentsPage() {
+  const allTournaments = await getTournaments();
+
+  const activeTournaments = allTournaments.filter(
     (t) => t.status === "active" || t.status === "published"
   );
-  const completedTournaments = tournaments.filter(
+  const completedTournaments = allTournaments.filter(
     (t) => t.status === "completed"
   );
 
+  // JSON-LD Event schema for SEO
+  const eventSchema = activeTournaments.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: activeTournaments.map((t, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "SportsEvent",
+        name: t.name,
+        startDate: t.startDate,
+        ...(t.endDate ? { endDate: t.endDate } : {}),
+        location: {
+          "@type": "Place",
+          name: t.location || "Inspire Courts AZ",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "725 W Elliot Rd Suite 101",
+            addressLocality: "Gilbert",
+            addressRegion: "AZ",
+            postalCode: "85233",
+            addressCountry: "US",
+          },
+        },
+        organizer: {
+          "@type": "Organization",
+          name: "OFF SZN HOOPS",
+          url: "https://inspirecourtsaz.com",
+        },
+        ...(t.entryFee != null && t.entryFee > 0 ? {
+          offers: {
+            "@type": "Offer",
+            price: (t.entryFee / 100).toFixed(2),
+            priceCurrency: "USD",
+            availability: t.registrationOpen
+              ? "https://schema.org/InStock"
+              : "https://schema.org/SoldOut",
+            url: "https://inspirecourts.leagueapps.com/tournaments",
+          },
+        } : {}),
+        url: `https://inspirecourtsaz.com/tournaments/${t.id}`,
+      },
+    })),
+  } : null;
+
   return (
     <div className="min-h-screen bg-white">
-      <title>Tournament Registration | Inspire Courts AZ</title>
-      <meta name="description" content="Register your team for OFF SZN HOOPS tournaments at Inspire Courts AZ in Gilbert, Arizona. 52,000 sq ft, 7 courts, game film, live scores." />
-      <link rel="canonical" href="https://inspirecourtsaz.com/tournaments" />
-      <meta property="og:title" content="Tournament Registration | Inspire Courts AZ" />
-      <meta property="og:description" content="Register your team for youth basketball tournaments at Arizona's premier facility. 3+ game guarantee, game film, electronic scoreboards." />
-      <meta property="og:url" content="https://inspirecourtsaz.com/tournaments" />
+      {eventSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema) }}
+        />
+      )}
       {/* ── HERO ── */}
       <section className="relative overflow-hidden">
         <Image
@@ -180,25 +280,7 @@ export default function TournamentsPage() {
 
       {/* ── TOURNAMENT LIST ── */}
       <section id="tournaments" className="max-w-5xl mx-auto px-4 py-12 lg:py-16">
-        {loading ? (
-          <div className="space-y-5">
-            {[1,2,3].map(i => (
-              <div key={i} className="bg-white border border-light-gray rounded-2xl p-6 lg:p-8 animate-pulse">
-                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="h-6 bg-light-gray rounded w-2/3 mb-3" />
-                    <div className="h-4 bg-light-gray rounded w-1/2 mb-3" />
-                    <div className="flex gap-2 mb-3">
-                      <div className="h-5 bg-light-gray rounded-full w-12" />
-                      <div className="h-5 bg-light-gray rounded-full w-16" />
-                    </div>
-                  </div>
-                  <div className="h-10 bg-light-gray rounded-lg w-24" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : activeTournaments.length === 0 && completedTournaments.length === 0 ? (
+        {activeTournaments.length === 0 && completedTournaments.length === 0 ? (
           /* ── Empty state ── */
           <div className="text-center py-12">
             <div className="max-w-lg mx-auto bg-white border border-light-gray shadow-sm rounded-2xl p-8 lg:p-10">
@@ -237,7 +319,7 @@ export default function TournamentsPage() {
             {activeTournaments.length > 0 && (
               <div>
                 <h2 className="text-navy font-bold text-lg font-heading uppercase tracking-wider mb-5 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-red" />
+                  <Calendar className="w-5 h-5 text-red" aria-hidden="true" />
                   {activeTournaments.some((t) => t.status === "active")
                     ? "Active & Upcoming"
                     : "Upcoming Tournaments"}
@@ -254,7 +336,7 @@ export default function TournamentsPage() {
             {completedTournaments.length > 0 && (
               <div>
                 <h2 className="text-text-muted font-bold text-sm font-heading uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-4 h-4" aria-hidden="true" />
                   Past Tournaments
                 </h2>
                 <div className="grid gap-4">
@@ -368,7 +450,7 @@ function TournamentCard({
         className="flex items-center justify-between gap-4 bg-white border border-light-gray rounded-xl px-5 py-4 hover:border-red/30 hover:shadow-sm transition-colors group"
       >
         <div className="flex items-center gap-3 min-w-0">
-          <Trophy className="w-4 h-4 text-text-muted flex-shrink-0" />
+          <Trophy className="w-4 h-4 text-text-muted flex-shrink-0" aria-hidden="true" />
           <span className="text-navy/60 text-sm font-semibold truncate group-hover:text-navy transition-colors">
             {t.name}
           </span>
@@ -392,7 +474,7 @@ function TournamentCard({
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-3 mb-2">
-              <Trophy className="w-5 h-5 text-red flex-shrink-0" />
+              <Trophy className="w-5 h-5 text-red flex-shrink-0" aria-hidden="true" />
               <h3 className="text-xl font-bold text-navy font-heading truncate">
                 {t.name}
               </h3>
@@ -410,7 +492,7 @@ function TournamentCard({
 
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-text-muted text-sm mb-3">
               <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5" />
+                <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                 {new Date(t.startDate + "T00:00:00").toLocaleDateString(
                   "en-US",
                   { month: "long", day: "numeric", year: "numeric" }
@@ -418,12 +500,12 @@ function TournamentCard({
               </span>
               {t.location && (
                 <span className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5" />
+                  <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
                   {t.location}
                 </span>
               )}
               <span className="flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5" />
+                <Users className="w-3.5 h-3.5" aria-hidden="true" />
                 {t.teamCount} team{t.teamCount !== 1 ? "s" : ""}
               </span>
               <span className="text-text-muted">
@@ -454,7 +536,7 @@ function TournamentCard({
           <div className="flex flex-col items-start lg:items-end gap-3 flex-shrink-0">
             {t.entryFee != null && t.entryFee > 0 && (
               <div className="flex items-center gap-1.5 text-navy font-bold text-lg">
-                <DollarSign className="w-4 h-4 text-emerald-500" />
+                <DollarSign className="w-4 h-4 text-emerald-500" aria-hidden="true" />
                 {(t.entryFee / 100).toFixed(0)}
                 <span className="text-text-muted text-sm font-normal">
                   /team

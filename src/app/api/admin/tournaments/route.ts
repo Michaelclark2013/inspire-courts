@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { tournaments, tournamentTeams, tournamentGames } from "@/lib/db/schema";
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq, sql, inArray } from "drizzle-orm";
 
 // GET /api/admin/tournaments — list all tournaments
 export async function GET() {
@@ -18,28 +18,40 @@ export async function GET() {
     .from(tournaments)
     .orderBy(desc(tournaments.createdAt));
 
-  // Get team counts and game counts
-  const enriched = await Promise.all(
-    allTournaments.map(async (t) => {
-      const [teamCount] = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(tournamentTeams)
-        .where(eq(tournamentTeams.tournamentId, t.id));
+  if (allTournaments.length === 0) return NextResponse.json([]);
 
-      const [gameCount] = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(tournamentGames)
-        .where(eq(tournamentGames.tournamentId, t.id));
+  const ids = allTournaments.map((t) => t.id);
 
-      return {
-        ...t,
-        divisions: t.divisions ? JSON.parse(t.divisions) : [],
-        courts: t.courts ? JSON.parse(t.courts) : [],
-        teamCount: teamCount?.count ?? 0,
-        gameCount: gameCount?.count ?? 0,
-      };
+  // Batch: get all team counts in 1 query (instead of N)
+  const teamCounts = await db
+    .select({
+      tournamentId: tournamentTeams.tournamentId,
+      count: sql<number>`count(*)`,
     })
-  );
+    .from(tournamentTeams)
+    .where(inArray(tournamentTeams.tournamentId, ids))
+    .groupBy(tournamentTeams.tournamentId);
+
+  // Batch: get all game counts in 1 query (instead of N)
+  const gameCounts = await db
+    .select({
+      tournamentId: tournamentGames.tournamentId,
+      count: sql<number>`count(*)`,
+    })
+    .from(tournamentGames)
+    .where(inArray(tournamentGames.tournamentId, ids))
+    .groupBy(tournamentGames.tournamentId);
+
+  const teamMap = new Map(teamCounts.map((r) => [r.tournamentId, r.count]));
+  const gameMap = new Map(gameCounts.map((r) => [r.tournamentId, r.count]));
+
+  const enriched = allTournaments.map((t) => ({
+    ...t,
+    divisions: t.divisions ? JSON.parse(t.divisions) : [],
+    courts: t.courts ? JSON.parse(t.courts) : [],
+    teamCount: teamMap.get(t.id) ?? 0,
+    gameCount: gameMap.get(t.id) ?? 0,
+  }));
 
   return NextResponse.json(enriched);
 }

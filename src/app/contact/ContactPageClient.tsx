@@ -32,6 +32,14 @@ export default function ContactPageClient() {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    // Honeypot: if filled, silently "succeed" without submitting
+    const honeypot = formData.get("website") as string;
+    if (honeypot) {
+      setSubmitted(true);
+      setLoading(false);
+      return;
+    }
+
     const data = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
@@ -196,6 +204,12 @@ export default function ContactPageClient() {
                         className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50 resize-vertical"
                         placeholder="Tell us what you need..."
                       />
+                    </div>
+
+                    {/* Honeypot — hidden from real users, catches bots */}
+                    <div className="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true">
+                      <label htmlFor="contact-website">Website</label>
+                      <input type="text" id="contact-website" name="website" tabIndex={-1} autoComplete="off" />
                     </div>
 
                     {error && (

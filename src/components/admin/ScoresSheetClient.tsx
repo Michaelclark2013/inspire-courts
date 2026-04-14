@@ -65,11 +65,14 @@ export default function ScoresSheetClient({ games, standings }: Props) {
   return (
     <div className="space-y-6">
       {/* Tabs */}
-      <div className="flex gap-1 bg-bg-secondary border border-border rounded-sm p-1 w-fit">
+      <div className="flex gap-1 bg-bg-secondary border border-border rounded-sm p-1 w-fit" role="tablist" aria-label="Scores view">
         {(["games", "standings"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
+            role="tab"
+            aria-selected={tab === t}
+            aria-controls={`${t}-panel`}
             className={`px-4 py-1.5 rounded text-sm font-medium capitalize transition-colors ${
               tab === t
                 ? "bg-accent text-white"
@@ -82,22 +85,24 @@ export default function ScoresSheetClient({ games, standings }: Props) {
       </div>
 
       {tab === "games" && (
-        <>
+        <div id="games-panel" role="tabpanel" aria-labelledby="games-tab">
           {/* Filters */}
           <div className="flex flex-wrap gap-3">
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search teams..."
+                aria-label="Search teams"
                 className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
               />
             </div>
             <select
               value={divFilter}
               onChange={(e) => setDivFilter(e.target.value)}
+              aria-label="Filter by division"
               className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
             >
               {divisions.map((d) => (
@@ -221,11 +226,11 @@ export default function ScoresSheetClient({ games, standings }: Props) {
               </table>
             </div>
           </div>
-        </>
+        </div>
       )}
 
       {tab === "standings" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div id="standings-panel" role="tabpanel" aria-labelledby="standings-tab" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Win leaderboard */}
           <div className="bg-bg-secondary border border-border rounded-sm p-5">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
 // GET /api/admin/users — list all users
@@ -140,6 +140,18 @@ export async function DELETE(request: NextRequest) {
   // Prevent admin from deleting themselves
   if (String(numId) === String(session.user.id)) {
     return NextResponse.json({ error: "Cannot delete your own account" }, { status: 400 });
+  }
+
+  // Prevent deleting the last admin
+  const [target] = await db.select({ role: users.role }).from(users).where(eq(users.id, numId)).limit(1);
+  if (target?.role === "admin") {
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(eq(users.role, "admin"));
+    if (count <= 1) {
+      return NextResponse.json({ error: "Cannot delete the last admin user" }, { status: 400 });
+    }
   }
 
   await db.delete(users).where(eq(users.id, numId));

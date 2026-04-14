@@ -12,10 +12,18 @@ import {
   Zap,
   Thermometer,
   Phone,
+  Star,
+  LayoutGrid,
+  Snowflake,
+  CalendarDays,
+  Tv,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
+import VideoShowcase from "@/components/ui/VideoShowcase";
+import BackToTop from "@/components/ui/BackToTop";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 const EmailSignup = dynamic(() => import("@/components/ui/EmailSignup"));
 
 export const metadata: Metadata = {
@@ -76,6 +84,27 @@ const FALLBACK_FEATURES = [
   { title: "Game Film", desc: "Professional game film available as a paid add-on at tournaments. Review footage and improve." },
   { title: "Snack Bar", desc: "Drinks, snacks, and game-day fuel available all day. No outside food or beverages permitted." },
   { title: "Climate Controlled", desc: "Fully air-conditioned, 52,000 sq ft facility. No Arizona heat — play in comfort year-round." },
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "Best tournament facility in Arizona. We bring our teams here every season — the courts, the game film, and the staff make it a first-class experience.",
+    name: "Coach D. Rivera",
+    role: "AAU Head Coach",
+  },
+  {
+    quote:
+      "We rented three courts for our corporate team-building day and it could not have gone smoother. The facility is immaculate and the booking process was easy.",
+    name: "Sarah M.",
+    role: "Corporate Event Organizer",
+  },
+  {
+    quote:
+      "Our club runs weekly practices at Inspire Courts. The air conditioning alone makes it worth it — our kids actually want to practice here.",
+    name: "Marcus T.",
+    role: "Youth Basketball Club Director",
+  },
 ];
 
 export default function Home() {
@@ -144,8 +173,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── STATS BAR ── */}
+      <section className="bg-navy border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+            {[
+              { icon: Trophy, label: "7 Courts" },
+              { icon: LayoutGrid, label: "52,000 Sq Ft" },
+              { icon: Tv, label: "Game Film" },
+              { icon: Snowflake, label: "Air-Conditioned" },
+              { icon: CalendarDays, label: "Year-Round" },
+            ].map(({ icon: Icon, label }, i) => (
+              <div
+                key={label}
+                className={`flex items-center justify-center gap-2.5 py-5 px-4 text-white/80 ${
+                  i < 4 ? "border-r border-white/10" : ""
+                } ${i >= 3 ? "hidden sm:flex" : ""} ${i >= 2 ? "border-t border-white/10 sm:border-t-0" : ""}`}
+              >
+                <Icon className="w-4 h-4 text-red flex-shrink-0" aria-hidden="true" />
+                <span className="text-sm font-semibold font-[var(--font-chakra)] uppercase tracking-wide whitespace-nowrap">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── QUICK NAV ── */}
-      <section className="py-12 lg:py-16 bg-white">
+      <section className="py-10 lg:py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {[
@@ -191,7 +247,7 @@ export default function Home() {
       </section>
 
       {/* ── JALEN WILLIAMS FEATURE ── */}
-      <section className="py-14 lg:py-28 bg-white">
+      <section className="py-14 lg:py-20 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <AnimateIn>
@@ -267,8 +323,40 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── TESTIMONIALS ── */}
+      <section className="py-14 lg:py-20 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            eyebrow="What People Say"
+            title="Trusted by Teams Across Arizona"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {TESTIMONIALS.map(({ quote, name, role }) => (
+              <AnimateIn key={name}>
+                <div className="bg-white border border-light-gray rounded-xl p-7 flex flex-col gap-4 h-full">
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <Star key={idx} className="w-4 h-4 fill-red text-red" aria-hidden="true" />
+                    ))}
+                  </div>
+                  <p className="text-text-muted leading-relaxed text-sm flex-1">
+                    &ldquo;{quote}&rdquo;
+                  </p>
+                  <div>
+                    <p className="text-navy font-bold text-sm font-[var(--font-chakra)] uppercase tracking-wide">
+                      {name}
+                    </p>
+                    <p className="text-text-muted text-xs mt-0.5">{role}</p>
+                  </div>
+                </div>
+              </AnimateIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── DUAL BRAND CARDS ── */}
-      <section className="py-12 lg:py-20 bg-off-white">
+      <section className="py-12 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Our Mission"
@@ -364,8 +452,32 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── VIDEO SHOWCASE ── */}
+      <section className="py-14 lg:py-20 bg-navy">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            eyebrow="On the Map"
+            title="Homegrown Talent"
+            description="From NBA players to rising prep stars — Inspire Courts is where Arizona basketball happens."
+            dark
+          />
+          <VideoShowcase
+            videos={[
+              { id: "hLGrKauJzLc", title: "Jalen Williams grew up at Inspire Courts", name: "Jalen Williams", subtitle: "NBA — OKC Thunder", aspect: "9/16" },
+              { id: "zYIBPJeUjGU", title: "Marvin Bagley III at Inspire Courts", name: "Marvin Bagley III", subtitle: "NBA — 8th Grade at Inspire" },
+              { id: "FmcgFmICrf4", title: "Koa Peat training at Inspire Courts", name: "Koa Peat", subtitle: "#1 Recruit · Training at Inspire" },
+              { id: "S8HgOlyWnDg", title: "Cody Williams training at Inspire Courts", name: "Cody Williams", subtitle: "NBA · Training at Inspire" },
+              { id: "ENl-hXQbEo8", title: "Thompson Twins playing for Team Inspire", name: "Thompson Twins", subtitle: "NBA · Team Inspire Alumni" },
+              { id: "HkiDY_bwRVw", title: "Saben Lee training at Inspire Courts", name: "Saben Lee", subtitle: "NBA — Training at Inspire" },
+            ]}
+            initialCount={4}
+            theme="dark"
+          />
+        </div>
+      </section>
+
       {/* ── LOCATION + CTA ── */}
-      <section className="py-12 lg:py-20 bg-white">
+      <section className="py-12 lg:py-20 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimateIn>
@@ -456,41 +568,32 @@ export default function Home() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="relative py-14 lg:py-24 overflow-hidden">
-        <Image src="/images/hero-bg-texture.jpg" alt="" fill sizes="100vw" className="object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-r from-navy/95 to-navy/85" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,_rgba(204,0,0,0.15),transparent_60%)]" />
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <AnimateIn>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] leading-[0.95]">
-              Ready to{" "}
-              <span className="text-red">Compete</span>?
-            </h2>
-            {/* CMS headline available at: getField(page, "Final CTA", "headline") */}
-            <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">
-              {page ? getField(page, "Final CTA", "description") : "Register your team for the next OFF SZN HOOPS tournament. Spots fill fast."}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/tournaments"
-                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
-              >
-                {page ? getField(page, "Final CTA", "ctaPrimary") : "Register Now"}{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/contact"
-                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
-              >
-                {page ? getField(page, "Final CTA", "ctaSecondary") : "Contact Us"}{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
+      <section className="py-12 bg-red">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="text-center sm:text-left">
+              <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight text-white font-[var(--font-chakra)]">
+                Ready to Compete?
+              </h2>
+              <p className="text-white/80 text-sm mt-1">
+                Register your team for the next OFF SZN HOOPS tournament.
+              </p>
             </div>
-          </AnimateIn>
+            <a
+              href="https://offsznhoops.leagueapps.com/tournaments"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-white hover:bg-off-white text-red px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors flex-shrink-0 font-[var(--font-chakra)]"
+            >
+              Register Now <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       </section>
 
-      <div className="h-20 lg:hidden" />
+      <QuickContactBar subject="General" label="Questions?" />
+      <BackToTop />
+      <div className="h-28 lg:hidden" />
     </>
   );
 }

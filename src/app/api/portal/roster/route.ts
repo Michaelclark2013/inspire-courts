@@ -17,24 +17,28 @@ export async function GET() {
     return NextResponse.json({ team: null, players: [] });
   }
 
-  // Find the coach's team
-  const [team] = await db
-    .select()
-    .from(teams)
-    .where(eq(teams.coachUserId, userId))
-    .limit(1);
+  try {
+    // Find the coach's team
+    const [team] = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.coachUserId, userId))
+      .limit(1);
 
-  if (!team) {
-    return NextResponse.json({ team: null, players: [] });
+    if (!team) {
+      return NextResponse.json({ team: null, players: [] });
+    }
+
+    // Get players on this team
+    const roster = await db
+      .select()
+      .from(players)
+      .where(eq(players.teamId, team.id));
+
+    return NextResponse.json({ team, players: roster });
+  } catch {
+    return NextResponse.json({ error: "Failed to load roster" }, { status: 500 });
   }
-
-  // Get players on this team
-  const roster = await db
-    .select()
-    .from(players)
-    .where(eq(players.teamId, team.id));
-
-  return NextResponse.json({ team, players: roster });
 }
 
 // POST /api/portal/roster — add a player (coach only)
@@ -72,17 +76,21 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const [player] = await db
-    .insert(players)
-    .values({
-      name,
-      teamId: team.id,
-      jerseyNumber: jerseyNumber || null,
-      division: division || team.division,
-    })
-    .returning();
+  try {
+    const [player] = await db
+      .insert(players)
+      .values({
+        name: String(name).trim().slice(0, 100),
+        teamId: team.id,
+        jerseyNumber: jerseyNumber ? String(jerseyNumber).slice(0, 10) : null,
+        division: division || team.division,
+      })
+      .returning();
 
-  return NextResponse.json(player, { status: 201 });
+    return NextResponse.json(player, { status: 201 });
+  } catch {
+    return NextResponse.json({ error: "Failed to add player" }, { status: 500 });
+  }
 }
 
 // DELETE /api/portal/roster — remove a player (coach only)
@@ -111,9 +119,13 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "No team assigned" }, { status: 404 });
   }
 
-  await db
-    .delete(players)
-    .where(and(eq(players.id, playerId), eq(players.teamId, team.id)));
+  try {
+    await db
+      .delete(players)
+      .where(and(eq(players.id, playerId), eq(players.teamId, team.id)));
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Failed to remove player" }, { status: 500 });
+  }
 }

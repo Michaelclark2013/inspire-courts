@@ -32,10 +32,13 @@ export default async function StaffPage() {
     );
   }
 
-  const [staffData, refData] = await Promise.all([
+  // Use allSettled so one failing sheet doesn't crash the whole page
+  const results = await Promise.allSettled([
     fetchSheetWithHeaders(SHEETS.staffCheckOut),
     fetchSheetWithHeaders(SHEETS.refCheckOut),
   ]);
+  const staffData = results[0].status === "fulfilled" ? results[0].value : { rows: [], headers: [] };
+  const refData = results[1].status === "fulfilled" ? results[1].value : { rows: [], headers: [] };
 
   const NAME_COLS = ["Name", "Full Name", "Staff Name", "Employee Name"];
   const ROLE_COLS = ["Role", "Job", "Position", "Title", "Job Title"];

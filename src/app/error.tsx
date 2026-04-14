@@ -13,8 +13,10 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log to your error reporting service here if applicable
-    console.error(error);
+    // In production, this would go to an error reporting service (Sentry, etc.)
+    if (process.env.NODE_ENV === "development") {
+      console.error(error);
+    }
   }, [error]);
 
   return (

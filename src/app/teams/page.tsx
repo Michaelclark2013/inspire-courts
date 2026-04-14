@@ -140,7 +140,7 @@ export default function TeamsPage() {
                 <div className="space-y-4 text-sm">
                   <div className="flex items-center gap-3 text-navy">
                     <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
-                      <Shield className="w-5 h-5 text-red" />
+                      <Shield className="w-5 h-5 text-red" aria-hidden="true" />
                     </div>
                     <div>
                       <p className="font-semibold">MADE Hoops High School Circuit</p>
@@ -149,7 +149,7 @@ export default function TeamsPage() {
                   </div>
                   <div className="flex items-center gap-3 text-navy">
                     <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-red" />
+                      <MapPin className="w-5 h-5 text-red" aria-hidden="true" />
                     </div>
                     <div>
                       <p className="font-semibold">Based at Inspire Courts</p>
@@ -158,7 +158,7 @@ export default function TeamsPage() {
                   </div>
                   <div className="flex items-center gap-3 text-navy">
                     <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
-                      <Flame className="w-5 h-5 text-red" />
+                      <Flame className="w-5 h-5 text-red" aria-hidden="true" />
                     </div>
                     <div>
                       <p className="font-semibold">16U & 17U Boys</p>

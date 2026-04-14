@@ -95,7 +95,7 @@ export async function POST(request: Request) {
         `,
       });
     } else {
-      console.log("[Password Reset] Email transport not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD to enable email delivery.");
+      // Email transport not configured — GMAIL_USER and GMAIL_APP_PASSWORD not set
     }
 
     return successResponse;

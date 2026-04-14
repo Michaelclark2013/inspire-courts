@@ -71,22 +71,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Also save waiver as a Google Doc in Drive, organized by event
-    const eventFolder = eventName || "General";
-    const waiversFolderId = await findOrCreateDriveFolder(
-      DRIVE_FOLDERS.waivers,
-      "Waivers"
-    );
-
-    if (waiversFolderId) {
-      const eventFolderId = await findOrCreateDriveFolder(
-        waiversFolderId,
-        eventFolder
+    // Also save waiver as a Google Doc in Drive, organized by event (non-blocking)
+    try {
+      const eventFolder = eventName || "General";
+      const waiversFolderId = await findOrCreateDriveFolder(
+        DRIVE_FOLDERS.waivers,
+        "Waivers"
       );
 
-      if (eventFolderId) {
-        const docTitle = `Waiver — ${playerName} (${timestamp})`;
-        const docContent = [
+      if (waiversFolderId) {
+        const eventFolderId = await findOrCreateDriveFolder(
+          waiversFolderId,
+          eventFolder
+        );
+
+        if (eventFolderId) {
+          const docTitle = `Waiver — ${playerName} (${timestamp})`;
+          const docContent = [
           `INSPIRE COURTS AZ — PARTICIPATION WAIVER`,
           `═══════════════════════════════════════`,
           ``,
@@ -121,7 +122,10 @@ export async function POST(request: NextRequest) {
         ].join("\n");
 
         await createDriveDoc(eventFolderId, docTitle, docContent);
+        }
       }
+    } catch {
+      // Drive doc creation is non-critical — waiver is already saved to Sheets
     }
   }
 

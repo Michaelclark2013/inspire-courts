@@ -115,6 +115,7 @@ export default function AnnouncementsPage() {
           </p>
         </div>
         <button
+          type="button"
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
         >
@@ -125,7 +126,7 @@ export default function AnnouncementsPage() {
 
       {/* Error banner visible when form is closed */}
       {!showForm && saveError && (
-        <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 mb-6 flex items-center justify-between" role="alert">
+        <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 mb-6 flex items-center justify-between" role="alert" aria-live="assertive">
           <span>{saveError}</span>
           <button onClick={() => setSaveError("")} className="text-red hover:text-white ml-4" aria-label="Dismiss">
             <X className="w-4 h-4" />

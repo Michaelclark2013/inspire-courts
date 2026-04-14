@@ -4,8 +4,18 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 registrations per 10 minutes per IP
+  const ip = getClientIp(request);
+  if (isRateLimited(ip, 5, 10 * 60 * 1000)) {
+    return NextResponse.json(
+      { error: "Too many registration attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await request.json();
     const { name, email, password, role, phone } = body;

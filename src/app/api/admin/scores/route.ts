@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { games, gameScores } from "@/lib/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, inArray, sql } from "drizzle-orm";
 
 // GET /api/admin/scores — list all games with latest scores
 export async function GET() {
@@ -15,26 +15,41 @@ export async function GET() {
 
   const allGames = await db.select().from(games).orderBy(desc(games.createdAt));
 
-  // Get latest score for each game
-  const gamesWithScores = await Promise.all(
-    allGames.map(async (game) => {
-      const [latestScore] = await db
-        .select()
-        .from(gameScores)
-        .where(eq(gameScores.gameId, game.id))
-        .orderBy(desc(gameScores.updatedAt))
-        .limit(1);
+  if (allGames.length === 0) return NextResponse.json([]);
 
-      return {
-        ...game,
-        homeScore: latestScore?.homeScore ?? 0,
-        awayScore: latestScore?.awayScore ?? 0,
-        lastQuarter: latestScore?.quarter ?? null,
-      };
+  // Batch: get latest score per game in 1 query instead of N
+  const ids = allGames.map((g) => g.id);
+  const latestScores = await db
+    .select({
+      gameId: gameScores.gameId,
+      homeScore: gameScores.homeScore,
+      awayScore: gameScores.awayScore,
+      quarter: gameScores.quarter,
+      updatedAt: gameScores.updatedAt,
     })
-  );
+    .from(gameScores)
+    .where(inArray(gameScores.gameId, ids))
+    .orderBy(desc(gameScores.updatedAt));
 
-  return NextResponse.json(gamesWithScores);
+  // Build map: gameId → latest score (first occurrence since ordered by updatedAt desc)
+  const scoreMap = new Map<number, (typeof latestScores)[0]>();
+  for (const s of latestScores) {
+    if (!scoreMap.has(s.gameId)) scoreMap.set(s.gameId, s);
+  }
+
+  const gamesWithScores = allGames.map((game) => {
+    const latest = scoreMap.get(game.id);
+    return {
+      ...game,
+      homeScore: latest?.homeScore ?? 0,
+      awayScore: latest?.awayScore ?? 0,
+      lastQuarter: latest?.quarter ?? null,
+    };
+  });
+
+  return NextResponse.json(gamesWithScores, {
+    headers: { "Cache-Control": "private, max-age=5, stale-while-revalidate=10" },
+  });
 }
 
 // POST /api/admin/scores — create a game

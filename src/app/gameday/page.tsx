@@ -193,7 +193,7 @@ export default function GameDayPage() {
           <AnimateIn>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-red rounded-full flex items-center justify-center flex-shrink-0">
-                <Car className="w-5 h-5 text-white" />
+                <Car className="w-5 h-5 text-white" aria-hidden="true" />
               </div>
               <h2 className="text-white font-bold text-sm uppercase tracking-[0.15em] font-[var(--font-chakra)]">
                 Getting Here & Parking

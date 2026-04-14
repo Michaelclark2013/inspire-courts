@@ -29,22 +29,26 @@ export async function POST(request: NextRequest) {
 
   const userId = session.user.id ? Number(session.user.id) : null;
 
-  // Write to DB (source of truth)
-  await db.insert(checkins).values({
-    playerName,
-    teamName: teamName || "",
-    division: division || null,
-    type: "checkin",
-    checkedInBy: userId && !isNaN(userId) ? userId : null,
-  });
+  try {
+    // Write to DB (source of truth)
+    await db.insert(checkins).values({
+      playerName: String(playerName).trim().slice(0, 100),
+      teamName: teamName ? String(teamName).trim().slice(0, 100) : "",
+      division: division || null,
+      type: "checkin",
+      checkedInBy: userId && !isNaN(userId) ? userId : null,
+    });
 
-  // Fire-and-forget: write to Google Sheets
-  if (isGoogleConfigured()) {
-    const timestamp = new Date().toISOString();
-    appendSheetRow(SHEETS.playerCheckIn, "Sheet1!A:F", [
-      sanitizeSheetRow([timestamp, playerName, teamName || "", division || "", "CHECKIN", session.user.name || ""]),
-    ]).catch(() => {});
+    // Fire-and-forget: write to Google Sheets
+    if (isGoogleConfigured()) {
+      const timestamp = new Date().toISOString();
+      appendSheetRow(SHEETS.playerCheckIn, "Sheet1!A:F", [
+        sanitizeSheetRow([timestamp, playerName, teamName || "", division || "", "CHECKIN", session.user.name || ""]),
+      ]).catch(() => {});
+    }
+
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Failed to check in player" }, { status: 500 });
   }
-
-  return NextResponse.json({ success: true });
 }

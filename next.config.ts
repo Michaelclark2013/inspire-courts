@@ -3,14 +3,14 @@ import type { NextConfig } from "next";
 const ContentSecurityPolicy = [
   "default-src 'self'",
   // Next.js requires unsafe-inline for its runtime scripts and style injection
-  "script-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net",
   "style-src 'self' 'unsafe-inline'",
   // Images: self, data URIs, blob, and the SportNgin CDN used for court photos
-  "img-src 'self' data: blob: https://cdn.sportngin.com https://cdn1.sportngin.com https://cdn4.sportngin.com https://*.instagram.com",
+  "img-src 'self' data: blob: https://cdn.sportngin.com https://cdn1.sportngin.com https://cdn4.sportngin.com https://*.instagram.com https://www.facebook.com https://www.google-analytics.com",
   // Iframes: Google Maps and YouTube embeds
   "frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://quickscores.com",
-  // API calls: Claude AI and self
-  "connect-src 'self' https://api.anthropic.com",
+  // API calls: Claude AI, Google Analytics, Facebook Pixel, and self
+  "connect-src 'self' https://api.anthropic.com https://www.google-analytics.com https://www.googletagmanager.com https://*.facebook.com",
   "font-src 'self' data:",
   "media-src 'self'",
   "object-src 'none'",

@@ -45,16 +45,22 @@ export default function LeadsPage() {
   const [search, setSearch] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
   const [expandedLead, setExpandedLead] = useState<number | null>(null);
+  const [fetchError, setFetchError] = useState(false);
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
+    setFetchError(false);
     try {
       const res = await fetch("/api/admin/leads");
       if (res.ok) {
         const data = await res.json();
         setLeads(data);
+      } else {
+        setFetchError(true);
       }
-    } catch {} finally {
+    } catch {
+      setFetchError(true);
+    } finally {
       setLoading(false);
     }
   }, []);
@@ -165,6 +171,18 @@ export default function LeadsPage() {
       {loading ? (
         <div className="flex items-center justify-center py-16 text-white/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading leads...
+        </div>
+      ) : fetchError ? (
+        <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
+          <TrendingUp className="w-10 h-10 text-red/40 mx-auto mb-3" />
+          <h3 className="text-white font-semibold mb-1">Failed to Load Leads</h3>
+          <p className="text-text-secondary text-sm mb-4">Could not fetch lead data. Check your connection or try again.</p>
+          <button
+            onClick={fetchLeads}
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" /> Retry
+          </button>
         </div>
       ) : (
         <div className="bg-card border border-white/10 rounded-xl overflow-hidden">

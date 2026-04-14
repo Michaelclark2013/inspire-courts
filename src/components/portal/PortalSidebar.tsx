@@ -175,7 +175,7 @@ export default function PortalSidebar() {
         )}
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-3 px-3">
+        <nav className="flex-1 overflow-y-auto py-3 px-3" aria-label="Portal navigation">
           <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-3 mb-2">Menu</p>
           <div className="space-y-0.5">
             {navItems.map((item) => {

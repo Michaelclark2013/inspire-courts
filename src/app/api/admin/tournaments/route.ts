@@ -53,7 +53,9 @@ export async function GET() {
     gameCount: gameMap.get(t.id) ?? 0,
   }));
 
-  return NextResponse.json(enriched);
+  return NextResponse.json(enriched, {
+    headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=30" },
+  });
 }
 
 // POST /api/admin/tournaments — create a tournament

@@ -18,31 +18,36 @@ export async function GET() {
     return NextResponse.json({ error: "Invalid user" }, { status: 400 });
   }
 
-  const [user] = await db
-    .select({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      role: users.role,
-      phone: users.phone,
-      passwordHash: users.passwordHash,
-    })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
+  try {
+    const [user] = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        role: users.role,
+        phone: users.phone,
+        passwordHash: users.passwordHash,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
 
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Only return safe fields — never expose passwordHash
+    return NextResponse.json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      phone: user.phone,
+      isOAuth: user.passwordHash === "google-oauth",
+    });
+  } catch {
+    return NextResponse.json({ error: "Failed to load profile" }, { status: 500 });
   }
-
-  return NextResponse.json({
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-    phone: user.phone,
-    isOAuth: user.passwordHash === "google-oauth",
-  });
 }
 
 // PUT /api/portal/profile — update own profile
@@ -154,16 +159,20 @@ export async function DELETE(request: NextRequest) {
     }
   }
 
-  // Nullify foreign key references (don't delete other records, just unlink)
-  await db.update(teams).set({ coachUserId: null }).where(eq(teams.coachUserId, userId));
-  await db.update(players).set({ parentUserId: null }).where(eq(players.parentUserId, userId));
-  await db.update(gameScores).set({ updatedBy: null }).where(eq(gameScores.updatedBy, userId));
-  await db.update(checkins).set({ checkedInBy: null }).where(eq(checkins.checkedInBy, userId));
-  await db.update(announcements).set({ createdBy: null }).where(eq(announcements.createdBy, userId));
-  await db.update(tournaments).set({ createdBy: null }).where(eq(tournaments.createdBy, userId));
+  try {
+    // Nullify foreign key references (don't delete other records, just unlink)
+    await db.update(teams).set({ coachUserId: null }).where(eq(teams.coachUserId, userId));
+    await db.update(players).set({ parentUserId: null }).where(eq(players.parentUserId, userId));
+    await db.update(gameScores).set({ updatedBy: null }).where(eq(gameScores.updatedBy, userId));
+    await db.update(checkins).set({ checkedInBy: null }).where(eq(checkins.checkedInBy, userId));
+    await db.update(announcements).set({ createdBy: null }).where(eq(announcements.createdBy, userId));
+    await db.update(tournaments).set({ createdBy: null }).where(eq(tournaments.createdBy, userId));
 
-  // Delete the user
-  await db.delete(users).where(eq(users.id, userId));
+    // Delete the user
+    await db.delete(users).where(eq(users.id, userId));
 
-  return NextResponse.json({ success: true, deleted: true });
+    return NextResponse.json({ success: true, deleted: true });
+  } catch {
+    return NextResponse.json({ error: "Failed to delete account. Please try again." }, { status: 500 });
+  }
 }

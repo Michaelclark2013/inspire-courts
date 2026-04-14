@@ -3,8 +3,18 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { resetTokens, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  // Rate limit: 5 attempts per 15 minutes per IP
+  const ip = getClientIp(request);
+  if (isRateLimited(ip, 5, 15 * 60 * 1000)) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   try {
     const { token, password } = await request.json();
 

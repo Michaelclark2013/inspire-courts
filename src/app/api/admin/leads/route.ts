@@ -36,8 +36,13 @@ export async function GET() {
       }))
       .reverse(); // newest first
 
-    return NextResponse.json(leads);
+    return NextResponse.json(leads, {
+      headers: { "Cache-Control": "private, max-age=30, stale-while-revalidate=60" },
+    });
   } catch {
-    return NextResponse.json([]);
+    return NextResponse.json(
+      { error: "Failed to fetch leads" },
+      { status: 500 }
+    );
   }
 }

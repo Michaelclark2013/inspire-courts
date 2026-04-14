@@ -93,6 +93,14 @@ button:focus-visible {
   border-radius: 2px;
 }
 
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #CC0000;
+  outline-offset: -1px;
+  border-color: #CC0000;
+}
+
 /* ── Mobile optimizations ── */
 
 /* Prevent horizontal scroll on mobile */

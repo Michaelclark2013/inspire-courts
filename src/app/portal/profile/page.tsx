@@ -185,13 +185,13 @@ export default function ProfilePage() {
           </div>
 
           {error && (
-            <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
+            <div role="alert" className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" /> {error}
             </div>
           )}
 
           {saved && (
-            <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
+            <div role="status" aria-live="polite" className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" /> Profile updated successfully.
             </div>
           )}
@@ -322,7 +322,7 @@ export default function ProfilePage() {
                   </div>
 
                   {deleteError && (
-                    <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+                    <div role="alert" className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4 flex-shrink-0" /> {deleteError}
                     </div>
                   )}

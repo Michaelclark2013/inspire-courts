@@ -155,6 +155,8 @@ export default function BookingForm() {
               name="phone"
               required
               autoComplete="tel"
+              pattern="[0-9\s\-\(\)\+]{10,}"
+              title="Please enter a valid phone number (at least 10 digits)"
               className={INPUT_CLASS_LG}
               placeholder="(480) 555-1234"
             />

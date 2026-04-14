@@ -178,7 +178,7 @@ export default function RosterPage() {
 
       {/* Feedback banner */}
       {feedback && (
-        <div className={`mb-4 rounded-xl px-4 py-3 flex items-center gap-2 text-sm ${
+        <div role="status" aria-live="polite" className={`mb-4 rounded-xl px-4 py-3 flex items-center gap-2 text-sm ${
           feedback.type === "success"
             ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
             : "bg-red/10 border border-red/20 text-red"

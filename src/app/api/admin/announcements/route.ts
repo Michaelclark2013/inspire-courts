@@ -38,14 +38,25 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (typeof title !== "string" || title.length > 255) {
+    return NextResponse.json({ error: "Title must be 255 characters or less" }, { status: 400 });
+  }
+
+  if (typeof content !== "string" || content.length > 10000) {
+    return NextResponse.json({ error: "Body must be 10,000 characters or less" }, { status: 400 });
+  }
+
+  const validAudiences = ["all", "coaches", "parents"];
+  const safeAudience = validAudiences.includes(audience) ? audience : "all";
+
   const userId = session.user.id ? Number(session.user.id) : null;
 
   const [announcement] = await db
     .insert(announcements)
     .values({
-      title,
-      body: content,
-      audience: audience || "all",
+      title: title.trim(),
+      body: content.trim(),
+      audience: safeAudience,
       createdBy: userId && !isNaN(userId) ? userId : null,
       expiresAt: expiresAt || null,
     })
@@ -63,8 +74,8 @@ export async function DELETE(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
-  if (!id) {
-    return NextResponse.json({ error: "id required" }, { status: 400 });
+  if (!id || isNaN(Number(id))) {
+    return NextResponse.json({ error: "Valid id required" }, { status: 400 });
   }
 
   await db.delete(announcements).where(eq(announcements.id, Number(id)));

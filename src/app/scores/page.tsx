@@ -29,6 +29,7 @@ export default function ScoresPage() {
             src="/images/courts-bg.jpg"
             alt="Inspire Courts AZ"
             fill
+            sizes="100vw"
             className="object-cover object-center"
             priority
           />

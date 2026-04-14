@@ -36,22 +36,27 @@ export const authOptions: NextAuthOptions = {
             .limit(1);
 
           if (user) {
-            const isValid = await bcrypt.compare(
-              credentials.password,
-              user.passwordHash
-            );
-            if (isValid) {
-              // Block unapproved staff/ref accounts
-              if (user.approved === false) return null;
-              return {
-                id: String(user.id),
-                email: user.email,
-                name: user.name,
-                role: user.role as "admin" | "staff" | "ref" | "front_desk" | "coach" | "parent",
-              };
+            // OAuth-only users (no real password) — skip DB auth, fall through to env admin check
+            if (user.passwordHash === "google-oauth") {
+              // Don't return null here — let the env admin fallback handle it
+            } else {
+              const isValid = await bcrypt.compare(
+                credentials.password,
+                user.passwordHash
+              );
+              if (isValid) {
+                // Block unapproved staff/ref accounts
+                if (user.approved === false) return null;
+                return {
+                  id: String(user.id),
+                  email: user.email,
+                  name: user.name,
+                  role: user.role as "admin" | "staff" | "ref" | "front_desk" | "coach" | "parent",
+                };
+              }
+              // If DB user exists but password is wrong, don't fall through to env admin
+              return null;
             }
-            // If DB user exists but password is wrong, don't fall through to env admin
-            return null;
           }
         } catch (err) {
           console.error("DB auth error:", err);

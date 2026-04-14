@@ -163,6 +163,8 @@ export default function ContactPageClient() {
                           id="phone"
                           name="phone"
                           autoComplete="tel"
+                          pattern="[0-9\s\-\(\)\+]{10,}"
+                          title="Please enter a valid phone number (at least 10 digits)"
                           className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
                           placeholder="(480) 555-1234"
                         />

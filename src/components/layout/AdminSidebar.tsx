@@ -112,13 +112,13 @@ export default function AdminSidebar() {
       <Link
         href={item.href}
         className={cn(
-          "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors",
+          "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors relative",
           active
-            ? "bg-accent/10 text-accent"
+            ? "bg-accent/10 text-accent before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-accent before:rounded-full"
             : "text-text-secondary hover:text-white hover:bg-bg"
         )}
       >
-        <item.icon className="w-4 h-4 flex-shrink-0" />
+        <item.icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
         {item.label}
       </Link>
     );
@@ -127,7 +127,7 @@ export default function AdminSidebar() {
   return (
     <>
       {/* ── Desktop sidebar (lg+) ──────────────────────────────────────────── */}
-      <aside className="hidden lg:flex flex-col w-64 bg-bg-secondary border-r border-border sticky top-0 h-screen">
+      <aside className="hidden lg:flex flex-col w-64 bg-bg-secondary border-r border-border sticky top-0 h-screen" aria-label="Admin navigation">
         {/* Logo */}
         <div className="px-5 py-5 border-b border-border flex-shrink-0">
           <Link href="/admin" className="flex items-center gap-3">
@@ -158,7 +158,7 @@ export default function AdminSidebar() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5" aria-label="Admin pages">
           {visiblePersonal.length > 0 && (
             <div>
               <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
@@ -251,6 +251,7 @@ export default function AdminSidebar() {
       <nav
         className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-bg-secondary border-t border-border-dark flex items-stretch"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        aria-label="Admin quick navigation"
       >
         {visibleBottomTabs.map((tab) => {
           const active = isActive(tab.href);
@@ -278,27 +279,38 @@ export default function AdminSidebar() {
             </Link>
           );
         })}
-        {/* More tab */}
-        <button
-          onClick={() => setShowMore((v) => !v)}
-          className={cn(
-            "flex-1 flex flex-col items-center justify-center py-2 gap-0.5 min-h-[56px] transition-colors",
-            showMore ? "text-accent" : "text-text-secondary"
-          )}
-        >
-          <MoreHorizontal
-            className="w-[22px] h-[22px]"
-            strokeWidth={showMore ? 2.5 : 1.75}
-          />
-          <span
-            className={cn(
-              "text-[10px] font-semibold",
-              showMore ? "text-accent" : "text-text-secondary"
-            )}
-          >
-            More
-          </span>
-        </button>
+        {/* More tab — shows dot when current page lives in the drawer */}
+        {(() => {
+          const drawerItems = [...visibleOps, ...visibleRes, ...visiblePersonal].filter(
+            (item) => !visibleBottomTabs.some((t) => t.href === item.href)
+          );
+          const drawerActive = !showMore && drawerItems.some((item) => isActive(item.href));
+          return (
+            <button
+              onClick={() => setShowMore((v) => !v)}
+              className={cn(
+                "flex-1 flex flex-col items-center justify-center py-2 gap-0.5 min-h-[56px] transition-colors relative",
+                showMore || drawerActive ? "text-accent" : "text-text-secondary"
+              )}
+            >
+              {drawerActive && !showMore && (
+                <span className="absolute top-2 right-[calc(50%-14px)] w-2 h-2 rounded-full bg-accent" />
+              )}
+              <MoreHorizontal
+                className="w-[22px] h-[22px]"
+                strokeWidth={showMore || drawerActive ? 2.5 : 1.75}
+              />
+              <span
+                className={cn(
+                  "text-[10px] font-semibold",
+                  showMore || drawerActive ? "text-accent" : "text-text-secondary"
+                )}
+              >
+                More
+              </span>
+            </button>
+          );
+        })()}
       </nav>
 
       {/* ── Mobile "More" slide-up drawer ─────────────────────────────────── */}
@@ -442,7 +454,7 @@ function MoreLink({
           : "bg-bg text-text-secondary border border-border hover:text-white"
       )}
     >
-      <item.icon className="w-4 h-4 flex-shrink-0" />
+      <item.icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
       <span className="truncate">{item.label}</span>
     </Link>
   );

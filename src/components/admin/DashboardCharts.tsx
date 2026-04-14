@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AdminBarChart, AdminDonutChart, BRAND, CHART_COLORS } from "@/components/dashboard/Charts";
 import Link from "next/link";
-import { Trophy, ChevronDown } from "lucide-react";
+import { Trophy, ChevronDown, AlertCircle } from "lucide-react";
 
 interface DashboardChartsProps {
   divisionData: { label: string; value: number }[];
@@ -64,7 +64,7 @@ export default function DashboardCharts({
               height={200}
             />
           ) : (
-            <EmptyChart message="No team data loaded yet" />
+            <EmptyChart message="No team data loaded yet" cta={{ label: "View Teams", href: "/admin/teams" }} />
           )}
         </div>
 
@@ -111,7 +111,7 @@ export default function DashboardCharts({
               }
             />
           ) : (
-            <EmptyChart message="No revenue data loaded yet" />
+            <EmptyChart message="No revenue data loaded yet" cta={{ label: "View Revenue", href: "/admin/revenue" }} />
           )}
         </div>
       </div>
@@ -120,7 +120,7 @@ export default function DashboardCharts({
       <div className="bg-bg-secondary border border-border rounded-sm">
         <div className="px-5 py-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-accent" />
+            <Trophy className="w-4 h-4 text-accent" aria-hidden="true" />
             <h2 className="text-white font-bold text-sm uppercase tracking-tight">
               Recent Game Scores
             </h2>
@@ -134,12 +134,12 @@ export default function DashboardCharts({
         </div>
 
         {divisions.length > 1 && (
-          <div className="flex gap-1.5 px-4 py-2 border-b border-border overflow-x-auto no-scrollbar">
-            <button onClick={() => setSelectedDivision(null)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${!selectedDivision ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
+          <div className="flex gap-1.5 px-4 py-2 border-b border-border overflow-x-auto no-scrollbar" role="tablist" aria-label="Filter games by division">
+            <button role="tab" aria-selected={!selectedDivision} onClick={() => setSelectedDivision(null)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${!selectedDivision ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
               All
             </button>
             {divisions.map(d => (
-              <button key={d} onClick={() => setSelectedDivision(d)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${selectedDivision === d ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
+              <button role="tab" aria-selected={selectedDivision === d} key={d} onClick={() => setSelectedDivision(d)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${selectedDivision === d ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
                 {d}
               </button>
             ))}
@@ -147,9 +147,13 @@ export default function DashboardCharts({
         )}
 
         {recentGames.length === 0 ? (
-          <div className="p-8 text-center text-text-secondary text-sm">
-            No game scores loaded yet. Share the Game Scores sheet with your
-            service account to see data here.
+          <div className="p-8 text-center">
+            <AlertCircle className="w-8 h-8 text-text-secondary/30 mx-auto mb-3" />
+            <p className="text-text-secondary text-sm mb-1">No game scores loaded yet</p>
+            <p className="text-text-secondary/60 text-xs mb-4">Share the Game Scores sheet with your service account to see data here.</p>
+            <Link href="/admin/scores/enter" className="inline-flex items-center gap-1.5 text-accent text-xs font-semibold hover:underline">
+              Enter first score →
+            </Link>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -264,10 +268,15 @@ export default function DashboardCharts({
   );
 }
 
-function EmptyChart({ message }: { message: string }) {
+function EmptyChart({ message, cta }: { message: string; cta?: { label: string; href: string } }) {
   return (
-    <div className="h-[200px] flex items-center justify-center text-text-secondary text-sm">
-      {message}
+    <div className="h-[200px] flex flex-col items-center justify-center gap-2">
+      <p className="text-text-secondary text-sm">{message}</p>
+      {cta && (
+        <Link href={cta.href} className="text-accent text-xs font-semibold hover:underline">
+          {cta.label} →
+        </Link>
+      )}
     </div>
   );
 }

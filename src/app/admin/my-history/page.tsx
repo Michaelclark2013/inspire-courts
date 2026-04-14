@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { History, Loader2, Clock, DollarSign } from "lucide-react";
+import { History, Loader2, Clock, DollarSign, Search } from "lucide-react";
 
 type ShiftRow = {
   date: string;
@@ -17,6 +17,7 @@ export default function MyHistoryPage() {
   const { data: session } = useSession();
   const [shifts, setShifts] = useState<ShiftRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const role = session?.user?.role;
 
   useEffect(() => {
@@ -30,6 +31,17 @@ export default function MyHistoryPage() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [session, role]);
+
+  const filteredShifts = useMemo(() => {
+    if (!search) return shifts;
+    const q = search.toLowerCase();
+    return shifts.filter(
+      (s) =>
+        s.event.toLowerCase().includes(q) ||
+        s.notes.toLowerCase().includes(q) ||
+        s.date.toLowerCase().includes(q)
+    );
+  }, [shifts, search]);
 
   const totalHours = shifts.reduce((sum, s) => sum + (parseFloat(s.hoursWorked) || 0), 0);
   const totalPay = shifts.reduce((sum, s) => sum + (parseFloat(s.amount.replace(/[$,]/g, "")) || 0), 0);
@@ -77,9 +89,19 @@ export default function MyHistoryPage() {
 
       {/* Shift table */}
       <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/10 flex items-center gap-2">
-          <History className="w-4 h-4 text-red" />
-          <h2 className="text-white font-bold text-sm uppercase tracking-wider">Shift History</h2>
+        <div className="px-6 py-4 border-b border-white/10 flex items-center gap-3 flex-wrap">
+          <History className="w-4 h-4 text-red flex-shrink-0" />
+          <h2 className="text-white font-bold text-sm uppercase tracking-wider flex-1">Shift History</h2>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search events or notes..."
+              className="bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-white text-xs focus:outline-none focus:border-red placeholder:text-white/25 w-48"
+            />
+          </div>
         </div>
 
         {loading ? (
@@ -104,15 +126,23 @@ export default function MyHistoryPage() {
                 </tr>
               </thead>
               <tbody>
-                {shifts.map((s, i) => (
-                  <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                    <td className="px-6 py-3 text-white">{s.date}</td>
-                    <td className="px-6 py-3 text-text-secondary">{s.event || "—"}</td>
-                    <td className="px-6 py-3 text-center text-white tabular-nums">{s.hoursWorked || "—"}</td>
-                    <td className="px-6 py-3 text-right text-emerald-400 tabular-nums">{s.amount || "—"}</td>
-                    <td className="px-6 py-3 text-text-secondary text-xs">{s.notes || "—"}</td>
+                {filteredShifts.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-8 text-center text-white/40 text-sm">
+                      No shifts match &ldquo;{search}&rdquo;
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredShifts.map((s, i) => (
+                    <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                      <td className="px-6 py-3 text-white">{s.date}</td>
+                      <td className="px-6 py-3 text-text-secondary">{s.event || "—"}</td>
+                      <td className="px-6 py-3 text-center text-white tabular-nums">{s.hoursWorked || "—"}</td>
+                      <td className="px-6 py-3 text-right text-emerald-400 tabular-nums">{s.amount || "—"}</td>
+                      <td className="px-6 py-3 text-text-secondary text-xs">{s.notes || "—"}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

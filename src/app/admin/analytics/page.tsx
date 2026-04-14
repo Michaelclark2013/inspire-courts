@@ -1,5 +1,4 @@
-import { BarChart3, ExternalLink, TrendingUp, Users, Eye, MousePointer } from "lucide-react";
-import KPICard from "@/components/dashboard/KPICard";
+import { BarChart3, ExternalLink, Users, Eye, MousePointer, Activity, ArrowUpRight } from "lucide-react";
 
 export default async function AnalyticsPage() {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
@@ -45,12 +44,49 @@ export default async function AnalyticsPage() {
         </div>
       ) : (
         <>
-          {/* Tracked Events Info */}
+          {/* GA4 Quick Links */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <KPICard title="Tracking ID" value={gaId} icon={BarChart3} />
-            <KPICard title="Page Views" value="Live in GA" icon={Eye} />
-            <KPICard title="Visitors" value="Live in GA" icon={Users} />
-            <KPICard title="Conversions" value="Live in GA" icon={MousePointer} />
+            {[
+              {
+                label: "Traffic Overview",
+                desc: "Sessions, users, bounce rate",
+                icon: Activity,
+                path: "reports/reportinghub",
+              },
+              {
+                label: "Page Views",
+                desc: "Top pages by traffic",
+                icon: Eye,
+                path: "reports/explorer",
+              },
+              {
+                label: "Audience",
+                desc: "Users, new vs returning",
+                icon: Users,
+                path: "reports/user",
+              },
+              {
+                label: "Conversions",
+                desc: "Form submits & CTA clicks",
+                icon: MousePointer,
+                path: "reports/conversions",
+              },
+            ].map((item) => (
+              <a
+                key={item.label}
+                href={`https://analytics.google.com/analytics/web/#/p${gaId}/${item.path}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-bg-secondary border border-border hover:border-accent/50 rounded-sm p-4 transition-colors group"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <item.icon className="w-4 h-4 text-text-secondary group-hover:text-accent transition-colors" />
+                  <ArrowUpRight className="w-3 h-3 text-text-secondary/40 group-hover:text-accent transition-colors" />
+                </div>
+                <p className="text-white font-bold text-sm">{item.label}</p>
+                <p className="text-text-secondary text-xs mt-0.5">{item.desc}</p>
+              </a>
+            ))}
           </div>
 
           <div className="space-y-6">

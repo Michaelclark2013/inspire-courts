@@ -12,6 +12,8 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
+  Copy,
+  Check,
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
 
@@ -67,6 +69,13 @@ export default function UsersPage() {
   // Form state
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editRole, setEditRole] = useState("");
+  const [copiedEmail, setCopiedEmail] = useState<number | null>(null);
+
+  function handleCopyEmail(id: number, email: string) {
+    navigator.clipboard.writeText(email).catch(() => {});
+    setCopiedEmail(id);
+    setTimeout(() => setCopiedEmail(null), 1500);
+  }
 
   // Form state
   const [form, setForm] = useState({
@@ -433,7 +442,22 @@ export default function UsersPage() {
                         <span className="ml-2"><LoyaltyBadge memberSince={u.memberSince} /></span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-text-secondary hidden sm:table-cell">{u.email}</td>
+                    <td className="px-6 py-4 text-text-secondary hidden sm:table-cell">
+                      <span className="flex items-center gap-1.5 group">
+                        <span className="truncate max-w-[180px]">{u.email}</span>
+                        <button
+                          onClick={() => handleCopyEmail(u.id, u.email)}
+                          title="Copy email"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-white/30 hover:text-accent flex-shrink-0"
+                        >
+                          {copiedEmail === u.id ? (
+                            <Check className="w-3 h-3 text-success" />
+                          ) : (
+                            <Copy className="w-3 h-3" />
+                          )}
+                        </button>
+                      </span>
+                    </td>
                     <td className="px-6 py-4">
                       {editingId === u.id ? (
                         <select

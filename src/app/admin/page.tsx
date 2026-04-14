@@ -211,7 +211,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Charts row */}
-      <CollapsibleSection title="Charts & Recent Scores">
+      <CollapsibleSection title={`Charts & Recent Scores · last ${data.recentGames.length} games`}>
         <DashboardCharts
           divisionData={divisionData}
           revenueData={revenueData}
@@ -221,12 +221,15 @@ export default async function AdminDashboard() {
       </CollapsibleSection>
 
       {/* Google Sheets KPIs */}
-      <CollapsibleSection title="Google Sheets KPIs">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-8">
+      <CollapsibleSection title={`Google Sheets KPIs · ${kpis.length} sources`}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
           {kpis.map((kpi) => (
             <KPICard key={kpi.title} {...kpi} />
           ))}
         </div>
+        <p className="text-text-secondary text-[10px] mb-8">
+          Sourced from Google Sheets · cached up to 5 min (revalidate: 300s)
+        </p>
       </CollapsibleSection>
 
       {/* Leads Pipeline */}

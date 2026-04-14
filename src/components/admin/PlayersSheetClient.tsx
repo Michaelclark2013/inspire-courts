@@ -1,7 +1,26 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, ExternalLink } from "lucide-react";
+import { Search, ExternalLink, Download } from "lucide-react";
+
+function downloadPlayersCSV(rows: Player[], filename: string) {
+  const headers = ["Player", "Parent/Guardian", "Team", "Division", "Phone", "Email", "Date"];
+  const lines = [
+    headers.join(","),
+    ...rows.map((p) =>
+      [p.name, p.parent, p.team, p.division, p.phone, p.email, p.date]
+        .map((v) => `"${(v ?? "").replace(/"/g, '""')}"`)
+        .join(",")
+    ),
+  ];
+  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 import { AdminBarChart, HorizontalBarList, CHART_COLORS, BRAND } from "@/components/dashboard/Charts";
 
 interface Player {
@@ -112,6 +131,13 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
             <option key={t} value={t}>{t === "All" ? "All Teams" : t}</option>
           ))}
         </select>
+        <button
+          onClick={() => downloadPlayersCSV(filtered, "players.csv")}
+          title="Download CSV"
+          className="flex items-center gap-1.5 bg-bg-secondary border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-white hover:border-accent/50 text-xs transition-colors flex-shrink-0"
+        >
+          <Download className="w-3.5 h-3.5" /> CSV
+        </button>
       </div>
 
       {/* Table */}

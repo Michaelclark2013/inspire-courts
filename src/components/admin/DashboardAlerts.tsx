@@ -188,7 +188,7 @@ export default function DashboardAlerts() {
           <kbd className="hidden lg:inline-block text-[9px] text-white/40 bg-white/10 px-1.5 py-0.5 rounded font-mono ml-2">T</kbd>
           <ArrowRight className="w-4 h-4 opacity-60 group-hover:translate-x-1 transition-transform" />
         </Link>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <QuickAction
             href="/admin/scores/enter"
             icon={ClipboardList}
@@ -209,6 +209,12 @@ export default function DashboardAlerts() {
             label="Announcement"
             color="text-amber-400"
             shortcutHint="A"
+          />
+          <QuickAction
+            href="/admin/teams"
+            icon={Users}
+            label="Teams"
+            color="text-blue-400"
           />
         </div>
       </div>

@@ -214,7 +214,7 @@ export default function EventsPage() {
             </div>
             <div className="mx-auto max-w-md w-full">
               <Image
-                src="/images/2026-tournament-schedule.png"
+                src="/images/tournament-schedule.png"
                 alt="2026 Inspire Courts Tournament Schedule"
                 width={1080}
                 height={1080}

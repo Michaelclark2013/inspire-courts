@@ -20,6 +20,7 @@ const PROGRAMS_DROPDOWN = [
   { href: "/training", label: "Training" },
   { href: "/teams", label: "Team Inspire" },
   { href: "/prep", label: "Inspire Prep" },
+  { href: "/camps", label: "Camps" },
 ];
 
 const MORE_DROPDOWN = [

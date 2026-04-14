@@ -453,6 +453,57 @@ const ROLE_FOLDER_NAMES: Record<string, string> = {
   front_desk: "Front Desk",
 };
 
+// ── Public API Key — Tournament Schedule Sheet ────────────────────────────────
+
+const TOURNAMENT_SCHEDULE_SHEET_ID = "1JTubujbJc3qELxWWdc0o1Jhmysa10ZRI";
+
+export interface TournamentScheduleRow {
+  [key: string]: string;
+}
+
+/**
+ * Fetch the public tournament schedule from Google Sheets using an API key.
+ * Uses GOOGLE_SHEETS_API_KEY env var (simpler than service account — suitable
+ * for publicly-shared sheets). Returns raw rows keyed by header.
+ */
+export async function fetchTournamentSchedule(): Promise<{
+  headers: string[];
+  rows: TournamentScheduleRow[];
+}> {
+  const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
+  if (!apiKey) return { headers: [], rows: [] };
+
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${TOURNAMENT_SCHEDULE_SHEET_ID}/values/A:ZZ?key=${encodeURIComponent(apiKey)}`;
+    const res = await fetch(url, {
+      next: { revalidate: 300 }, // 5-minute cache
+    });
+
+    if (!res.ok) {
+      console.error(`[tournament-schedule] Sheet fetch failed: ${res.status}`);
+      return { headers: [], rows: [] };
+    }
+
+    const data = await res.json();
+    const raw: string[][] = data.values ?? [];
+    if (raw.length === 0) return { headers: [], rows: [] };
+
+    const headers = raw[0].map((h) => h.trim());
+    const rows = raw.slice(1).map((row) => {
+      const obj: TournamentScheduleRow = {};
+      headers.forEach((h, i) => {
+        obj[h] = (row[i] ?? "").trim();
+      });
+      return obj;
+    });
+
+    return { headers, rows };
+  } catch (err) {
+    console.error("[tournament-schedule] Fetch error:", err);
+    return { headers: [], rows: [] };
+  }
+}
+
 export async function saveRegistrationToDrive(
   name: string,
   email: string,

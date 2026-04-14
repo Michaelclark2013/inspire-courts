@@ -200,6 +200,42 @@ export default function EventsPage() {
         </div>
       </section>
 
+      {/* 2026 Tournament Schedule */}
+      <section className="py-10 lg:py-14 bg-navy">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimateIn>
+            <div className="text-center mb-6">
+              <span className="inline-block text-red text-xs font-bold uppercase tracking-[0.2em] mb-2 font-[var(--font-chakra)]">
+                Season Schedule
+              </span>
+              <h2 className="text-white text-2xl lg:text-3xl font-bold uppercase tracking-tight font-[var(--font-chakra)]">
+                2026 Tournament Schedule
+              </h2>
+            </div>
+            <div className="mx-auto max-w-md w-full">
+              <Image
+                src="/images/2026-tournament-schedule.png"
+                alt="2026 Inspire Courts Tournament Schedule"
+                width={1080}
+                height={1080}
+                className="w-full h-auto rounded-2xl shadow-2xl shadow-black/40"
+                priority
+              />
+            </div>
+            <div className="text-center mt-6">
+              <a
+                href="https://inspirecourts.leagueapps.com/tournaments"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+              >
+                Register Now <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          </AnimateIn>
+        </div>
+      </section>
+
       {/* Events Hub — tabs, filters, schedule, game day */}
       {notionEnabled ? (
         <Suspense fallback={<EventsListSkeleton />}>

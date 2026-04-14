@@ -119,6 +119,64 @@ export default function TeamsPage() {
         </div>
       </section>
 
+      {/* Interest Form — two-column on desktop */}
+      <section id="join" className="py-14 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-20 items-start">
+            {/* Left: info panel */}
+            <AnimateIn>
+              <div className="lg:sticky lg:top-32">
+                <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                  Now Recruiting
+                </span>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)] leading-[0.95]">
+                  Join Team
+                  <br />
+                  Inspire
+                </h2>
+                <p className="text-text-muted max-w-md mb-8 leading-relaxed">
+                  We&apos;re looking for competitive coaches and players for our 16U and 17U MADE Hoops teams. Fill out the form and we&apos;ll be in touch.
+                </p>
+                <div className="space-y-4 text-sm">
+                  <div className="flex items-center gap-3 text-navy">
+                    <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-red" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">MADE Hoops High School Circuit</p>
+                      <p className="text-text-muted text-xs">Top grassroots platform in the country</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-navy">
+                    <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-red" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Based at Inspire Courts</p>
+                      <p className="text-text-muted text-xs">7 courts, game film, pro environment</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-navy">
+                    <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
+                      <Flame className="w-5 h-5 text-red" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">16U & 17U Boys</p>
+                      <p className="text-text-muted text-xs">Expanding to 13U–15U soon</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </AnimateIn>
+
+            {/* Right: form */}
+            <AnimateIn delay={150}>
+              <ClubInterestForm />
+            </AnimateIn>
+          </div>
+        </div>
+      </section>
+
       {/* Divisions — redesigned for desktop impact */}
       <section className="py-12 lg:py-16 bg-navy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -308,64 +366,6 @@ export default function TeamsPage() {
             >
               Join the Team <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Interest Form — two-column on desktop */}
-      <section id="join" className="py-14 lg:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-20 items-start">
-            {/* Left: info panel */}
-            <AnimateIn>
-              <div className="lg:sticky lg:top-32">
-                <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
-                  Now Recruiting
-                </span>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)] leading-[0.95]">
-                  Join Team
-                  <br />
-                  Inspire
-                </h2>
-                <p className="text-text-muted max-w-md mb-8 leading-relaxed">
-                  We&apos;re looking for competitive coaches and players for our 16U and 17U MADE Hoops teams. Fill out the form and we&apos;ll be in touch.
-                </p>
-                <div className="space-y-4 text-sm">
-                  <div className="flex items-center gap-3 text-navy">
-                    <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
-                      <Shield className="w-5 h-5 text-red" />
-                    </div>
-                    <div>
-                      <p className="font-semibold">MADE Hoops High School Circuit</p>
-                      <p className="text-text-muted text-xs">Top grassroots platform in the country</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 text-navy">
-                    <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-red" />
-                    </div>
-                    <div>
-                      <p className="font-semibold">Based at Inspire Courts</p>
-                      <p className="text-text-muted text-xs">7 courts, game film, pro environment</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 text-navy">
-                    <div className="w-10 h-10 bg-navy/5 rounded-lg flex items-center justify-center">
-                      <Flame className="w-5 h-5 text-red" />
-                    </div>
-                    <div>
-                      <p className="font-semibold">16U & 17U Boys</p>
-                      <p className="text-text-muted text-xs">Expanding to 13U–15U soon</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimateIn>
-
-            {/* Right: form */}
-            <AnimateIn delay={150}>
-              <ClubInterestForm />
-            </AnimateIn>
           </div>
         </div>
       </section>

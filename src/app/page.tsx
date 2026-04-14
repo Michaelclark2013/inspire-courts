@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { FACILITY_EMAIL, FACILITY_PHONE } from "@/lib/constants";
 import { getPageContent, getField, getList } from "@/lib/content";
+import { db } from "@/lib/db";
+import { tournaments } from "@/lib/db/schema";
+import { inArray, asc } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -12,7 +15,8 @@ import {
   Zap,
   Thermometer,
   Phone,
-  Star,
+  Calendar,
+  DollarSign,
   LayoutGrid,
   Snowflake,
   CalendarDays,
@@ -86,30 +90,49 @@ const FALLBACK_FEATURES = [
   { title: "Climate Controlled", desc: "Fully air-conditioned, 52,000 sq ft facility. No Arizona heat — play in comfort year-round." },
 ];
 
-const TESTIMONIALS = [
-  {
-    quote:
-      "Best tournament facility in Arizona. We bring our teams here every season — the courts, the game film, and the staff make it a first-class experience.",
-    name: "Coach D. Rivera",
-    role: "AAU Head Coach",
-  },
-  {
-    quote:
-      "We rented three courts for our corporate team-building day and it could not have gone smoother. The facility is immaculate and the booking process was easy.",
-    name: "Sarah M.",
-    role: "Corporate Event Organizer",
-  },
-  {
-    quote:
-      "Our club runs weekly practices at Inspire Courts. The air conditioning alone makes it worth it — our kids actually want to practice here.",
-    name: "Marcus T.",
-    role: "Youth Basketball Club Director",
-  },
-];
+const FORMAT_LABELS: Record<string, string> = {
+  single_elim: "Single Elimination",
+  double_elim: "Double Elimination",
+  round_robin: "Round Robin",
+  pool_play: "Pool Play",
+};
 
-export default function Home() {
+export default async function Home() {
   const page = getPageContent("home");
   const features = page ? getList(page, "Facility Features") : [];
+
+  // Fetch upcoming tournaments from DB
+  let upcomingTournaments: {
+    id: number;
+    name: string;
+    startDate: string;
+    location: string | null;
+    format: string;
+    divisions: string | null;
+    entryFee: number | null;
+    registrationOpen: boolean | null;
+    registrationDeadline: string | null;
+  }[] = [];
+  try {
+    upcomingTournaments = await db
+      .select({
+        id: tournaments.id,
+        name: tournaments.name,
+        startDate: tournaments.startDate,
+        location: tournaments.location,
+        format: tournaments.format,
+        divisions: tournaments.divisions,
+        entryFee: tournaments.entryFee,
+        registrationOpen: tournaments.registrationOpen,
+        registrationDeadline: tournaments.registrationDeadline,
+      })
+      .from(tournaments)
+      .where(inArray(tournaments.status, ["published", "active"]))
+      .orderBy(asc(tournaments.startDate))
+      .limit(3);
+  } catch {
+    // DB unavailable at build time — show fallback
+  }
 
   return (
     <>
@@ -323,35 +346,103 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
+      {/* ── UPCOMING TOURNAMENTS ── */}
       <section className="py-14 lg:py-20 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
-            eyebrow="What People Say"
-            title="Trusted by Teams Across Arizona"
+            eyebrow="Compete"
+            title="Upcoming Tournaments"
+            description="Register your team for the next OFF SZN HOOPS event."
           />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map(({ quote, name, role }) => (
-              <AnimateIn key={name}>
-                <div className="bg-white border border-light-gray rounded-xl p-7 flex flex-col gap-4 h-full">
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: 5 }).map((_, idx) => (
-                      <Star key={idx} className="w-4 h-4 fill-red text-red" aria-hidden="true" />
-                    ))}
-                  </div>
-                  <p className="text-text-muted leading-relaxed text-sm flex-1">
-                    &ldquo;{quote}&rdquo;
-                  </p>
-                  <div>
-                    <p className="text-navy font-bold text-sm font-[var(--font-chakra)] uppercase tracking-wide">
-                      {name}
-                    </p>
-                    <p className="text-text-muted text-xs mt-0.5">{role}</p>
-                  </div>
+          {upcomingTournaments.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {upcomingTournaments.map((t, i) => {
+                const divisions = t.divisions ? JSON.parse(t.divisions) as string[] : [];
+                const isPast = t.registrationDeadline && new Date(t.registrationDeadline + "T23:59:59") < new Date();
+                const canRegister = t.registrationOpen && !isPast;
+                return (
+                  <AnimateIn key={t.id} delay={i * 80}>
+                    <div className="bg-white border border-light-gray rounded-2xl p-6 flex flex-col h-full hover:border-red/40 hover:shadow-lg transition-all">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Trophy className="w-4 h-4 text-red flex-shrink-0" aria-hidden="true" />
+                        <h3 className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)] truncate">
+                          {t.name}
+                        </h3>
+                      </div>
+                      <div className="space-y-2 mb-4 flex-1">
+                        <p className="flex items-center gap-2 text-text-muted text-xs">
+                          <Calendar className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                          {new Date(t.startDate + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                        </p>
+                        {t.location && (
+                          <p className="flex items-center gap-2 text-text-muted text-xs">
+                            <MapPin className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                            {t.location}
+                          </p>
+                        )}
+                        {t.entryFee != null && t.entryFee > 0 && (
+                          <p className="flex items-center gap-2 text-text-muted text-xs">
+                            <DollarSign className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                            ${(t.entryFee / 100).toFixed(0)}/team &middot; {FORMAT_LABELS[t.format] || t.format}
+                          </p>
+                        )}
+                      </div>
+                      {divisions.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mb-4">
+                          {divisions.slice(0, 4).map((d: string) => (
+                            <span key={d} className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-red/10 text-red">
+                              {d}
+                            </span>
+                          ))}
+                          {divisions.length > 4 && (
+                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-navy/5 text-text-muted">
+                              +{divisions.length - 4}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <Link
+                        href={`/tournaments/${t.id}`}
+                        className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
+                      >
+                        {canRegister ? "Register" : "View Details"} <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </AnimateIn>
+                );
+              })}
+            </div>
+          ) : (
+            <AnimateIn>
+              <div className="text-center bg-white border border-light-gray rounded-2xl p-8 max-w-lg mx-auto">
+                <div className="w-14 h-14 bg-red/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Trophy className="w-7 h-7 text-red" aria-hidden="true" />
                 </div>
-              </AnimateIn>
-            ))}
-          </div>
+                <h3 className="text-navy font-bold text-base uppercase tracking-tight font-[var(--font-chakra)] mb-2">
+                  Tournaments Coming Soon
+                </h3>
+                <p className="text-text-muted text-sm mb-5">
+                  New events are announced regularly. Follow us on Instagram to be the first to know.
+                </p>
+                <Link
+                  href="/contact?type=Tournament+Registration"
+                  className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
+                >
+                  Contact Us <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </AnimateIn>
+          )}
+          {upcomingTournaments.length > 0 && (
+            <div className="text-center mt-8">
+              <Link
+                href="/tournaments"
+                className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
+              >
+                View All Tournaments <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -593,7 +684,7 @@ export default function Home() {
 
       <QuickContactBar subject="General" label="Questions?" />
       <BackToTop />
-      <div className="h-28 lg:hidden" />
+      <div className="h-32 lg:hidden" />
     </>
   );
 }

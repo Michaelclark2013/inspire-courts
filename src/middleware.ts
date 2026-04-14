@@ -28,6 +28,19 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Public-facing player & coach portal pages — no auth required
+  const PUBLIC_PORTAL_PATHS = ["/portal/player", "/portal/coach"];
+  const isPublicPortalPath = PUBLIC_PORTAL_PATHS.some((p) => pathname.startsWith(p));
+
+  if (isPublicPortalPath) {
+    const response = NextResponse.next();
+    response.headers.set("x-portal-public", "1");
+    response.headers.set("X-Frame-Options", "SAMEORIGIN");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    return response;
+  }
+
   // Portal routes: require portal-level role
   if (pathname.startsWith("/portal") || pathname.startsWith("/api/portal")) {
     if (!token) return unauthorizedResponse();

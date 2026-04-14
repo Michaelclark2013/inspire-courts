@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import PortalSidebar from "@/components/portal/PortalSidebar";
@@ -15,6 +16,19 @@ export default async function PortalLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const isPublic = headersList.get("x-portal-public") === "1";
+
+  // Public player/coach portal pages — no auth required, no sidebar
+  if (isPublic) {
+    return (
+      <div className="min-h-screen bg-bg">
+        {children}
+      </div>
+    );
+  }
+
+  // Authenticated portal — require session
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/login");

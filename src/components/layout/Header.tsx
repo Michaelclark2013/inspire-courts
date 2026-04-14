@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { Menu, X, ArrowRight, Calendar, ChevronDown, LogIn, LayoutDashboard } from "lucide-react";
+import { Menu, X, ArrowRight, Calendar, ChevronDown, LogIn, LayoutDashboard, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackConversion } from "@/lib/analytics";
 
@@ -29,6 +29,11 @@ const MORE_DROPDOWN = [
   { href: "/media", label: "Media" },
   { href: "/gallery", label: "Gallery" },
   { href: "/faq", label: "FAQ" },
+];
+
+const PORTAL_DROPDOWN = [
+  { href: "/portal/player", label: "Player Portal" },
+  { href: "/portal/coach", label: "Coach Portal" },
 ];
 
 function DropdownMenu({
@@ -222,6 +227,7 @@ export default function Header() {
             ))}
             <DropdownMenu label="Programs" items={PROGRAMS_DROPDOWN} />
             <DropdownMenu label="More" items={MORE_DROPDOWN} />
+            <DropdownMenu label="Portal" items={PORTAL_DROPDOWN} />
           </nav>
 
           {/* Desktop CTA */}
@@ -307,6 +313,13 @@ export default function Header() {
           <MobileAccordion
             label="More"
             items={MORE_DROPDOWN}
+            onClose={() => setOpen(false)}
+          />
+
+          {/* Portal accordion */}
+          <MobileAccordion
+            label="Portal"
+            items={PORTAL_DROPDOWN}
             onClose={() => setOpen(false)}
           />
 

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Home, Calendar, Mail } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Page Not Found | Inspire Courts AZ",
+  description: "The page you're looking for doesn't exist. Head back to the Inspire Courts AZ homepage.",
+};
 
 export default function NotFound() {
   return (
@@ -39,27 +45,27 @@ export default function NotFound() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-10">
           <Link
             href="/"
-            className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/10 text-white text-xs font-bold uppercase tracking-wide px-4 py-3.5 rounded-xl transition-colors font-[var(--font-chakra)]"
+            className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/10 text-white text-xs font-bold uppercase tracking-wide px-4 py-3.5 rounded-xl transition-colors font-[var(--font-chakra)] focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy focus-visible:outline-none"
           >
-            <Home className="w-3.5 h-3.5" /> Home
+            <Home className="w-3.5 h-3.5" aria-hidden="true" /> Home
           </Link>
           <Link
             href="/events"
-            className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/10 text-white text-xs font-bold uppercase tracking-wide px-4 py-3.5 rounded-xl transition-colors font-[var(--font-chakra)]"
+            className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/10 text-white text-xs font-bold uppercase tracking-wide px-4 py-3.5 rounded-xl transition-colors font-[var(--font-chakra)] focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy focus-visible:outline-none"
           >
-            <Calendar className="w-3.5 h-3.5" /> Events
+            <Calendar className="w-3.5 h-3.5" aria-hidden="true" /> Events
           </Link>
           <Link
             href="/contact"
-            className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/10 text-white text-xs font-bold uppercase tracking-wide px-4 py-3.5 rounded-xl transition-colors font-[var(--font-chakra)]"
+            className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/10 text-white text-xs font-bold uppercase tracking-wide px-4 py-3.5 rounded-xl transition-colors font-[var(--font-chakra)] focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy focus-visible:outline-none"
           >
-            <Mail className="w-3.5 h-3.5" /> Contact
+            <Mail className="w-3.5 h-3.5" aria-hidden="true" /> Contact
           </Link>
         </div>
 
         <Link
           href="/"
-          className="group inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all shadow-[0_4px_24px_rgba(204,0,0,0.4)] hover:scale-[1.03] font-[var(--font-chakra)]"
+          className="group inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all shadow-[0_4px_24px_rgba(204,0,0,0.4)] hover:scale-[1.03] font-[var(--font-chakra)] focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:ring-offset-navy focus-visible:outline-none"
         >
           Back to Home{" "}
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

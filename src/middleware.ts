@@ -39,9 +39,24 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  // Security headers
+  response.headers.set("X-Frame-Options", "SAMEORIGIN");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+
+  return response;
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/portal/:path*", "/api/admin/:path*", "/api/portal/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/portal/:path*",
+    "/api/admin/:path*",
+    "/api/portal/:path*",
+    // Apply security headers to all pages
+    "/((?!_next/static|_next/image|favicon.ico|images/).*)",
+  ],
 };

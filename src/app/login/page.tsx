@@ -84,7 +84,7 @@ export default function LoginPage() {
           className={`bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-7 shadow-2xl ${shake ? "animate-[shake_0.5s_ease-in-out]" : ""}`}
         >
           <div className="flex items-center gap-2 mb-6">
-            <Lock className="w-4 h-4 text-red" />
+            <Lock className="w-4 h-4 text-red" aria-hidden="true" />
             <h2 className="text-white text-sm font-bold uppercase tracking-wider">
               Sign In
             </h2>
@@ -182,7 +182,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || !email || !password}
-              className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-all shadow-lg shadow-red/20 hover:shadow-red/30"
+              className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-all shadow-lg shadow-red/20 hover:shadow-red/30 focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:ring-offset-navy focus-visible:outline-none"
             >
               {loading ? (
                 <>

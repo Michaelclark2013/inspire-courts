@@ -6,6 +6,7 @@ import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 import QuickScoresEmbed from "@/components/ui/QuickScoresEmbed";
 import BackToTop from "@/components/ui/BackToTop";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 import { getPageContent, getField } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -53,7 +54,7 @@ export default function SchedulePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-red" />
+              <Clock className="w-5 h-5 text-red" aria-hidden="true" />
               <p className="text-navy text-sm font-semibold">
                 Schedules drop <span className="text-red">48 hours</span> before
                 tip-off and are emailed to head coaches.
@@ -150,8 +151,9 @@ export default function SchedulePage() {
         </div>
       </section>
 
+      <QuickContactBar subject="Schedule" label="Need help finding your schedule?" />
       <BackToTop />
-      <div className="h-16 lg:hidden" />
+      <div className="h-20 lg:hidden" />
     </>
   );
 }

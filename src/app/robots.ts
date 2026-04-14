@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/_next/static/", "/_next/image/"],
+        disallow: ["/admin/", "/portal/", "/api/", "/login", "/register", "/reset-password", "/_next/static/", "/_next/image/"],
       },
     ],
     sitemap: "https://inspirecourtsaz.com/sitemap.xml",

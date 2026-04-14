@@ -94,28 +94,41 @@ export default function BracketView({
     });
   }
 
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   async function handleScoreSave(gameId: number) {
     setSaving(true);
-    await fetch("/api/admin/scores", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        gameId,
-        homeScore: scoreForm.homeScore,
-        awayScore: scoreForm.awayScore,
-        quarter: scoreForm.quarter || undefined,
-        status: scoreForm.status || undefined,
-      }),
-    });
+    setSaveError(null);
+    try {
+      const res = await fetch("/api/admin/scores", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gameId,
+          homeScore: scoreForm.homeScore,
+          awayScore: scoreForm.awayScore,
+          quarter: scoreForm.quarter || undefined,
+          status: scoreForm.status || undefined,
+        }),
+      });
 
-    // Auto-advance if game went to final
-    if (scoreForm.status === "final" && onAdvance) {
-      onAdvance(gameId);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to save score");
+      }
+
+      // Auto-advance if game went to final
+      if (scoreForm.status === "final" && onAdvance) {
+        onAdvance(gameId);
+      }
+
+      setUpdatingGame(null);
+      onRefresh?.();
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : "Failed to save. Try again.");
+    } finally {
+      setSaving(false);
     }
-
-    setUpdatingGame(null);
-    setSaving(false);
-    onRefresh?.();
   }
 
   const ROUND_LABELS: Record<string, string> = {
@@ -324,11 +337,14 @@ export default function BracketView({
                                     Save
                                   </button>
                                   <button
-                                    onClick={() => setUpdatingGame(null)}
+                                    onClick={() => { setUpdatingGame(null); setSaveError(null); }}
                                     className="text-white/30 hover:text-white px-3 py-1.5 rounded text-[10px] transition-colors"
                                   >
                                     Cancel
                                   </button>
+                                  {saveError && (
+                                    <p role="alert" className="text-red text-[10px] mt-1 col-span-2 w-full">{saveError}</p>
+                                  )}
                                 </div>
                               </div>
                             ) : (

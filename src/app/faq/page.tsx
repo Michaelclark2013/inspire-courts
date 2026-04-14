@@ -202,7 +202,7 @@ export default function FAQPage() {
       <section className="py-16 bg-navy">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <AnimateIn>
-            <HelpCircle className="w-10 h-10 text-red mx-auto mb-4" />
+            <HelpCircle className="w-10 h-10 text-red mx-auto mb-4" aria-hidden="true" />
             <h3 className="text-white font-bold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
               Still Have Questions?
             </h3>

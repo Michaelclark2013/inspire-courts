@@ -259,15 +259,19 @@ export default function AdminSidebar() {
             <Link
               key={tab.href}
               href={tab.href}
-              className={cn(
-                "flex-1 flex flex-col items-center justify-center py-2 gap-0.5 min-h-[56px] transition-colors",
-                active ? "text-accent" : "text-text-secondary"
-              )}
+              className="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 min-h-[56px] transition-colors"
             >
-              <tab.icon
-                className="w-[22px] h-[22px]"
-                strokeWidth={active ? 2.5 : 1.75}
-              />
+              <div
+                className={cn(
+                  "flex items-center justify-center w-12 h-7 rounded-full transition-colors mb-0.5",
+                  active ? "bg-accent/20" : ""
+                )}
+              >
+                <tab.icon
+                  className={cn("w-6 h-6", active ? "text-accent" : "text-text-secondary")}
+                  strokeWidth={active ? 2.5 : 1.75}
+                />
+              </div>
               <span
                 className={cn(
                   "text-[10px] font-semibold",
@@ -288,18 +292,22 @@ export default function AdminSidebar() {
           return (
             <button
               onClick={() => setShowMore((v) => !v)}
-              className={cn(
-                "flex-1 flex flex-col items-center justify-center py-2 gap-0.5 min-h-[56px] transition-colors relative",
-                showMore || drawerActive ? "text-accent" : "text-text-secondary"
-              )}
+              className="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 min-h-[56px] transition-colors relative"
             >
               {drawerActive && !showMore && (
                 <span className="absolute top-2 right-[calc(50%-14px)] w-2 h-2 rounded-full bg-accent" />
               )}
-              <MoreHorizontal
-                className="w-[22px] h-[22px]"
-                strokeWidth={showMore || drawerActive ? 2.5 : 1.75}
-              />
+              <div
+                className={cn(
+                  "flex items-center justify-center w-12 h-7 rounded-full transition-colors mb-0.5",
+                  showMore || drawerActive ? "bg-accent/20" : ""
+                )}
+              >
+                <MoreHorizontal
+                  className={cn("w-6 h-6", showMore || drawerActive ? "text-accent" : "text-text-secondary")}
+                  strokeWidth={showMore || drawerActive ? 2.5 : 1.75}
+                />
+              </div>
               <span
                 className={cn(
                   "text-[10px] font-semibold",

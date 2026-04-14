@@ -172,10 +172,10 @@ export default function ScoreEntryPage() {
       {/* Header */}
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             Score Entry
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-text-secondary text-sm mt-1 hidden md:block">
             Create games and enter live scores
           </p>
         </div>
@@ -230,38 +230,48 @@ export default function ScoreEntryPage() {
               </button>
             </div>
           )}
-          <form onSubmit={handleCreateGame} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Home Team</label>
-              <input type="text" value={form.homeTeam} onChange={(e) => setForm({ ...form, homeTeam: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Team name" />
+          <form onSubmit={handleCreateGame}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Home Team</label>
+                <input type="text" value={form.homeTeam} onChange={(e) => setForm({ ...form, homeTeam: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Team name" />
+              </div>
+              <div>
+                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Away Team</label>
+                <input type="text" value={form.awayTeam} onChange={(e) => setForm({ ...form, awayTeam: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Team name" />
+              </div>
+              <div>
+                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Division</label>
+                <input type="text" value={form.division} onChange={(e) => setForm({ ...form, division: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="e.g. 14U" />
+              </div>
+              <div>
+                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Court</label>
+                <input type="text" value={form.court} onChange={(e) => setForm({ ...form, court: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="e.g. Court 1" />
+              </div>
+              <div>
+                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Event / Tournament</label>
+                {tournamentOptions.length > 0 ? (
+                  <select value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all cursor-pointer">
+                    <option value="">— Select tournament —</option>
+                    {tournamentOptions.map((t) => (
+                      <option key={t.id} value={t.name}>{t.name}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input type="text" value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Tournament name" />
+                )}
+              </div>
+              {/* Desktop submit — inline in grid */}
+              <div className="hidden md:flex items-end">
+                <button type="submit" disabled={saving} className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  Create Game
+                </button>
+              </div>
             </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Away Team</label>
-              <input type="text" value={form.awayTeam} onChange={(e) => setForm({ ...form, awayTeam: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Team name" />
-            </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Division</label>
-              <input type="text" value={form.division} onChange={(e) => setForm({ ...form, division: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="e.g. 14U" />
-            </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Court</label>
-              <input type="text" value={form.court} onChange={(e) => setForm({ ...form, court: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="e.g. Court 1" />
-            </div>
-            <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Event / Tournament</label>
-              {tournamentOptions.length > 0 ? (
-                <select value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all cursor-pointer">
-                  <option value="">— Select tournament —</option>
-                  {tournamentOptions.map((t) => (
-                    <option key={t.id} value={t.name}>{t.name}</option>
-                  ))}
-                </select>
-              ) : (
-                <input type="text" value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Tournament name" />
-              )}
-            </div>
-            <div className="flex items-end">
-              <button type="submit" disabled={saving} className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
+            {/* Mobile sticky submit */}
+            <div className="md:hidden sticky bottom-20 -mx-6 px-6 py-3 bg-bg/95 backdrop-blur border-t border-white/10">
+              <button type="submit" disabled={saving} className="w-full flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                 Create Game
               </button>

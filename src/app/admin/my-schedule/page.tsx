@@ -43,10 +43,10 @@ export default function MySchedulePage() {
     <div className="p-6 lg:p-8">
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             My Schedule
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-text-secondary text-sm mt-1 hidden md:block">
             Today&apos;s games and upcoming events
           </p>
         </div>

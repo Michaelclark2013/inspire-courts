@@ -104,7 +104,39 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
       {/* Staff table */}
       {tab === "staff" && (
         <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile cards */}
+          <div className="md:hidden divide-y divide-border">
+            {filteredStaff.length === 0 ? (
+              <p className="px-4 py-8 text-center text-text-secondary text-sm">No staff records found.</p>
+            ) : (
+              filteredStaff.map((s, i) => (
+                <div key={i} className="px-4 py-3">
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <span className="text-white font-semibold text-sm">{s.name}</span>
+                    {s.pay > 0 && <span className="text-success font-mono font-bold text-sm">${s.pay.toFixed(0)}</span>}
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">{s.role}</span>
+                    {s.hours > 0 && <span className="text-xs text-text-secondary font-mono">{s.hours}h</span>}
+                    {s.rate > 0 && <span className="text-xs text-text-secondary font-mono">${s.rate}/hr</span>}
+                    <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">{s.payMethod}</span>
+                    <span className="text-xs text-text-secondary ml-auto">{s.date}</span>
+                  </div>
+                </div>
+              ))
+            )}
+            {filteredStaff.length > 0 && (
+              <div className="px-4 py-3 bg-bg/30 flex items-center justify-between">
+                <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Totals</span>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono font-bold text-white text-sm">{filteredStaff.reduce((s, r) => s + r.hours, 0).toFixed(1)}h</span>
+                  {(() => { const t = filteredStaff.reduce((s, r) => s + r.pay, 0); return t > 0 ? <span className="font-mono font-bold text-success text-sm">${t.toFixed(0)}</span> : null; })()}
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
@@ -165,14 +197,46 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                 </tfoot>
               )}
             </table>
-          </div>
+          </div>{/* end hidden md:block */}
         </div>
       )}
 
       {/* Refs table */}
       {tab === "refs" && (
         <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile cards */}
+          <div className="md:hidden divide-y divide-border">
+            {filteredRefs.length === 0 ? (
+              <p className="px-4 py-8 text-center text-text-secondary text-sm">No ref records found.</p>
+            ) : (
+              filteredRefs.map((r, i) => (
+                <div key={i} className="px-4 py-3">
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <span className="text-white font-semibold text-sm">{r.name}</span>
+                    {r.pay > 0 && <span className="text-success font-mono font-bold text-sm">${r.pay.toFixed(0)}</span>}
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {r.games > 0 && <span className="text-xs text-text-secondary font-mono">{r.games} games</span>}
+                    {r.courts && <span className="text-xs text-text-secondary">{r.courts}</span>}
+                    {r.rate > 0 && <span className="text-xs text-text-secondary font-mono">${r.rate}/game</span>}
+                    <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">{r.payMethod}</span>
+                    <span className="text-xs text-text-secondary ml-auto">{r.date}</span>
+                  </div>
+                </div>
+              ))
+            )}
+            {filteredRefs.length > 0 && (
+              <div className="px-4 py-3 bg-bg/30 flex items-center justify-between">
+                <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Totals</span>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono font-bold text-white text-sm">{filteredRefs.reduce((s, r) => s + r.games, 0)} games</span>
+                  {(() => { const t = filteredRefs.reduce((s, r) => s + r.pay, 0); return t > 0 ? <span className="font-mono font-bold text-success text-sm">${t.toFixed(0)}</span> : null; })()}
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
@@ -233,7 +297,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                 </tfoot>
               )}
             </table>
-          </div>
+          </div>{/* end hidden md:block */}
         </div>
       )}
     </div>

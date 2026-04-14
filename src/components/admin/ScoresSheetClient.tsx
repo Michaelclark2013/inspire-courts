@@ -87,30 +87,49 @@ export default function ScoresSheetClient({ games, standings }: Props) {
       {tab === "games" && (
         <div id="games-panel" role="tabpanel" aria-labelledby="games-tab">
           {/* Filters */}
-          <div className="flex flex-wrap gap-3">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search teams..."
-                aria-label="Search teams"
-                className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
-              />
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-3">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search teams..."
+                  aria-label="Search teams"
+                  className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent"
+                />
+              </div>
+              {/* Desktop division select */}
+              <select
+                value={divFilter}
+                onChange={(e) => setDivFilter(e.target.value)}
+                aria-label="Filter by division"
+                className="hidden md:block bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
+              >
+                {divisions.map((d) => (
+                  <option key={d} value={d}>
+                    {d === "All" ? "All Divisions" : d}
+                  </option>
+                ))}
+              </select>
             </div>
-            <select
-              value={divFilter}
-              onChange={(e) => setDivFilter(e.target.value)}
-              aria-label="Filter by division"
-              className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"
-            >
+            {/* Mobile division pills */}
+            <div className="md:hidden flex gap-2 overflow-x-auto snap-x pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {divisions.map((d) => (
-                <option key={d} value={d}>
+                <button
+                  key={d}
+                  onClick={() => setDivFilter(d)}
+                  className={`snap-start flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+                    divFilter === d
+                      ? "bg-accent text-white"
+                      : "bg-bg-secondary border border-border text-text-secondary"
+                  }`}
+                >
                   {d === "All" ? "All Divisions" : d}
-                </option>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
           {/* Games container */}
@@ -120,7 +139,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
             </div>
 
             {/* Mobile card view */}
-            <div className="sm:hidden divide-y divide-border">
+            <div className="md:hidden divide-y divide-border">
               {filtered.length === 0 ? (
                 <p className="px-4 py-8 text-center text-text-secondary text-sm">
                   No games match your filters.
@@ -169,7 +188,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
             </div>
 
             {/* Desktop table view */}
-            <div className="hidden sm:block overflow-x-auto">
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">

@@ -49,10 +49,10 @@ export default function MyHistoryPage() {
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
           My Work History
         </h1>
-        <p className="text-text-secondary text-sm mt-1">
+        <p className="text-text-secondary text-sm mt-1 hidden md:block">
           {role === "ref" ? "Ref Check-Out" : "Staff Check-Out"} records for {session?.user?.name}
         </p>
       </div>

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AdminSidebar from "@/components/layout/AdminSidebar";
+import AdminFAB from "@/components/admin/AdminFAB";
 import SessionProvider from "@/components/layout/SessionProvider";
 import { isAdminRole } from "@/lib/permissions";
 
@@ -28,6 +29,7 @@ export default async function AdminLayout({
       <div className="min-h-screen bg-bg lg:flex">
         <AdminSidebar />
         <main className="flex-1 min-w-0 pb-20 lg:pb-0">{children}</main>
+        <AdminFAB />
       </div>
     </SessionProvider>
   );

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import CollapsibleSection from "@/components/admin/CollapsibleSection";
 import KPICard from "@/components/dashboard/KPICard";
+import DashboardRefreshButton from "@/components/admin/DashboardRefreshButton";
 import DashboardCharts from "@/components/admin/DashboardCharts";
 import DashboardAlerts from "@/components/admin/DashboardAlerts";
 import DashboardDBStats from "@/components/admin/DashboardDBStats";
@@ -199,9 +200,12 @@ export default async function AdminDashboard() {
               Dashboard
             </h1>
           </div>
-          <p className="text-text-secondary text-[10px] lg:text-xs uppercase tracking-wider text-right">
-            {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-          </p>
+          <div className="flex items-center gap-2">
+            <DashboardRefreshButton />
+            <p className="text-text-secondary text-[10px] lg:text-xs uppercase tracking-wider text-right hidden sm:block">
+              {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -226,9 +230,12 @@ export default async function AdminDashboard() {
 
       {/* Google Sheets KPIs */}
       <CollapsibleSection title={`Google Sheets KPIs · ${kpis.length} sources`}>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
-          {kpis.map((kpi) => (
-            <KPICard key={kpi.title} {...kpi} />
+        {/* Mobile: horizontal scroll snap. Desktop: 4-col grid */}
+        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory -mx-4 px-4 pb-3 lg:grid lg:grid-cols-4 lg:overflow-visible lg:mx-0 lg:px-0 lg:pb-0 mb-3 lg:mb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {kpis.map((kpi, i) => (
+            <div key={kpi.title} className={`snap-start flex-shrink-0 lg:w-auto ${i === 0 ? "w-[75%]" : "w-[60%]"}`}>
+              <KPICard {...kpi} />
+            </div>
           ))}
         </div>
         <p className="text-text-secondary text-[10px] mb-8">

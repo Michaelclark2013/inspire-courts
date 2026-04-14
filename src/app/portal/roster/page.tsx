@@ -15,6 +15,8 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
+import TeamLogo from "@/components/ui/TeamLogo";
+import LogoUploader from "@/components/ui/LogoUploader";
 import { usePortalView } from "@/components/portal/PortalViewContext";
 
 type Player = {
@@ -47,6 +49,7 @@ export default function RosterPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [sortField, setSortField] = useState<SortField>("name");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [teamLogoUrl, setTeamLogoUrl] = useState<string | null>(null);
   const actualRole = session?.user?.role;
   const role = (actualRole === "admin" && viewAsRole) ? viewAsRole : actualRole;
   const isCoach = role === "coach" || actualRole === "admin";
@@ -67,6 +70,13 @@ export default function RosterPage() {
         const data = await res.json();
         setTeam(data.team);
         setRoster(data.players);
+        // Fetch logo for this team
+        if (data.team?.name) {
+          fetch(`/api/teams/logo?teamName=${encodeURIComponent(data.team.name)}`)
+            .then((r) => r.json())
+            .then((d) => setTeamLogoUrl(d.url || null))
+            .catch(() => {});
+        }
       } else {
         setError(true);
       }
@@ -156,24 +166,43 @@ export default function RosterPage() {
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
-            My Roster
-          </h1>
-          <p className="text-text-secondary text-sm mt-1">
-            {team ? `${team.name} — ${team.division || ""}` : "Team roster management"}
-          </p>
+      <div className="mb-8">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex items-center gap-4">
+            {team && (
+              <div className="relative">
+                <TeamLogo teamName={team.name} logoUrl={teamLogoUrl} size={56} />
+                {isCoach && (
+                  <div className="absolute -bottom-1 -right-1">
+                    <LogoUploader
+                      teamName={team.name}
+                      currentLogoUrl={teamLogoUrl}
+                      onSuccess={(url) => setTeamLogoUrl(url)}
+                      variant="button"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+            <div>
+              <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+                My Roster
+              </h1>
+              <p className="text-text-secondary text-sm mt-1">
+                {team ? `${team.name}${team.division ? ` — ${team.division}` : ""}` : "Team roster management"}
+              </p>
+            </div>
+          </div>
+          {isCoach && team && (
+            <button
+              onClick={() => setShowAdd(!showAdd)}
+              className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              Add Player
+            </button>
+          )}
         </div>
-        {isCoach && team && (
-          <button
-            onClick={() => setShowAdd(!showAdd)}
-            className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add Player
-          </button>
-        )}
       </div>
 
       {/* Feedback banner */}

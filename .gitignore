@@ -34,7 +34,8 @@ yarn-error.log*
 .env*
 
 # runtime data (auth overrides, generated files)
-/data/
+# team-logos.json is tracked — maps team names to logo paths
+/data/*.bak
 
 # local database
 local.db

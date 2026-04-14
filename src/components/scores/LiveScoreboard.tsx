@@ -19,6 +19,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import TeamLogo from "@/components/ui/TeamLogo";
 
 type QuarterScore = {
   quarter: string | null;
@@ -56,6 +57,15 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
   const [expandedGame, setExpandedGame] = useState<number | null>(null);
   const [countdownPct, setCountdownPct] = useState(0);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const [logos, setLogos] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    fetch("/api/teams/logo")
+      .then((r) => r.json())
+      .then((data) => { if (data && typeof data === "object") setLogos(data); })
+      .catch(() => {});
+  }, []);
 
   const fetchScores = useCallback(async (showRefresh = false) => {
     if (showRefresh) setRefreshing(true);
@@ -334,6 +344,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
                     onToggle={() => setExpandedGame(expandedGame === game.id ? null : game.id)}
                     canEdit={canEditScores}
                     onScoreUpdated={() => fetchScores(false)}
+                    logos={logos}
                   />
                 ))}
               </div>
@@ -359,6 +370,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
                     onToggle={() => setExpandedGame(expandedGame === game.id ? null : game.id)}
                     canEdit={canEditScores}
                     onScoreUpdated={() => fetchScores(false)}
+                    logos={logos}
                   />
                 ))}
               </div>
@@ -384,6 +396,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
                     onToggle={() => setExpandedGame(expandedGame === game.id ? null : game.id)}
                     canEdit={canEditScores}
                     onScoreUpdated={() => fetchScores(false)}
+                    logos={logos}
                   />
                 ))}
               </div>
@@ -410,6 +423,7 @@ function GameCard({
   onToggle,
   canEdit = false,
   onScoreUpdated,
+  logos = {},
 }: {
   game: LiveGame;
   teamRecords: Record<string, { w: number; l: number }>;
@@ -417,6 +431,7 @@ function GameCard({
   onToggle: () => void;
   canEdit?: boolean;
   onScoreUpdated?: () => void;
+  logos?: Record<string, string>;
 }) {
   const [editing, setEditing] = useState(false);
   const [editHome, setEditHome] = useState(game.homeScore);
@@ -519,46 +534,48 @@ function GameCard({
 
         {/* Scoreboard */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <TeamLogo teamName={game.homeTeam} logoUrl={logos[game.homeTeam]} size={24} />
               <span
-                className={`text-sm font-semibold ${
+                className={`text-sm font-semibold truncate ${
                   isFinal && homeWinning ? "text-white" : "text-white/80"
                 }`}
               >
                 {game.homeTeam}
               </span>
               {homeRec && (
-                <span className="text-white/25 text-[10px] ml-1.5 tabular-nums">
+                <span className="text-white/25 text-[10px] ml-0.5 tabular-nums flex-shrink-0">
                   ({homeRec.w}-{homeRec.l})
                 </span>
               )}
             </div>
             <span
-              className={`text-2xl font-bold tabular-nums ${
+              className={`text-2xl font-bold tabular-nums flex-shrink-0 ${
                 isLive ? "text-white" : isFinal && homeWinning ? "text-white" : "text-white/60"
               }`}
             >
               {game.homeScore}
             </span>
           </div>
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <TeamLogo teamName={game.awayTeam} logoUrl={logos[game.awayTeam]} size={24} />
               <span
-                className={`text-sm font-semibold ${
+                className={`text-sm font-semibold truncate ${
                   isFinal && awayWinning ? "text-white" : "text-white/80"
                 }`}
               >
                 {game.awayTeam}
               </span>
               {awayRec && (
-                <span className="text-white/25 text-[10px] ml-1.5 tabular-nums">
+                <span className="text-white/25 text-[10px] ml-0.5 tabular-nums flex-shrink-0">
                   ({awayRec.w}-{awayRec.l})
                 </span>
               )}
             </div>
             <span
-              className={`text-2xl font-bold tabular-nums ${
+              className={`text-2xl font-bold tabular-nums flex-shrink-0 ${
                 isLive ? "text-white" : isFinal && awayWinning ? "text-white" : "text-white/60"
               }`}
             >

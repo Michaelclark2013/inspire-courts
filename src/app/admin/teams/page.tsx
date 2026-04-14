@@ -1,4 +1,5 @@
-import { Users } from "lucide-react";
+import { Users, ImageIcon } from "lucide-react";
+import Link from "next/link";
 import TeamsSheetClient from "@/components/admin/TeamsSheetClient";
 import {
   fetchSheetWithHeaders,
@@ -77,7 +78,13 @@ export default async function TeamsPage() {
             Master Teams & Payments — {teams.length} teams registered
           </p>
         </div>
-        <div className="flex gap-2 flex-shrink-0">
+        <div className="flex gap-2 flex-shrink-0 items-center">
+          <Link
+            href="/admin/teams/logos"
+            className="flex items-center gap-1.5 text-text-secondary hover:text-white border border-border hover:border-accent/40 rounded-sm px-3 py-1.5 text-xs font-semibold transition-colors"
+          >
+            <ImageIcon className="w-3.5 h-3.5" /> Logos
+          </Link>
           <div className="bg-success/10 border border-success/20 rounded-sm px-2.5 py-1.5 text-center min-w-[44px]">
             <p className="text-success font-bold text-base leading-none">{paidCount}</p>
             <p className="text-success/70 text-[10px] uppercase tracking-wider mt-0.5">Paid</p>

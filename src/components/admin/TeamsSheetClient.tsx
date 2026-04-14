@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { AdminBarChart, CHART_COLORS } from "@/components/dashboard/Charts";
+import TeamLogo from "@/components/ui/TeamLogo";
+import LogoUploader from "@/components/ui/LogoUploader";
 
 interface Team {
   teamName: string;
@@ -37,6 +39,18 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
   const [sortKey, setSortKey] = useState<keyof Team>("teamName");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [logos, setLogos] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    fetch("/api/teams/logo")
+      .then((r) => r.json())
+      .then((data) => { if (data && typeof data === "object") setLogos(data); })
+      .catch(() => {});
+  }, []);
+
+  function handleLogoSuccess(teamName: string, url: string) {
+    setLogos((prev) => ({ ...prev, [teamName]: url }));
+  }
 
   const divisions = useMemo(
     () => ["All", ...Array.from(new Set(teams.map((t) => t.division))).sort()],
@@ -163,11 +177,14 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                   onClick={() => setExpanded(expanded === i ? null : i)}
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold text-sm truncate">
-                        {team.teamName}
-                      </p>
-                      <p className="text-text-secondary text-xs mt-0.5">{team.coach}</p>
+                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                      <TeamLogo teamName={team.teamName} logoUrl={logos[team.teamName]} size={32} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-semibold text-sm truncate">
+                          {team.teamName}
+                        </p>
+                        <p className="text-text-secondary text-xs mt-0.5">{team.coach}</p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded font-mono">
@@ -189,6 +206,15 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                 </button>
                 {expanded === i && (
                   <div className="px-4 pb-4 pt-1 bg-bg/40 space-y-3">
+                    <div>
+                      <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-2">Team Logo</p>
+                      <LogoUploader
+                        teamName={team.teamName}
+                        currentLogoUrl={logos[team.teamName]}
+                        onSuccess={(url) => handleLogoSuccess(team.teamName, url)}
+                        variant="card"
+                      />
+                    </div>
                     {team.email !== "—" && (
                       <div>
                         <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-1">Email</p>
@@ -261,8 +287,17 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                       className="hover:bg-bg/40 transition-colors cursor-pointer"
                       onClick={() => setExpanded(expanded === i ? null : i)}
                     >
-                      <td className="px-4 py-3 font-semibold text-white">
-                        {team.teamName}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2.5">
+                          <TeamLogo teamName={team.teamName} logoUrl={logos[team.teamName]} size={28} />
+                          <span className="font-semibold text-white">{team.teamName}</span>
+                          <LogoUploader
+                            teamName={team.teamName}
+                            currentLogoUrl={logos[team.teamName]}
+                            onSuccess={(url) => handleLogoSuccess(team.teamName, url)}
+                            variant="button"
+                          />
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-text-secondary">
                         {team.coach}
@@ -295,7 +330,16 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                     {expanded === i && (
                       <tr key={`${i}-expand`} className="bg-bg/60">
                         <td colSpan={6} className="px-4 py-4">
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <p className="text-text-secondary text-xs uppercase tracking-wider mb-2">Team Logo</p>
+                              <LogoUploader
+                                teamName={team.teamName}
+                                currentLogoUrl={logos[team.teamName]}
+                                onSuccess={(url) => handleLogoSuccess(team.teamName, url)}
+                                variant="card"
+                              />
+                            </div>
                             <div>
                               <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Email</p>
                               <p className="text-white">{team.email !== "—" ? (

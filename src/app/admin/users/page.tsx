@@ -9,6 +9,9 @@ import {
   Loader2,
   X,
   Search,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
 
@@ -19,6 +22,7 @@ type User = {
   role: string;
   phone: string | null;
   memberSince: string | null;
+  approved: boolean | null;
   createdAt: string;
 };
 
@@ -121,11 +125,22 @@ export default function UsersPage() {
     fetchUsers();
   }
 
+  async function handleApproval(id: number, approved: boolean) {
+    await fetch("/api/admin/users", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, approved }),
+    });
+    fetchUsers();
+  }
+
   async function handleDelete(id: number, name: string) {
     if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
     await fetch(`/api/admin/users?id=${id}`, { method: "DELETE" });
     fetchUsers();
   }
+
+  const pendingUsers = userList.filter((u) => u.approved === false);
 
   return (
     <div className="p-6 lg:p-8">
@@ -297,6 +312,48 @@ export default function UsersPage() {
         </select>
       </div>
 
+      {/* Pending Approvals */}
+      {pendingUsers.length > 0 && (
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-5 mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <h2 className="text-amber-400 font-bold text-sm uppercase tracking-wider">
+              Pending Approval ({pendingUsers.length})
+            </h2>
+          </div>
+          <div className="space-y-2">
+            {pendingUsers.map((u) => (
+              <div
+                key={u.id}
+                className="flex items-center justify-between gap-3 bg-navy/50 rounded-lg px-4 py-3"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="text-white font-medium text-sm truncate">{u.name}</span>
+                  <span className="text-white/40 text-xs truncate hidden sm:inline">{u.email}</span>
+                  <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${ROLE_COLORS[u.role] || "bg-white/10 text-white/60"}`}>
+                    {u.role}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => handleApproval(u.id, true)}
+                    className="flex items-center gap-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5" /> Approve
+                  </button>
+                  <button
+                    onClick={() => handleDelete(u.id, u.name)}
+                    className="flex items-center gap-1.5 bg-red/20 hover:bg-red/30 text-red px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
+                  >
+                    <XCircle className="w-3.5 h-3.5" /> Deny
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Users table */}
       <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-white/10 flex items-center gap-2">
@@ -327,6 +384,7 @@ export default function UsersPage() {
                   <th className="text-left px-6 py-3 font-semibold">Name</th>
                   <th className="text-left px-6 py-3 font-semibold hidden sm:table-cell">Email</th>
                   <th className="text-left px-6 py-3 font-semibold">Role</th>
+                  <th className="text-left px-6 py-3 font-semibold hidden lg:table-cell">Status</th>
                   <th className="text-left px-6 py-3 font-semibold hidden md:table-cell">Phone</th>
                   <th className="text-left px-6 py-3 font-semibold hidden md:table-cell">Created</th>
                   <th className="px-6 py-3"></th>
@@ -383,6 +441,21 @@ export default function UsersPage() {
                         >
                           {ROLE_LABELS[u.role] || u.role}
                         </button>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 hidden lg:table-cell">
+                      {u.approved === false ? (
+                        <button
+                          onClick={() => handleApproval(u.id, true)}
+                          className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors cursor-pointer"
+                          title="Click to approve"
+                        >
+                          Pending
+                        </button>
+                      ) : (
+                        <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400/60">
+                          Active
+                        </span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-text-secondary hidden md:table-cell">

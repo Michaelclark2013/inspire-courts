@@ -24,13 +24,13 @@ export const metadata: Metadata = {
   description:
     "Everything you need for game day at Inspire Courts AZ. Location, parking, admission, check-in, schedules, food, house rules, and more. Gilbert, AZ.",
   alternates: {
-    canonical: "https://inspirecourts.com/gameday",
+    canonical: "https://inspirecourtsaz.com/gameday",
   },
   openGraph: {
     title: "Game Day Info | Inspire Courts AZ",
     description: "Location, parking, admission, check-in, schedules, food, and house rules for game day at Inspire Courts AZ.",
-    url: "https://inspirecourts.com/gameday",
-    images: [{ url: "https://inspirecourts.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ game day" }],
+    url: "https://inspirecourtsaz.com/gameday",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ game day" }],
   },
 };
 

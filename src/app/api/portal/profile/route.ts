@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { users, teams, players, gameScores, checkins, announcements, tournaments } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
@@ -86,4 +86,71 @@ export async function PUT(request: NextRequest) {
     .where(eq(users.id, userId));
 
   return NextResponse.json({ success: true });
+}
+
+// DELETE /api/portal/profile — delete own account
+export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Prevent env-based admin from deleting themselves
+  if (session.user.id === "admin-env") {
+    return NextResponse.json(
+      { error: "This account cannot be deleted" },
+      { status: 403 }
+    );
+  }
+
+  const userId = Number(session.user.id);
+  if (isNaN(userId)) {
+    return NextResponse.json({ error: "Invalid user" }, { status: 400 });
+  }
+
+  // Require password confirmation
+  const body = await request.json();
+  if (!body.password) {
+    return NextResponse.json(
+      { error: "Password is required to delete your account" },
+      { status: 400 }
+    );
+  }
+
+  // Verify password
+  const [user] = await db
+    .select({ passwordHash: users.passwordHash, role: users.role })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  // Don't allow admin to delete via portal self-service
+  if (user.role === "admin") {
+    return NextResponse.json(
+      { error: "Admin accounts cannot be deleted through the portal" },
+      { status: 403 }
+    );
+  }
+
+  const valid = await bcrypt.compare(body.password, user.passwordHash);
+  if (!valid) {
+    return NextResponse.json({ error: "Incorrect password" }, { status: 403 });
+  }
+
+  // Nullify foreign key references (don't delete other records, just unlink)
+  await db.update(teams).set({ coachUserId: null }).where(eq(teams.coachUserId, userId));
+  await db.update(players).set({ parentUserId: null }).where(eq(players.parentUserId, userId));
+  await db.update(gameScores).set({ updatedBy: null }).where(eq(gameScores.updatedBy, userId));
+  await db.update(checkins).set({ checkedInBy: null }).where(eq(checkins.checkedInBy, userId));
+  await db.update(announcements).set({ createdBy: null }).where(eq(announcements.createdBy, userId));
+  await db.update(tournaments).set({ createdBy: null }).where(eq(tournaments.createdBy, userId));
+
+  // Delete the user
+  await db.delete(users).where(eq(users.id, userId));
+
+  return NextResponse.json({ success: true, deleted: true });
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FACILITY_EMAIL } from "@/lib/constants";
+import { FACILITY_EMAIL, FACILITY_PHONE } from "@/lib/constants";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
   description:
     "The story behind Arizona's premier indoor basketball & volleyball facility. Founded to give youth athletes a true professional-level experience in Gilbert, AZ.",
   alternates: {
-    canonical: "https://inspirecourts.com/about",
+    canonical: "https://inspirecourtsaz.com/about",
   },
   openGraph: {
     title: "About Inspire Courts AZ",
     description: "Arizona's premier indoor basketball & volleyball facility — 7 courts, game film, and a pro-level setup in Gilbert, AZ.",
-    url: "https://inspirecourts.com/about",
-    images: [{ url: "https://inspirecourts.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ indoor basketball facility" }],
+    url: "https://inspirecourtsaz.com/about",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ indoor basketball facility" }],
   },
 };
 
@@ -40,8 +40,9 @@ const sportsOrgSchema = {
   name: "Inspire Courts AZ",
   description:
     "Arizona's premier indoor basketball & volleyball facility and youth tournament organization. Home of OFF SZN HOOPS and Team Inspire.",
-  url: "https://inspirecourts.com",
+  url: "https://inspirecourtsaz.com",
   email: FACILITY_EMAIL,
+  telephone: FACILITY_PHONE,
   location: {
     "@type": "Place",
     address: {

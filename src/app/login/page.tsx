@@ -63,6 +63,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-navy flex flex-col items-center justify-center px-4">
       <title>Sign In | Inspire Courts AZ</title>
       <meta name="description" content="Sign in to your Inspire Courts AZ account. Coaches, parents, staff, and referees." />
+      <link rel="canonical" href="https://inspirecourtsaz.com/login" />
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy-dark to-navy pointer-events-none" />
 

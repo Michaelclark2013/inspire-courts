@@ -19,8 +19,10 @@ import {
   FileCheck,
   ChevronLeft,
   Radio,
+  Eye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePortalView } from "@/components/portal/PortalViewContext";
 
 type NavItem = { href: string; label: string; icon: typeof LayoutDashboard };
 
@@ -53,7 +55,10 @@ export default function PortalSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
-  const role = session?.user?.role;
+  const actualRole = session?.user?.role;
+  const { viewAsRole, setViewAsRole } = usePortalView();
+  const role = (actualRole === "admin" && viewAsRole) ? viewAsRole : actualRole;
+  const isAdmin = actualRole === "admin";
   const [announcementCount, setAnnouncementCount] = useState(0);
   const [hasLiveGames, setHasLiveGames] = useState(false);
 
@@ -148,6 +153,26 @@ export default function PortalSidebar() {
             <p className="text-text-secondary text-[11px] truncate">{session?.user?.email}</p>
           </div>
         </Link>
+
+        {/* View As (admin only) */}
+        {isAdmin && (
+          <div className="mx-3 mb-2 p-3 bg-amber-500/[0.06] border border-amber-500/15 rounded-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <Eye className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-amber-400 text-[10px] font-bold uppercase tracking-widest">View As</span>
+            </div>
+            <select
+              value={viewAsRole || "admin"}
+              onChange={(e) => setViewAsRole(e.target.value === "admin" ? null : e.target.value)}
+              className="w-full bg-navy/80 border border-white/10 rounded-lg px-3 py-2 text-white text-xs font-medium focus:outline-none focus:border-amber-500/50 cursor-pointer appearance-none"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center" }}
+            >
+              <option value="admin">Admin (default)</option>
+              <option value="coach">Coach View</option>
+              <option value="parent">Parent View</option>
+            </select>
+          </div>
+        )}
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-3 px-3">

@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin/", "/api/", "/_next/static/", "/_next/image/"],
       },
     ],
-    sitemap: "https://inspirecourts.com/sitemap.xml",
+    sitemap: "https://inspirecourtsaz.com/sitemap.xml",
   };
 }

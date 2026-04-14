@@ -51,10 +51,14 @@ function DropdownMenu({
   }, []);
 
   return (
-    <div ref={ref} className="relative">
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
       <button
         onClick={() => setOpen((v) => !v)}
-        onMouseEnter={() => setOpen(true)}
         className={cn(
           "px-3.5 py-2 min-h-[44px] inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-sm",
           open ? "text-white" : "text-white/80 hover:text-white"
@@ -72,7 +76,6 @@ function DropdownMenu({
       </button>
 
       <div
-        onMouseLeave={() => setOpen(false)}
         className={cn(
           "absolute top-full left-1/2 -translate-x-1/2 mt-1 min-w-[200px] bg-navy-dark border border-white/10 rounded-xl shadow-2xl overflow-hidden transition-all duration-200 origin-top",
           open

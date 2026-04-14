@@ -18,16 +18,7 @@ import {
   Heart,
 } from "lucide-react";
 
-const ROLES = [
-  {
-    value: "parent",
-    label: "Parent",
-    icon: Heart,
-    description: "View schedules, submit waivers, see scores",
-    color: "border-cyan-500/40 bg-cyan-500/5 hover:bg-cyan-500/10",
-    activeColor: "border-cyan-400 bg-cyan-500/20 ring-1 ring-cyan-500/30",
-    iconColor: "text-cyan-400",
-  },
+const PRIMARY_ROLES = [
   {
     value: "coach",
     label: "Coach",
@@ -38,11 +29,23 @@ const ROLES = [
     iconColor: "text-emerald-400",
   },
   {
+    value: "parent",
+    label: "Parent / Player",
+    icon: Heart,
+    description: "View schedules, submit waivers, see scores",
+    color: "border-cyan-500/40 bg-cyan-500/5 hover:bg-cyan-500/10",
+    activeColor: "border-cyan-400 bg-cyan-500/20 ring-1 ring-cyan-500/30",
+    iconColor: "text-cyan-400",
+  },
+];
+
+const STAFF_ROLES = [
+  {
     value: "staff",
     label: "Staff",
     icon: Users,
-    description: "Score entry, schedules, personal work history",
-    color: "border-blue-500/40 bg-blue-500/5 hover:bg-blue-500/10",
+    description: "Score entry, schedules — requires admin approval",
+    color: "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]",
     activeColor: "border-blue-400 bg-blue-500/20 ring-1 ring-blue-500/30",
     iconColor: "text-blue-400",
   },
@@ -50,16 +53,17 @@ const ROLES = [
     value: "ref",
     label: "Referee",
     icon: Flag,
-    description: "Work history, referee checkout details",
-    color: "border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10",
+    description: "Work history, referee checkout — requires admin approval",
+    color: "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]",
     activeColor: "border-amber-400 bg-amber-500/20 ring-1 ring-amber-500/30",
     iconColor: "text-amber-400",
   },
 ];
 
 export default function RegisterPage() {
-  const [step, setStep] = useState<"role" | "details" | "done">("role");
+  const [step, setStep] = useState<"role" | "details" | "done" | "pending">("role");
   const [selectedRole, setSelectedRole] = useState("");
+  const [showStaffRoles, setShowStaffRoles] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -91,6 +95,13 @@ export default function RegisterPage() {
         return;
       }
 
+      // Staff/ref need admin approval — don't auto-login
+      if (data.pendingApproval) {
+        setStep("pending");
+        setLoading(false);
+        return;
+      }
+
       // Auto sign in after registration
       const signInResult = await signIn("credentials", {
         email: form.email,
@@ -101,12 +112,7 @@ export default function RegisterPage() {
       if (signInResult?.ok) {
         setStep("done");
         setTimeout(() => {
-          const adminRoles = ["admin", "staff", "ref", "front_desk"];
-          if (adminRoles.includes(selectedRole)) {
-            router.push("/admin");
-          } else {
-            router.push("/portal");
-          }
+          router.push("/portal");
         }, 1500);
       } else {
         // Registration succeeded but auto-login failed — just redirect to login
@@ -153,6 +159,27 @@ export default function RegisterPage() {
           </div>
         )}
 
+        {/* Pending approval state */}
+        {step === "pending" && (
+          <div className="bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-8 shadow-2xl text-center">
+            <Shield className="w-14 h-14 text-amber-400 mx-auto mb-4" />
+            <h2 className="text-white text-lg font-bold mb-2">Pending Approval</h2>
+            <p className="text-white/50 text-sm mb-2">
+              Your account has been created but requires admin approval before you can sign in.
+            </p>
+            <p className="text-white/40 text-xs mb-6">
+              The facility admin will review and approve your {selectedRole === "ref" ? "referee" : "staff"} account.
+              You&apos;ll be able to sign in once approved.
+            </p>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-colors"
+            >
+              Back to Login
+            </Link>
+          </div>
+        )}
+
         {/* Step 1: Role selection */}
         {step === "role" && (
           <div className="bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-7 shadow-2xl">
@@ -166,8 +193,9 @@ export default function RegisterPage() {
               Select your role to get started
             </p>
 
+            {/* Primary roles — Coach & Parent */}
             <div className="space-y-3">
-              {ROLES.map((role) => {
+              {PRIMARY_ROLES.map((role) => {
                 const Icon = role.icon;
                 const isActive = selectedRole === role.value;
                 return (
@@ -194,6 +222,51 @@ export default function RegisterPage() {
                   </button>
                 );
               })}
+            </div>
+
+            {/* Staff/Ref — collapsible, less prominent */}
+            <div className="mt-4 pt-3 border-t border-white/[0.06]">
+              <button
+                type="button"
+                onClick={() => setShowStaffRoles(!showStaffRoles)}
+                className="text-white/30 hover:text-white/50 text-xs font-medium uppercase tracking-wider transition-colors flex items-center gap-1.5"
+              >
+                {showStaffRoles ? "Hide" : "Staff or Referee?"}
+              </button>
+              {showStaffRoles && (
+                <div className="space-y-2 mt-3">
+                  <p className="text-amber-400/60 text-[10px] uppercase tracking-wider font-semibold flex items-center gap-1">
+                    <Shield className="w-3 h-3" /> Requires admin approval
+                  </p>
+                  {STAFF_ROLES.map((role) => {
+                    const Icon = role.icon;
+                    const isActive = selectedRole === role.value;
+                    return (
+                      <button
+                        key={role.value}
+                        type="button"
+                        onClick={() => setSelectedRole(role.value)}
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${
+                          isActive ? role.activeColor : role.color
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? "bg-white/10" : "bg-white/5"}`}>
+                          <Icon className={`w-4 h-4 ${role.iconColor}`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white/70 font-semibold text-xs">{role.label}</p>
+                          <p className="text-white/30 text-[10px]">{role.description}</p>
+                        </div>
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                          isActive ? "border-white bg-white" : "border-white/15"
+                        }`}>
+                          {isActive && <div className="w-1.5 h-1.5 rounded-full bg-navy" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <button

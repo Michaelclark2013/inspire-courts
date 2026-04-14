@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Camera, Mail, MapPin } from "lucide-react";
+import { Camera, Mail } from "lucide-react";
 import { FACILITY_EMAIL, FACILITY_ADDRESS, SOCIAL_LINKS } from "@/lib/constants";
 import { trackConversion } from "@/lib/analytics";
 

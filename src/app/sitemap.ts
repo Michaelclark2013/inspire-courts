@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://inspirecourts.com";
+  const base = "https://inspirecourtsaz.com";
 
   return [
     { url: base, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
@@ -17,5 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/book`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/gallery`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.6 },
+    { url: `${base}/scores`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
+    { url: `${base}/faq`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${base}/tournaments`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
   ];
 }

@@ -15,6 +15,7 @@ import {
   UsersRound,
   Undo2,
   XCircle,
+  Shield,
 } from "lucide-react";
 
 type Player = {
@@ -24,6 +25,9 @@ type Player = {
 };
 
 type CheckedIn = { name: string; time: string };
+type CoachCheckedIn = { name: string; time: string };
+
+const MAX_COACH_BANDS = 2;
 
 export default function CoachCheckInPage() {
   const { data: session } = useSession();
@@ -42,6 +46,9 @@ export default function CoachCheckInPage() {
   const [undoPlayer, setUndoPlayer] = useState<string | null>(null);
   const [undoTimeout, setUndoTimeout] = useState<NodeJS.Timeout | null>(null);
   const [duplicateWarning, setDuplicateWarning] = useState("");
+  const [coachesCheckedIn, setCoachesCheckedIn] = useState<CoachCheckedIn[]>([]);
+  const [coachName, setCoachName] = useState("");
+  const [coachCheckingIn, setCoachCheckingIn] = useState(false);
 
   const fetchRoster = useCallback(async () => {
     try {
@@ -150,6 +157,44 @@ export default function CoachCheckInPage() {
 
     setBulkChecking(false);
   }
+
+  async function handleCoachCheckIn(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = coachName.trim();
+    if (!trimmed) return;
+
+    if (coachesCheckedIn.length >= MAX_COACH_BANDS) {
+      setMutationError(`Maximum ${MAX_COACH_BANDS} coaching bands allowed. No more coaches can check in.`);
+      return;
+    }
+
+    if (coachesCheckedIn.some((c) => c.name.toLowerCase() === trimmed.toLowerCase())) {
+      setDuplicateWarning(`${trimmed} is already checked in as a coach.`);
+      return;
+    }
+
+    setCoachCheckingIn(true);
+    setMutationError("");
+
+    try {
+      const res = await fetch("/api/portal/checkin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerName: `[COACH] ${trimmed}`, teamName }),
+      });
+      if (res.ok) {
+        setCoachesCheckedIn((prev) => [...prev, { name: trimmed, time: new Date().toLocaleTimeString() }]);
+        setCoachName("");
+      } else {
+        setMutationError(`Failed to check in coach ${trimmed}. Try again.`);
+      }
+    } catch {
+      setMutationError(`Failed to check in coach ${trimmed}. Check your connection.`);
+    }
+    setCoachCheckingIn(false);
+  }
+
+  const coachSlotsRemaining = MAX_COACH_BANDS - coachesCheckedIn.length;
 
   const uncheckedCount = roster.filter((p) => !isCheckedIn(p.name)).length;
 
@@ -273,6 +318,106 @@ export default function CoachCheckInPage() {
           </div>
           <p className="text-emerald-400 text-2xl font-bold">{checkedIn.length} <span className="text-sm text-emerald-400/50 font-normal">of {roster.length}</span></p>
         </div>
+      </div>
+
+      {/* Coach Check-In (2 bands max) */}
+      <div className="bg-card border border-amber-500/20 rounded-xl p-5 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4 text-amber-400" />
+            <h2 className="text-amber-400 font-bold text-sm uppercase tracking-wider">
+              Coach Check-In
+            </h2>
+          </div>
+          <div className="flex items-center gap-2">
+            {coachesCheckedIn.map((c, i) => (
+              <span
+                key={i}
+                className="bg-amber-500/20 text-amber-400 text-[10px] font-bold px-2.5 py-1 rounded-full"
+              >
+                {c.name}
+              </span>
+            ))}
+            <span className={`text-xs font-semibold tabular-nums ${
+              coachSlotsRemaining === 0 ? "text-red" : "text-amber-400/60"
+            }`}>
+              {coachSlotsRemaining === 0
+                ? "No bands left"
+                : `${coachSlotsRemaining} band${coachSlotsRemaining !== 1 ? "s" : ""} remaining`}
+            </span>
+          </div>
+        </div>
+
+        {/* Band slots visual */}
+        <div className="flex gap-2 mb-4">
+          {Array.from({ length: MAX_COACH_BANDS }).map((_, i) => (
+            <div
+              key={i}
+              className={`flex-1 h-2 rounded-full transition-all duration-300 ${
+                i < coachesCheckedIn.length
+                  ? "bg-amber-400"
+                  : "bg-white/[0.06]"
+              }`}
+            />
+          ))}
+        </div>
+
+        {coachSlotsRemaining > 0 ? (
+          <form onSubmit={handleCoachCheckIn} className="flex gap-3 items-end">
+            <div className="flex-1">
+              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Coach Name
+              </label>
+              <input
+                type="text"
+                value={coachName}
+                onChange={(e) => setCoachName(e.target.value)}
+                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500 placeholder:text-white/25"
+                placeholder="Enter coach name for band..."
+                aria-label="Coach name for coaching band"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={!coachName.trim() || coachCheckingIn}
+              className="flex items-center gap-2 bg-amber-500/20 hover:bg-amber-500/30 disabled:opacity-40 text-amber-400 px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+            >
+              {coachCheckingIn ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Shield className="w-4 h-4" />
+              )}
+              Issue Band
+            </button>
+          </form>
+        ) : (
+          <div className="flex items-center gap-2 bg-red/10 border border-red/20 rounded-lg px-4 py-3">
+            <AlertTriangle className="w-4 h-4 text-red flex-shrink-0" />
+            <p className="text-red text-sm font-medium">
+              Maximum {MAX_COACH_BANDS} coaching bands have been issued. No additional coaches can check in.
+            </p>
+          </div>
+        )}
+
+        {/* Checked-in coaches detail */}
+        {coachesCheckedIn.length > 0 && (
+          <div className="mt-3 divide-y divide-white/5">
+            {coachesCheckedIn.map((c, i) => (
+              <div key={i} className="flex items-center justify-between py-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 bg-amber-500/20 rounded-full flex items-center justify-center text-amber-400 text-[10px] font-bold">
+                    {i + 1}
+                  </span>
+                  <span className="text-white text-sm font-medium">{c.name}</span>
+                </div>
+                <span className="flex items-center gap-1.5 text-white/30 text-xs">
+                  <Clock className="w-3 h-3" />
+                  {c.time}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Manual check-in */}

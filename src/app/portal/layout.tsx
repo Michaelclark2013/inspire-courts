@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import PortalSidebar from "@/components/portal/PortalSidebar";
 import SessionProvider from "@/components/layout/SessionProvider";
+import { PortalViewProvider } from "@/components/portal/PortalViewContext";
 
 export const metadata = {
   title: "Portal | Inspire Courts AZ",
@@ -24,10 +25,12 @@ export default async function PortalLayout({
 
   return (
     <SessionProvider>
-      <div className="min-h-screen bg-bg flex">
-        <PortalSidebar />
-        <div className="flex-1 min-w-0">{children}</div>
-      </div>
+      <PortalViewProvider>
+        <div className="min-h-screen bg-bg flex">
+          <PortalSidebar />
+          <div className="flex-1 min-w-0">{children}</div>
+        </div>
+      </PortalViewProvider>
     </SessionProvider>
   );
 }

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     "View live tournament schedules, brackets, and results for Inspire Courts AZ events via QuickScores. Game schedules drop 48 hours before tip-off.",
   alternates: {
-    canonical: "https://inspirecourts.com/schedule",
+    canonical: "https://inspirecourtsaz.com/schedule",
   },
 };
 

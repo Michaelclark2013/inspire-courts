@@ -32,12 +32,12 @@ export const metadata: Metadata = {
   description:
     "Professional indoor basketball & volleyball court rental in Gilbert, AZ. 7 courts, climate-controlled. Book for leagues, practices, and events. $80/court/hour.",
   alternates: {
-    canonical: "https://inspirecourts.com/facility",
+    canonical: "https://inspirecourtsaz.com/facility",
   },
   openGraph: {
     images: [
       {
-        url: "https://inspirecourts.com/images/hero-bg.jpg",
+        url: "https://inspirecourtsaz.com/images/hero-bg.jpg",
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ – Indoor basketball & volleyball facility in Gilbert, AZ",
@@ -115,7 +115,7 @@ const JSON_LD = {
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
   name: "Inspire Courts AZ",
-  url: "https://inspirecourts.com/facility",
+  url: "https://inspirecourtsaz.com/facility",
   telephone: FACILITY_PHONE,
   address: {
     "@type": "PostalAddress",
@@ -377,35 +377,53 @@ export default function FacilityPage() {
         </div>
       </section>
 
-      {/* Virtual Tour / Parallax */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <Image src="/images/courts-bg-texture.jpg" alt="" fill sizes="100vw" className="object-cover object-center" />
-        <div className="absolute inset-0 bg-navy/80" />
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Facility Video Tour */}
+      <section className="py-16 lg:py-28 bg-navy">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimateIn>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white mb-4 font-[var(--font-chakra)] leading-[0.95]">
-              No Rec Gyms. No Excuses.
-            </h2>
-            <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">
-              This is what youth sports should look like. Take a virtual tour of the facility.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href={SOCIAL_LINKS.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-off-white text-navy px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
-              >
-                Watch Tour <ArrowRight className="w-4 h-4" />
-              </a>
-              <Link
-                href="/book"
-                className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
-              >
-                Book Your Court <ArrowRight className="w-4 h-4" />
-              </Link>
+            <div className="text-center mb-10">
+              <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-3 font-[var(--font-chakra)]">
+                Virtual Tour
+              </p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white mb-4 font-[var(--font-chakra)] leading-[0.95]">
+                No Rec Gyms. <span className="text-red">No Excuses.</span>
+              </h2>
+              <p className="text-white/60 text-lg max-w-xl mx-auto">
+                This is what youth sports should look like. See the facility for yourself.
+              </p>
             </div>
           </AnimateIn>
+
+          {/* YouTube Embed — replace VIDEO_ID with actual YouTube video ID */}
+          <AnimateIn delay={150}>
+            <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10" style={{ paddingBottom: "56.25%" }}>
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/VIDEO_ID?rel=0&modestbranding=1"
+                title="Inspire Courts AZ Facility Tour"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+              />
+            </div>
+          </AnimateIn>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+            <Link
+              href="/book"
+              className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
+            >
+              Book Your Court <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a
+              href={SOCIAL_LINKS.youtube}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 border border-white/30 hover:border-white/60 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
+            >
+              More Videos <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       </section>
 

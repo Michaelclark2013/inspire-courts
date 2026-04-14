@@ -21,6 +21,7 @@ export async function GET() {
       role: users.role,
       phone: users.phone,
       memberSince: users.memberSince,
+      approved: users.approved,
       createdAt: users.createdAt,
     })
     .from(users);
@@ -110,6 +111,7 @@ export async function PUT(request: NextRequest) {
   if (role) updates.role = role;
   if (name) updates.name = name;
   if (phone !== undefined) updates.phone = phone || null;
+  if (body.approved !== undefined) updates.approved = body.approved;
 
   await db.update(users).set(updates).where(eq(users.id, Number(id)));
 

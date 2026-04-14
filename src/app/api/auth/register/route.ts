@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
+    const needsApproval = ["staff", "ref"].includes(role);
 
     await db.insert(users).values({
       email: email.toLowerCase(),
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
       passwordHash,
       role,
       phone: phone || null,
+      approved: !needsApproval,
     });
 
     // Save contact info to Google Drive and Sheets (non-blocking)
@@ -73,7 +75,10 @@ export async function POST(request: NextRequest) {
       ]),
     ]).catch(() => {});
 
-    return NextResponse.json({ success: true }, { status: 201 });
+    return NextResponse.json(
+      { success: true, pendingApproval: needsApproval },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(

@@ -41,6 +41,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen bg-navy flex flex-col items-center justify-center px-4">
       <title>Forgot Password | Inspire Courts AZ</title>
       <meta name="description" content="Reset your Inspire Courts AZ account password." />
+      <link rel="canonical" href="https://inspirecourtsaz.com/forgot-password" />
       <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy-dark to-navy pointer-events-none" />
 
       <div className="relative w-full max-w-sm z-10">

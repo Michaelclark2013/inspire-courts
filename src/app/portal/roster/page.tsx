@@ -15,6 +15,7 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
+import { usePortalView } from "@/components/portal/PortalViewContext";
 
 type Player = {
   id: number;
@@ -35,6 +36,7 @@ type SortField = "name" | "jersey";
 
 export default function RosterPage() {
   const { data: session } = useSession();
+  const { viewAsRole } = usePortalView();
   const [team, setTeam] = useState<Team | null>(null);
   const [roster, setRoster] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,9 @@ export default function RosterPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [sortField, setSortField] = useState<SortField>("name");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
-  const isCoach = session?.user?.role === "coach";
+  const actualRole = session?.user?.role;
+  const role = (actualRole === "admin" && viewAsRole) ? viewAsRole : actualRole;
+  const isCoach = role === "coach" || actualRole === "admin";
 
   // Clear feedback after 3s
   useEffect(() => {

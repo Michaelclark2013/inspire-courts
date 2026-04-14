@@ -41,6 +41,8 @@ export const authOptions: NextAuthOptions = {
               user.passwordHash
             );
             if (isValid) {
+              // Block unapproved staff/ref accounts
+              if (user.approved === false) return null;
               return {
                 id: String(user.id),
                 email: user.email,

@@ -18,8 +18,10 @@ import {
   Megaphone,
   AlertTriangle,
   RefreshCw,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
+import { usePortalView } from "@/components/portal/PortalViewContext";
 
 type LiveGame = {
   id: number;
@@ -42,6 +44,7 @@ type RegistrationStep = {
 
 export default function PortalDashboard() {
   const { data: session } = useSession();
+  const { viewAsRole } = usePortalView();
   const [liveGames, setLiveGames] = useState<LiveGame[]>([]);
   const [rosterCount, setRosterCount] = useState<number | null>(null);
   const [waiverSubmitted, setWaiverSubmitted] = useState(false);
@@ -56,7 +59,8 @@ export default function PortalDashboard() {
   const [secondsAgo, setSecondsAgo] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const role = session?.user?.role;
+  const actualRole = session?.user?.role;
+  const role = (actualRole === "admin" && viewAsRole) ? viewAsRole : actualRole;
   const name = session?.user?.name?.split(" ")[0] || "there";
   const liveNow = liveGames.filter((g) => g.status === "live");
 
@@ -183,6 +187,14 @@ export default function PortalDashboard() {
 
   return (
     <div className="p-5 lg:p-8 max-w-5xl">
+      {/* View-As Banner */}
+      {actualRole === "admin" && viewAsRole && (
+        <div className="mb-4 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2.5 flex items-center gap-2 text-amber-400 text-xs font-semibold">
+          <Eye className="w-3.5 h-3.5" />
+          Viewing as {viewAsRole === "coach" ? "Coach" : "Parent"} — This is what a {viewAsRole} sees on their dashboard.
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>

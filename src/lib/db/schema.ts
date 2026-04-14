@@ -11,6 +11,7 @@ export const users = sqliteTable("users", {
     .notNull()
     .default("coach"),
   phone: text("phone"),
+  approved: integer("approved", { mode: "boolean" }).default(true), // staff/ref need admin approval
   memberSince: text("member_since"), // Year they started (e.g. "2022") — for loyalty badge
   createdAt: text("created_at")
     .notNull()

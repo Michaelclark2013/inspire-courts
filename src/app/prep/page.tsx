@@ -21,13 +21,13 @@ export const metadata: Metadata = {
   description:
     "Inspire Prep combines elite basketball development with academic excellence. Train, compete, and prepare for the next level in Gilbert, Arizona.",
   alternates: {
-    canonical: "https://inspirecourts.com/prep",
+    canonical: "https://inspirecourtsaz.com/prep",
   },
   openGraph: {
     title: "Inspire Prep — Basketball Prep School in Gilbert, AZ",
     description: "Elite basketball development meets academic excellence. Train, compete, and prepare for the next level at Inspire Courts AZ.",
-    url: "https://inspirecourts.com/prep",
-    images: [{ url: "https://inspirecourts.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Prep basketball academy" }],
+    url: "https://inspirecourtsaz.com/prep",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Prep basketball academy" }],
   },
 };
 

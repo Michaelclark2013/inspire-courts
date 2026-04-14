@@ -9,13 +9,13 @@ export const metadata: Metadata = {
   description:
     "Follow live game scores and league standings at Inspire Courts AZ in Gilbert, Arizona.",
   alternates: {
-    canonical: "https://inspirecourts.com/scores",
+    canonical: "https://inspirecourtsaz.com/scores",
   },
   openGraph: {
     title: "Live Scores & Standings | Inspire Courts AZ",
     description: "Real-time game scores and league standings from Inspire Courts AZ tournaments in Gilbert, Arizona.",
-    url: "https://inspirecourts.com/scores",
-    images: [{ url: "https://inspirecourts.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ Live Scores" }],
+    url: "https://inspirecourtsaz.com/scores",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ Live Scores" }],
   },
 };
 

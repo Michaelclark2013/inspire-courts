@@ -133,8 +133,28 @@ function AccordionItem({ q, a, id }: { q: string; a: string; id: string }) {
 }
 
 export default function FAQPage() {
+  // Build FAQ structured data for Google rich results
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ_CATEGORIES.flatMap((cat) =>
+      cat.items.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.a,
+        },
+      }))
+    ),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         <Image src="/images/courts-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />

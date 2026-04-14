@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { UserCircle, Save, Loader2, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { UserCircle, Save, Loader2, CheckCircle2, AlertTriangle, RefreshCw, Trash2 } from "lucide-react";
 
 function formatPhone(value: string): string {
   const digits = value.replace(/\D/g, "").slice(0, 10);
@@ -37,6 +38,11 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [fetchError, setFetchError] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteTyped, setDeleteTyped] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -88,6 +94,36 @@ export default function ProfilePage() {
     setSaving(false);
   }
 
+  async function handleDeleteAccount(e: React.FormEvent) {
+    e.preventDefault();
+    if (deleteTyped !== "DELETE") return;
+    if (!deletePassword) {
+      setDeleteError("Enter your password to confirm.");
+      return;
+    }
+
+    setDeleting(true);
+    setDeleteError("");
+
+    try {
+      const res = await fetch("/api/portal/profile", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: deletePassword }),
+      });
+
+      if (res.ok) {
+        signOut({ callbackUrl: "/login" });
+      } else {
+        const data = await res.json();
+        setDeleteError(data.error || "Failed to delete account");
+      }
+    } catch {
+      setDeleteError("Something went wrong. Check your connection.");
+    }
+    setDeleting(false);
+  }
+
   const isEnvAdmin = session?.user?.id === "admin-env";
   const pwStrength = getPasswordStrength(newPassword);
 
@@ -137,7 +173,8 @@ export default function ProfilePage() {
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading profile...
         </div>
       ) : (
-        <div className="bg-card border border-white/10 rounded-xl p-6 max-w-lg">
+        <>
+        <div className="bg-card border border-white/10 rounded-xl p-6 max-w-lg mb-8">
           <div className="flex items-center gap-2 mb-6">
             <UserCircle className="w-4 h-4 text-red" />
             <h2 className="text-white font-bold text-sm uppercase tracking-wider">
@@ -247,6 +284,103 @@ export default function ProfilePage() {
             </button>
           </form>
         </div>
+
+        {/* Delete Account */}
+        {!isEnvAdmin && (
+          <div className="max-w-lg">
+            <div className="bg-card border border-red/20 rounded-xl p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Trash2 className="w-4 h-4 text-red" />
+                <h2 className="text-red font-bold text-sm uppercase tracking-wider">
+                  Delete Account
+                </h2>
+              </div>
+              <p className="text-text-secondary text-sm mb-4">
+                Permanently delete your account and all associated data. This action cannot be undone.
+              </p>
+
+              {!showDeleteConfirm ? (
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="flex items-center gap-2 bg-red/10 hover:bg-red/20 border border-red/30 text-red px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete My Account
+                </button>
+              ) : (
+                <form onSubmit={handleDeleteAccount} className="space-y-4">
+                  <div className="bg-red/5 border border-red/20 rounded-lg p-4">
+                    <p className="text-white text-sm font-semibold mb-1">This will permanently:</p>
+                    <ul className="text-text-secondary text-xs space-y-1 list-disc list-inside">
+                      <li>Delete your account and login credentials</li>
+                      <li>Remove you as coach from any assigned teams</li>
+                      <li>Unlink you from any player records</li>
+                      <li>Sign you out immediately</li>
+                    </ul>
+                  </div>
+
+                  {deleteError && (
+                    <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 flex-shrink-0" /> {deleteError}
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                      Type DELETE to confirm
+                    </label>
+                    <input
+                      type="text"
+                      value={deleteTyped}
+                      onChange={(e) => setDeleteTyped(e.target.value)}
+                      className="w-full bg-navy border border-red/20 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                      placeholder="DELETE"
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                      Enter your password
+                    </label>
+                    <input
+                      type="password"
+                      value={deletePassword}
+                      onChange={(e) => setDeletePassword(e.target.value)}
+                      className="w-full bg-navy border border-red/20 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                      placeholder="Your current password"
+                      autoComplete="current-password"
+                    />
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      type="submit"
+                      disabled={deleting || deleteTyped !== "DELETE" || !deletePassword}
+                      className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                    >
+                      {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                      Permanently Delete
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowDeleteConfirm(false);
+                        setDeletePassword("");
+                        setDeleteTyped("");
+                        setDeleteError("");
+                      }}
+                      className="px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider text-white/60 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
+        </>
       )}
     </div>
   );

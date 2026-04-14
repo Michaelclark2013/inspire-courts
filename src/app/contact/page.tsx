@@ -57,7 +57,7 @@ export default function ContactPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <Image src={HERO_BG_IMAGE} alt="" fill priority sizes="100vw" className="object-cover object-center" />
+        <Image src={HERO_BG_IMAGE} alt="Inspire Courts AZ contact page" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>

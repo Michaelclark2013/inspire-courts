@@ -13,6 +13,8 @@ const QUICK_LINKS = [
   { href: "/training", label: "Training" },
   { href: "/teams", label: "Club" },
   { href: "/prep", label: "Prep" },
+  { href: "/gameday", label: "Game Day" },
+  { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -37,7 +39,7 @@ export default function Footer() {
               </span>
             </Link>
 
-            <nav className="flex flex-wrap gap-x-4 gap-y-1">
+            <nav aria-label="Footer navigation" className="flex flex-wrap gap-x-4 gap-y-1">
               {QUICK_LINKS.map((link) => (
                 <Link
                   key={link.href}

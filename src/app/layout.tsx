@@ -59,6 +59,8 @@ export default function RootLayout({
     <html lang="en" className={`${workSans.variable} ${chakra.variable} h-full antialiased`}>
       <head>
         <link rel="preconnect" href="https://maps.google.com" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
       </head>
       <body className="min-h-full flex flex-col">
         <SessionProvider>

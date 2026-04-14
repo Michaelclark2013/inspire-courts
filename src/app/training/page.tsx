@@ -23,6 +23,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://inspirecourtsaz.com/training",
   },
+  openGraph: {
+    title: "Private Basketball Training | Inspire Courts AZ",
+    description: "1-on-1 and small group basketball training in Gilbert, AZ. Shooting, ball handling, basketball IQ, and position-specific development.",
+    url: "https://inspirecourtsaz.com/training",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ private basketball training" }],
+  },
 };
 
 const TRAINING_OPTIONS = [

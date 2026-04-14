@@ -16,6 +16,8 @@ import {
 import AnimateIn from "@/components/ui/AnimateIn";
 import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
+import BackToTop from "@/components/ui/BackToTop";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 
 export const metadata: Metadata = {
   title: "Inspire Prep | Basketball Prep School in Gilbert, AZ | Inspire Courts AZ",
@@ -161,7 +163,7 @@ export default function PrepPage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy/95 to-navy-dark" />
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-red rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-red rounded-xl flex items-center justify-center" aria-hidden="true">
                       <Target className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="font-bold text-lg lg:text-xl uppercase tracking-tight font-[var(--font-chakra)]">
@@ -268,7 +270,7 @@ export default function PrepPage() {
                   <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="flex items-start gap-5 lg:gap-6">
-                      <div className="w-16 h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                      <div className="w-16 h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md" aria-hidden="true">
                         <item.icon className="w-7 h-7 text-white" />
                       </div>
                       <div className="flex-1">
@@ -291,7 +293,7 @@ export default function PrepPage() {
                 <AnimateIn key={item.title} delay={(i + 2) * 80}>
                   <div className="group relative bg-white border border-light-gray rounded-2xl p-6 lg:p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-12 h-12 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-4 shadow-md">
+                    <div className="w-12 h-12 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-4 shadow-md" aria-hidden="true">
                       <item.icon className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-base lg:text-lg uppercase tracking-tight mb-2">
@@ -320,7 +322,7 @@ export default function PrepPage() {
             ].map((stat) => (
               <AnimateIn key={stat.label}>
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-red/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 bg-red/20 rounded-xl flex items-center justify-center mx-auto mb-3" aria-hidden="true">
                     <stat.icon className="w-6 h-6 text-red" />
                   </div>
                   <p className="text-white font-bold text-lg lg:text-xl font-[var(--font-chakra)] uppercase tracking-tight">
@@ -438,6 +440,8 @@ export default function PrepPage() {
         </div>
       </section>
 
+      <QuickContactBar subject="Inspire Prep" label="Questions about Prep?" />
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

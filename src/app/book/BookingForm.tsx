@@ -87,7 +87,7 @@ export default function BookingForm() {
 
   if (submitted) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center px-4 py-16">
+      <div role="status" aria-live="polite" className="min-h-[60vh] flex items-center justify-center px-4 py-16">
         <div className="bg-green-50 border border-green-200 rounded-2xl p-10 text-center max-w-md w-full">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
             <Check className="w-8 h-8 text-green-600" />
@@ -243,7 +243,7 @@ export default function BookingForm() {
           </div>
 
           {error && (
-            <p className="text-red text-sm bg-red/5 border border-red/20 rounded-xl px-4 py-3">
+            <p role="alert" aria-live="assertive" className="text-red text-sm bg-red/5 border border-red/20 rounded-xl px-4 py-3">
               {error}
             </p>
           )}

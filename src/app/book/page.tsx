@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MapPin, Clock, Shield, Phone } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import BackToTop from "@/components/ui/BackToTop";
 import BookingForm from "./BookingForm";
 
 export const metadata: Metadata = {
@@ -89,7 +90,7 @@ export default function BookPage() {
                   i < FEATURES.length - 1 ? "border-r border-light-gray" : ""
                 }`}
               >
-                <div className="w-10 h-10 bg-navy rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 bg-navy rounded-lg flex items-center justify-center flex-shrink-0" aria-hidden="true">
                   <Icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -156,6 +157,7 @@ export default function BookPage() {
         </div>
       </section>
 
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

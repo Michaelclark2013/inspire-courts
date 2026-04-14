@@ -17,6 +17,7 @@ import AnimateIn from "@/components/ui/AnimateIn";
 import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
 import ClubInterestForm from "@/components/ui/ClubInterestForm";
+import BackToTop from "@/components/ui/BackToTop";
 
 export const metadata: Metadata = {
   title: "Team Inspire | Club Basketball in Gilbert, AZ | Inspire Courts AZ",
@@ -195,7 +196,7 @@ export default function TeamsPage() {
                 <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="flex items-start gap-5 lg:gap-6">
-                    <div className="w-14 h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                    <div className="w-14 h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md" aria-hidden="true">
                       <item.icon className="w-6 h-6 lg:w-7 lg:h-7 text-white" />
                     </div>
                     <div className="flex-1">
@@ -250,7 +251,7 @@ export default function TeamsPage() {
               <div className="space-y-5">
                 {WHY_INSPIRE.map((item) => (
                   <div key={item.title} className="flex items-start gap-5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 lg:p-8">
-                    <div className="w-14 h-14 bg-red/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div className="w-14 h-14 bg-red/20 rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
                       <item.icon className="w-7 h-7 text-red" />
                     </div>
                     <div>
@@ -416,6 +417,7 @@ export default function TeamsPage() {
         </div>
       </section>
 
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

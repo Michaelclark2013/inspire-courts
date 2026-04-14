@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { games, gameScores } from "@/lib/db/schema";
-import { desc, inArray, sql, eq } from "drizzle-orm";
+import { desc, inArray } from "drizzle-orm";
 
 // GET /api/scores/live — public endpoint for live scores and recent finals
 export async function GET() {
@@ -19,18 +19,24 @@ export async function GET() {
       });
     }
 
-    // Query 2: Get all scores in one query, then pick latest per game in JS
+    // Query 2: Get all scores in one query
     const allScores = await db
       .select()
       .from(gameScores)
       .orderBy(desc(gameScores.updatedAt));
 
-    // Build a map of gameId → latest score
+    // Build maps: latest score per game + all quarter scores per game
     const latestScoreMap = new Map<
       number,
       { homeScore: number; awayScore: number; quarter: string | null }
     >();
+    const quarterScoresMap = new Map<
+      number,
+      { quarter: string | null; homeScore: number; awayScore: number }[]
+    >();
+
     for (const score of allScores) {
+      // Latest score (first entry per gameId since sorted desc)
       if (!latestScoreMap.has(score.gameId)) {
         latestScoreMap.set(score.gameId, {
           homeScore: score.homeScore,
@@ -38,6 +44,22 @@ export async function GET() {
           quarter: score.quarter,
         });
       }
+
+      // All quarter scores
+      if (!quarterScoresMap.has(score.gameId)) {
+        quarterScoresMap.set(score.gameId, []);
+      }
+      quarterScoresMap.get(score.gameId)!.push({
+        quarter: score.quarter,
+        homeScore: score.homeScore,
+        awayScore: score.awayScore,
+      });
+    }
+
+    // Sort quarter scores chronologically (Q1, Q2, Q3, Q4, OT, final)
+    const quarterOrder: Record<string, number> = { "1": 1, "2": 2, "3": 3, "4": 4, "OT": 5, "final": 6 };
+    for (const [, scores] of quarterScoresMap) {
+      scores.sort((a, b) => (quarterOrder[a.quarter || ""] || 99) - (quarterOrder[b.quarter || ""] || 99));
     }
 
     const gamesWithScores = allGames.map((game) => {
@@ -54,6 +76,7 @@ export async function GET() {
         eventName: game.eventName,
         scheduledTime: game.scheduledTime,
         status: game.status,
+        scores: quarterScoresMap.get(game.id) || [],
       };
     });
 

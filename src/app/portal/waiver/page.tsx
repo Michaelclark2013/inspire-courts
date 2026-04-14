@@ -113,7 +113,7 @@ export default function WaiverPage() {
               <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Player Full Name
               </label>
-              <input type="text" value={form.playerName} onChange={(e) => setForm({ ...form, playerName: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="Player's full name" />
+              <input type="text" value={form.playerName} onChange={(e) => setForm({ ...form, playerName: e.target.value })} required autoComplete="name" className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="Player's full name" />
             </div>
 
             {/* Parent/Guardian */}
@@ -122,13 +122,13 @@ export default function WaiverPage() {
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Parent/Guardian Name
                 </label>
-                <input type="text" value={form.parentName} onChange={(e) => setForm({ ...form, parentName: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="Parent's full name" />
+                <input type="text" value={form.parentName} onChange={(e) => setForm({ ...form, parentName: e.target.value })} required autoComplete="name" className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="Parent's full name" />
               </div>
               <div>
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Parent Email
                 </label>
-                <input type="email" value={form.parentEmail} onChange={(e) => setForm({ ...form, parentEmail: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="parent@email.com" />
+                <input type="email" value={form.parentEmail} onChange={(e) => setForm({ ...form, parentEmail: e.target.value })} required autoComplete="email" className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="parent@email.com" />
               </div>
             </div>
 
@@ -137,7 +137,7 @@ export default function WaiverPage() {
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Parent Phone
                 </label>
-                <input type="tel" value={form.parentPhone} onChange={(e) => setForm({ ...form, parentPhone: e.target.value })} required className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="(555) 123-4567" />
+                <input type="tel" value={form.parentPhone} onChange={(e) => setForm({ ...form, parentPhone: e.target.value })} required autoComplete="tel" className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25" placeholder="(555) 123-4567" />
               </div>
               <div>
                 <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">

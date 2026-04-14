@@ -100,6 +100,7 @@ export default function CoachCheckInPage() {
                 onChange={(e) => setManualName(e.target.value)}
                 className="w-full bg-navy border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
                 placeholder="Type player name not on roster..."
+                aria-label="Manual player check-in name"
               />
             </div>
           </div>

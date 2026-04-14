@@ -97,7 +97,9 @@ export const gameScores = sqliteTable("game_scores", {
   updatedAt: text("updated_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => [
+  index("game_scores_game_id_idx").on(table.gameId),
+]);
 
 // ── Tournaments ─────────────────────────────────────────────────────────────
 

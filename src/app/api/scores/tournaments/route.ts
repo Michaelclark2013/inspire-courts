@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { tournaments, tournamentTeams, tournamentGames, games, gameScores } from "@/lib/db/schema";
-import { eq, desc, inArray } from "drizzle-orm";
+import { desc, inArray } from "drizzle-orm";
 
 // GET /api/scores/tournaments — public list of active/published tournaments
 export async function GET() {
@@ -12,41 +12,54 @@ export async function GET() {
       .where(inArray(tournaments.status, ["published", "active"]))
       .orderBy(desc(tournaments.startDate));
 
-    const result = await Promise.all(
-      activeTournaments.map(async (t) => {
-        const teams = await db
-          .select({ teamName: tournamentTeams.teamName })
+    const tournamentIds = activeTournaments.map((t) => t.id);
+
+    // Batch: all teams for all active tournaments
+    const allTeams = tournamentIds.length > 0
+      ? await db
+          .select({ tournamentId: tournamentTeams.tournamentId, teamName: tournamentTeams.teamName })
           .from(tournamentTeams)
-          .where(eq(tournamentTeams.tournamentId, t.id));
+          .where(inArray(tournamentTeams.tournamentId, tournamentIds))
+      : [];
 
-        const bracketEntries = await db
-          .select({ gameId: tournamentGames.gameId })
+    // Batch: all bracket entries for all active tournaments
+    const allBracketEntries = tournamentIds.length > 0
+      ? await db
+          .select({ tournamentId: tournamentGames.tournamentId, gameId: tournamentGames.gameId })
           .from(tournamentGames)
-          .where(eq(tournamentGames.tournamentId, t.id));
+          .where(inArray(tournamentGames.tournamentId, tournamentIds))
+      : [];
 
-        // Get game statuses
-        const bracketStatuses = await Promise.all(
-          bracketEntries.map(async (bg) => {
-            const [game] = await db
-              .select({ status: games.status })
-              .from(games)
-              .where(eq(games.id, bg.gameId));
-            return { status: game?.status || "scheduled" };
-          })
-        );
+    // Batch: all game statuses in one query
+    const allGameIds = allBracketEntries.map((bg) => bg.gameId);
+    const allBracketGames = allGameIds.length > 0
+      ? await db
+          .select({ id: games.id, status: games.status })
+          .from(games)
+          .where(inArray(games.id, allGameIds))
+      : [];
+    const gameStatusMap = new Map(allBracketGames.map((g) => [g.id, g.status]));
 
-        return {
-          id: t.id,
-          name: t.name,
-          startDate: t.startDate,
-          location: t.location,
-          format: t.format,
-          status: t.status,
-          teams,
-          bracket: bracketStatuses,
-        };
-      })
-    );
+    const result = activeTournaments.map((t) => {
+      const teams = allTeams
+        .filter((tt) => tt.tournamentId === t.id)
+        .map((tt) => ({ teamName: tt.teamName }));
+
+      const bracket = allBracketEntries
+        .filter((bg) => bg.tournamentId === t.id)
+        .map((bg) => ({ status: gameStatusMap.get(bg.gameId) || "scheduled" }));
+
+      return {
+        id: t.id,
+        name: t.name,
+        startDate: t.startDate,
+        location: t.location,
+        format: t.format,
+        status: t.status,
+        teams,
+        bracket,
+      };
+    });
 
     return NextResponse.json(result, {
       headers: { "Cache-Control": "public, max-age=30" },

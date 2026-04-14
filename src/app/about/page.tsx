@@ -68,7 +68,7 @@ export default function AboutPage() {
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <Image
           src="/images/courts-bg.jpg"
-          alt=""
+          alt="Inspire Courts AZ indoor basketball and volleyball facility"
           fill
           priority
           sizes="100vw"

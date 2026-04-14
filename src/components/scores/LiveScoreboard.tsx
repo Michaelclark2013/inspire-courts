@@ -1,8 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Trophy, Radio, Clock, Calendar } from "lucide-react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import {
+  Trophy,
+  Radio,
+  Clock,
+  Calendar,
+  RefreshCw,
+  ChevronDown,
+  ChevronUp,
+  LayoutGrid,
+  List,
+  MapPin,
+} from "lucide-react";
 import Link from "next/link";
+
+type QuarterScore = {
+  quarter: string | null;
+  homeScore: number;
+  awayScore: number;
+};
 
 type LiveGame = {
   id: number;
@@ -16,33 +33,112 @@ type LiveGame = {
   eventName: string | null;
   scheduledTime: string | null;
   status: "scheduled" | "live" | "final";
+  scores: QuarterScore[];
 };
 
-export default function LiveScoreboard() {
+type Props = {
+  eventFilter?: string;
+};
+
+export default function LiveScoreboard({ eventFilter = "" }: Props) {
   const [games, setGames] = useState<LiveGame[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [divFilter, setDivFilter] = useState("");
+  const [viewMode, setViewMode] = useState<"timeline" | "courts">("timeline");
+  const [expandedGame, setExpandedGame] = useState<number | null>(null);
+  const [countdownPct, setCountdownPct] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    async function fetchScores() {
-      try {
-        const res = await fetch("/api/scores/live");
-        if (res.ok) setGames(await res.json());
-      } catch {
-        // API not available
-      } finally {
-        setLoading(false);
+  const fetchScores = useCallback(async (showRefresh = false) => {
+    if (showRefresh) setRefreshing(true);
+    try {
+      const res = await fetch("/api/scores/live");
+      if (res.ok) {
+        setGames(await res.json());
+        setLastUpdated(new Date());
       }
+    } catch {
+      // API not available
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+      setCountdownPct(0);
     }
-
-    fetchScores();
-    // Poll every 30 seconds
-    const interval = setInterval(fetchScores, 30000);
-    return () => clearInterval(interval);
   }, []);
 
-  const liveGames = games.filter((g) => g.status === "live");
-  const finalGames = games.filter((g) => g.status === "final");
-  const scheduledGames = games.filter((g) => g.status === "scheduled");
+  // Adaptive polling: 15s when live games, 30s otherwise
+  const hasLive = games.some((g) => g.status === "live");
+  const pollInterval = hasLive ? 15000 : 30000;
+
+  useEffect(() => {
+    fetchScores();
+  }, [fetchScores]);
+
+  useEffect(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (countdownRef.current) clearInterval(countdownRef.current);
+
+    intervalRef.current = setInterval(() => fetchScores(), pollInterval);
+
+    // Countdown progress bar — tick every 100ms
+    const tickMs = 100;
+    let elapsed = 0;
+    countdownRef.current = setInterval(() => {
+      elapsed += tickMs;
+      setCountdownPct(Math.min((elapsed / pollInterval) * 100, 100));
+    }, tickMs);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, [fetchScores, pollInterval]);
+
+  // Filter by event (tournament) name
+  const eventFiltered = eventFilter
+    ? games.filter((g) => g.eventName === eventFilter)
+    : games;
+
+  // Extract divisions from event-filtered games
+  const divisions = useMemo(
+    () => [...new Set(eventFiltered.map((g) => g.division).filter(Boolean))] as string[],
+    [eventFiltered]
+  );
+
+  // Filter by division
+  const filtered = divFilter
+    ? eventFiltered.filter((g) => g.division === divFilter)
+    : eventFiltered;
+
+  const liveGames = filtered.filter((g) => g.status === "live");
+  const finalGames = filtered.filter((g) => g.status === "final");
+  const scheduledGames = filtered.filter((g) => g.status === "scheduled");
+
+  // Team records computed from all final games (not filtered by division)
+  const teamRecords = useMemo(() => {
+    const records: Record<string, { w: number; l: number }> = {};
+    for (const g of eventFiltered.filter((g) => g.status === "final")) {
+      if (!records[g.homeTeam]) records[g.homeTeam] = { w: 0, l: 0 };
+      if (!records[g.awayTeam]) records[g.awayTeam] = { w: 0, l: 0 };
+      if (g.homeScore > g.awayScore) {
+        records[g.homeTeam].w++;
+        records[g.awayTeam].l++;
+      } else if (g.awayScore > g.homeScore) {
+        records[g.awayTeam].w++;
+        records[g.homeTeam].l++;
+      }
+    }
+    return records;
+  }, [eventFiltered]);
+
+  // Courts for court view
+  const courts = useMemo(
+    () => [...new Set(filtered.map((g) => g.court).filter(Boolean))] as string[],
+    [filtered]
+  );
 
   if (loading) {
     return (
@@ -75,136 +171,417 @@ export default function LiveScoreboard() {
   }
 
   return (
-    <div className="space-y-10">
-      {/* Live games */}
-      {liveGames.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
-            <h2 className="text-white font-bold text-sm uppercase tracking-wider">
-              Live Now
-            </h2>
+    <div className="space-y-6">
+      {/* Controls bar */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-white/30 text-xs">
+            {hasLive && (
+              <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Auto-updating every {pollInterval / 1000}s
+              </span>
+            )}
+            {lastUpdated && (
+              <span>
+                {hasLive ? " · " : ""}Last updated{" "}
+                {lastUpdated.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+              </span>
+            )}
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {liveGames.map((game) => (
-              <GameCard key={game.id} game={game} />
-            ))}
+          <div className="flex items-center gap-3">
+            {/* View toggle */}
+            <div className="flex items-center bg-white/5 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setViewMode("timeline")}
+                className={`p-1.5 transition-colors ${viewMode === "timeline" ? "bg-white/10 text-white" : "text-white/30 hover:text-white/60"}`}
+                aria-label="Timeline view"
+              >
+                <List className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setViewMode("courts")}
+                className={`p-1.5 transition-colors ${viewMode === "courts" ? "bg-white/10 text-white" : "text-white/30 hover:text-white/60"}`}
+                aria-label="Courts view"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <button
+              onClick={() => fetchScores(true)}
+              disabled={refreshing}
+              className="flex items-center gap-1.5 text-white/40 hover:text-white text-xs font-semibold transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+              Refresh
+            </button>
           </div>
-        </section>
-      )}
+        </div>
 
-      {/* Scheduled */}
-      {scheduledGames.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="w-4 h-4 text-white/40" />
-            <h2 className="text-white font-bold text-sm uppercase tracking-wider">
-              Upcoming
-            </h2>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {scheduledGames.map((game) => (
-              <GameCard key={game.id} game={game} />
-            ))}
-          </div>
-        </section>
-      )}
+        {/* Countdown bar */}
+        <div className="h-0.5 bg-white/5 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-emerald-500/40 transition-none"
+            style={{ width: `${countdownPct}%` }}
+          />
+        </div>
 
-      {/* Final */}
-      {finalGames.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <Trophy className="w-4 h-4 text-red" />
-            <h2 className="text-white font-bold text-sm uppercase tracking-wider">
-              Final
-            </h2>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {finalGames.map((game) => (
-              <GameCard key={game.id} game={game} />
+        {/* Division filter pills */}
+        {divisions.length > 1 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setDivFilter("")}
+              className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
+                divFilter === "" ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
+              }`}
+            >
+              All
+            </button>
+            {divisions.sort().map((d) => (
+              <button
+                key={d}
+                onClick={() => setDivFilter(d)}
+                className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
+                  divFilter === d ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
+                }`}
+              >
+                {d}
+              </button>
             ))}
           </div>
-        </section>
+        )}
+      </div>
+
+      {/* Court-by-court view */}
+      {viewMode === "courts" ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {courts.length === 0 ? (
+            <p className="col-span-full text-center text-white/30 text-sm py-8">
+              No court assignments found.
+            </p>
+          ) : (
+            courts.sort().map((court) => {
+              const courtGame = filtered.find(
+                (g) => g.court === court && (g.status === "live" || g.status === "scheduled")
+              );
+              return (
+                <div
+                  key={court}
+                  className={`border rounded-xl p-4 transition-all ${
+                    courtGame?.status === "live"
+                      ? "bg-navy-light/60 border-emerald-500/30 shadow-lg shadow-emerald-500/5"
+                      : "bg-navy-light/40 border-white/10"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <MapPin className="w-3 h-3 text-white/40" />
+                    <h3 className="text-white font-bold text-xs uppercase tracking-wider">
+                      {court}
+                    </h3>
+                    {courtGame?.status === "live" && (
+                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    )}
+                  </div>
+                  {courtGame ? (
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-white/80 text-xs font-semibold truncate mr-2">
+                          {courtGame.homeTeam}
+                        </span>
+                        <span className="text-white font-bold text-sm tabular-nums">
+                          {courtGame.homeScore}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-white/80 text-xs font-semibold truncate mr-2">
+                          {courtGame.awayTeam}
+                        </span>
+                        <span className="text-white font-bold text-sm tabular-nums">
+                          {courtGame.awayScore}
+                        </span>
+                      </div>
+                      {courtGame.division && (
+                        <p className="text-white/20 text-[10px] uppercase tracking-wider mt-1">
+                          {courtGame.division}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-white/20 text-xs italic">No active game</p>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Timeline view — Live games */}
+          {liveGames.length > 0 && (
+            <section>
+              <div className="flex items-center gap-2 mb-4">
+                <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
+                <h2 className="text-white font-bold text-sm uppercase tracking-wider">
+                  Live Now
+                </h2>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                {liveGames.map((game) => (
+                  <GameCard
+                    key={game.id}
+                    game={game}
+                    teamRecords={teamRecords}
+                    expanded={expandedGame === game.id}
+                    onToggle={() => setExpandedGame(expandedGame === game.id ? null : game.id)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Scheduled */}
+          {scheduledGames.length > 0 && (
+            <section>
+              <div className="flex items-center gap-2 mb-4">
+                <Clock className="w-4 h-4 text-white/40" />
+                <h2 className="text-white font-bold text-sm uppercase tracking-wider">
+                  Upcoming
+                </h2>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                {scheduledGames.map((game) => (
+                  <GameCard
+                    key={game.id}
+                    game={game}
+                    teamRecords={teamRecords}
+                    expanded={expandedGame === game.id}
+                    onToggle={() => setExpandedGame(expandedGame === game.id ? null : game.id)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Final */}
+          {finalGames.length > 0 && (
+            <section>
+              <div className="flex items-center gap-2 mb-4">
+                <Trophy className="w-4 h-4 text-red" />
+                <h2 className="text-white font-bold text-sm uppercase tracking-wider">
+                  Final
+                </h2>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                {finalGames.map((game) => (
+                  <GameCard
+                    key={game.id}
+                    game={game}
+                    teamRecords={teamRecords}
+                    expanded={expandedGame === game.id}
+                    onToggle={() => setExpandedGame(expandedGame === game.id ? null : game.id)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {filtered.length === 0 && (
+            <p className="text-center text-white/30 text-sm py-12">
+              No games match the current filters.
+            </p>
+          )}
+        </>
       )}
     </div>
   );
 }
 
-function GameCard({ game }: { game: LiveGame }) {
+// ── GameCard ──────────────────────────────────────────────────────────────────
+
+function GameCard({
+  game,
+  teamRecords,
+  expanded,
+  onToggle,
+}: {
+  game: LiveGame;
+  teamRecords: Record<string, { w: number; l: number }>;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
   const isLive = game.status === "live";
   const isFinal = game.status === "final";
   const homeWinning = game.homeScore > game.awayScore;
   const awayWinning = game.awayScore > game.homeScore;
+  const homeRec = teamRecords[game.homeTeam];
+  const awayRec = teamRecords[game.awayTeam];
+
+  // Quarter scores (exclude "final" entry for the box score rows)
+  const quarterScores = (game.scores || []).filter((s) => s.quarter && s.quarter !== "final");
 
   return (
     <div
-      className={`bg-navy-light/60 backdrop-blur border rounded-xl p-5 transition-all ${
-        isLive ? "border-emerald-500/30 shadow-lg shadow-emerald-500/5" : "border-white/10"
+      className={`bg-navy-light/60 backdrop-blur border rounded-xl transition-all cursor-pointer ${
+        isLive ? "border-emerald-500/30 shadow-lg shadow-emerald-500/5" : "border-white/10 hover:border-white/20"
       }`}
+      onClick={onToggle}
     >
-      {/* Meta row */}
-      <div className="flex items-center justify-between mb-4 text-xs">
-        <div className="flex items-center gap-2 text-white/40">
-          {game.division && <span>{game.division}</span>}
-          {game.court && (
-            <>
-              <span className="text-white/20">&bull;</span>
-              <span>{game.court}</span>
-            </>
-          )}
+      <div className="p-5">
+        {/* Meta row */}
+        <div className="flex items-center justify-between mb-4 text-xs">
+          <div className="flex items-center gap-2 text-white/40">
+            {game.division && <span>{game.division}</span>}
+            {game.court && (
+              <>
+                <span className="text-white/20">&bull;</span>
+                <span>{game.court}</span>
+              </>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <span
+              className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                isLive
+                  ? "bg-emerald-500/20 text-emerald-400"
+                  : isFinal
+                  ? "bg-white/10 text-white/50"
+                  : "bg-white/5 text-white/30"
+              }`}
+            >
+              {isLive && game.quarter ? `Q${game.quarter}` : game.status}
+            </span>
+            {expanded ? (
+              <ChevronUp className="w-3.5 h-3.5 text-white/30" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-white/30" />
+            )}
+          </div>
         </div>
-        <span
-          className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-            isLive
-              ? "bg-emerald-500/20 text-emerald-400"
-              : isFinal
-              ? "bg-white/10 text-white/50"
-              : "bg-white/5 text-white/30"
-          }`}
+
+        {/* Scoreboard */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <span
+                className={`text-sm font-semibold ${
+                  isFinal && homeWinning ? "text-white" : "text-white/80"
+                }`}
+              >
+                {game.homeTeam}
+              </span>
+              {homeRec && (
+                <span className="text-white/25 text-[10px] ml-1.5 tabular-nums">
+                  ({homeRec.w}-{homeRec.l})
+                </span>
+              )}
+            </div>
+            <span
+              className={`text-2xl font-bold tabular-nums ${
+                isLive ? "text-white" : isFinal && homeWinning ? "text-white" : "text-white/60"
+              }`}
+            >
+              {game.homeScore}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <span
+                className={`text-sm font-semibold ${
+                  isFinal && awayWinning ? "text-white" : "text-white/80"
+                }`}
+              >
+                {game.awayTeam}
+              </span>
+              {awayRec && (
+                <span className="text-white/25 text-[10px] ml-1.5 tabular-nums">
+                  ({awayRec.w}-{awayRec.l})
+                </span>
+              )}
+            </div>
+            <span
+              className={`text-2xl font-bold tabular-nums ${
+                isLive ? "text-white" : isFinal && awayWinning ? "text-white" : "text-white/60"
+              }`}
+            >
+              {game.awayScore}
+            </span>
+          </div>
+        </div>
+
+        {/* Event name */}
+        {game.eventName && (
+          <p className="text-white/30 text-xs mt-3 truncate">{game.eventName}</p>
+        )}
+      </div>
+
+      {/* Expanded details */}
+      {expanded && (
+        <div
+          className="border-t border-white/10 px-5 py-4 space-y-4"
+          onClick={(e) => e.stopPropagation()}
         >
-          {isLive && game.quarter ? `Q${game.quarter}` : game.status}
-        </span>
-      </div>
+          {/* Quarter-by-quarter box score */}
+          {quarterScores.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-white/40 uppercase tracking-wider">
+                    <th className="text-left py-1 pr-3 font-semibold">Team</th>
+                    {quarterScores.map((s) => (
+                      <th key={s.quarter} className="text-center py-1 px-2 font-semibold min-w-[32px]">
+                        {s.quarter === "OT" ? "OT" : `Q${s.quarter}`}
+                      </th>
+                    ))}
+                    <th className="text-center py-1 px-2 font-bold">T</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className={homeWinning ? "text-white" : "text-white/60"}>
+                    <td className="py-1 pr-3 font-semibold truncate max-w-[100px]">{game.homeTeam}</td>
+                    {quarterScores.map((s) => (
+                      <td key={s.quarter} className="text-center py-1 px-2 tabular-nums">{s.homeScore}</td>
+                    ))}
+                    <td className="text-center py-1 px-2 font-bold tabular-nums">{game.homeScore}</td>
+                  </tr>
+                  <tr className={awayWinning ? "text-white" : "text-white/60"}>
+                    <td className="py-1 pr-3 font-semibold truncate max-w-[100px]">{game.awayTeam}</td>
+                    {quarterScores.map((s) => (
+                      <td key={s.quarter} className="text-center py-1 px-2 tabular-nums">{s.awayScore}</td>
+                    ))}
+                    <td className="text-center py-1 px-2 font-bold tabular-nums">{game.awayScore}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
 
-      {/* Scoreboard */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <span
-            className={`text-sm font-semibold ${
-              isFinal && homeWinning ? "text-white" : "text-white/80"
-            }`}
-          >
-            {game.homeTeam}
-          </span>
-          <span
-            className={`text-2xl font-bold tabular-nums ${
-              isLive ? "text-white" : isFinal && homeWinning ? "text-white" : "text-white/60"
-            }`}
-          >
-            {game.homeScore}
-          </span>
+          {/* Game meta */}
+          <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-white/40">
+            {game.scheduledTime && (
+              <span>
+                <Clock className="w-3 h-3 inline mr-1 -mt-0.5" />
+                {new Date(game.scheduledTime).toLocaleString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })}
+              </span>
+            )}
+            {game.court && (
+              <span>
+                <MapPin className="w-3 h-3 inline mr-1 -mt-0.5" />
+                {game.court}
+              </span>
+            )}
+            {game.eventName && (
+              <span>
+                <Trophy className="w-3 h-3 inline mr-1 -mt-0.5" />
+                {game.eventName}
+              </span>
+            )}
+          </div>
         </div>
-        <div className="flex items-center justify-between">
-          <span
-            className={`text-sm font-semibold ${
-              isFinal && awayWinning ? "text-white" : "text-white/80"
-            }`}
-          >
-            {game.awayTeam}
-          </span>
-          <span
-            className={`text-2xl font-bold tabular-nums ${
-              isLive ? "text-white" : isFinal && awayWinning ? "text-white" : "text-white/60"
-            }`}
-          >
-            {game.awayScore}
-          </span>
-        </div>
-      </div>
-
-      {/* Event name */}
-      {game.eventName && (
-        <p className="text-white/30 text-xs mt-3 truncate">{game.eventName}</p>
       )}
     </div>
   );

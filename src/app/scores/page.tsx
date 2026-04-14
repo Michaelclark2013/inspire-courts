@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import LiveScoreboard from "@/components/scores/LiveScoreboard";
-import StandingsTable from "@/components/scores/StandingsTable";
-import TournamentsList from "@/components/scores/TournamentsList";
+import ScoresPageClient from "@/components/scores/ScoresPageClient";
 import BackToTop from "@/components/ui/BackToTop";
 
 export const metadata: Metadata = {
@@ -27,39 +25,13 @@ export default function ScoresPage() {
             Standings
           </h1>
           <p className="text-white/50 text-sm max-w-md mx-auto">
-            Real-time game scores and league standings. Updates every 30 seconds
+            Real-time game scores and league standings. Updates automatically
             during live games.
           </p>
         </div>
       </section>
 
-      {/* Active Tournaments */}
-      <section className="px-4 pb-8">
-        <div className="max-w-4xl mx-auto">
-          <TournamentsList />
-        </div>
-      </section>
-
-      {/* Scoreboard */}
-      <section className="px-4 pb-12">
-        <div className="max-w-4xl mx-auto">
-          <LiveScoreboard />
-        </div>
-      </section>
-
-      {/* Standings */}
-      <section className="px-4 pb-20">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-navy-light/40 border border-white/10 rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/10">
-              <h2 className="text-white font-bold text-sm uppercase tracking-wider">
-                League Standings
-              </h2>
-            </div>
-            <StandingsTable />
-          </div>
-        </div>
-      </section>
+      <ScoresPageClient />
 
       {/* Registration CTA */}
       <section className="px-4 pb-16">

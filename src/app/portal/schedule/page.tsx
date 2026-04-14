@@ -48,10 +48,15 @@ export default function SchedulePage() {
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading schedule...
         </div>
       ) : games.length === 0 ? (
-        <div className="bg-card border border-white/10 rounded-xl p-8 text-center">
-          <Calendar className="w-8 h-8 text-white/30 mx-auto mb-3" />
-          <p className="text-white font-semibold mb-1">No games scheduled</p>
-          <p className="text-text-secondary text-sm">Check back when the next event is set up.</p>
+        <div className="bg-card border border-white/10 rounded-xl p-10 text-center">
+          <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+            <Calendar className="w-7 h-7 text-white/20" />
+          </div>
+          <p className="text-white font-semibold mb-1">No Games Scheduled</p>
+          <p className="text-text-secondary text-sm mb-4">Your schedule will appear here once games are set up for your team.</p>
+          <a href="/scores" className="text-red text-xs font-semibold hover:text-red-hover transition-colors">
+            View Live Scores &rarr;
+          </a>
         </div>
       ) : (
         <div className="space-y-6">

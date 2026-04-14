@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { BarChart3 } from "lucide-react";
+import { computeStandings } from "@/lib/standings";
 import type { StandingRow } from "@/lib/standings";
 
 type GameData = {
@@ -11,77 +12,60 @@ type GameData = {
   awayScore: number;
   status: string;
   division: string | null;
+  scheduledTime: string | null;
 };
 
-export default function StandingsTable() {
-  const [standings, setStandings] = useState<StandingRow[]>([]);
-  const [loading, setLoading] = useState(true);
+type Props = {
+  eventFilter?: string;
+};
+
+export default function StandingsTable({ eventFilter = "" }: Props) {
   const [allGames, setAllGames] = useState<GameData[]>([]);
-  const [divisions, setDivisions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   const [divisionFilter, setDivisionFilter] = useState("");
 
   useEffect(() => {
-    async function fetchStandings() {
+    async function fetchGames() {
       try {
         const res = await fetch("/api/scores/live");
         if (!res.ok) return;
         const games: GameData[] = await res.json();
         setAllGames(games);
-
-        // Extract unique divisions
-        const divs = [...new Set(games.map((g) => g.division).filter(Boolean))] as string[];
-        setDivisions(divs.sort());
-
-        computeStandings(games, "");
       } catch {
         // API not available
       } finally {
         setLoading(false);
       }
     }
-
-    fetchStandings();
+    fetchGames();
   }, []);
 
-  function computeStandings(games: GameData[], division: string) {
-    const filtered = division
-      ? games.filter((g) => g.division === division)
-      : games;
-
-    const records: Record<string, { wins: number; losses: number }> = {};
-    for (const g of filtered) {
-      if (g.status !== "final") continue;
-      if (g.homeTeam) records[g.homeTeam] = records[g.homeTeam] || { wins: 0, losses: 0 };
-      if (g.awayTeam) records[g.awayTeam] = records[g.awayTeam] || { wins: 0, losses: 0 };
-
-      if (g.homeScore > g.awayScore) {
-        records[g.homeTeam].wins++;
-        records[g.awayTeam].losses++;
-      } else if (g.awayScore > g.homeScore) {
-        records[g.awayTeam].wins++;
-        records[g.homeTeam].losses++;
-      }
+  // Filter by event then division, compute standings from final games
+  const { standings, divisions } = useMemo(() => {
+    let games = allGames;
+    if (eventFilter) {
+      games = games.filter((g: any) => g.eventName === eventFilter);
     }
 
-    const rows = Object.entries(records)
-      .map(([team, rec]) => ({
-        team,
-        wins: rec.wins,
-        losses: rec.losses,
-        pct:
-          rec.wins + rec.losses > 0
-            ? ((rec.wins / (rec.wins + rec.losses)) * 100).toFixed(0)
-            : "0",
+    const divs = [...new Set(games.map((g) => g.division).filter(Boolean))] as string[];
+
+    const filtered = divisionFilter
+      ? games.filter((g) => g.division === divisionFilter)
+      : games;
+
+    const finalGames = filtered.filter((g) => g.status === "final");
+    const rows = computeStandings(
+      finalGames.map((g) => ({
+        homeTeam: g.homeTeam,
+        awayTeam: g.awayTeam,
+        homeScore: g.homeScore,
+        awayScore: g.awayScore,
+        scheduledTime: g.scheduledTime,
       }))
-      .sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+    );
 
-    setStandings(rows);
-  }
-
-  function handleDivisionChange(div: string) {
-    setDivisionFilter(div);
-    computeStandings(allGames, div);
-  }
+    return { standings: rows, divisions: divs.sort() };
+  }, [allGames, eventFilter, divisionFilter]);
 
   if (loading) {
     return (
@@ -107,7 +91,7 @@ export default function StandingsTable() {
         <div className="px-4 py-3 border-b border-white/10 flex flex-wrap items-center gap-2">
           <span className="text-white/40 text-xs font-semibold uppercase tracking-wider">Division:</span>
           <button
-            onClick={() => handleDivisionChange("")}
+            onClick={() => setDivisionFilter("")}
             className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
               divisionFilter === "" ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
             }`}
@@ -117,7 +101,7 @@ export default function StandingsTable() {
           {divisions.map((d) => (
             <button
               key={d}
-              onClick={() => handleDivisionChange(d)}
+              onClick={() => setDivisionFilter(d)}
               className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
                 divisionFilter === d ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
               }`}
@@ -132,9 +116,15 @@ export default function StandingsTable() {
           <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
             <th className="text-left px-4 py-3 font-semibold">#</th>
             <th className="text-left px-4 py-3 font-semibold">Team</th>
-            <th className="text-center px-4 py-3 font-semibold">W</th>
-            <th className="text-center px-4 py-3 font-semibold">L</th>
-            <th className="text-center px-4 py-3 font-semibold">Win %</th>
+            <th className="text-center px-3 py-3 font-semibold">W</th>
+            <th className="text-center px-3 py-3 font-semibold">L</th>
+            <th className="text-center px-3 py-3 font-semibold">PCT</th>
+            <th className="text-center px-3 py-3 font-semibold hidden sm:table-cell">GB</th>
+            <th className="text-center px-3 py-3 font-semibold">+/-</th>
+            <th className="text-center px-3 py-3 font-semibold hidden md:table-cell">PF</th>
+            <th className="text-center px-3 py-3 font-semibold hidden md:table-cell">PA</th>
+            <th className="text-center px-3 py-3 font-semibold">STRK</th>
+            <th className="text-center px-3 py-3 font-semibold hidden sm:table-cell">L5</th>
           </tr>
         </thead>
         <tbody>
@@ -143,16 +133,44 @@ export default function StandingsTable() {
               key={row.team}
               className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
             >
-              <td className="px-4 py-3 text-white/40 font-mono">{i + 1}</td>
+              <td className="px-4 py-3 text-white/40 font-mono text-xs">{i + 1}</td>
               <td className="px-4 py-3 text-white font-semibold">{row.team}</td>
-              <td className="px-4 py-3 text-center text-emerald-400 font-bold tabular-nums">
+              <td className="px-3 py-3 text-center text-emerald-400 font-bold tabular-nums">
                 {row.wins}
               </td>
-              <td className="px-4 py-3 text-center text-red font-bold tabular-nums">
+              <td className="px-3 py-3 text-center text-red font-bold tabular-nums">
                 {row.losses}
               </td>
-              <td className="px-4 py-3 text-center text-white/60 tabular-nums">
-                {row.pct}%
+              <td className="px-3 py-3 text-center text-white/60 tabular-nums">
+                .{row.pct === "100" ? "1000" : row.pct === "0" ? "000" : row.pct.padStart(3, "0")}
+              </td>
+              <td className="px-3 py-3 text-center text-white/40 tabular-nums hidden sm:table-cell">
+                {row.gb}
+              </td>
+              <td
+                className={`px-3 py-3 text-center font-bold tabular-nums ${
+                  row.pointDiff > 0 ? "text-emerald-400" : row.pointDiff < 0 ? "text-red" : "text-white/40"
+                }`}
+              >
+                {row.pointDiff > 0 ? `+${row.pointDiff}` : row.pointDiff}
+              </td>
+              <td className="px-3 py-3 text-center text-white/40 tabular-nums hidden md:table-cell">
+                {row.pointsFor}
+              </td>
+              <td className="px-3 py-3 text-center text-white/40 tabular-nums hidden md:table-cell">
+                {row.pointsAgainst}
+              </td>
+              <td className="px-3 py-3 text-center tabular-nums">
+                <span
+                  className={`text-xs font-bold ${
+                    row.streak.startsWith("W") ? "text-emerald-400" : row.streak.startsWith("L") ? "text-red" : "text-white/40"
+                  }`}
+                >
+                  {row.streak || "—"}
+                </span>
+              </td>
+              <td className="px-3 py-3 text-center text-white/40 tabular-nums text-xs hidden sm:table-cell">
+                {row.lastFive}
               </td>
             </tr>
           ))}

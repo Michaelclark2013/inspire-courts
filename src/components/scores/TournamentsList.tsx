@@ -15,13 +15,15 @@ type TournamentSummary = {
   bracket: { status: string }[];
 };
 
-export default function TournamentsList() {
+type Props = {
+  selectedEvent: string;
+  onSelectEvent: (eventName: string) => void;
+};
+
+export default function TournamentsList({ selectedEvent, onSelectEvent }: Props) {
   const [tournaments, setTournaments] = useState<TournamentSummary[]>([]);
 
   useEffect(() => {
-    // Fetch active/published tournaments via public API
-    // We'll hit each tournament individually since there's no list endpoint for public
-    // For now, this uses a simple approach — can be optimized with a public list endpoint
     fetch("/api/scores/tournaments")
       .then((r) => (r.ok ? r.json() : []))
       .then(setTournaments)
@@ -36,6 +38,34 @@ export default function TournamentsList() {
         <Trophy className="w-4 h-4 text-red" />
         Active Tournaments
       </h2>
+
+      {/* Tournament filter pills */}
+      <div className="flex flex-wrap items-center gap-2 mb-3">
+        <button
+          onClick={() => onSelectEvent("")}
+          className={`text-xs px-3 py-1.5 rounded-full font-semibold transition-colors ${
+            selectedEvent === ""
+              ? "bg-red text-white"
+              : "bg-white/5 text-white/40 hover:text-white"
+          }`}
+        >
+          All Games
+        </button>
+        {tournaments.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => onSelectEvent(t.name)}
+            className={`text-xs px-3 py-1.5 rounded-full font-semibold transition-colors ${
+              selectedEvent === t.name
+                ? "bg-red text-white"
+                : "bg-white/5 text-white/40 hover:text-white"
+            }`}
+          >
+            {t.name}
+          </button>
+        ))}
+      </div>
+
       <div className="space-y-2">
         {tournaments.map((t) => {
           const liveCount = t.bracket?.filter((g) => g.status === "live").length || 0;

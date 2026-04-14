@@ -143,7 +143,7 @@ export default function EventsPage() {
       <section className="relative overflow-hidden">
         <Image
           src="/images/courts-bg.jpg"
-          alt=""
+          alt="Inspire Courts AZ youth basketball tournament"
           fill
           priority
           sizes="100vw"

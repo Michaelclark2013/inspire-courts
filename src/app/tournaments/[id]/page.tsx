@@ -59,10 +59,25 @@ export default function PublicTournamentPage() {
     setLoading(false);
   }, [id]);
 
+  // Poll every 30s for live score updates, but pause when tab is hidden
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 30000); // Poll every 30s
-    return () => clearInterval(interval);
+    let interval = setInterval(fetchData, 30000);
+
+    function handleVisibility() {
+      if (document.hidden) {
+        clearInterval(interval);
+      } else {
+        fetchData();
+        interval = setInterval(fetchData, 30000);
+      }
+    }
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [fetchData]);
 
   if (loading) {

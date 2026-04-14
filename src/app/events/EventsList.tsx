@@ -1,4 +1,4 @@
-import { SOCIAL_LINKS, FACILITY_EMAIL, FACILITY_ADDRESS } from "@/lib/constants";
+import { SOCIAL_LINKS, FACILITY_EMAIL, FACILITY_ADDRESS, SITE_URL } from "@/lib/constants";
 import {
   getUpcomingEvents,
   getPastEvents,
@@ -76,16 +76,65 @@ export default async function EventsList() {
     };
   });
 
+  // JSON-LD Event structured data for SEO — helps Google show rich event snippets
+  const eventSchema = upcoming
+    .filter((e) => e.rawDate)
+    .map((e) => ({
+      "@context": "https://schema.org",
+      "@type": "SportsEvent",
+      name: e.name,
+      startDate: e.rawDate,
+      eventStatus: "https://schema.org/EventScheduled",
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      location: {
+        "@type": "Place",
+        name: "Inspire Courts AZ",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
+          addressLocality: "Gilbert",
+          addressRegion: "AZ",
+          postalCode: "85233",
+          addressCountry: "US",
+        },
+      },
+      organizer: {
+        "@type": "Organization",
+        name: e.brand || "OFF SZN HOOPS",
+        url: SITE_URL,
+      },
+      sport: e.sport || "Basketball",
+      url: `${SITE_URL}/events`,
+      ...(e.fee && {
+        offers: {
+          "@type": "Offer",
+          price: e.fee.replace(/[^0-9.]/g, ""),
+          priceCurrency: "USD",
+          availability: "https://schema.org/InStock",
+          url: `${SITE_URL}${REGISTER_URL}`,
+        },
+      }),
+      image: `${SITE_URL}/images/hero-bg.jpg`,
+    }));
+
   return (
-    <EventsHub
-      upcoming={upcoming}
-      past={past}
-      registerUrl={REGISTER_URL}
-      facilityEmail={FACILITY_EMAIL}
-      facilityAddress={FACILITY_ADDRESS.full}
-      instagramHandle={SOCIAL_LINKS.instagramHandle}
-      youtubeUrl={SOCIAL_LINKS.youtube}
-      quickScoresUrl="https://quickscores.com/inspirecourts"
-    />
+    <>
+      {eventSchema.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema) }}
+        />
+      )}
+      <EventsHub
+        upcoming={upcoming}
+        past={past}
+        registerUrl={REGISTER_URL}
+        facilityEmail={FACILITY_EMAIL}
+        facilityAddress={FACILITY_ADDRESS.full}
+        instagramHandle={SOCIAL_LINKS.instagramHandle}
+        youtubeUrl={SOCIAL_LINKS.youtube}
+        quickScoresUrl="https://quickscores.com/inspirecourts"
+      />
+    </>
   );
 }

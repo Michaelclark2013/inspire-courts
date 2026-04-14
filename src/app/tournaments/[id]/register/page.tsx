@@ -48,6 +48,27 @@ export default function RegisterPage() {
   const [playerCount, setPlayerCount] = useState("");
   const [waiversAcknowledged, setWaiversAcknowledged] = useState(false);
 
+  // Field-level validation (touched tracks which fields the user has interacted with)
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const markTouched = (field: string) =>
+    setTouched((prev) => ({ ...prev, [field]: true }));
+
+  const fieldErrors: Record<string, string> = {};
+  if (!teamName.trim()) fieldErrors.teamName = "Team name is required";
+  if (!coachName.trim()) fieldErrors.coachName = "Coach name is required";
+  if (!coachEmail.trim()) fieldErrors.coachEmail = "Email is required";
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(coachEmail))
+    fieldErrors.coachEmail = "Enter a valid email address";
+  if (coachPhone && coachPhone.replace(/\D/g, "").length < 10)
+    fieldErrors.coachPhone = "Enter a valid 10-digit phone number";
+
+  const fieldClass = (field: string) =>
+    `w-full bg-off-white border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50 transition-colors ${
+      touched[field] && fieldErrors[field]
+        ? "border-red/60 bg-red/[0.03]"
+        : "border-light-gray"
+    }`;
+
   useEffect(() => {
     fetch(`/api/tournaments/${id}`)
       .then((r) => r.json())
@@ -225,7 +246,7 @@ export default function RegisterPage() {
         </div>
 
         {error && (
-          <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-6">
+          <div role="alert" aria-live="assertive" className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-6">
             {error}
           </div>
         )}
@@ -245,10 +266,16 @@ export default function RegisterPage() {
                   type="text"
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
+                  onBlur={() => markTouched("teamName")}
                   required
-                  className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                  className={fieldClass("teamName")}
                   placeholder="e.g. Phoenix Elite"
+                  aria-invalid={touched.teamName && !!fieldErrors.teamName}
+                  aria-describedby={touched.teamName && fieldErrors.teamName ? "err-teamName" : undefined}
                 />
+                {touched.teamName && fieldErrors.teamName && (
+                  <p id="err-teamName" className="text-red text-xs mt-1">{fieldErrors.teamName}</p>
+                )}
               </div>
               {tournament.divisions.length > 0 && (
                 <div>
@@ -279,10 +306,16 @@ export default function RegisterPage() {
                     type="text"
                     value={coachName}
                     onChange={(e) => setCoachName(e.target.value)}
+                    onBlur={() => markTouched("coachName")}
                     required
-                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    className={fieldClass("coachName")}
                     placeholder="Full name"
+                    aria-invalid={touched.coachName && !!fieldErrors.coachName}
+                    aria-describedby={touched.coachName && fieldErrors.coachName ? "err-coachName" : undefined}
                   />
+                  {touched.coachName && fieldErrors.coachName && (
+                    <p id="err-coachName" className="text-red text-xs mt-1">{fieldErrors.coachName}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -292,10 +325,16 @@ export default function RegisterPage() {
                     type="email"
                     value={coachEmail}
                     onChange={(e) => setCoachEmail(e.target.value)}
+                    onBlur={() => markTouched("coachEmail")}
                     required
-                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    className={fieldClass("coachEmail")}
                     placeholder="coach@email.com"
+                    aria-invalid={touched.coachEmail && !!fieldErrors.coachEmail}
+                    aria-describedby={touched.coachEmail && fieldErrors.coachEmail ? "err-coachEmail" : undefined}
                   />
+                  {touched.coachEmail && fieldErrors.coachEmail && (
+                    <p id="err-coachEmail" className="text-red text-xs mt-1">{fieldErrors.coachEmail}</p>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -307,9 +346,15 @@ export default function RegisterPage() {
                     type="tel"
                     value={coachPhone}
                     onChange={(e) => setCoachPhone(e.target.value)}
-                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    onBlur={() => markTouched("coachPhone")}
+                    className={fieldClass("coachPhone")}
                     placeholder="(555) 123-4567"
+                    aria-invalid={touched.coachPhone && !!fieldErrors.coachPhone}
+                    aria-describedby={touched.coachPhone && fieldErrors.coachPhone ? "err-coachPhone" : undefined}
                   />
+                  {touched.coachPhone && fieldErrors.coachPhone && (
+                    <p id="err-coachPhone" className="text-red text-xs mt-1">{fieldErrors.coachPhone}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">

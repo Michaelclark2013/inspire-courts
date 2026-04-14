@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, Clock, Loader2, Trophy, ArrowRight } from "lucide-react";
@@ -12,15 +12,36 @@ type RegStatus = {
   teamName: string;
 };
 
+const MAX_POLLS = 60; // Stop after ~3 minutes (60 × 3s)
+
 export default function ConfirmationPage() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const regId = searchParams.get("reg");
   const [regStatus, setRegStatus] = useState<RegStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [timedOut, setTimedOut] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollCountRef = useRef(0);
+
+  const isConfirmed =
+    regStatus?.status === "approved" &&
+    (regStatus?.paymentStatus === "paid" || regStatus?.paymentStatus === "waived");
+
+  const stopPolling = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
 
   const poll = useCallback(async () => {
     if (!regId) return;
+    pollCountRef.current += 1;
+    if (pollCountRef.current > MAX_POLLS) {
+      setTimedOut(true);
+      return;
+    }
     try {
       const res = await fetch(
         `/api/tournaments/${id}/registration-status?reg=${regId}`
@@ -33,23 +54,19 @@ export default function ConfirmationPage() {
     setLoading(false);
   }, [id, regId]);
 
+  // Start polling
   useEffect(() => {
     poll();
-    // Poll every 3 seconds until confirmed
-    const interval = setInterval(poll, 3000);
-    return () => clearInterval(interval);
-  }, [poll]);
+    intervalRef.current = setInterval(poll, 3000);
+    return () => stopPolling();
+  }, [poll, stopPolling]);
 
-  // Stop polling once approved
+  // Stop polling once confirmed or timed out
   useEffect(() => {
-    if (regStatus?.status === "approved" && regStatus?.paymentStatus === "paid") {
-      // Already confirmed, no need to keep polling
+    if (isConfirmed || timedOut) {
+      stopPolling();
     }
-  }, [regStatus]);
-
-  const isConfirmed =
-    regStatus?.status === "approved" &&
-    (regStatus?.paymentStatus === "paid" || regStatus?.paymentStatus === "waived");
+  }, [isConfirmed, timedOut, stopPolling]);
 
   const isPending = regStatus && !isConfirmed;
 
@@ -88,6 +105,36 @@ export default function ConfirmationPage() {
               >
                 Coach Portal
                 <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </>
+        ) : timedOut ? (
+          <>
+            <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Clock className="w-8 h-8 text-amber-400" />
+            </div>
+            <h1 className="text-2xl font-bold text-navy font-heading mb-2">
+              Still Processing
+            </h1>
+            <p className="text-text-muted mb-2">
+              Your payment is taking longer than expected.
+            </p>
+            <p className="text-text-muted text-sm mb-6">
+              Don&apos;t worry — if your payment went through, your registration is safe.
+              You&apos;ll receive a confirmation email, or you can check the coach portal.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/portal"
+                className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                Check Coach Portal <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/contact?type=Tournament+Registration"
+                className="flex items-center justify-center gap-2 border border-light-gray hover:border-light-gray/80 text-navy px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                Contact Us
               </Link>
             </div>
           </>

@@ -2,15 +2,15 @@ import NotionFallback from "@/components/dashboard/NotionFallback";
 import LeadsClient from "@/components/admin/LeadsClient";
 import { getChatLeads, getProperty, isNotionConfigured } from "@/lib/notion";
 
-export default async function LeadsPage() {
+export default async function ContactsPage() {
   if (!isNotionConfigured()) {
     return (
       <div className="p-6 lg:p-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Leads</h1>
-          <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Leads</p>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Contacts</h1>
+          <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Submissions</p>
         </div>
-        <NotionFallback type="no-key" entityName="leads" />
+        <NotionFallback type="no-key" entityName="contacts" />
       </div>
     );
   }
@@ -37,10 +37,10 @@ export default async function LeadsPage() {
     return (
       <div className="p-6 lg:p-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Leads</h1>
-          <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Leads</p>
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Contacts</h1>
+          <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Submissions</p>
         </div>
-        <NotionFallback type="empty" entityName="leads" />
+        <NotionFallback type="empty" entityName="contacts" />
       </div>
     );
   }
@@ -48,8 +48,8 @@ export default async function LeadsPage() {
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Leads</h1>
-        <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Leads — captured automatically from chatbot and contact form</p>
+        <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Contacts</h1>
+        <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Submissions — captured automatically from chatbot and contact form</p>
       </div>
       <LeadsClient leads={leads} />
     </div>

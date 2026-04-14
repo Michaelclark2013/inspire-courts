@@ -8,6 +8,7 @@ import {
   Loader2,
   Trophy,
   X,
+  AlertCircle,
 } from "lucide-react";
 
 type Game = {
@@ -37,6 +38,8 @@ export default function ScoreEntryPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [scoreError, setScoreError] = useState("");
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [tournamentFilter, setTournamentFilter] = useState<string>("");
   const [tournamentOptions, setTournamentOptions] = useState<TournamentOption[]>([]);
@@ -85,15 +88,23 @@ export default function ScoreEntryPage() {
   async function handleCreateGame(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const res = await fetch("/api/admin/scores", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    if (res.ok) {
-      setForm({ homeTeam: "", awayTeam: "", division: "", court: "", eventName: "" });
-      setShowForm(false);
-      fetchGames();
+    setFormError("");
+    try {
+      const res = await fetch("/api/admin/scores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setForm({ homeTeam: "", awayTeam: "", division: "", court: "", eventName: "" });
+        setShowForm(false);
+        fetchGames();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setFormError(data.error || "Failed to create game");
+      }
+    } catch {
+      setFormError("Network error — please try again");
     }
     setSaving(false);
   }
@@ -111,18 +122,35 @@ export default function ScoreEntryPage() {
 
   async function handleUpdateScore(e: React.FormEvent) {
     e.preventDefault();
+    // Confirm before marking game as final
+    if (scoreForm.status === "final") {
+      if (!confirm("Mark this game as final? This cannot be undone.")) return;
+    }
     setSaving(true);
-    await fetch("/api/admin/scores", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        gameId: scoreForm.gameId,
-        homeScore: scoreForm.homeScore,
-        awayScore: scoreForm.awayScore,
-        quarter: scoreForm.quarter || undefined,
-        status: scoreForm.status || undefined,
-      }),
-    });
+    setScoreError("");
+    try {
+      const res = await fetch("/api/admin/scores", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gameId: scoreForm.gameId,
+          homeScore: scoreForm.homeScore,
+          awayScore: scoreForm.awayScore,
+          quarter: scoreForm.quarter || undefined,
+          status: scoreForm.status || undefined,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setScoreError(data.error || "Failed to update score");
+        setSaving(false);
+        return;
+      }
+    } catch {
+      setScoreError("Network error — please try again");
+      setSaving(false);
+      return;
+    }
     setUpdatingId(null);
     fetchGames();
     setSaving(false);
@@ -179,6 +207,14 @@ export default function ScoreEntryPage() {
           <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
             <Plus className="w-4 h-4 text-red" /> Create Game
           </h2>
+          {formError && (
+            <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 mb-4 flex items-center justify-between">
+              <span>{formError}</span>
+              <button type="button" onClick={() => setFormError("")} className="ml-4 text-red hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
           <form onSubmit={handleCreateGame} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Home Team</label>
@@ -197,8 +233,17 @@ export default function ScoreEntryPage() {
               <input type="text" value={form.court} onChange={(e) => setForm({ ...form, court: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="e.g. Court 1" />
             </div>
             <div>
-              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Event</label>
-              <input type="text" value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Tournament name" />
+              <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">Event / Tournament</label>
+              {tournamentOptions.length > 0 ? (
+                <select value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all cursor-pointer">
+                  <option value="">— Select tournament —</option>
+                  {tournamentOptions.map((t) => (
+                    <option key={t.id} value={t.name}>{t.name}</option>
+                  ))}
+                </select>
+              ) : (
+                <input type="text" value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25" placeholder="Tournament name" />
+              )}
             </div>
             <div className="flex items-end">
               <button type="submit" disabled={saving} className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
@@ -236,17 +281,17 @@ export default function ScoreEntryPage() {
         <div className="space-y-8">
           {/* Live games */}
           {liveGames.length > 0 && (
-            <GameSection title="Live Now" icon={<Play className="w-4 h-4 text-emerald-400" />} games={liveGames} onUpdate={startScoreUpdate} updatingId={updatingId} scoreForm={scoreForm} setScoreForm={setScoreForm} onSaveScore={handleUpdateScore} onCancelUpdate={() => setUpdatingId(null)} saving={saving} />
+            <GameSection title="Live Now" icon={<Play className="w-4 h-4 text-emerald-400" />} games={liveGames} onUpdate={startScoreUpdate} updatingId={updatingId} scoreForm={scoreForm} setScoreForm={setScoreForm} onSaveScore={handleUpdateScore} onCancelUpdate={() => { setUpdatingId(null); setScoreError(""); }} saving={saving} scoreError={scoreError} onClearScoreError={() => setScoreError("")} />
           )}
 
           {/* Scheduled */}
           {scheduledGames.length > 0 && (
-            <GameSection title="Scheduled" icon={<Trophy className="w-4 h-4 text-white/40" />} games={scheduledGames} onUpdate={startScoreUpdate} updatingId={updatingId} scoreForm={scoreForm} setScoreForm={setScoreForm} onSaveScore={handleUpdateScore} onCancelUpdate={() => setUpdatingId(null)} saving={saving} />
+            <GameSection title="Scheduled" icon={<Trophy className="w-4 h-4 text-white/40" />} games={scheduledGames} onUpdate={startScoreUpdate} updatingId={updatingId} scoreForm={scoreForm} setScoreForm={setScoreForm} onSaveScore={handleUpdateScore} onCancelUpdate={() => { setUpdatingId(null); setScoreError(""); }} saving={saving} scoreError={scoreError} onClearScoreError={() => setScoreError("")} />
           )}
 
           {/* Final */}
           {finalGames.length > 0 && (
-            <GameSection title="Final" icon={<CheckCircle2 className="w-4 h-4 text-red" />} games={finalGames} onUpdate={startScoreUpdate} updatingId={updatingId} scoreForm={scoreForm} setScoreForm={setScoreForm} onSaveScore={handleUpdateScore} onCancelUpdate={() => setUpdatingId(null)} saving={saving} />
+            <GameSection title="Final" icon={<CheckCircle2 className="w-4 h-4 text-red" />} games={finalGames} onUpdate={startScoreUpdate} updatingId={updatingId} scoreForm={scoreForm} setScoreForm={setScoreForm} onSaveScore={handleUpdateScore} onCancelUpdate={() => { setUpdatingId(null); setScoreError(""); }} saving={saving} scoreError={scoreError} onClearScoreError={() => setScoreError("")} />
           )}
 
           {gameList.length === 0 && (
@@ -272,6 +317,8 @@ function GameSection({
   onSaveScore,
   onCancelUpdate,
   saving,
+  scoreError,
+  onClearScoreError,
 }: {
   title: string;
   icon: React.ReactNode;
@@ -283,6 +330,8 @@ function GameSection({
   onSaveScore: (e: React.FormEvent) => void;
   onCancelUpdate: () => void;
   saving: boolean;
+  scoreError: string;
+  onClearScoreError: () => void;
 }) {
   return (
     <div>
@@ -325,7 +374,15 @@ function GameSection({
 
             {/* Inline score update form */}
             {updatingId === game.id && (
-              <form onSubmit={onSaveScore} className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
+              <form onSubmit={onSaveScore} className="mt-4 pt-4 border-t border-white/10 space-y-3">
+                {scoreError && (
+                  <div className="flex items-center gap-2 bg-red/10 border border-red/30 text-red text-xs rounded-lg px-3 py-2">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="flex-1">{scoreError}</span>
+                    <button type="button" onClick={onClearScoreError} className="text-red hover:text-white"><X className="w-3.5 h-3.5" /></button>
+                  </div>
+                )}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
                 <div>
                   <label className="block text-white/60 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.homeTeam} Score</label>
                   <div className="flex items-center gap-1">
@@ -371,6 +428,7 @@ function GameSection({
                     Cancel
                   </button>
                 </div>
+              </div>
               </form>
             )}
           </div>

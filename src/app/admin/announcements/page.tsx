@@ -37,6 +37,7 @@ export default function AnnouncementsPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [form, setForm] = useState({
     title: "",
     body: "",
@@ -60,26 +61,45 @@ export default function AnnouncementsPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const res = await fetch("/api/admin/announcements", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: form.title,
-        body: form.body,
-        audience: form.audience,
-        expiresAt: form.expiresAt || undefined,
-      }),
-    });
-    if (res.ok) {
-      setForm({ title: "", body: "", audience: "all", expiresAt: "" });
-      setShowForm(false);
-      fetchAll();
+    setSaveError("");
+    try {
+      const res = await fetch("/api/admin/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: form.title,
+          body: form.body,
+          audience: form.audience,
+          expiresAt: form.expiresAt || undefined,
+        }),
+      });
+      if (res.ok) {
+        setForm({ title: "", body: "", audience: "all", expiresAt: "" });
+        setShowForm(false);
+        fetchAll();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setSaveError(data.error || "Failed to publish announcement");
+      }
+    } catch {
+      setSaveError("Network error — please try again");
     }
     setSaving(false);
   }
 
-  async function handleDelete(id: number) {
-    await fetch(`/api/admin/announcements?id=${id}`, { method: "DELETE" });
+  async function handleDelete(id: number, title: string) {
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`/api/admin/announcements?id=${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setSaveError(data.error || "Failed to delete announcement");
+        return;
+      }
+    } catch {
+      setSaveError("Network error — could not delete");
+      return;
+    }
     fetchAll();
   }
 
@@ -103,9 +123,27 @@ export default function AnnouncementsPage() {
         </button>
       </div>
 
+      {/* Error banner visible when form is closed */}
+      {!showForm && saveError && (
+        <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 mb-6 flex items-center justify-between" role="alert">
+          <span>{saveError}</span>
+          <button onClick={() => setSaveError("")} className="text-red hover:text-white ml-4" aria-label="Dismiss">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {showForm && (
         <div className="bg-card border border-white/10 rounded-xl p-6 mb-8">
           <form onSubmit={handleCreate} className="space-y-4">
+            {saveError && (
+              <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center justify-between">
+                <span>{saveError}</span>
+                <button type="button" onClick={() => setSaveError("")} className="text-red hover:text-white ml-4">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
             <div>
               <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Title *
@@ -168,6 +206,8 @@ export default function AnnouncementsPage() {
                 <input
                   type="date"
                   value={form.expiresAt}
+                  min={new Date().toISOString().split("T")[0]}
+                  title="Announcement will be hidden after this date"
                   onChange={(e) => setForm({ ...form, expiresAt: e.target.value })}
                   className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
                 />
@@ -192,7 +232,13 @@ export default function AnnouncementsPage() {
       ) : list.length === 0 ? (
         <div className="text-center py-16 text-white/40">
           <Megaphone className="w-8 h-8 mx-auto mb-3 opacity-40" />
-          <p className="text-sm">No announcements yet.</p>
+          <p className="text-sm mb-4">No announcements yet.</p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Create First Announcement
+          </button>
         </div>
       ) : (
         <div className="space-y-3">
@@ -236,7 +282,7 @@ export default function AnnouncementsPage() {
                   </div>
                 </div>
                 <button
-                  onClick={() => handleDelete(a.id)}
+                  onClick={() => handleDelete(a.id, a.title)}
                   className="text-white/20 hover:text-red transition-colors flex-shrink-0"
                 >
                   <Trash2 className="w-4 h-4" />

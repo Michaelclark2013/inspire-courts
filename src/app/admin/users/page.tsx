@@ -236,7 +236,7 @@ export default function UsersPage() {
                 Password
               </label>
               <input
-                type="text"
+                type="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required

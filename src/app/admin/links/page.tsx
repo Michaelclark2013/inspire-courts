@@ -1,6 +1,3 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { ExternalLink } from "lucide-react";
 
 const LINK_SECTIONS = [
@@ -25,9 +22,6 @@ const LINK_SECTIONS = [
 ];
 
 export default async function LinksPage() {
-  const session = await getServerSession(authOptions);
-  // Auth temporarily disabled
-
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">

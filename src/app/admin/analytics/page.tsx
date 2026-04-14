@@ -1,13 +1,7 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { BarChart3, ExternalLink, TrendingUp, Users, Eye, MousePointer } from "lucide-react";
 import KPICard from "@/components/dashboard/KPICard";
 
 export default async function AnalyticsPage() {
-  const session = await getServerSession(authOptions);
-  // Auth temporarily disabled
-
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (

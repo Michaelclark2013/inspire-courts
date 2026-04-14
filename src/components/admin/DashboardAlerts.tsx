@@ -39,19 +39,22 @@ export default function DashboardAlerts() {
         (t: { status: string }) => t.status === "draft"
       ).length;
 
-      // Count pending registrations across all tournaments
-      let pendingRegistrations = 0;
-      for (const t of tournaments) {
-        try {
-          const regRes = await fetch(`/api/admin/tournaments/${t.id}/registrations`);
-          if (regRes.ok) {
-            const regs = await regRes.json();
-            pendingRegistrations += regs.filter(
-              (r: { paymentStatus: string }) => r.paymentStatus === "pending"
-            ).length;
-          }
-        } catch {}
-      }
+      // Count pending registrations across all tournaments (parallel fetches)
+      const pendingCounts = await Promise.all(
+        tournaments.map(async (t: { id: number }) => {
+          try {
+            const regRes = await fetch(`/api/admin/tournaments/${t.id}/registrations`);
+            if (regRes.ok) {
+              const regs = await regRes.json();
+              return regs.filter(
+                (r: { paymentStatus: string }) => r.paymentStatus === "pending"
+              ).length;
+            }
+          } catch {}
+          return 0;
+        })
+      );
+      const pendingRegistrations = pendingCounts.reduce((sum: number, n: number) => sum + n, 0);
 
       // Count upcoming games
       const gamesRes = await fetch("/api/scores/live");

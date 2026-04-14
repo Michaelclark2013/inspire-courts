@@ -9,6 +9,7 @@ import {
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
 import { isNotionConfigured } from "@/lib/notion";
+import { isGoogleConfigured } from "@/lib/google-sheets";
 import EventsList from "./EventsList";
 
 export const metadata: Metadata = {
@@ -144,6 +145,8 @@ function NoNotionFallback() {
 /* ─── Page ─── */
 export default function EventsPage() {
   const notionEnabled = isNotionConfigured();
+  const sheetsEnabled = isGoogleConfigured() || !!process.env.GOOGLE_SHEETS_API_KEY;
+  const dynamicEventsEnabled = notionEnabled || sheetsEnabled;
 
   return (
     <>
@@ -214,7 +217,7 @@ export default function EventsPage() {
             </div>
             <div className="mx-auto max-w-md w-full">
               <Image
-                src="/images/tournament-schedule.png"
+                src="/images/2026-tournament-schedule.png"
                 alt="2026 Inspire Courts Tournament Schedule"
                 width={1080}
                 height={1080}
@@ -237,7 +240,7 @@ export default function EventsPage() {
       </section>
 
       {/* Events Hub — tabs, filters, schedule, game day */}
-      {notionEnabled ? (
+      {dynamicEventsEnabled ? (
         <Suspense fallback={<EventsListSkeleton />}>
           <EventsList />
         </Suspense>

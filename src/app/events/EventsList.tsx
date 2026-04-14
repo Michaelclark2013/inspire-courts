@@ -3,78 +3,111 @@ import {
   getUpcomingEvents,
   getPastEvents,
   getProperty,
+  isNotionConfigured,
 } from "@/lib/notion";
+import {
+  fetchTournamentSchedule,
+  tournamentToEventData,
+  isGoogleConfigured,
+} from "@/lib/google-sheets";
 import EventsHub, { type EventData, type PastEventData } from "./EventsHub";
 
 const REGISTER_URL = "/tournaments";
 
 export default async function EventsList() {
-  const [upcomingEvents, pastEvents] = await Promise.all([
-    getUpcomingEvents(),
-    getPastEvents(),
-  ]);
+  let upcoming: EventData[] = [];
+  let past: PastEventData[] = [];
 
-  const upcoming: EventData[] = upcomingEvents.map((e: any) => {
-    const divisions = getProperty(e, "Divisions") || "";
-    const fee = getProperty(e, "Entry Fee") || "";
-    const date = getProperty(e, "Event Date") || "";
-    const teams = getProperty(e, "Team Count") || 0;
-    const maxTeams = getProperty(e, "Max Teams") || "";
-    const status = getProperty(e, "Status") || "";
-    const brand = getProperty(e, "Brand") || "OFF SZN HOOPS";
-    const sport = getProperty(e, "Sport") || "Basketball";
-    const bracketLink = getProperty(e, "Bracket Link") || "";
-    const regDeadline = getProperty(e, "Registration Deadline") || "";
+  if (isNotionConfigured()) {
+    const [upcomingEvents, pastEvents] = await Promise.all([
+      getUpcomingEvents(),
+      getPastEvents(),
+    ]);
 
-    return {
-      name: getProperty(e, "Tournament Name") || "Upcoming Event",
-      date: date
-        ? new Date(date).toLocaleDateString("en-US", {
-            month: "long",
-            year: "numeric",
-            day: "numeric",
-          })
-        : "TBD",
-      rawDate: date || "",
-      divisions: Array.isArray(divisions)
-        ? divisions
-        : divisions
+    upcoming = upcomingEvents.map((e: any) => {
+      const divisions = getProperty(e, "Divisions") || "";
+      const fee = getProperty(e, "Entry Fee") || "";
+      const date = getProperty(e, "Event Date") || "";
+      const teams = getProperty(e, "Team Count") || 0;
+      const maxTeams = getProperty(e, "Max Teams") || "";
+      const status = getProperty(e, "Status") || "";
+      const brand = getProperty(e, "Brand") || "OFF SZN HOOPS";
+      const sport = getProperty(e, "Sport") || "Basketball";
+      const bracketLink = getProperty(e, "Bracket Link") || "";
+      const regDeadline = getProperty(e, "Registration Deadline") || "";
+
+      return {
+        name: getProperty(e, "Tournament Name") || "Upcoming Event",
+        date: date
+          ? new Date(date).toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+              day: "numeric",
+            })
+          : "TBD",
+        rawDate: date || "",
+        divisions: Array.isArray(divisions)
           ? divisions
-              .split(",")
-              .map((d: string) => d.trim())
-              .filter(Boolean)
-          : [],
-      fee: fee ? (typeof fee === "number" ? `$${fee}` : String(fee)) : "",
-      teams: Number(teams) || 0,
-      maxTeams: maxTeams ? Number(maxTeams) : null,
-      status: String(status),
-      brand: String(brand),
-      sport: String(sport),
-      bracketLink: String(bracketLink || ""),
-      regDeadline: regDeadline
-        ? new Date(regDeadline).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          })
-        : "",
-    };
-  });
+          : divisions
+            ? divisions
+                .split(",")
+                .map((d: string) => d.trim())
+                .filter(Boolean)
+            : [],
+        fee: fee ? (typeof fee === "number" ? `$${fee}` : String(fee)) : "",
+        teams: Number(teams) || 0,
+        maxTeams: maxTeams ? Number(maxTeams) : null,
+        status: String(status),
+        brand: String(brand),
+        sport: String(sport),
+        bracketLink: String(bracketLink || ""),
+        regDeadline: regDeadline
+          ? new Date(regDeadline).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })
+          : "",
+      };
+    });
 
-  const past: PastEventData[] = pastEvents.slice(0, 8).map((e: any) => {
-    const date = getProperty(e, "Event Date") || "";
-    const teams = getProperty(e, "Team Count") || 0;
-    return {
-      name: getProperty(e, "Tournament Name") || "Past Event",
-      date: date
-        ? new Date(date).toLocaleDateString("en-US", {
-            month: "long",
-            year: "numeric",
-          })
-        : "",
-      teams: Number(teams) || 0,
-      brand: String(getProperty(e, "Brand") || ""),
-    };
-  });
+    past = pastEvents.slice(0, 8).map((e: any) => {
+      const date = getProperty(e, "Event Date") || "";
+      const teams = getProperty(e, "Team Count") || 0;
+      return {
+        name: getProperty(e, "Tournament Name") || "Past Event",
+        date: date
+          ? new Date(date).toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+            })
+          : "",
+        teams: Number(teams) || 0,
+        brand: String(getProperty(e, "Brand") || ""),
+      };
+    });
+  } else if (isGoogleConfigured() || process.env.GOOGLE_SHEETS_API_KEY) {
+    // Fall back to Google Sheets tournament schedule
+    const { tournaments } = await fetchTournamentSchedule();
+    upcoming = tournaments
+      .filter((t) => t.status !== "Completed" && t.status !== "Cancelled")
+      .map(tournamentToEventData);
+    past = tournaments
+      .filter((t) => t.status === "Completed")
+      .slice(0, 8)
+      .map((t) => ({
+        name: t.name,
+        date: t.startDate
+          ? (() => {
+              const d = new Date(t.startDate + "T12:00:00");
+              return isNaN(d.getTime())
+                ? t.startDate
+                : d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+            })()
+          : "",
+        teams: t.teamsRegistered,
+        brand: "OFF SZN HOOPS",
+      }));
+  }
 
   // JSON-LD Event structured data for SEO — helps Google show rich event snippets
   const eventSchema = upcoming

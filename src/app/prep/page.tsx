@@ -14,6 +14,7 @@ import {
   Star,
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 export const metadata: Metadata = {
@@ -182,8 +183,75 @@ export default function PrepPage() {
         </div>
       </section>
 
+      {/* Adan Diggs — Flagship Player */}
+      <section className="py-14 lg:py-24 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <AnimateIn>
+              <div>
+                <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                  Inspire Prep Alumni
+                </span>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy mb-6 font-[var(--font-chakra)] leading-[0.95]">
+                  Adan Diggs <span className="text-red">Came Up Here</span>
+                </h2>
+                <p className="text-text-muted text-lg leading-relaxed mb-6">
+                  Adan Diggs developed his game through Inspire Prep — training daily, competing against top talent, and earning his opportunity. This is what the program builds.
+                </p>
+                <Link
+                  href="/contact?type=Inspire+Prep"
+                  className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
+                >
+                  Join the Program
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </AnimateIn>
+            <AnimateIn delay={150}>
+              <div
+                className="relative rounded-2xl overflow-hidden shadow-2xl border border-light-gray mx-auto"
+                style={{ aspectRatio: "9/16", maxWidth: "360px" }}
+              >
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube.com/embed/HXmJvuzzPxg?rel=0&modestbranding=1"
+                  title="Adan Diggs — Inspire Prep"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+            </AnimateIn>
+          </div>
+        </div>
+      </section>
+
+      {/* More Inspire Prep Videos */}
+      <section className="py-12 lg:py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimateIn>
+            <div className="text-center mb-10">
+              <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                Inside Look
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy font-[var(--font-chakra)] leading-[0.95]">
+                Inspire Prep in Action
+              </h2>
+            </div>
+          </AnimateIn>
+          <VideoShowcase
+            videos={[
+              { id: "HXmJvuzzPxg", title: "Inspire Prep 2030", name: "Inspire Prep 2030", subtitle: "Highlights", aspect: "9/16" },
+              { id: "X3okI0F8RDE", title: "Inspire Prep — Oba", name: "Inspire Prep — Oba", subtitle: "Highlights", aspect: "9/16" },
+            ]}
+            initialCount={4}
+            theme="light"
+          />
+        </div>
+      </section>
+
       {/* Program Highlights — featured card + grid layout for desktop */}
-      <section className="py-14 lg:py-28 bg-off-white">
+      <section className="py-14 lg:py-24 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Why Inspire Prep"

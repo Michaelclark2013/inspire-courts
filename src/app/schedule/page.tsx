@@ -5,6 +5,7 @@ import { ArrowRight, Clock, Mail, ExternalLink } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 import QuickScoresEmbed from "@/components/ui/QuickScoresEmbed";
+import BackToTop from "@/components/ui/BackToTop";
 import { getPageContent, getField } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -94,9 +95,6 @@ export default function SchedulePage() {
             title="Past Event Results"
             description="Brackets and results from previous tournaments."
           />
-          <p className="text-text-muted text-xs mb-6 text-center">
-            Last updated: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-          </p>
           <div className="max-w-3xl mx-auto space-y-3">
             {[
               { name: "OFF SZN Session 1", date: "April 2026" },
@@ -152,6 +150,7 @@ export default function SchedulePage() {
         </div>
       </section>
 
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

@@ -31,7 +31,7 @@ const REGISTER_URL = "/tournaments";
 /* ─── Loading Skeleton ─── */
 function EventsListSkeleton() {
   return (
-    <div>
+    <div aria-hidden="true" role="presentation">
       {/* Fake tab bar */}
       <div className="sticky top-[72px] z-30 bg-white border-b border-light-gray shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,12 +117,14 @@ function NoNotionFallback() {
               registration opens.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href={REGISTER_URL}
+              <a
+                href="https://offsznhoops.leagueapps.com/tournaments"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
                 Register Now <ArrowRight className="w-4 h-4" />
-              </Link>
+              </a>
               <a
                 href="https://instagram.com/inspirecourts"
                 target="_blank"
@@ -178,12 +180,14 @@ export default function EventsPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link
-                  href={REGISTER_URL}
+                <a
+                  href="https://offsznhoops.leagueapps.com/tournaments"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg shadow-red/30"
                 >
                   Register Your Team <ArrowRight className="w-4 h-4" />
-                </Link>
+                </a>
                 <Link
                   href="/contact?type=Tournament+Registration"
                   className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/30 hover:bg-white hover:text-navy text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"

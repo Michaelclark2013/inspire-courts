@@ -102,7 +102,7 @@ function AccordionItem({ q, a, id }: { q: string; a: string; id: string }) {
     <div className="border border-light-gray rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left bg-white hover:bg-off-white transition-colors"
+        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left bg-white hover:bg-off-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
         aria-expanded={open}
         aria-controls={answerId}
       >
@@ -217,13 +217,15 @@ export default function FAQPage() {
               >
                 Contact Us <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link
-                href="/tournaments"
+              <a
+                href="https://offsznhoops.leagueapps.com/tournaments"
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => trackConversion("register_click")}
                 className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/40 hover:bg-white hover:text-navy text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
                 Register Now <ArrowRight className="w-4 h-4" />
-              </Link>
+              </a>
             </div>
           </AnimateIn>
         </div>

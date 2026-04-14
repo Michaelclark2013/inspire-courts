@@ -161,7 +161,7 @@ export default function MediaPage() {
       </section>
 
       {/* Services Grid */}
-      <section className="py-14 lg:py-28 bg-white">
+      <section className="py-14 lg:py-28 bg-white" aria-label="Media services offered">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="What We Offer"
@@ -179,7 +179,7 @@ export default function MediaPage() {
                     </span>
                   )}
                   <div className="w-14 h-14 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-5 shadow-md">
-                    <service.icon className="w-6 h-6 text-white" />
+                    <service.icon className="w-6 h-6 text-white" aria-hidden="true" />
                   </div>
                   <h3 className="text-navy font-[var(--font-chakra)] font-bold text-lg uppercase tracking-tight mb-3">
                     {service.title}

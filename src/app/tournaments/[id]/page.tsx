@@ -67,16 +67,16 @@ export default function PublicTournamentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-white/40" />
+      <div className="min-h-screen bg-off-white flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-text-muted" />
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <p className="text-white/40">Tournament not found.</p>
+      <div className="min-h-screen bg-off-white flex items-center justify-center">
+        <p className="text-text-muted">Tournament not found.</p>
       </div>
     );
   }
@@ -104,20 +104,20 @@ export default function PublicTournamentPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen bg-off-white">
       <div className="max-w-6xl mx-auto px-4 py-8 lg:py-12">
         <Link
-          href="/scores"
-          className="text-text-secondary text-xs hover:text-white flex items-center gap-1 mb-6 transition-colors"
+          href="/tournaments"
+          className="text-text-muted text-xs hover:text-navy flex items-center gap-1 mb-6 transition-colors"
         >
-          <ChevronLeft className="w-3 h-3" /> Back to Scores
+          <ChevronLeft className="w-3 h-3" /> Back to Tournaments
         </Link>
 
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Trophy className="w-6 h-6 text-red" />
-            <h1 className="text-2xl lg:text-3xl font-bold text-white font-heading">
+            <h1 className="text-2xl lg:text-3xl font-bold text-navy font-heading">
               {data.name}
             </h1>
             {liveCount > 0 && (
@@ -127,7 +127,7 @@ export default function PublicTournamentPage() {
               </span>
             )}
           </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-secondary text-sm">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-muted text-sm">
             <span>{FORMAT_LABELS[data.format] || data.format}</span>
             <span>
               {new Date(data.startDate + "T00:00:00").toLocaleDateString("en-US", {
@@ -143,10 +143,10 @@ export default function PublicTournamentPage() {
 
         {/* Registration CTA */}
         {data.registrationOpen && (
-          <div className="mb-8 bg-gradient-to-r from-red/10 to-red/5 border border-red/20 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="mb-8 bg-white border border-red/20 shadow-sm rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-white font-bold text-lg mb-1">Registration Open</h2>
-              <div className="flex flex-wrap items-center gap-3 text-text-secondary text-sm">
+              <h2 className="text-navy font-bold text-lg mb-1">Registration Open</h2>
+              <div className="flex flex-wrap items-center gap-3 text-text-muted text-sm">
                 {data.entryFee != null && data.entryFee > 0 && (
                   <span className="flex items-center gap-1">
                     <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
@@ -161,38 +161,40 @@ export default function PublicTournamentPage() {
                 )}
               </div>
             </div>
-            <Link
-              href={`/tournaments/${data.id}/register`}
+            <a
+              href="https://offsznhoops.leagueapps.com/tournaments"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
             >
               Register Now
-            </Link>
+            </a>
           </div>
         )}
 
         {/* Description */}
         {data.description && (
-          <div className="mb-8 bg-card border border-white/10 rounded-xl p-5">
-            <p className="text-white/70 text-sm whitespace-pre-wrap">{data.description}</p>
+          <div className="mb-8 bg-white border border-light-gray rounded-xl p-5">
+            <p className="text-text-muted text-sm whitespace-pre-wrap">{data.description}</p>
           </div>
         )}
 
         {/* Registered Teams */}
         {data.teams.length > 0 && data.bracket.length === 0 && (
-          <div className="mb-8 bg-card border border-white/10 rounded-xl overflow-hidden">
-            <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2">
+          <div className="mb-8 bg-white border border-light-gray rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-light-gray flex items-center gap-2">
               <Users className="w-4 h-4 text-red" />
-              <h2 className="text-white font-bold text-sm uppercase tracking-wider">
+              <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
                 Registered Teams ({data.teams.length})
               </h2>
             </div>
-            <div className="divide-y divide-white/5">
+            <div className="divide-y divide-light-gray">
               {data.teams.map((team, i) => (
                 <div key={i} className="px-5 py-3 flex items-center gap-3">
-                  <span className="text-white/30 text-xs font-bold w-6 text-center tabular-nums">
+                  <span className="text-text-muted text-xs font-bold w-6 text-center tabular-nums">
                     {i + 1}
                   </span>
-                  <span className="text-white text-sm font-semibold">{team.teamName}</span>
+                  <span className="text-navy text-sm font-semibold">{team.teamName}</span>
                   {team.division && (
                     <span className="text-[10px] bg-red/10 text-red px-1.5 py-0.5 rounded font-bold">
                       {team.division}
@@ -215,7 +217,7 @@ export default function PublicTournamentPage() {
             />
           </div>
         ) : (
-          <div className="text-center py-16 text-white/40">
+          <div className="text-center py-16 text-text-muted">
             <Trophy className="w-8 h-8 mx-auto mb-3 opacity-40" />
             <p className="text-sm">
               Bracket will be posted soon. Check back for live updates!
@@ -226,7 +228,7 @@ export default function PublicTournamentPage() {
         {/* Standings */}
         {data.bracket.filter((g) => g.status === "final").length > 0 && (
           <div>
-            <h2 className="text-white font-bold text-lg mb-4">Standings</h2>
+            <h2 className="text-navy font-bold text-lg mb-4">Standings</h2>
             <PoolStandings bracket={bracketForView} />
           </div>
         )}

@@ -14,6 +14,7 @@ import {
   MapPin,
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
 import ClubInterestForm from "@/components/ui/ClubInterestForm";
 
@@ -118,7 +119,7 @@ export default function TeamsPage() {
       </section>
 
       {/* Divisions — redesigned for desktop impact */}
-      <section className="py-16 lg:py-24 bg-navy">
+      <section className="py-12 lg:py-16 bg-navy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-12 lg:gap-20 items-center">
             {/* Left: text + future divisions */}
@@ -181,7 +182,7 @@ export default function TeamsPage() {
       </section>
 
       {/* What You Get — improved desktop layout */}
-      <section className="py-14 lg:py-28 bg-white">
+      <section className="py-12 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="The Program"
@@ -215,7 +216,7 @@ export default function TeamsPage() {
 
       {/* Why Team Inspire — side-by-side on desktop */}
       <section
-        className="relative py-20 lg:py-36 bg-scroll md:bg-fixed bg-cover bg-center"
+        className="relative py-14 lg:py-24 bg-scroll md:bg-fixed bg-cover bg-center"
         style={{
           backgroundImage: "url('/images/courts-bg-texture.jpg')",
         }}
@@ -268,49 +269,50 @@ export default function TeamsPage() {
         </div>
       </section>
 
-      {/* Player Highlight */}
-      <section className="py-14 lg:py-28 bg-off-white">
+      {/* Player Highlights */}
+      <section className="py-12 lg:py-20 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            <AnimateIn>
-              <div className="flex justify-center">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-light-gray w-full" style={{ maxWidth: "640px", aspectRatio: "16/9" }}>
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/LsB3MD2GOXA?rel=0&modestbranding=1"
-                    title="Team Inspire Player Highlight"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-            </AnimateIn>
-            <AnimateIn delay={150}>
-              <div>
-                <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
-                  Player Highlight
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)] leading-[0.95]">
-                  See Our Players <span className="text-red">In Action</span>
-                </h2>
-                <p className="text-text-muted leading-relaxed mb-6">
-                  Team Inspire players compete at the highest level on the MADE Hoops Circuit. Watch the highlights and see what our program is building.
-                </p>
-                <a
-                  href="#join"
-                  className="group inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
-                >
-                  Join the Team <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </a>
-              </div>
-            </AnimateIn>
+          <AnimateIn>
+            <div className="text-center mb-10">
+              <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                Highlights
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)] leading-[0.95]">
+                See Our Players <span className="text-red">In Action</span>
+              </h2>
+              <p className="text-text-muted leading-relaxed max-w-2xl mx-auto">
+                Team Inspire players compete at the highest level on the MADE Hoops Circuit. Watch the highlights and see what our program is building.
+              </p>
+            </div>
+          </AnimateIn>
+          <div className="max-w-5xl mx-auto mb-10">
+            <VideoShowcase
+              videos={[
+                { id: "5WFbsqEQxDE", title: "Team Inspire headline video", name: "Team Inspire", subtitle: "MADE Hoops Circuit" },
+                { id: "ENl-hXQbEo8", title: "Thompson Twins playing for Team Inspire", name: "Thompson Twins", subtitle: "NBA · Team Inspire Alumni" },
+                { id: "LsB3MD2GOXA", title: "Team Inspire Player Highlight", name: "Player Highlight", subtitle: "Team Inspire" },
+                { id: "cOD4jknl2-E", title: "Team Inspire highlights", name: "Team Inspire", subtitle: "Highlights" },
+                { id: "W84u1OuxI7M", title: "Team Inspire highlights", name: "Team Inspire", subtitle: "Highlights" },
+                { id: "ZGsUk0p0CsE", title: "Team Inspire highlights", name: "Team Inspire", subtitle: "Highlights" },
+                { id: "X3okI0F8RDE", title: "Team Inspire - Oba", name: "Team Inspire — Oba", subtitle: "Highlights", aspect: "9/16" },
+              ]}
+              initialCount={4}
+              theme="light"
+            />
+          </div>
+          <div className="text-center">
+            <a
+              href="#join"
+              className="group inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
+            >
+              Join the Team <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </a>
           </div>
         </div>
       </section>
 
       {/* Interest Form — two-column on desktop */}
-      <section id="join" className="py-20 lg:py-28 bg-white">
+      <section id="join" className="py-14 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-20 items-start">
             {/* Left: info panel */}

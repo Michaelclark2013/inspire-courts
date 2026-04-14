@@ -310,7 +310,7 @@ export default function RegisterPage() {
             </p>
 
             {error && (
-              <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4">
+              <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4" role="alert" aria-live="assertive">
                 {error}
               </div>
             )}

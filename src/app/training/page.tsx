@@ -12,6 +12,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 import { getPageContent, getField, getList } from "@/lib/content";
@@ -197,7 +198,7 @@ export default function TrainingPage() {
                 <div className="group relative bg-white border border-light-gray rounded-2xl p-8 lg:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="w-14 h-14 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mb-5 shadow-md">
-                    <skill.icon className="w-6 h-6 text-white" />
+                    <skill.icon className="w-6 h-6 text-white" aria-hidden="true" />
                   </div>
                   <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg uppercase tracking-tight mb-2">
                     {skill.title}
@@ -209,6 +210,74 @@ export default function TrainingPage() {
               </AnimateIn>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Koa Peat Headline Training Video */}
+      <section className="py-14 lg:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <AnimateIn>
+              <div>
+                <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                  #1 Recruit Trains Here
+                </span>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy mb-6 font-[var(--font-chakra)] leading-[0.95]">
+                  Koa Peat <span className="text-red">Trains at Inspire</span>
+                </h2>
+                <p className="text-text-muted text-lg leading-relaxed mb-6">
+                  The #1 recruit in the nation trains at Inspire Courts. This is the same floor your kids train on — pro-level facility, pro-level results.
+                </p>
+                <Link
+                  href="/contact?type=Private+Training"
+                  className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
+                >
+                  Book Your Session
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </AnimateIn>
+            <AnimateIn delay={150}>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-light-gray" style={{ aspectRatio: "16/9" }}>
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube.com/embed/FmcgFmICrf4?rel=0&modestbranding=1"
+                  title="Koa Peat training at Inspire Courts"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+            </AnimateIn>
+          </div>
+        </div>
+      </section>
+
+      {/* More Training Videos */}
+      <section className="py-14 lg:py-28 bg-off-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimateIn>
+            <div className="text-center mb-10">
+              <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+                Inside Look
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-navy font-[var(--font-chakra)] leading-[0.95]">
+                Training Day at Inspire
+              </h2>
+            </div>
+          </AnimateIn>
+          <VideoShowcase
+            videos={[
+              { id: "HkiDY_bwRVw", title: "Saben Lee training at Inspire Courts", name: "Saben Lee", subtitle: "NBA · Training at Inspire" },
+              { id: "S8HgOlyWnDg", title: "Cody Williams training at Inspire Courts", name: "Cody Williams", subtitle: "NBA · Training at Inspire" },
+              { id: "OUkcMQd_aWM", title: "Cam Williams training at Inspire Courts", name: "Cam Williams", subtitle: "NBA Prospect · Training at Inspire" },
+              { id: "iwla0gak5JU", title: "Zylan Cheatham training at Inspire Courts", name: "Zylan Cheatham", subtitle: "NBA · Training at Inspire" },
+              { id: "mmbKaoOHzn4", title: "Jordan Burks training at Inspire Courts", name: "Jordan Burks", subtitle: "Training at Inspire" },
+              { id: "EkIbBj3UDAg", title: "Recent training day at Inspire Courts", name: "Training Day", subtitle: "Recent Session at Inspire" },
+            ]}
+            initialCount={4}
+            theme="light"
+          />
         </div>
       </section>
 

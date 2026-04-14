@@ -68,7 +68,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
       </p>
 
       {status === "success" ? (
-        <div className="bg-green-50 border border-green-200 text-green-800 rounded-full px-6 py-4 font-semibold text-sm" role="status" aria-live="polite">
+        <div className="bg-green-50 border border-green-200 text-green-800 rounded-full px-6 py-4 font-semibold text-sm" role="status" aria-live="polite" aria-atomic="true">
           {message}
         </div>
       ) : (

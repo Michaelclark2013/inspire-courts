@@ -54,23 +54,23 @@ export default function ConfirmationPage() {
   const isPending = regStatus && !isConfirmed;
 
   return (
-    <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+    <div className="min-h-screen bg-off-white flex items-center justify-center">
       <div className="max-w-md mx-auto px-4 text-center">
         {loading ? (
-          <Loader2 className="w-8 h-8 animate-spin text-white/40 mx-auto" />
+          <Loader2 className="w-8 h-8 animate-spin text-text-muted mx-auto" />
         ) : isConfirmed ? (
           <>
             <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-8 h-8 text-emerald-400" />
             </div>
-            <h1 className="text-2xl font-bold text-white font-heading mb-2">
+            <h1 className="text-2xl font-bold text-navy font-heading mb-2">
               You&apos;re Registered!
             </h1>
-            <p className="text-text-secondary mb-2">
-              <span className="text-white font-semibold">{regStatus?.teamName}</span>{" "}
+            <p className="text-text-muted mb-2">
+              <span className="text-navy font-semibold">{regStatus?.teamName}</span>{" "}
               has been added to the tournament.
             </p>
-            <p className="text-text-secondary text-sm mb-8">
+            <p className="text-text-muted text-sm mb-8">
               You&apos;ll receive tournament updates at your registered email.
               Submit waivers and manage your roster through the coach portal.
             </p>
@@ -84,7 +84,7 @@ export default function ConfirmationPage() {
               </Link>
               <Link
                 href="/portal"
-                className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="flex items-center justify-center gap-2 border border-light-gray hover:border-light-gray/80 text-navy px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
               >
                 Coach Portal
                 <ArrowRight className="w-4 h-4" />
@@ -96,21 +96,21 @@ export default function ConfirmationPage() {
             <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Clock className="w-8 h-8 text-amber-400" />
             </div>
-            <h1 className="text-2xl font-bold text-white font-heading mb-2">
+            <h1 className="text-2xl font-bold text-navy font-heading mb-2">
               Payment Processing
             </h1>
-            <p className="text-text-secondary mb-2">
+            <p className="text-text-muted mb-2">
               Waiting for payment confirmation for{" "}
-              <span className="text-white font-semibold">{regStatus?.teamName}</span>.
+              <span className="text-navy font-semibold">{regStatus?.teamName}</span>.
             </p>
-            <p className="text-text-secondary text-sm mb-4">
+            <p className="text-text-muted text-sm mb-4">
               This page will update automatically once your payment is confirmed.
             </p>
             <Loader2 className="w-5 h-5 animate-spin text-amber-400 mx-auto" />
           </>
         ) : (
           <>
-            <p className="text-white/40">Registration not found.</p>
+            <p className="text-text-muted">Registration not found.</p>
             <Link href="/tournaments" className="text-red text-sm mt-4 inline-block">
               Browse Tournaments
             </Link>

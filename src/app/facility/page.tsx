@@ -277,7 +277,7 @@ export default function FacilityPage() {
                   <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="flex items-start gap-5 lg:gap-6">
                     <div className="w-16 h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                      <feature.icon className="w-7 h-7 text-white" />
+                      <feature.icon className="w-7 h-7 text-white" aria-hidden="true" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-navy font-[var(--font-chakra)] font-bold text-xl lg:text-2xl uppercase tracking-tight mb-2">
@@ -299,7 +299,7 @@ export default function FacilityPage() {
               <AnimateIn key={feature.title} delay={(i + 2) * 80}>
                 <div className="group relative bg-off-white border border-light-gray rounded-2xl p-6 lg:p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full text-center">
                   <div className="w-12 h-12 bg-gradient-to-br from-navy to-navy-dark rounded-xl flex items-center justify-center mx-auto mb-4 shadow-md">
-                    <feature.icon className="w-5 h-5 text-white" />
+                    <feature.icon className="w-5 h-5 text-white" aria-hidden="true" />
                   </div>
                   <h3 className="text-navy font-[var(--font-chakra)] font-bold text-sm lg:text-base uppercase tracking-tight mb-1.5">
                     {feature.title}

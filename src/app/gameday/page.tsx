@@ -144,7 +144,7 @@ export default function GameDayPage() {
                         : "bg-navy text-white"
                     }`}
                   >
-                    <section.icon className="w-5 h-5" />
+                    <section.icon className="w-5 h-5" aria-hidden="true" />
                   </div>
                 </div>
                 <div>
@@ -177,7 +177,7 @@ export default function GameDayPage() {
       </section>
 
       {/* Getting Here */}
-      <section className="py-16 bg-navy">
+      <section className="py-16 bg-navy" aria-label="Getting here and parking">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimateIn>
             <div className="flex items-center gap-3 mb-6">

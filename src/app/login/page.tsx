@@ -119,8 +119,8 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 flex items-start gap-2">
-                <span className="text-red mt-0.5">!</span>
+              <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 flex items-start gap-2" role="alert" aria-live="assertive">
+                <span className="text-red mt-0.5" aria-hidden="true">!</span>
                 <span>{error}</span>
               </div>
             )}

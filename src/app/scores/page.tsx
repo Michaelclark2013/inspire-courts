@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import ScoresPageClient from "@/components/scores/ScoresPageClient";
 import BackToTop from "@/components/ui/BackToTop";
+import AnimateIn from "@/components/ui/AnimateIn";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 
 export const metadata: Metadata = {
   title: "Live Scores & Standings | Inspire Courts AZ",
-  description:
-    "Follow live game scores and league standings at Inspire Courts AZ in Gilbert, Arizona.",
-  alternates: {
-    canonical: "https://inspirecourtsaz.com/scores",
-  },
+  description: "Follow live game scores and league standings at Inspire Courts AZ in Gilbert, Arizona.",
+  alternates: { canonical: "https://inspirecourtsaz.com/scores" },
   openGraph: {
     title: "Live Scores & Standings | Inspire Courts AZ",
     description: "Real-time game scores and league standings from Inspire Courts AZ tournaments in Gilbert, Arizona.",
@@ -21,48 +21,68 @@ export const metadata: Metadata = {
 
 export default function ScoresPage() {
   return (
-    <main className="min-h-screen bg-navy">
+    <main className="min-h-screen bg-white">
       {/* Hero */}
       <section className="relative pt-32 pb-16 px-4">
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-dark via-navy to-navy" />
+        <div className="absolute inset-0 overflow-hidden">
+          <Image
+            src="/images/courts-bg.jpg"
+            alt="Inspire Courts AZ"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/90" />
+        </div>
         <div className="relative max-w-4xl mx-auto text-center">
-          <p className="text-red text-xs font-bold uppercase tracking-[0.25em] mb-3">
-            Inspire Courts AZ
-          </p>
-          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white font-heading mb-4">
-            Live Scores &<br />
-            Standings
-          </h1>
-          <p className="text-white/50 text-sm max-w-md mx-auto">
-            Real-time game scores and league standings. Updates automatically
-            during live games.
-          </p>
+          <AnimateIn>
+            <p className="text-red text-xs font-bold uppercase tracking-[0.25em] mb-3">
+              Inspire Courts AZ
+            </p>
+            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white font-heading mb-4">
+              Live Scores &<br />
+              Standings
+            </h1>
+            <p className="text-white/50 text-sm max-w-md mx-auto">
+              Real-time game scores and league standings. Updates automatically
+              during live games.
+            </p>
+          </AnimateIn>
         </div>
       </section>
 
-      <ScoresPageClient />
+      {/* Scoreboard — kept dark for live game viewing */}
+      <section className="bg-navy py-8" aria-label="Live scoreboard">
+        <div className="max-w-4xl mx-auto px-4">
+          <ScoresPageClient />
+        </div>
+      </section>
 
       {/* Registration CTA */}
-      <section className="px-4 pb-16">
+      <section className="px-4 py-16">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-r from-red/20 to-red/5 border border-red/20 rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h3 className="text-white font-bold text-lg font-heading uppercase tracking-tight">
-                Want to Compete?
-              </h3>
-              <p className="text-white/60 text-sm">
-                Register your team for the next tournament.
-              </p>
+          <AnimateIn>
+            <div className="bg-white border border-light-gray rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h3 className="text-navy font-bold text-lg font-heading uppercase tracking-tight">
+                  Want to Compete?
+                </h3>
+                <p className="text-text-muted text-sm">
+                  Register your team for the next tournament.
+                </p>
+              </div>
+              <Link
+                href="/tournaments"
+                className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
+              >
+                Browse Tournaments <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
-            <Link
-              href="/tournaments"
-              className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
-            >
-              Browse Tournaments <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
+          </AnimateIn>
         </div>
       </section>
+
+      <QuickContactBar subject="Scores" label="Need help?" />
 
       <BackToTop />
     </main>

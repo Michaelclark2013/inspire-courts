@@ -78,13 +78,6 @@ const FALLBACK_FEATURES = [
   { title: "Climate Controlled", desc: "Fully air-conditioned, 52,000 sq ft facility. No Arizona heat — play in comfort year-round." },
 ];
 
-const FALLBACK_STATS = [
-  { value: "500+", label: "Teams Hosted" },
-  { value: "30+", label: "Tournaments" },
-  { value: "5,000+", label: "Players" },
-  { value: "52K", label: "Sq Ft Facility" },
-];
-
 export default function Home() {
   const page = getPageContent("home");
   const features = page ? getList(page, "Facility Features") : [];
@@ -129,13 +122,15 @@ export default function Home() {
 
           <AnimateIn delay={300}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/tournaments"
+              <a
+                href="https://offsznhoops.leagueapps.com/tournaments"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
               >
                 {page ? getField(page, "Hero", "ctaPrimary") : "Register for Next Event"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </a>
               <Link
                 href="/facility"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
@@ -149,30 +144,51 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── STATS BAR ── */}
-      <section className="bg-red py-8 shadow-[0_4px_20px_rgba(204,0,0,0.3)]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-white/20">
-            {FALLBACK_STATS.map((stat, i) => {
-              const value = (page ? getField(page, "Stats", `stat${i + 1}Value`) : "") || stat.value;
-              const label = (page ? getField(page, "Stats", `stat${i + 1}Label`) : "") || stat.label;
-              return (
-                <AnimateIn key={label} delay={i * 100}>
-                  <div className="text-center px-4 hover:scale-105 transition-transform cursor-default" title={`${value} ${label}`}>
-                    <p className="text-2xl md:text-3xl font-bold text-white font-[var(--font-chakra)] leading-none mb-1">
-                      {value}
+      {/* ── QUICK NAV ── */}
+      <section className="py-12 lg:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {[
+              { href: "/training", title: "Private Training", desc: "1-on-1 and small group sessions", icon: "Target" },
+              { href: "/teams", title: "Team Inspire", desc: "Club basketball on MADE Hoops", icon: "Users" },
+              { href: "/prep", title: "Inspire Prep", desc: "Basketball prep school program", icon: "GraduationCap" },
+              { href: "https://offsznhoops.leagueapps.com/tournaments", title: "Tournaments", desc: "Register for OFF SZN HOOPS", icon: "Trophy", external: true },
+            ].map((item, i) => (
+              <AnimateIn key={item.title} delay={i * 80}>
+                {item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col bg-off-white border border-light-gray rounded-2xl p-5 lg:p-6 hover:border-red/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full"
+                  >
+                    <h3 className="text-navy font-[var(--font-chakra)] font-bold text-sm lg:text-base uppercase tracking-tight mb-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-text-muted text-xs lg:text-sm leading-relaxed flex-1">
+                      {item.desc}
                     </p>
-                    <p className="text-xs uppercase tracking-wider text-white/80 font-semibold">
-                      {label}
+                    <ArrowRight className="w-4 h-4 text-red mt-3 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                ) : (
+                  <Link
+                    href={item.href}
+                    className="group flex flex-col bg-off-white border border-light-gray rounded-2xl p-5 lg:p-6 hover:border-red/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full"
+                  >
+                    <h3 className="text-navy font-[var(--font-chakra)] font-bold text-sm lg:text-base uppercase tracking-tight mb-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-text-muted text-xs lg:text-sm leading-relaxed flex-1">
+                      {item.desc}
                     </p>
-                  </div>
-                </AnimateIn>
-              );
-            })}
+                    <ArrowRight className="w-4 h-4 text-red mt-3 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                )}
+              </AnimateIn>
+            ))}
           </div>
         </div>
       </section>
-
 
       {/* ── JALEN WILLIAMS FEATURE ── */}
       <section className="py-14 lg:py-28 bg-white">
@@ -181,13 +197,13 @@ export default function Home() {
             <AnimateIn>
               <div>
                 <span className="inline-block bg-red/10 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
-                  As Seen On
+                  Homegrown Talent
                 </span>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-navy mb-6 font-[var(--font-chakra)] leading-[0.95]">
-                  NBA Star <span className="text-red">Jalen Williams</span> Knows Inspire Courts
+                  <span className="text-red">Jalen Williams</span> Grew Up Here
                 </h2>
                 <p className="text-text-muted text-lg leading-relaxed mb-6">
-                  OKC Thunder guard and Gilbert, AZ native Jalen Williams shouts out Inspire Courts. When an NBA player from your city recognizes what you&apos;re building — you know it&apos;s real.
+                  OKC Thunder guard Jalen Williams grew up training at Inspire Courts in Gilbert, AZ. From our gym to the NBA — this is where it starts.
                 </p>
                 <Link
                   href="/about"
@@ -204,7 +220,7 @@ export default function Home() {
                   <iframe
                     className="absolute inset-0 w-full h-full"
                     src="https://www.youtube.com/embed/hLGrKauJzLc?rel=0&modestbranding=1"
-                    title="NBA Star Jalen Williams talks about Inspire Courts"
+                    title="Jalen Williams grew up at Inspire Courts"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     loading="lazy"
@@ -217,7 +233,7 @@ export default function Home() {
       </section>
 
       {/* ── FACILITY FEATURES ── */}
-      <section className="py-14 lg:py-32 bg-white">
+      <section className="py-12 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow={page ? getField(page, "Facility Features", "eyebrow") : "The Facility"}
@@ -251,9 +267,8 @@ export default function Home() {
         </div>
       </section>
 
-
       {/* ── DUAL BRAND CARDS ── */}
-      <section className="py-14 lg:py-32 bg-off-white">
+      <section className="py-12 lg:py-20 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Our Mission"
@@ -349,9 +364,8 @@ export default function Home() {
         </div>
       </section>
 
-
       {/* ── LOCATION + CTA ── */}
-      <section className="py-14 lg:py-32 bg-white">
+      <section className="py-12 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimateIn>
@@ -431,7 +445,7 @@ export default function Home() {
       </section>
 
       {/* ── EMAIL SIGNUP ── */}
-      <section className="relative py-14 lg:py-28 bg-navy overflow-hidden">
+      <section className="relative py-12 lg:py-20 bg-navy overflow-hidden">
         <Image src="/images/hero-bg-texture.jpg" alt="" fill sizes="100vw" className="object-cover object-center opacity-[0.05]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(204,0,0,0.08),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -442,7 +456,7 @@ export default function Home() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="relative py-16 lg:py-32 overflow-hidden">
+      <section className="relative py-14 lg:py-24 overflow-hidden">
         <Image src="/images/hero-bg-texture.jpg" alt="" fill sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/95 to-navy/85" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,_rgba(204,0,0,0.15),transparent_60%)]" />

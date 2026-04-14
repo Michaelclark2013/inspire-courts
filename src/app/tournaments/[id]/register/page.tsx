@@ -116,26 +116,26 @@ export default function RegisterPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-white/40" />
+      <div className="min-h-screen bg-off-white flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-text-muted" />
       </div>
     );
   }
 
   if (!tournament) {
     return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <p className="text-white/40">Tournament not found.</p>
+      <div className="min-h-screen bg-off-white flex items-center justify-center">
+        <p className="text-text-muted">Tournament not found.</p>
       </div>
     );
   }
 
   if (!tournament.registrationOpen) {
     return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+      <div className="min-h-screen bg-off-white flex items-center justify-center">
         <div className="text-center">
-          <Trophy className="w-10 h-10 mx-auto mb-3 text-white/20" />
-          <p className="text-white/40 mb-4">Registration is not open for this tournament.</p>
+          <Trophy className="w-10 h-10 mx-auto mb-3 text-text-muted" />
+          <p className="text-text-muted mb-4">Registration is not open for this tournament.</p>
           <Link href={`/tournaments/${id}`} className="text-red text-sm hover:text-red-hover">
             View Tournament
           </Link>
@@ -155,21 +155,21 @@ export default function RegisterPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen bg-off-white">
       <div className="max-w-2xl mx-auto px-4 py-8 lg:py-12">
         <Link
           href={`/tournaments/${id}`}
-          className="text-text-secondary text-xs hover:text-white flex items-center gap-1 mb-6 transition-colors"
+          className="text-text-muted text-xs hover:text-navy flex items-center gap-1 mb-6 transition-colors"
         >
           <ChevronLeft className="w-3 h-3" /> Back to {tournament.name}
         </Link>
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white font-heading mb-1">
+          <h1 className="text-2xl font-bold text-navy font-heading mb-1">
             Register for {tournament.name}
           </h1>
-          <div className="flex items-center gap-3 text-text-secondary text-sm">
+          <div className="flex items-center gap-3 text-text-muted text-sm">
             <span>
               {new Date(tournament.startDate + "T00:00:00").toLocaleDateString("en-US", {
                 month: "long",
@@ -200,7 +200,7 @@ export default function RegisterPage() {
                       ? "bg-emerald-500/20 text-emerald-400"
                       : active
                       ? "bg-red/20 text-red"
-                      : "bg-white/5 text-white/20"
+                      : "bg-light-gray text-text-muted"
                   }`}
                 >
                   {done ? (
@@ -211,7 +211,7 @@ export default function RegisterPage() {
                 </div>
                 <span
                   className={`text-xs font-semibold uppercase tracking-wider ${
-                    active ? "text-white" : "text-white/30"
+                    active ? "text-navy" : "text-text-muted"
                   }`}
                 >
                   {s.label}
@@ -232,13 +232,13 @@ export default function RegisterPage() {
 
         {/* Step 1: Team Info */}
         {step === 1 && (
-          <div className="bg-card border border-white/10 rounded-2xl p-6">
-            <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+          <div className="bg-white border border-light-gray shadow-sm rounded-2xl p-6">
+            <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
               Team Information
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Team Name *
                 </label>
                 <input
@@ -246,20 +246,20 @@ export default function RegisterPage() {
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
                   required
-                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                  className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                   placeholder="e.g. Phoenix Elite"
                 />
               </div>
               {tournament.divisions.length > 0 && (
                 <div>
-                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Division *
                   </label>
                   <select
                     value={division}
                     onChange={(e) => setDivision(e.target.value)}
                     required
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
                   >
                     <option value="">Select division</option>
                     {tournament.divisions.map((d) => (
@@ -272,7 +272,7 @@ export default function RegisterPage() {
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Coach Name *
                   </label>
                   <input
@@ -280,12 +280,12 @@ export default function RegisterPage() {
                     value={coachName}
                     onChange={(e) => setCoachName(e.target.value)}
                     required
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="Full name"
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Coach Email *
                   </label>
                   <input
@@ -293,26 +293,26 @@ export default function RegisterPage() {
                     value={coachEmail}
                     onChange={(e) => setCoachEmail(e.target.value)}
                     required
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="coach@email.com"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Phone (optional)
                   </label>
                   <input
                     type="tel"
                     value={coachPhone}
                     onChange={(e) => setCoachPhone(e.target.value)}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="(555) 123-4567"
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Number of Players
                   </label>
                   <input
@@ -321,7 +321,7 @@ export default function RegisterPage() {
                     max={25}
                     value={playerCount}
                     onChange={(e) => setPlayerCount(e.target.value)}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red placeholder:text-white/25"
+                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="e.g. 10"
                   />
                 </div>
@@ -351,11 +351,11 @@ export default function RegisterPage() {
 
         {/* Step 2: Waivers (if required) */}
         {step === 2 && tournament.requireWaivers && (
-          <div className="bg-card border border-white/10 rounded-2xl p-6">
-            <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+          <div className="bg-white border border-light-gray shadow-sm rounded-2xl p-6">
+            <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
               Waivers & Acknowledgment
             </h2>
-            <div className="bg-navy/50 border border-white/5 rounded-xl p-4 mb-4 text-white/60 text-sm space-y-2">
+            <div className="bg-off-white border border-light-gray rounded-xl p-4 mb-4 text-text-muted text-sm space-y-2">
               <p>
                 All players must have a signed waiver on file before participating.
                 You can submit waivers through the coach portal after registration.
@@ -371,7 +371,7 @@ export default function RegisterPage() {
                 onChange={(e) => setWaiversAcknowledged(e.target.checked)}
                 className="mt-1 accent-red"
               />
-              <span className="text-white text-sm">
+              <span className="text-navy text-sm">
                 I acknowledge that all players on my team will have signed waivers
                 before competing.
               </span>
@@ -379,7 +379,7 @@ export default function RegisterPage() {
             <div className="mt-6 flex justify-between">
               <button
                 onClick={() => setStep(1)}
-                className="text-white/40 hover:text-white text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="text-text-muted hover:text-navy text-sm font-semibold uppercase tracking-wider transition-colors"
               >
                 Back
               </button>
@@ -402,34 +402,34 @@ export default function RegisterPage() {
 
         {/* Final step: Payment / Confirm */}
         {step === totalSteps && (
-          <div className="bg-card border border-white/10 rounded-2xl p-6">
-            <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+          <div className="bg-white border border-light-gray shadow-sm rounded-2xl p-6">
+            <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
               {needsPayment ? "Review & Pay" : "Review & Confirm"}
             </h2>
 
             {/* Summary */}
-            <div className="bg-navy/50 border border-white/5 rounded-xl p-4 mb-6 space-y-2">
+            <div className="bg-off-white border border-light-gray rounded-xl p-4 mb-6 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-white/50">Team</span>
-                <span className="text-white font-semibold">{teamName}</span>
+                <span className="text-text-muted">Team</span>
+                <span className="text-navy font-semibold">{teamName}</span>
               </div>
               {division && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-white/50">Division</span>
-                  <span className="text-white">{division}</span>
+                  <span className="text-text-muted">Division</span>
+                  <span className="text-navy">{division}</span>
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-white/50">Coach</span>
-                <span className="text-white">{coachName}</span>
+                <span className="text-text-muted">Coach</span>
+                <span className="text-navy">{coachName}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-white/50">Email</span>
-                <span className="text-white">{coachEmail}</span>
+                <span className="text-text-muted">Email</span>
+                <span className="text-navy">{coachEmail}</span>
               </div>
               {needsPayment && (
-                <div className="flex justify-between text-sm pt-2 border-t border-white/5">
-                  <span className="text-white/50">Entry Fee</span>
+                <div className="flex justify-between text-sm pt-2 border-t border-light-gray">
+                  <span className="text-text-muted">Entry Fee</span>
                   <span className="text-emerald-400 font-bold">
                     ${(fee / 100).toFixed(2)}
                   </span>
@@ -442,7 +442,7 @@ export default function RegisterPage() {
                 onClick={() =>
                   setStep(tournament.requireWaivers ? 2 : 1)
                 }
-                className="text-white/40 hover:text-white text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="text-text-muted hover:text-navy text-sm font-semibold uppercase tracking-wider transition-colors"
               >
                 Back
               </button>

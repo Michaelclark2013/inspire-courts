@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import AnimateIn from "@/components/ui/AnimateIn";
+import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { getPageContent, getField } from "@/lib/content";
 
@@ -174,7 +175,7 @@ export default function AboutPage() {
             <AnimateIn>
               <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-navy rounded-full flex items-center justify-center mb-6">
-                  <Target className="w-6 h-6 text-white" />
+                  <Target className="w-6 h-6 text-white" aria-hidden="true" />
                 </div>
                 <h3 className="text-navy font-semibold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
                   Inspire Courts
@@ -190,7 +191,7 @@ export default function AboutPage() {
             <AnimateIn delay={150}>
               <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-red rounded-full flex items-center justify-center mb-6">
-                  <Flame className="w-6 h-6 text-white" />
+                  <Flame className="w-6 h-6 text-white" aria-hidden="true" />
                 </div>
                 <h3 className="text-navy font-semibold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
                   OFF SZN HOOPS
@@ -204,7 +205,7 @@ export default function AboutPage() {
             <AnimateIn delay={300}>
               <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-navy rounded-full flex items-center justify-center mb-6">
-                  <Camera className="w-6 h-6 text-white" />
+                  <Camera className="w-6 h-6 text-white" aria-hidden="true" />
                 </div>
                 <h3 className="text-navy font-semibold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
                   @AZFinestMixtape
@@ -264,7 +265,7 @@ export default function AboutPage() {
               <AnimateIn key={item.title} delay={i * 60}>
                 <div className="flex gap-4 p-5 rounded-xl border border-light-gray bg-off-white transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:border-red/20">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-navy text-white">
-                    <item.icon className="w-5 h-5" />
+                    <item.icon className="w-5 h-5" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="text-navy font-semibold text-sm uppercase tracking-tight mb-1 font-[var(--font-chakra)]">
@@ -287,7 +288,7 @@ export default function AboutPage() {
           <AnimateIn>
             <div className="text-center mb-12">
               <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-3 font-[var(--font-chakra)]">
-                As Seen On
+                Homegrown Talent
               </p>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white font-[var(--font-chakra)]">
                 On the Map
@@ -298,51 +299,24 @@ export default function AboutPage() {
             </div>
           </AnimateIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Jalen Williams */}
-            <AnimateIn>
-              <div className="text-center">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-auto" style={{ maxWidth: "360px", aspectRatio: "9/16" }}>
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/hLGrKauJzLc?rel=0&modestbranding=1"
-                    title="NBA Star Jalen Williams talks about Inspire Courts"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    loading="lazy"
-                  />
-                </div>
-                <p className="text-white font-bold text-sm uppercase tracking-wide mt-4 font-[var(--font-chakra)]">
-                  Jalen Williams
-                </p>
-                <p className="text-white/50 text-xs uppercase tracking-wider">
-                  NBA — OKC Thunder · Gilbert, AZ Native
-                </p>
-              </div>
-            </AnimateIn>
-
-            {/* Adan Diggs — Inspire Prep */}
-            <AnimateIn delay={150}>
-              <div className="text-center">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-auto" style={{ maxWidth: "360px", aspectRatio: "9/16" }}>
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/Vjih-x7OBQ8?rel=0&modestbranding=1"
-                    title="Adan Diggs playing for Inspire Prep"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    loading="lazy"
-                  />
-                </div>
-                <p className="text-white font-bold text-sm uppercase tracking-wide mt-4 font-[var(--font-chakra)]">
-                  Adan Diggs
-                </p>
-                <p className="text-white/50 text-xs uppercase tracking-wider">
-                  Inspire Prep
-                </p>
-              </div>
-            </AnimateIn>
-          </div>
+          <VideoShowcase
+            videos={[
+              { id: "hLGrKauJzLc", title: "Jalen Williams grew up at Inspire Courts", name: "Jalen Williams", subtitle: "NBA — OKC Thunder · Grew Up at Inspire", aspect: "9/16" },
+              { id: "zYIBPJeUjGU", title: "Marvin Bagley III in 8th grade at Inspire Courts", name: "Marvin Bagley III", subtitle: "NBA — 8th Grade at Inspire" },
+              { id: "lz8D5WPdA3w", title: "Nico Mannion when he was young at Inspire Courts", name: "Nico Mannion", subtitle: "NBA — Growing Up at Inspire" },
+              { id: "FmcgFmICrf4", title: "Koa Peat training at Inspire Courts", name: "Koa Peat", subtitle: "#1 Recruit · Training at Inspire" },
+              { id: "S8HgOlyWnDg", title: "Cody Williams training at Inspire Courts", name: "Cody Williams", subtitle: "NBA · Training at Inspire" },
+              { id: "ENl-hXQbEo8", title: "Thompson Twins playing for Team Inspire", name: "Thompson Twins", subtitle: "NBA · Team Inspire Alumni" },
+              { id: "HkiDY_bwRVw", title: "Saben Lee training at Inspire Courts", name: "Saben Lee", subtitle: "NBA — Training at Inspire" },
+              { id: "iwla0gak5JU", title: "Zylan Cheatham training at Inspire Courts", name: "Zylan Cheatham", subtitle: "NBA · Training at Inspire" },
+              { id: "OUkcMQd_aWM", title: "Cam Williams training at Inspire Courts", name: "Cam Williams", subtitle: "NBA Prospect · Training at Inspire" },
+              { id: "a4OaOYwTCao", title: "Saben Lee at Inspire Courts", name: "Saben Lee", subtitle: "NBA — At Inspire Courts" },
+              { id: "Vjih-x7OBQ8", title: "Adan Diggs playing for Inspire Prep", name: "Adan Diggs", subtitle: "Inspire Prep", aspect: "9/16" },
+              { id: "HXmJvuzzPxg", title: "Inspire Prep 2030", name: "Inspire Prep 2030", subtitle: "Next Generation", aspect: "9/16" },
+            ]}
+            initialCount={4}
+            theme="dark"
+          />
         </div>
       </section>
 

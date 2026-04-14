@@ -252,6 +252,37 @@ export default function PrepPage() {
         </div>
       </section>
 
+      {/* Instagram Reel — See Us In Action */}
+      <section className="py-14 lg:py-24 bg-navy">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <AnimateIn>
+            <span className="inline-block bg-red/20 text-red text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4 font-[var(--font-chakra)]">
+              On The Gram
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-white mb-4 font-[var(--font-chakra)] leading-[0.95]">
+              Watch Our <span className="text-red">Athletes</span>
+            </h2>
+            <p className="text-white/60 text-base mb-10 max-w-xl mx-auto">
+              Follow along as our players train, compete, and level up.
+            </p>
+            <div
+              className="mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+              style={{ maxWidth: "360px", aspectRatio: "9/16", position: "relative" }}
+            >
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://www.instagram.com/reel/DQ-4oaDkSZx/embed/"
+                title="Inspire Prep — Instagram Reel"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                allowFullScreen
+                loading="lazy"
+                style={{ border: "none" }}
+              />
+            </div>
+          </AnimateIn>
+        </div>
+      </section>
+
       {/* Program Highlights — featured card + grid layout for desktop */}
       <section className="py-14 lg:py-24 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

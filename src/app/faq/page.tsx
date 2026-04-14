@@ -97,10 +97,12 @@ const FAQ_CATEGORIES = [
 function AccordionItem({ q, a, id }: { q: string; a: string; id: string }) {
   const [open, setOpen] = useState(false);
   const answerId = `faq-answer-${id}`;
+  const buttonId = `faq-btn-${id}`;
 
   return (
     <div className="border border-light-gray rounded-xl overflow-hidden">
       <button
+        id={buttonId}
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left bg-white hover:bg-off-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
         aria-expanded={open}
@@ -114,11 +116,13 @@ function AccordionItem({ q, a, id }: { q: string; a: string; id: string }) {
             "w-5 h-5 text-red flex-shrink-0 transition-transform duration-200",
             open && "rotate-180"
           )}
+          aria-hidden="true"
         />
       </button>
       <div
         id={answerId}
         role="region"
+        aria-labelledby={buttonId}
         className={cn(
           "overflow-hidden transition-all duration-300",
           open ? "max-h-[1000px]" : "max-h-0"

@@ -118,21 +118,7 @@ export default function BookingForm() {
   }
 
   return (
-    <div className="min-h-screen bg-white py-16 px-4 sm:px-6">
-      <div className="max-w-xl mx-auto">
-
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl sm:text-5xl font-bold uppercase tracking-tight text-navy mb-4 font-[var(--font-chakra)]">
-            Book Our Facility
-          </h1>
-          <p className="text-text-muted text-lg leading-relaxed">
-            Fill out the form below and we&apos;ll get back to you within 24 hours to confirm availability and pricing.
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
 
           <div>
             <label htmlFor="name" className={LABEL_CLASS}>Full Name *</label>
@@ -208,6 +194,7 @@ export default function BookingForm() {
               id="preferredDate"
               name="preferredDate"
               required
+              min={new Date().toISOString().split("T")[0]}
               className={INPUT_CLASS_LG}
             />
           </div>
@@ -272,17 +259,13 @@ export default function BookingForm() {
             {loading ? "Submitting…" : "Submit Booking Request"}
             {!loading && <ArrowRight className="w-4 h-4" />}
           </button>
-        </form>
-
-        {/* Footer note */}
-        <p className="text-center text-sm text-text-muted mt-8">
-          Questions? Email us at{" "}
-          <a href={`mailto:${FACILITY_EMAIL}`} className="text-red hover:underline">
-            {FACILITY_EMAIL}
-          </a>
-        </p>
-
-      </div>
-    </div>
+      {/* Footer note */}
+      <p className="text-center text-sm text-text-muted mt-8">
+        Questions? Email us at{" "}
+        <a href={`mailto:${FACILITY_EMAIL}`} className="text-red hover:underline">
+          {FACILITY_EMAIL}
+        </a>
+      </p>
+    </form>
   );
 }

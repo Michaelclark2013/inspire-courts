@@ -23,19 +23,17 @@ export default function ScoresPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* Hero */}
-      <section className="relative pt-32 pb-16 px-4">
-        <div className="absolute inset-0 overflow-hidden">
-          <Image
-            src="/images/courts-bg.jpg"
-            alt="Inspire Courts AZ"
-            fill
-            sizes="100vw"
-            className="object-cover object-center"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/90" />
-        </div>
-        <div className="relative max-w-4xl mx-auto text-center">
+      <section className="relative py-20 sm:py-28 lg:py-36 overflow-hidden">
+        <Image
+          src="/images/courts-bg.jpg"
+          alt="Inspire Courts AZ live scores"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/90" />
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <AnimateIn>
             <p className="text-red text-xs font-bold uppercase tracking-[0.25em] mb-3">
               Inspire Courts AZ

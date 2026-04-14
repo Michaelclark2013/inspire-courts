@@ -98,11 +98,12 @@ export default function ClubInterestForm() {
       {/* Common Fields */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+          <label htmlFor="club-name" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
             Full Name *
           </label>
           <input
             type="text"
+            id="club-name"
             name="name"
             required
             autoComplete="name"
@@ -111,11 +112,12 @@ export default function ClubInterestForm() {
           />
         </div>
         <div>
-          <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+          <label htmlFor="club-email" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
             Email *
           </label>
           <input
             type="email"
+            id="club-email"
             name="email"
             required
             autoComplete="email"
@@ -127,11 +129,12 @@ export default function ClubInterestForm() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+          <label htmlFor="club-phone" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
             Phone *
           </label>
           <input
             type="tel"
+            id="club-phone"
             name="phone"
             required
             autoComplete="tel"
@@ -140,10 +143,11 @@ export default function ClubInterestForm() {
           />
         </div>
         <div>
-          <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+          <label htmlFor="club-division" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
             Division Interest
           </label>
           <select
+            id="club-division"
             name="division"
             className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors"
           >

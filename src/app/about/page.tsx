@@ -281,6 +281,17 @@ export default function AboutPage() {
               </AnimateIn>
             ))}
           </div>
+          <AnimateIn delay={100}>
+            <div className="max-w-4xl mx-auto mt-8 text-center">
+              <Link
+                href="/gameday"
+                className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
+              >
+                View Full Game Day Info
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </AnimateIn>
         </div>
       </section>
 

@@ -188,7 +188,7 @@ export default function CampsPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-14 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-6 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
-              Inspire Courts AZ
+              Youth Basketball Camps
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg leading-[0.9]">
               Basketball
@@ -667,15 +667,15 @@ export default function CampsPage() {
               <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/tournaments"
+              href="/prep"
               className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
             >
               <div>
                 <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
-                  Tournaments
+                  Inspire Prep
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">
-                  Compete in OFF SZN HOOPS events
+                  Full-time basketball prep school program
                 </p>
               </div>
               <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />

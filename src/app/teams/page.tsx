@@ -390,14 +390,14 @@ export default function TeamsPage() {
               <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/events"
+              href="/camps"
               className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
             >
               <div>
                 <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
-                  Tournaments
+                  Basketball Camps
                 </p>
-                <p className="text-text-muted text-xs mt-0.5">Upcoming OFF SZN HOOPS events</p>
+                <p className="text-text-muted text-xs mt-0.5">Youth skill camps at Inspire Courts</p>
               </div>
               <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
             </Link>

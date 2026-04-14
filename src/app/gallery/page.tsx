@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
+import BackToTop from "@/components/ui/BackToTop";
 import GalleryPageClient from "./GalleryPageClient";
 
 export const metadata: Metadata = {
@@ -53,7 +54,7 @@ export default function GalleryPage() {
       </section>
 
       {/* Gallery Content */}
-      <section className="py-12 lg:py-20 bg-white">
+      <section aria-label="Photo gallery" className="py-12 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <GalleryPageClient />
         </div>
@@ -106,6 +107,7 @@ export default function GalleryPage() {
         </div>
       </section>
 
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

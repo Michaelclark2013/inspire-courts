@@ -18,6 +18,8 @@ import Image from "next/image";
 import AnimateIn from "@/components/ui/AnimateIn";
 import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
+import BackToTop from "@/components/ui/BackToTop";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 import { getPageContent, getField } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -385,6 +387,8 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <QuickContactBar subject="About" label="Questions?" />
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

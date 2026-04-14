@@ -120,7 +120,7 @@ export default function Footer() {
                 className="flex items-center gap-2.5 text-white/60 hover:text-white text-sm transition-colors"
                 aria-label="@inspirecourts on Instagram"
               >
-                <Camera className="w-4 h-4 flex-shrink-0" />
+                <Camera className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 {SOCIAL_LINKS.instagramHandle}
               </a>
               <a
@@ -130,7 +130,7 @@ export default function Footer() {
                 className="flex items-center gap-2.5 text-white/60 hover:text-white text-sm transition-colors"
                 aria-label="@azfinestmixtape on Instagram"
               >
-                <Camera className="w-4 h-4 flex-shrink-0" />
+                <Camera className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 {SOCIAL_LINKS.instagramMixtapeHandle}
               </a>
               <a
@@ -139,7 +139,7 @@ export default function Footer() {
                 className="flex items-center gap-2.5 text-white/60 hover:text-white text-sm transition-colors"
                 aria-label="Email Inspire Courts"
               >
-                <Mail className="w-4 h-4 flex-shrink-0" />
+                <Mail className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 {FACILITY_EMAIL}
               </a>
               <a
@@ -148,7 +148,7 @@ export default function Footer() {
                 className="flex items-center gap-2.5 text-white/60 hover:text-white text-sm transition-colors"
                 aria-label="Call Inspire Courts"
               >
-                <Phone className="w-4 h-4 flex-shrink-0" />
+                <Phone className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 {FACILITY_PHONE}
               </a>
             </div>

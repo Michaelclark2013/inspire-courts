@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
+import BackToTop from "@/components/ui/BackToTop";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 
 export const metadata: Metadata = {
   title: "Basketball Media Services | Highlights, Film & Content | Inspire Courts AZ",
@@ -454,6 +456,8 @@ export default function MediaPage() {
         </div>
       </section>
 
+      <QuickContactBar subject="Media Services" label="Need a quote?" />
+      <BackToTop />
       <div className="h-16 lg:hidden" />
     </>
   );

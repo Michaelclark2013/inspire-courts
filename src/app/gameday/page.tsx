@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 
 export const metadata: Metadata = {
   title: "Game Day Info | Inspire Courts AZ",
@@ -235,6 +236,7 @@ export default function GameDayPage() {
         </div>
       </section>
 
+      <QuickContactBar subject="Game Day" label="Need help?" />
       <BackToTop />
       <div className="h-16 lg:hidden" />
     </>

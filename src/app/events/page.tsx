@@ -31,7 +31,7 @@ const REGISTER_URL = "/tournaments";
 /* ─── Loading Skeleton ─── */
 function EventsListSkeleton() {
   return (
-    <div aria-hidden="true" role="presentation">
+    <div aria-hidden="true">
       {/* Fake tab bar */}
       <div className="sticky top-[72px] z-30 bg-white border-b border-light-gray shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

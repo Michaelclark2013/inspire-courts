@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
+import QuickContactBar from "@/components/ui/QuickContactBar";
 import { getPageContent, getField, getList } from "@/lib/content";
 import { FACILITY_ADDRESS, FACILITY_PHONE, FACILITY_EMAIL, SOCIAL_LINKS } from "@/lib/constants";
 
@@ -592,6 +593,7 @@ export default function FacilityPage() {
         </div>
       </section>
 
+      <QuickContactBar subject="Facility" label="Questions?" />
       <BackToTop />
       <div className="h-28 lg:hidden" />
     </>

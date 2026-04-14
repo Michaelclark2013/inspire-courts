@@ -84,11 +84,12 @@ function DropdownMenu({
         )}
       >
         <div className="bg-navy-dark border border-white/10 rounded-xl shadow-2xl overflow-hidden">
-          <div className="py-2">
+          <div className="py-2" role="menu" aria-label={`${label} submenu`}>
             {items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
+                role="menuitem"
                 onClick={() => setOpen(false)}
                 className="block px-5 py-3 text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
               >

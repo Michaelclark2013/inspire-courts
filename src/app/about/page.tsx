@@ -26,6 +26,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://inspirecourtsaz.com/about",
   },
+  openGraph: {
+    title: "About Inspire Courts AZ",
+    description: "Arizona's premier indoor basketball & volleyball facility — 7 courts, game film, and a pro-level setup in Gilbert, AZ.",
+    url: "https://inspirecourtsaz.com/about",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ indoor basketball facility" }],
+  },
 };
 
 const sportsOrgSchema = {
@@ -255,7 +261,7 @@ export default function AboutPage() {
               },
             ].map((item, i) => (
               <AnimateIn key={item.title} delay={i * 60}>
-                <div className="flex gap-4 p-5 rounded-xl border border-light-gray bg-off-white">
+                <div className="flex gap-4 p-5 rounded-xl border border-light-gray bg-off-white transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:border-red/20">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-navy text-white">
                     <item.icon className="w-5 h-5" />
                   </div>

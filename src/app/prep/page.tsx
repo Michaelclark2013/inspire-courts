@@ -23,6 +23,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://inspirecourtsaz.com/prep",
   },
+  openGraph: {
+    title: "Inspire Prep — Basketball Prep School in Gilbert, AZ",
+    description: "Elite basketball development meets academic excellence. Train, compete, and prepare for the next level at Inspire Courts AZ.",
+    url: "https://inspirecourtsaz.com/prep",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Prep basketball academy" }],
+  },
 };
 
 const PROGRAM_HIGHLIGHTS = [

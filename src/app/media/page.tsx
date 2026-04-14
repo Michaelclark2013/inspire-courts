@@ -24,6 +24,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://inspirecourtsaz.com/media",
   },
+  openGraph: {
+    title: "Basketball Media Services | @AZFinestMixtape",
+    description: "Professional game film, highlight reels, mixtapes, and social media content for youth basketball players.",
+    url: "https://inspirecourtsaz.com/media",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "AZFinestMixtape basketball media services" }],
+  },
 };
 
 const SERVICES = [

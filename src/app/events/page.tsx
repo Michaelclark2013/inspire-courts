@@ -18,6 +18,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://inspirecourtsaz.com/events",
   },
+  openGraph: {
+    title: "Youth Basketball Tournaments | Inspire Courts AZ",
+    description: "10U–17U boys & girls divisions. 3+ game guarantee, game film available. Register your team at Arizona's premier indoor facility.",
+    url: "https://inspirecourtsaz.com/events",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ youth basketball tournaments" }],
+  },
 };
 
 const REGISTER_URL = "/tournaments";

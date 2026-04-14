@@ -26,6 +26,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://inspirecourtsaz.com/gameday",
   },
+  openGraph: {
+    title: "Game Day Info | Inspire Courts AZ",
+    description: "Location, parking, admission, check-in, schedules, food, and house rules for game day at Inspire Courts AZ.",
+    url: "https://inspirecourtsaz.com/gameday",
+    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ game day" }],
+  },
 };
 
 const INFO_SECTIONS = [
@@ -124,10 +130,10 @@ export default function GameDayPage() {
           {INFO_SECTIONS.map((section, i) => (
             <AnimateIn key={section.title} delay={i * 60}>
               <div
-                className={`bg-white border rounded-xl p-6 lg:p-8 flex gap-4 lg:gap-6 shadow-sm ${
+                className={`bg-white border rounded-xl p-6 lg:p-8 flex gap-4 lg:gap-6 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${
                   section.highlight
                     ? "border-red/40 bg-red/5"
-                    : "border-light-gray"
+                    : "border-light-gray hover:border-red/20"
                 }`}
               >
                 <div className="flex-shrink-0">

@@ -90,7 +90,7 @@ export default function TournamentsPage() {
       <section className="relative overflow-hidden">
         <Image
           src="/images/courts-bg.jpg"
-          alt=""
+          alt="Inspire Courts AZ youth basketball tournament registration"
           fill
           priority
           sizes="100vw"

@@ -265,19 +265,27 @@ export default function PrepPage() {
             <p className="text-white/60 text-base mb-10 max-w-xl mx-auto">
               Follow along as our players train, compete, and level up.
             </p>
-            <div
-              className="mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-              style={{ maxWidth: "360px", aspectRatio: "9/16", position: "relative" }}
-            >
-              <iframe
-                className="absolute inset-0 w-full h-full"
-                src="https://www.instagram.com/reel/DQ-4oaDkSZx/embed/"
-                title="Inspire Prep — Instagram Reel"
-                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                allowFullScreen
-                loading="lazy"
-                style={{ border: "none" }}
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center max-w-[760px] mx-auto">
+              {[
+                { src: "https://www.instagram.com/reel/DQ-4oaDkSZx/embed/", title: "Adan — Inspire Prep Reel 1" },
+                { src: "https://www.instagram.com/reel/CwJQp-CBtTW/embed/", title: "Adan — Inspire Prep Reel 2" },
+              ].map((reel) => (
+                <div
+                  key={reel.src}
+                  className="w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                  style={{ maxWidth: "360px", aspectRatio: "9/16", position: "relative" }}
+                >
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src={reel.src}
+                    title={reel.title}
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    allowFullScreen
+                    loading="lazy"
+                    style={{ border: "none" }}
+                  />
+                </div>
+              ))}
             </div>
           </AnimateIn>
         </div>

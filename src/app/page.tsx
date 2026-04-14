@@ -289,27 +289,27 @@ export default function Home() {
       </section>
 
       {/* ── FACILITY FEATURES ── */}
-      <section className="py-12 lg:py-20 bg-white">
+      <section className="py-10 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow={page ? getField(page, "Facility Features", "eyebrow") : "The Facility"}
             title={page ? getField(page, "Facility Features", "headline") : "Built for Competitors"}
             description={page ? getField(page, "Facility Features", "description") : "Professional-grade courts, technology, and amenities designed for serious athletes."}
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
             {FEATURE_ICONS.map((Icon, i) => {
               const item = features[i];
               const title = item?.title || FALLBACK_FEATURES[i].title;
               const desc = item?.description || FALLBACK_FEATURES[i].desc;
               return (
                 <AnimateIn key={title} delay={i * 80}>
-                  <div className="group relative bg-white border border-light-gray rounded-2xl p-6 sm:p-8 lg:p-10 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden h-full">
+                  <div className="group relative bg-white border border-light-gray rounded-2xl p-5 sm:p-8 lg:p-10 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden h-full">
                     {/* Red accent stripe */}
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-red rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
+                    <div className="w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-br from-navy to-navy-dark rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
                       <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                     </div>
-                    <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-lg lg:text-xl uppercase tracking-tight mb-3">
+                    <h3 className="text-navy font-[var(--font-chakra)] font-semibold text-base lg:text-xl uppercase tracking-tight mb-2">
                       {title}
                     </h3>
                     <p className="text-text-muted text-sm leading-relaxed">

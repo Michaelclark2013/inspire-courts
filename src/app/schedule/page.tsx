@@ -113,9 +113,12 @@ export default function SchedulePage() {
                       {event.date}
                     </p>
                   </div>
-                  <span className="text-text-muted text-xs font-semibold uppercase">
-                    Completed
-                  </span>
+                  <Link
+                    href="/tournaments"
+                    className="inline-flex items-center gap-1 text-red text-xs font-semibold uppercase hover:underline"
+                  >
+                    View Results <ArrowRight className="w-3 h-3" />
+                  </Link>
                 </div>
               </AnimateIn>
             ))}

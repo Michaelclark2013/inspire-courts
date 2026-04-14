@@ -65,8 +65,8 @@ const localBusinessSchema = {
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: 33.3528,
-    longitude: -111.7897,
+    latitude: 33.3825,
+    longitude: -111.789,
   },
   sameAs: [
     "https://www.instagram.com/inspirecourts",

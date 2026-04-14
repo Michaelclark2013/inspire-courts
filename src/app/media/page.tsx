@@ -295,7 +295,7 @@ export default function MediaPage() {
                 </h2>
                 <p className="text-text-muted leading-relaxed mb-6">
                   The same team behind @AZFinestMixtape also produces
-                  professional videography for weddings, quincea&ntilde;eras,
+                  professional videography for weddings, quinceañeras,
                   corporate events, and private celebrations. Cinematic quality,
                   same creative eye.
                 </p>

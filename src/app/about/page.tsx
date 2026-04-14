@@ -58,7 +58,7 @@ const sportsOrgSchema = {
     },
   },
   sameAs: [
-    "https://www.instagram.com/inspirecourtsaz",
+    "https://www.instagram.com/inspirecourts",
     "https://www.youtube.com/@AZFinestMixtape",
   ],
   sport: ["Basketball", "Volleyball"],

@@ -63,6 +63,8 @@ const INFO_SECTIONS = [
     content:
       "Schedules drop 48 hours before tip-off. Check the Schedule page or your email.",
     highlight: false,
+    link: "/schedule",
+    linkLabel: "View Schedule →",
   },
   {
     icon: UtensilsCrossed,
@@ -155,6 +157,14 @@ export default function GameDayPage() {
                   <p className="text-text-muted text-sm leading-relaxed">
                     {section.content}
                   </p>
+                  {"link" in section && section.link && (
+                    <Link
+                      href={section.link as string}
+                      className="inline-block mt-2 text-red text-sm font-semibold hover:underline"
+                    >
+                      {(section as { linkLabel?: string }).linkLabel ?? "View →"}
+                    </Link>
+                  )}
                   {section.map && (
                     <div className="mt-4 bg-off-white border border-light-gray rounded-xl overflow-hidden aspect-[16/9]">
                       <iframe

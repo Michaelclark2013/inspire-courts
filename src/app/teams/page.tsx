@@ -120,7 +120,7 @@ export default function TeamsPage() {
       </section>
 
       {/* Interest Form — two-column on desktop */}
-      <section id="join" className="py-14 lg:py-20 bg-white">
+      <section id="join" className="py-14 lg:py-20 bg-white scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-20 items-start">
             {/* Left: info panel */}

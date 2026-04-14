@@ -15,6 +15,7 @@ import {
 import AnimateIn from "@/components/ui/AnimateIn";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 import BackToTop from "@/components/ui/BackToTop";
+import { FACILITY_ADDRESS } from "@/lib/constants";
 import { db } from "@/lib/db";
 import {
   tournaments,
@@ -158,10 +159,10 @@ export default async function TournamentsPage() {
           name: t.location || "Inspire Courts AZ",
           address: {
             "@type": "PostalAddress",
-            streetAddress: "725 W Elliot Rd Suite 101",
-            addressLocality: "Gilbert",
-            addressRegion: "AZ",
-            postalCode: "85233",
+            streetAddress: `${FACILITY_ADDRESS.street}, ${FACILITY_ADDRESS.suite}`,
+            addressLocality: FACILITY_ADDRESS.city,
+            addressRegion: FACILITY_ADDRESS.state,
+            postalCode: FACILITY_ADDRESS.zip,
             addressCountry: "US",
           },
         },
@@ -279,7 +280,7 @@ export default async function TournamentsPage() {
       </section>
 
       {/* ── TOURNAMENT LIST ── */}
-      <section id="tournaments" className="max-w-5xl mx-auto px-4 py-12 lg:py-16">
+      <section id="tournaments" className="max-w-5xl mx-auto px-4 py-12 lg:py-16 scroll-mt-20">
         {activeTournaments.length === 0 && completedTournaments.length === 0 ? (
           /* ── Empty state ── */
           <div className="text-center py-12">

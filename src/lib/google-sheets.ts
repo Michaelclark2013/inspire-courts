@@ -455,53 +455,180 @@ const ROLE_FOLDER_NAMES: Record<string, string> = {
 
 // ── Public API Key — Tournament Schedule Sheet ────────────────────────────────
 
-const TOURNAMENT_SCHEDULE_SHEET_ID = "1JTubujbJc3qELxWWdc0o1Jhmysa10ZRI";
+const TOURNAMENT_SCHEDULE_SHEET_ID =
+  process.env.GOOGLE_SHEETS_TOURNAMENT_ID ?? "1JTubujbJc3qELxWWdc0o1Jhmysa10ZRI";
 
 export interface TournamentScheduleRow {
   [key: string]: string;
 }
 
+// Column layout for Tournaments tab (data starts at row 5, headers at row 4)
+// A: Event ID, B: Tournament Name, C: Start Date, D: End Date, E: Age Groups,
+// F: Gender, G: Entry Fee, H: Max Teams, I: Teams Registered, J: Spots Remaining,
+// K: Status, L: Registration Link, M: Description, N: Location
+const TOURNAMENT_COLUMNS = [
+  "Event ID",
+  "Tournament Name",
+  "Start Date",
+  "End Date",
+  "Age Groups",
+  "Gender",
+  "Entry Fee",
+  "Max Teams",
+  "Teams Registered",
+  "Spots Remaining",
+  "Status",
+  "Registration Link",
+  "Description",
+  "Location",
+] as const;
+
+export type TournamentColumn = (typeof TOURNAMENT_COLUMNS)[number];
+
+export interface ParsedTournament {
+  eventId: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  ageGroups: string[];
+  gender: string;
+  entryFee: string;
+  maxTeams: number | null;
+  teamsRegistered: number;
+  spotsRemaining: number | null;
+  status: string;
+  registrationLink: string;
+  description: string;
+  location: string;
+}
+
+function parseTournamentRow(row: string[]): ParsedTournament {
+  const get = (i: number) => (row[i] ?? "").trim();
+  const ageRaw = get(4);
+  return {
+    eventId: get(0),
+    name: get(1),
+    startDate: get(2),
+    endDate: get(3),
+    ageGroups: ageRaw ? ageRaw.split(/[,/]/).map((s) => s.trim()).filter(Boolean) : [],
+    gender: get(5),
+    entryFee: get(6),
+    maxTeams: get(7) ? Number(get(7)) || null : null,
+    teamsRegistered: Number(get(8)) || 0,
+    spotsRemaining: get(9) ? Number(get(9)) || null : null,
+    status: get(10),
+    registrationLink: get(11),
+    description: get(12),
+    location: get(13),
+  };
+}
+
 /**
  * Fetch the public tournament schedule from Google Sheets using an API key.
- * Uses GOOGLE_SHEETS_API_KEY env var (simpler than service account — suitable
- * for publicly-shared sheets). Returns raw rows keyed by header.
+ * Data starts at row 5 (rows 1-4 are title/metadata/headers).
+ * Uses GOOGLE_SHEETS_API_KEY env var — suitable for publicly-shared sheets.
  */
 export async function fetchTournamentSchedule(): Promise<{
   headers: string[];
   rows: TournamentScheduleRow[];
+  tournaments: ParsedTournament[];
 }> {
   const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
-  if (!apiKey) return { headers: [], rows: [] };
+  if (!apiKey) return { headers: [], rows: [], tournaments: [] };
 
   try {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${TOURNAMENT_SCHEDULE_SHEET_ID}/values/A:ZZ?key=${encodeURIComponent(apiKey)}`;
+    // Fetch A4:N500 — row 4 is the header row, rows 5+ are data
+    const range = encodeURIComponent("A4:N500");
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${TOURNAMENT_SCHEDULE_SHEET_ID}/values/${range}?key=${encodeURIComponent(apiKey)}`;
     const res = await fetch(url, {
       next: { revalidate: 300 }, // 5-minute cache
     });
 
     if (!res.ok) {
       console.error(`[tournament-schedule] Sheet fetch failed: ${res.status}`);
-      return { headers: [], rows: [] };
+      return { headers: [], rows: [], tournaments: [] };
     }
 
     const data = await res.json();
     const raw: string[][] = data.values ?? [];
-    if (raw.length === 0) return { headers: [], rows: [] };
+    if (raw.length === 0) return { headers: [], rows: [], tournaments: [] };
 
+    // First fetched row is the header row (row 4 in sheet)
     const headers = raw[0].map((h) => h.trim());
-    const rows = raw.slice(1).map((row) => {
+    const dataRows = raw.slice(1); // rows 5+ in sheet
+
+    const rows = dataRows.map((row) => {
       const obj: TournamentScheduleRow = {};
-      headers.forEach((h, i) => {
-        obj[h] = (row[i] ?? "").trim();
+      TOURNAMENT_COLUMNS.forEach((col, i) => {
+        obj[col] = (row[i] ?? "").trim();
       });
       return obj;
     });
 
-    return { headers, rows };
+    // Parse into typed objects, skip empty rows
+    const tournaments = dataRows
+      .filter((row) => row.some((cell) => cell.trim() !== ""))
+      .filter((row) => (row[1] ?? "").trim() !== "") // must have a name
+      .map(parseTournamentRow);
+
+    return { headers, rows, tournaments };
   } catch (err) {
     console.error("[tournament-schedule] Fetch error:", err);
-    return { headers: [], rows: [] };
+    return { headers: [], rows: [], tournaments: [] };
   }
+}
+
+/** Convert a ParsedTournament into the EventData shape used by EventsHub */
+export function tournamentToEventData(t: ParsedTournament): {
+  name: string;
+  date: string;
+  rawDate: string;
+  divisions: string[];
+  fee: string;
+  teams: number;
+  maxTeams: number | null;
+  status: string;
+  brand: string;
+  sport: string;
+  bracketLink: string;
+  regDeadline: string;
+} {
+  const dateLabel = t.startDate
+    ? (() => {
+        const d = new Date(t.startDate + "T12:00:00"); // noon to avoid TZ off-by-one
+        return isNaN(d.getTime())
+          ? t.startDate
+          : d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      })()
+    : "TBD";
+
+  const divisions = [...t.ageGroups];
+  if (t.gender && t.gender.toLowerCase() !== "both" && t.gender.toLowerCase() !== "co-ed") {
+    // Annotate divisions with gender if specified
+    divisions.push(t.gender);
+  }
+
+  return {
+    name: t.name,
+    date: dateLabel,
+    rawDate: t.startDate,
+    divisions: divisions.length > 0 ? divisions : [],
+    fee: t.entryFee,
+    teams: t.teamsRegistered,
+    maxTeams: t.maxTeams,
+    status: t.status,
+    brand: "OFF SZN HOOPS",
+    sport: "Basketball",
+    bracketLink: "",
+    regDeadline: t.endDate
+      ? (() => {
+          const d = new Date(t.endDate + "T12:00:00");
+          return isNaN(d.getTime())
+            ? ""
+            : d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        })()
+      : "",
+  };
 }
 
 export async function saveRegistrationToDrive(

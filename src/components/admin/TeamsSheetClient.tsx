@@ -141,14 +141,85 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
         </select>
       </div>
 
-      {/* Table */}
+      {/* Table/card container */}
       <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
         <div className="px-4 py-3 border-b border-border flex items-center justify-between">
           <p className="text-text-secondary text-xs">
             Showing <span className="text-white font-semibold">{filtered.length}</span> of {teams.length} teams
           </p>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* Mobile card view */}
+        <div className="sm:hidden divide-y divide-border">
+          {filtered.length === 0 ? (
+            <p className="px-4 py-8 text-center text-text-secondary text-sm">
+              No teams match your filters.
+            </p>
+          ) : (
+            filtered.map((team, i) => (
+              <div key={i}>
+                <button
+                  className="w-full px-4 py-4 text-left hover:bg-bg/40 transition-colors"
+                  onClick={() => setExpanded(expanded === i ? null : i)}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-semibold text-sm truncate">
+                        {team.teamName}
+                      </p>
+                      <p className="text-text-secondary text-xs mt-0.5">{team.coach}</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded font-mono">
+                        {team.division}
+                      </span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-text-secondary transition-transform ${expanded === i ? "rotate-180" : ""}`}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`text-xs px-2 py-0.5 rounded font-semibold ${paymentColor(team.paymentStatus)}`}>
+                      {team.paymentStatus || "—"}
+                    </span>
+                    {team.amount && team.amount !== "—" && (
+                      <span className="text-text-secondary text-xs font-mono">{team.amount}</span>
+                    )}
+                  </div>
+                </button>
+                {expanded === i && (
+                  <div className="px-4 pb-4 pt-1 bg-bg/40 space-y-3">
+                    {team.email !== "—" && (
+                      <div>
+                        <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-1">Email</p>
+                        <a href={`mailto:${team.email}`} className="text-accent text-sm hover:underline flex items-center gap-1">
+                          {team.email} <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    )}
+                    {team.phone !== "—" && (
+                      <div>
+                        <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-1">Phone</p>
+                        <a href={`tel:${team.phone}`} className="text-accent text-sm hover:underline">
+                          {team.phone}
+                        </a>
+                      </div>
+                    )}
+                    {team.notes && (
+                      <div>
+                        <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-1">Notes</p>
+                        <p className="text-white text-sm">{team.notes}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop table view */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
@@ -212,7 +283,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                         {team.amount || "—"}
                       </td>
                       <td className="px-4 py-3">
-                        <button className="text-text-secondary hover:text-white transition-colors">
+                        <button className="text-text-secondary hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
                           {expanded === i ? (
                             <ChevronUp className="w-4 h-4" />
                           ) : (

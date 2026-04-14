@@ -97,7 +97,48 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
             {filtered.length} of {transactions.length} entries
           </p>
         </div>
-        <div className="overflow-x-auto">
+        {/* Mobile card view */}
+        <div className="sm:hidden divide-y divide-border">
+          {filtered.length === 0 ? (
+            <p className="px-4 py-8 text-center text-text-secondary text-sm">No transactions found.</p>
+          ) : (
+            <>
+              {filtered.map((t, i) => (
+                <div key={i} className="px-4 py-3">
+                  <div className="flex items-start justify-between gap-3 mb-1.5">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-medium truncate">{t.description || "—"}</p>
+                      <p className="text-text-secondary text-xs mt-0.5">{t.date}</p>
+                    </div>
+                    <span className="font-mono font-bold text-white text-sm flex-shrink-0">
+                      {t.total > 0 ? `$${t.total.toFixed(0)}` : "—"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {t.cash > 0 && <span className="text-xs text-success font-mono">Cash ${t.cash.toFixed(0)}</span>}
+                    {t.card > 0 && <span className="text-xs text-blue-400 font-mono">Card ${t.card.toFixed(0)}</span>}
+                    {t.square > 0 && <span className="text-xs text-purple-400 font-mono">Square ${t.square.toFixed(0)}</span>}
+                  </div>
+                </div>
+              ))}
+              {/* Mobile totals */}
+              <div className="px-4 py-3 bg-bg/30 border-t-2 border-border">
+                <div className="flex items-center justify-between">
+                  <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total ({filtered.length})</span>
+                  <span className="font-mono font-bold text-white">${filtered.reduce((s, t) => s + t.total, 0).toFixed(0)}</span>
+                </div>
+                <div className="flex gap-4 mt-1">
+                  <span className="text-xs text-success font-mono">Cash ${filtered.reduce((s, t) => s + t.cash, 0).toFixed(0)}</span>
+                  <span className="text-xs text-blue-400 font-mono">Card ${filtered.reduce((s, t) => s + t.card, 0).toFixed(0)}</span>
+                  <span className="text-xs text-purple-400 font-mono">Square ${filtered.reduce((s, t) => s + t.square, 0).toFixed(0)}</span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Desktop table view */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">

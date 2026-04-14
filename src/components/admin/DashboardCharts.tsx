@@ -36,7 +36,7 @@ export default function DashboardCharts({
   return (
     <div className="space-y-6">
       {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
         {/* Teams by Division */}
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
           <div className="flex items-center justify-between mb-4">
@@ -134,12 +134,12 @@ export default function DashboardCharts({
         </div>
 
         {divisions.length > 1 && (
-          <div className="flex flex-wrap gap-1.5 px-4 py-2 border-b border-border">
-            <button onClick={() => setSelectedDivision(null)} className={`text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider transition-colors ${!selectedDivision ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
+          <div className="flex gap-1.5 px-4 py-2 border-b border-border overflow-x-auto no-scrollbar">
+            <button onClick={() => setSelectedDivision(null)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${!selectedDivision ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
               All
             </button>
             {divisions.map(d => (
-              <button key={d} onClick={() => setSelectedDivision(d)} className={`text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider transition-colors ${selectedDivision === d ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
+              <button key={d} onClick={() => setSelectedDivision(d)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${selectedDivision === d ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-white"}`}>
                 {d}
               </button>
             ))}

@@ -188,18 +188,18 @@ export default async function AdminDashboard() {
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-4 lg:p-8">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-bg/95 backdrop-blur-sm border-b border-border/50 -mx-6 lg:-mx-8 px-6 lg:px-8 py-4 mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+      <div className="sticky top-0 z-10 bg-bg/95 backdrop-blur-sm border-b border-border/50 -mx-6 lg:-mx-8 px-6 lg:px-8 py-3 lg:py-4 mb-6 lg:mb-8">
+        <div className="flex items-center justify-between gap-2">
           <div>
-            <p className="text-text-secondary text-xs mb-0.5">{greeting}</p>
-            <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+            <p className="text-text-secondary text-[10px] lg:text-xs mb-0.5">{greeting}</p>
+            <h1 className="text-xl lg:text-2xl font-bold uppercase tracking-tight text-white font-heading">
               Dashboard
             </h1>
           </div>
-          <p className="text-text-secondary text-xs uppercase tracking-wider">
-            {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
+          <p className="text-text-secondary text-[10px] lg:text-xs uppercase tracking-wider text-right">
+            {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
           </p>
         </div>
       </div>
@@ -222,7 +222,7 @@ export default async function AdminDashboard() {
 
       {/* Google Sheets KPIs */}
       <CollapsibleSection title="Google Sheets KPIs">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-8">
           {kpis.map((kpi) => (
             <KPICard key={kpi.title} {...kpi} />
           ))}

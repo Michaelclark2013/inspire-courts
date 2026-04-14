@@ -108,30 +108,68 @@ export default function ScoresSheetClient({ games, standings }: Props) {
             </select>
           </div>
 
-          {/* Games table */}
+          {/* Games container */}
           <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-border">
-              <p className="text-text-secondary text-xs">
-                {filtered.length} games
-              </p>
+              <p className="text-text-secondary text-xs">{filtered.length} games</p>
             </div>
-            <div className="overflow-x-auto">
+
+            {/* Mobile card view */}
+            <div className="sm:hidden divide-y divide-border">
+              {filtered.length === 0 ? (
+                <p className="px-4 py-8 text-center text-text-secondary text-sm">
+                  No games match your filters.
+                </p>
+              ) : (
+                filtered.map((game, i) => {
+                  const homeWon =
+                    game.winner &&
+                    game.home !== "—" &&
+                    game.winner.toLowerCase().includes(game.home.toLowerCase().split(" ")[0]);
+                  const awayWon =
+                    game.winner &&
+                    game.away !== "—" &&
+                    game.winner.toLowerCase().includes(game.away.toLowerCase().split(" ")[0]);
+                  return (
+                    <div key={i} className="px-4 py-3">
+                      {/* Score display */}
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`flex-1 text-sm font-semibold truncate ${homeWon ? "text-white" : "text-text-secondary"}`}>
+                          {game.home}
+                          {homeWon && <span className="ml-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">W</span>}
+                        </span>
+                        <span className="font-mono font-bold text-white text-base px-2">
+                          {game.homeScore !== "—" && game.awayScore !== "—" ? `${game.homeScore}–${game.awayScore}` : "vs"}
+                        </span>
+                        <span className={`flex-1 text-sm font-semibold truncate text-right ${awayWon ? "text-white" : "text-text-secondary"}`}>
+                          {awayWon && <span className="mr-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">W</span>}
+                          {game.away}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {game.division && game.division !== "—" && (
+                          <span className="text-[10px] bg-bg px-2 py-0.5 rounded text-text-secondary">{game.division}</span>
+                        )}
+                        {game.court && game.court !== "—" && (
+                          <span className="text-[10px] text-text-secondary">Court {game.court}</span>
+                        )}
+                        {game.date && game.date !== "—" && (
+                          <span className="text-[10px] text-text-secondary ml-auto">{game.date}</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Desktop table view */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    {[
-                      "Date",
-                      "Home",
-                      "Score",
-                      "Away",
-                      "Winner",
-                      "Division",
-                      "Court",
-                    ].map((h) => (
-                      <th
-                        key={h}
-                        className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider"
-                      >
+                    {["Date", "Home", "Score", "Away", "Winner", "Division", "Court"].map((h) => (
+                      <th key={h} className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
                         {h}
                       </th>
                     ))}
@@ -140,10 +178,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                 <tbody className="divide-y divide-border">
                   {filtered.length === 0 ? (
                     <tr>
-                      <td
-                        colSpan={7}
-                        className="px-4 py-8 text-center text-text-secondary"
-                      >
+                      <td colSpan={7} className="px-4 py-8 text-center text-text-secondary">
                         No games match your filters.
                       </td>
                     </tr>
@@ -152,67 +187,32 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                       const homeWon =
                         game.winner &&
                         game.home !== "—" &&
-                        game.winner.toLowerCase().includes(
-                          game.home.toLowerCase().split(" ")[0]
-                        );
+                        game.winner.toLowerCase().includes(game.home.toLowerCase().split(" ")[0]);
                       const awayWon =
                         game.winner &&
                         game.away !== "—" &&
-                        game.winner.toLowerCase().includes(
-                          game.away.toLowerCase().split(" ")[0]
-                        );
-
+                        game.winner.toLowerCase().includes(game.away.toLowerCase().split(" ")[0]);
                       return (
-                        <tr
-                          key={i}
-                          className="hover:bg-bg/40 transition-colors"
-                        >
-                          <td className="px-4 py-3 text-text-secondary text-xs">
-                            {game.date}
-                          </td>
-                          <td
-                            className={`px-4 py-3 font-medium ${
-                              homeWon ? "text-white" : "text-text-secondary"
-                            }`}
-                          >
+                        <tr key={i} className="hover:bg-bg/40 transition-colors">
+                          <td className="px-4 py-3 text-text-secondary text-xs">{game.date}</td>
+                          <td className={`px-4 py-3 font-medium ${homeWon ? "text-white" : "text-text-secondary"}`}>
                             {game.home}
-                            {homeWon && (
-                              <span className="ml-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">
-                                W
-                              </span>
-                            )}
+                            {homeWon && <span className="ml-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">W</span>}
                           </td>
                           <td className="px-4 py-3 text-center">
                             <span className="font-mono font-bold text-white text-sm">
-                              {game.homeScore !== "—" &&
-                              game.awayScore !== "—"
-                                ? `${game.homeScore} – ${game.awayScore}`
-                                : "—"}
+                              {game.homeScore !== "—" && game.awayScore !== "—" ? `${game.homeScore} – ${game.awayScore}` : "—"}
                             </span>
                           </td>
-                          <td
-                            className={`px-4 py-3 font-medium ${
-                              awayWon ? "text-white" : "text-text-secondary"
-                            }`}
-                          >
+                          <td className={`px-4 py-3 font-medium ${awayWon ? "text-white" : "text-text-secondary"}`}>
                             {game.away}
-                            {awayWon && (
-                              <span className="ml-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">
-                                W
-                              </span>
-                            )}
+                            {awayWon && <span className="ml-1.5 text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded">W</span>}
                           </td>
-                          <td className="px-4 py-3 text-text-secondary text-xs max-w-[120px] truncate">
-                            {game.winner}
-                          </td>
+                          <td className="px-4 py-3 text-text-secondary text-xs max-w-[120px] truncate">{game.winner}</td>
                           <td className="px-4 py-3">
-                            <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">
-                              {game.division}
-                            </span>
+                            <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">{game.division}</span>
                           </td>
-                          <td className="px-4 py-3 text-text-secondary text-xs">
-                            {game.court}
-                          </td>
+                          <td className="px-4 py-3 text-text-secondary text-xs">{game.court}</td>
                         </tr>
                       );
                     })

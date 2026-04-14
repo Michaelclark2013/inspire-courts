@@ -16,18 +16,18 @@ interface KPICardProps {
 export default function KPICard({ title, value, icon: Icon, trend, trendUp, sparklineData }: KPICardProps) {
   return (
     <div
-      className="bg-bg-secondary border border-border rounded-sm p-5 transition-colors hover:border-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
+      className="bg-bg-secondary border border-border rounded-sm p-3 lg:p-5 transition-colors hover:border-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
       role="article"
       aria-label={`${title}: ${value}`}
       tabIndex={0}
     >
-      <div className="flex items-start justify-between mb-3">
-        <p className="text-text-secondary text-xs font-bold uppercase tracking-wider">
+      <div className="flex items-start justify-between mb-2 lg:mb-3">
+        <p className="text-text-secondary text-[10px] lg:text-xs font-bold uppercase tracking-wider leading-tight">
           {title}
         </p>
-        <Icon className="w-4 h-4 text-text-secondary" />
+        <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-text-secondary flex-shrink-0 ml-1" />
       </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
+      <p className="text-xl lg:text-2xl font-bold text-white">{value}</p>
       {trend && (
         <p
           className={cn(

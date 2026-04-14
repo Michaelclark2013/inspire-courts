@@ -119,6 +119,25 @@ html, body {
   ::-webkit-scrollbar { width: 0; }
 }
 
+/* Safe-area-aware bottom padding for admin content on mobile */
+@media (max-width: 1024px) {
+  .admin-safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+  }
+}
+
+/* Utility: hide scrollbar while keeping scroll behavior */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Ensure minimum touch target size for interactive elements in admin */
+@media (max-width: 1024px) {
+  .admin-touch a,
+  .admin-touch button {
+    min-height: 44px;
+  }
+}
+
 /* ── Shared heading size utilities ── */
 @layer components {
   .heading-hero {

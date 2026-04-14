@@ -121,7 +121,7 @@ export default function DashboardDBStats() {
   if (!data) {
     return (
       <div className="space-y-6 mb-8 animate-pulse">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="bg-bg-secondary border border-border rounded-sm p-5">
               <div className="flex items-start justify-between mb-3">
@@ -154,10 +154,10 @@ export default function DashboardDBStats() {
         </span>
         <button
           onClick={() => fetchData()}
-          className="text-text-secondary hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 rounded"
+          className="text-text-secondary hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 rounded p-1 min-h-[44px] min-w-[44px] flex items-center justify-center lg:min-h-0 lg:min-w-0 lg:p-0"
           title="Refresh now"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <RefreshCw className="w-4 h-4 lg:w-3.5 lg:h-3.5" />
         </button>
       </div>
 
@@ -180,7 +180,7 @@ export default function DashboardDBStats() {
       )}
 
       {/* Registration KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         <KPICard
           title="Registrations"
           value={data.registrations.total.toString()}

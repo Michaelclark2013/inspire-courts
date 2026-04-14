@@ -12,7 +12,7 @@ export default function MobileRegisterBar() {
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => trackConversion("register_click")}
-        className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors shadow-lg"
+        className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors shadow-lg focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         Register Now <ArrowRight className="w-4 h-4" />
       </a>

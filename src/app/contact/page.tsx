@@ -153,7 +153,7 @@ export default function ContactPage() {
                         <select
                           id="inquiryType"
                           name="inquiryType"
-                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors"
+                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors"
                         >
                           {INQUIRY_TYPES.map((type) => (
                             <option key={type} value={type}>
@@ -173,7 +173,7 @@ export default function ContactPage() {
                         name="message"
                         rows={5}
                         required
-                        className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50 resize-vertical"
+                        className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50 resize-vertical"
                         placeholder="Tell us what you need..."
                       />
                     </div>
@@ -181,7 +181,7 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
                       {loading ? "Sending..." : "Send Message"}{" "}
                       <ArrowRight className="w-4 h-4" />
@@ -200,7 +200,7 @@ export default function ContactPage() {
                       Location
                     </h3>
                     <div className="flex gap-3 text-text-muted text-sm">
-                      <MapPin className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <MapPin className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <div>
                         <p>{FACILITY_ADDRESS.street}</p>
                         <p>{FACILITY_ADDRESS.suite}</p>
@@ -214,7 +214,7 @@ export default function ContactPage() {
                       Email
                     </h3>
                     <div className="flex gap-3 text-text-muted text-sm">
-                      <Mail className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <Mail className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <a
                         href={`mailto:${FACILITY_EMAIL}`}
                         className="hover:text-red transition-colors"
@@ -230,7 +230,7 @@ export default function ContactPage() {
                       Social
                     </h3>
                     <div className="flex gap-3 text-text-muted text-sm">
-                      <Camera className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <Camera className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <a
                         href={SOCIAL_LINKS.instagram}
                         target="_blank"

@@ -54,6 +54,7 @@ export default function ScoresPage() {
       {/* Scoreboard — kept dark for live game viewing */}
       <section className="bg-navy py-8" aria-label="Live scoreboard">
         <div className="max-w-4xl mx-auto px-4">
+          <h2 className="sr-only">Live Scoreboard</h2>
           <ScoresPageClient />
         </div>
       </section>

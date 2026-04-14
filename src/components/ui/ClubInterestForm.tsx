@@ -73,7 +73,7 @@ export default function ClubInterestForm() {
           type="button"
           onClick={() => setRole("player")}
           className={cn(
-            "flex-1 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all font-[var(--font-chakra)]",
+            "flex-1 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all font-[var(--font-chakra)] focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:outline-none",
             role === "player"
               ? "bg-red text-white shadow-md"
               : "text-text-muted hover:text-navy"
@@ -85,7 +85,7 @@ export default function ClubInterestForm() {
           type="button"
           onClick={() => setRole("coach")}
           className={cn(
-            "flex-1 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all font-[var(--font-chakra)]",
+            "flex-1 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all font-[var(--font-chakra)] focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:outline-none",
             role === "coach"
               ? "bg-navy text-white shadow-md"
               : "text-text-muted hover:text-navy"
@@ -105,7 +105,8 @@ export default function ClubInterestForm() {
             type="text"
             name="name"
             required
-            className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+            autoComplete="name"
+            className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
             placeholder={role === "player" ? "Player name" : "Coach name"}
           />
         </div>
@@ -117,7 +118,8 @@ export default function ClubInterestForm() {
             type="email"
             name="email"
             required
-            className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+            autoComplete="email"
+            className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
             placeholder="you@example.com"
           />
         </div>
@@ -132,7 +134,8 @@ export default function ClubInterestForm() {
             type="tel"
             name="phone"
             required
-            className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+            autoComplete="tel"
+            className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
             placeholder="(480) 555-1234"
           />
         </div>
@@ -142,7 +145,7 @@ export default function ClubInterestForm() {
           </label>
           <select
             name="division"
-            className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors"
+            className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors"
           >
             <option value="16U">16U Boys</option>
             <option value="17U">17U Boys</option>
@@ -161,7 +164,7 @@ export default function ClubInterestForm() {
             <input
               type="text"
               name="age"
-              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
               placeholder="e.g. 16 / 2028"
             />
           </div>
@@ -172,7 +175,7 @@ export default function ClubInterestForm() {
             <input
               type="text"
               name="position"
-              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
               placeholder="e.g. PG, SG, SF"
             />
           </div>
@@ -183,7 +186,7 @@ export default function ClubInterestForm() {
             <input
               type="text"
               name="currentTeam"
-              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
               placeholder="Team name"
             />
           </div>
@@ -200,7 +203,7 @@ export default function ClubInterestForm() {
             <input
               type="text"
               name="experience"
-              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
               placeholder="e.g. 5 years, AAU, HS varsity"
             />
           </div>
@@ -211,7 +214,7 @@ export default function ClubInterestForm() {
             <input
               type="text"
               name="ageGroups"
-              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50"
+              className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
               placeholder="e.g. 14U-17U"
             />
           </div>
@@ -226,7 +229,7 @@ export default function ClubInterestForm() {
         <textarea
           name="notes"
           rows={3}
-          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red transition-colors placeholder:text-text-muted/50 resize-vertical"
+          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50 resize-vertical"
           placeholder={role === "player" ? "Highlight links, stats, why you want to play for Inspire..." : "What you bring to the program, coaching philosophy..."}
         />
       </div>

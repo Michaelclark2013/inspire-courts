@@ -11,9 +11,10 @@ interface KPICardProps {
   trend?: string;
   trendUp?: boolean;
   sparklineData?: number[];
+  valueColor?: string;
 }
 
-export default function KPICard({ title, value, icon: Icon, trend, trendUp, sparklineData }: KPICardProps) {
+export default function KPICard({ title, value, icon: Icon, trend, trendUp, sparklineData, valueColor }: KPICardProps) {
   return (
     <div
       className="bg-bg-secondary border border-border rounded-sm p-3 lg:p-5 transition-colors hover:border-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
@@ -27,7 +28,7 @@ export default function KPICard({ title, value, icon: Icon, trend, trendUp, spar
         </p>
         <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-text-secondary flex-shrink-0 ml-1" />
       </div>
-      <p className="text-xl lg:text-2xl font-bold text-white">{value}</p>
+      <p className={cn("text-xl lg:text-2xl font-bold", valueColor || "text-white")}>{value}</p>
       {trend && (
         <p
           className={cn(

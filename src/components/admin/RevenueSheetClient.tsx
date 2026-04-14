@@ -1,8 +1,27 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import { Search, Download } from "lucide-react";
 import { AdminDonutChart, AdminBarChart, BRAND } from "@/components/dashboard/Charts";
+
+function downloadTransactionsCSV(rows: Transaction[], filename: string) {
+  const headers = ["Date", "Description", "Cash", "Card", "Square/Digital", "Total", "Notes"];
+  const lines = [
+    headers.join(","),
+    ...rows.map((t) =>
+      [t.date, t.description, t.cash, t.card, t.square, t.total, t.notes]
+        .map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`)
+        .join(",")
+    ),
+  ];
+  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 interface Transaction {
   date: string;
@@ -96,6 +115,13 @@ export default function RevenueSheetClient({ transactions, sourceData, revenueOv
           <p className="text-text-secondary text-xs flex-shrink-0">
             {filtered.length} of {transactions.length} entries
           </p>
+          <button
+            onClick={() => downloadTransactionsCSV(filtered, "revenue.csv")}
+            title="Download CSV"
+            className="flex items-center gap-1.5 bg-bg border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-white hover:border-accent/50 text-xs transition-colors flex-shrink-0"
+          >
+            <Download className="w-3.5 h-3.5" /> CSV
+          </button>
         </div>
         {/* Mobile card view */}
         <div className="sm:hidden divide-y divide-border">

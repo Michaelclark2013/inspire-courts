@@ -1,8 +1,27 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, ExternalLink } from "lucide-react";
+import { Search, ExternalLink, Download } from "lucide-react";
 import { HorizontalBarList, CHART_COLORS, BRAND } from "@/components/dashboard/Charts";
+
+function downloadProspectsCSV(rows: Prospect[], filename: string) {
+  const headers = ["Team", "Coach", "Phone", "Email", "Status", "Division", "Notes", "Date"];
+  const lines = [
+    headers.join(","),
+    ...rows.map((p) =>
+      [p.team, p.coach, p.phone, p.email, p.status, p.division, p.notes, p.date]
+        .map((v) => `"${(v ?? "").replace(/"/g, '""')}"`)
+        .join(",")
+    ),
+  ];
+  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 interface Prospect {
   team: string;
@@ -136,6 +155,13 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
             <option key={d} value={d}>{d === "All" ? "All Divisions" : d}</option>
           ))}
         </select>
+        <button
+          onClick={() => downloadProspectsCSV(filtered, "prospects.csv")}
+          title="Download CSV"
+          className="flex items-center gap-1.5 bg-bg-secondary border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-white hover:border-accent/50 text-xs transition-colors flex-shrink-0"
+        >
+          <Download className="w-3.5 h-3.5" /> CSV
+        </button>
       </div>
 
       {/* Table */}

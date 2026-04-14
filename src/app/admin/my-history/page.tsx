@@ -46,7 +46,7 @@ export default function MyHistoryPage() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid gap-4 md:grid-cols-3 mb-8">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4 mb-8">
         <div className="bg-card border border-white/10 rounded-xl p-5">
           <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-wider mb-2">
             <History className="w-3.5 h-3.5" /> Total Shifts
@@ -64,6 +64,14 @@ export default function MyHistoryPage() {
             <DollarSign className="w-3.5 h-3.5" /> Total Earned
           </div>
           <p className="text-white text-2xl font-bold">${totalPay.toFixed(2)}</p>
+        </div>
+        <div className="bg-card border border-white/10 rounded-xl p-5">
+          <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-wider mb-2">
+            <DollarSign className="w-3.5 h-3.5" /> Avg / Shift
+          </div>
+          <p className="text-white text-2xl font-bold">
+            {shifts.length > 0 ? `$${(totalPay / shifts.length).toFixed(2)}` : "—"}
+          </p>
         </div>
       </div>
 

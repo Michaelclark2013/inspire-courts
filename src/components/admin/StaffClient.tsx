@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Search, UserCheck, Clock, DollarSign, Shield, Users, Eye, EyeOff } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Search, UserCheck, Clock, DollarSign, Shield, Users, Eye, EyeOff, ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+type SortDir = "asc" | "desc";
 
 type Tab = "staff" | "refs";
 
@@ -37,14 +39,50 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
   const [tab, setTab] = useState<Tab>("staff");
   const [search, setSearch] = useState("");
   const [showAccounts, setShowAccounts] = useState<Set<string>>(new Set());
+  const [staffSort, setStaffSort] = useState<{ key: keyof StaffMember; dir: SortDir }>({ key: "totalPay", dir: "desc" });
+  const [refSort, setRefSort] = useState<{ key: keyof Referee; dir: SortDir }>({ key: "totalPay", dir: "desc" });
+
+  function toggleStaffSort(key: keyof StaffMember) {
+    setStaffSort((s) => s.key === key ? { key, dir: s.dir === "desc" ? "asc" : "desc" } : { key, dir: "desc" });
+  }
+  function toggleRefSort(key: keyof Referee) {
+    setRefSort((s) => s.key === key ? { key, dir: s.dir === "desc" ? "asc" : "desc" } : { key, dir: "desc" });
+  }
+  function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
+    if (!active) return <ChevronDown className="w-3 h-3 opacity-20 inline ml-1" />;
+    return dir === "asc"
+      ? <ChevronUp className="w-3 h-3 text-accent inline ml-1" />
+      : <ChevronDown className="w-3 h-3 text-accent inline ml-1" />;
+  }
 
   const totalStaffPay = staff.reduce((s, r) => s + parseInt(r.totalPay.replace(/[$,]/g, "") || "0"), 0);
   const totalRefPay = refs.reduce((s, r) => s + parseInt(r.totalPay.replace(/[$,]/g, "") || "0"), 0);
   const totalGames = refs.reduce((s, r) => s + r.gamesReffed, 0);
   const totalShifts = staff.reduce((s, r) => s + r.shifts, 0);
 
-  const filteredStaff = staff.filter((s) => s.name.toLowerCase().includes(search.toLowerCase()) || s.role.toLowerCase().includes(search.toLowerCase()));
-  const filteredRefs = refs.filter((r) => r.name.toLowerCase().includes(search.toLowerCase()));
+  const filteredStaff = useMemo(() => {
+    const base = staff.filter((s) => s.name.toLowerCase().includes(search.toLowerCase()) || s.role.toLowerCase().includes(search.toLowerCase()));
+    return [...base].sort((a, b) => {
+      const av = a[staffSort.key];
+      const bv = b[staffSort.key];
+      const numA = typeof av === "string" ? parseFloat(av.replace(/[$,]/g, "")) || 0 : (av as number);
+      const numB = typeof bv === "string" ? parseFloat(bv.replace(/[$,]/g, "")) || 0 : (bv as number);
+      if (!isNaN(numA) && !isNaN(numB)) return staffSort.dir === "desc" ? numB - numA : numA - numB;
+      return staffSort.dir === "desc" ? String(bv).localeCompare(String(av)) : String(av).localeCompare(String(bv));
+    });
+  }, [staff, search, staffSort]);
+
+  const filteredRefs = useMemo(() => {
+    const base = refs.filter((r) => r.name.toLowerCase().includes(search.toLowerCase()));
+    return [...base].sort((a, b) => {
+      const av = a[refSort.key];
+      const bv = b[refSort.key];
+      const numA = typeof av === "string" ? parseFloat(av.replace(/[$,]/g, "")) || 0 : (av as number);
+      const numB = typeof bv === "string" ? parseFloat(bv.replace(/[$,]/g, "")) || 0 : (bv as number);
+      if (!isNaN(numA) && !isNaN(numB)) return refSort.dir === "desc" ? numB - numA : numA - numB;
+      return refSort.dir === "desc" ? String(bv).localeCompare(String(av)) : String(av).localeCompare(String(bv));
+    });
+  }, [refs, search, refSort]);
 
   const toggleAccount = (key: string) => {
     setShowAccounts((prev) => {
@@ -114,14 +152,15 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Name</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Role</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Shifts</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Hours</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Pay</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Method</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Account</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Last Shift</th>
+                  {(["name","role","shifts","hoursWorked","totalPay","payMethod","payAccount","lastShift"] as (keyof StaffMember)[]).map((k) => {
+                    const labels: Record<string, string> = { name: "Name", role: "Role", shifts: "Shifts", hoursWorked: "Hours", totalPay: "Pay", payMethod: "Method", payAccount: "Account", lastShift: "Last Shift" };
+                    const sortable = ["name","shifts","hoursWorked","totalPay"].includes(k);
+                    return (
+                      <th key={k} onClick={sortable ? () => toggleStaffSort(k) : undefined} className={cn("text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3", sortable && "cursor-pointer hover:text-white transition-colors select-none")}>
+                        {labels[k]}{sortable && <SortIcon active={staffSort.key === k} dir={staffSort.dir} />}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
@@ -153,13 +192,15 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Name</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Games</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Pay</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Method</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Account</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Court</th>
-                  <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Last Game</th>
+                  {(["name","gamesReffed","totalPay","payMethod","payAccount","court","lastGame"] as (keyof Referee)[]).map((k) => {
+                    const labels: Record<string, string> = { name: "Name", gamesReffed: "Games", totalPay: "Pay", payMethod: "Method", payAccount: "Account", court: "Court", lastGame: "Last Game" };
+                    const sortable = ["name","gamesReffed","totalPay"].includes(k);
+                    return (
+                      <th key={k} onClick={sortable ? () => toggleRefSort(k) : undefined} className={cn("text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3", sortable && "cursor-pointer hover:text-white transition-colors select-none")}>
+                        {labels[k]}{sortable && <SortIcon active={refSort.key === k} dir={refSort.dir} />}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>

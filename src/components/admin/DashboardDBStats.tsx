@@ -194,6 +194,7 @@ export default function DashboardDBStats() {
           icon={AlertTriangle}
           trend={data.registrations.pendingPayments > 0 ? "Action needed" : "All clear"}
           trendUp={data.registrations.pendingPayments === 0}
+          valueColor={data.registrations.pendingPayments > 0 ? "text-danger" : undefined}
         />
         <KPICard
           title="Registration Revenue"

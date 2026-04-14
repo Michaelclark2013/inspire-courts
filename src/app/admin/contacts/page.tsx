@@ -5,8 +5,8 @@ import { getChatLeads, getProperty, isNotionConfigured } from "@/lib/notion";
 export default async function ContactsPage() {
   if (!isNotionConfigured()) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="mb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
+        <div className="mb-4 md:mb-8">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Contacts</h1>
           <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Submissions</p>
         </div>
@@ -35,8 +35,8 @@ export default async function ContactsPage() {
 
   if (leads.length === 0) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="mb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
+        <div className="mb-4 md:mb-8">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Contacts</h1>
           <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Submissions</p>
         </div>
@@ -46,8 +46,8 @@ export default async function ContactsPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8">
         <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Contacts</h1>
         <p className="text-text-secondary text-sm mt-1">Chat & Contact Form Submissions — captured automatically from chatbot and contact form</p>
       </div>

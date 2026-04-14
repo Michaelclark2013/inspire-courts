@@ -164,11 +164,11 @@ export default function UsersPage() {
   const pendingUsers = userList.filter((u) => u.approved === false);
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8 flex items-start justify-between gap-4">
+      <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             Users
           </h1>
           <p className="text-text-secondary text-sm mt-1">
@@ -410,6 +410,7 @@ export default function UsersPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
+              <caption className="sr-only">User accounts</caption>
               <thead>
                 <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
                   <th className="text-left px-6 py-3 font-semibold">Name</th>

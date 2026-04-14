@@ -58,14 +58,18 @@ async function getAccessToken(): Promise<string | null> {
   const jwt = `${signingInput}.${signature}`;
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     const res = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      signal: controller.signal,
       body: new URLSearchParams({
         grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
         assertion: jwt,
       }),
     });
+    clearTimeout(timeout);
 
     if (!res.ok) {
       console.error("Google auth failed:", await res.text());
@@ -95,11 +99,15 @@ export async function fetchSheetData(
   if (!token) return [];
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000); // 8s timeout
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}`;
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
+      signal: controller.signal,
       next: { revalidate: 300 }, // 5-minute cache
     });
+    clearTimeout(timeout);
 
     if (!res.ok) {
       console.error(`Sheet fetch failed (${spreadsheetId}): ${res.status}`);
@@ -227,6 +235,8 @@ export async function updateSheetRow(
   if (!token) return false;
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`;
     const res = await fetch(url, {
       method: "PUT",
@@ -234,8 +244,10 @@ export async function updateSheetRow(
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
       body: JSON.stringify({ values }),
     });
+    clearTimeout(timeout);
 
     if (!res.ok) {
       console.error(`Sheet update failed (${spreadsheetId}): ${res.status}`);
@@ -258,6 +270,8 @@ export async function appendSheetRow(
   if (!token) return false;
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
     const res = await fetch(url, {
       method: "POST",
@@ -265,8 +279,10 @@ export async function appendSheetRow(
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
       body: JSON.stringify({ values }),
     });
+    clearTimeout(timeout);
 
     if (!res.ok) {
       console.error(`Sheet append failed (${spreadsheetId}): ${res.status}`);
@@ -540,9 +556,13 @@ export async function fetchTournamentSchedule(): Promise<{
     // Fetch A4:N500 — row 4 is the header row, rows 5+ are data
     const range = encodeURIComponent("A4:N500");
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${TOURNAMENT_SCHEDULE_SHEET_ID}/values/${range}?key=${encodeURIComponent(apiKey)}`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     const res = await fetch(url, {
+      signal: controller.signal,
       next: { revalidate: 300 }, // 5-minute cache
     });
+    clearTimeout(timeout);
 
     if (!res.ok) {
       console.error(`[tournament-schedule] Sheet fetch failed: ${res.status}`);

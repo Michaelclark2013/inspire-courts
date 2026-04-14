@@ -67,23 +67,23 @@ export default async function TeamsPage() {
   ).length;
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8 flex items-start justify-between gap-4">
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             Teams
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-text-secondary text-sm mt-1 hidden md:block">
             Master Teams & Payments — {teams.length} teams registered
           </p>
         </div>
-        <div className="flex gap-3 flex-shrink-0">
-          <div className="bg-success/10 border border-success/20 rounded-sm px-3 py-2 text-center">
-            <p className="text-success font-bold text-lg leading-none">{paidCount}</p>
+        <div className="flex gap-2 flex-shrink-0">
+          <div className="bg-success/10 border border-success/20 rounded-sm px-2.5 py-1.5 text-center min-w-[44px]">
+            <p className="text-success font-bold text-base leading-none">{paidCount}</p>
             <p className="text-success/70 text-[10px] uppercase tracking-wider mt-0.5">Paid</p>
           </div>
-          <div className="bg-danger/10 border border-danger/20 rounded-sm px-3 py-2 text-center">
-            <p className="text-danger font-bold text-lg leading-none">{unpaidCount}</p>
+          <div className="bg-danger/10 border border-danger/20 rounded-sm px-2.5 py-1.5 text-center min-w-[44px]">
+            <p className="text-danger font-bold text-base leading-none">{unpaidCount}</p>
             <p className="text-danger/70 text-[10px] uppercase tracking-wider mt-0.5">Unpaid</p>
           </div>
         </div>
@@ -96,12 +96,12 @@ export default async function TeamsPage() {
 
 function SetupPrompt() {
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">Teams</h1>
-        <p className="text-text-secondary text-sm mt-1">Master Teams & Payments</p>
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8">
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">Teams</h1>
+        <p className="text-text-secondary text-sm mt-1 hidden md:block">Master Teams & Payments</p>
       </div>
-      <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
+      <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
         <Users className="w-10 h-10 text-text-secondary mx-auto mb-3" />
         <p className="text-white font-semibold mb-1">Google Sheets not connected</p>
         <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>

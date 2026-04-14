@@ -85,10 +85,10 @@ export default function LeadsPage() {
   });
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             Prospect Pipeline
           </h1>
           <p className="text-text-secondary text-sm mt-1">
@@ -188,6 +188,7 @@ export default function LeadsPage() {
         <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
+              <caption className="sr-only">Prospect pipeline leads</caption>
               <thead>
                 <tr className="border-b border-white/10">
                   <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-5 py-3">

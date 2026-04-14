@@ -97,9 +97,9 @@ export default async function FilesPage() {
     }));
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8">
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
           Files
         </h1>
         <p className="text-text-secondary text-sm mt-1">
@@ -141,7 +141,7 @@ export default async function FilesPage() {
 
       {/* Drive browser */}
       {!isGoogleConfigured() ? (
-        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
+        <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
           <FolderOpen className="w-10 h-10 text-text-secondary mx-auto mb-3" />
           <p className="text-white font-semibold mb-1">
             Connect Google Drive

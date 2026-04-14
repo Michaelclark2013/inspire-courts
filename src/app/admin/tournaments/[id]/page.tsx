@@ -198,7 +198,7 @@ export default function TournamentDetailPage() {
   const finalGames = data.bracket.filter((g) => g.status === "final").length;
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       {/* Back link + Header */}
       <Link
         href="/admin/tournaments/manage"

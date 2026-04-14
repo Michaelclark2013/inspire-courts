@@ -7,8 +7,8 @@ import { getAllSchools, getProperty, isNotionConfigured } from "@/lib/notion";
 export default async function SchoolsPage() {
   if (!isNotionConfigured()) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="mb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
+        <div className="mb-4 md:mb-8">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Schools</h1>
           <p className="text-text-secondary text-sm mt-1">School Basketball Programs from Notion</p>
         </div>
@@ -21,8 +21,8 @@ export default async function SchoolsPage() {
 
   if (data.length === 0) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="mb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
+        <div className="mb-4 md:mb-8">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Schools</h1>
           <p className="text-text-secondary text-sm mt-1">School Basketball Programs from Notion</p>
         </div>
@@ -52,8 +52,8 @@ export default async function SchoolsPage() {
   ];
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8">
         <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Schools</h1>
         <p className="text-text-secondary text-sm mt-1">School Basketball Programs from Notion</p>
       </div>

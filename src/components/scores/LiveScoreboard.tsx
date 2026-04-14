@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useVisibilityPolling } from "@/hooks/useVisibilityPolling";
 import {
   Trophy,
   Radio,
@@ -54,7 +55,6 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
   const [viewMode, setViewMode] = useState<"timeline" | "courts">("timeline");
   const [expandedGame, setExpandedGame] = useState<number | null>(null);
   const [countdownPct, setCountdownPct] = useState(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchScores = useCallback(async (showRefresh = false) => {
@@ -78,29 +78,23 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
   const hasLive = games.some((g) => g.status === "live");
   const pollInterval = hasLive ? 15000 : 30000;
 
-  useEffect(() => {
-    fetchScores();
-  }, [fetchScores]);
+  // Visibility-aware polling: pauses when tab hidden, resumes on focus.
+  // Adaptive: 15s during live games, 30s otherwise.
+  useVisibilityPolling(() => fetchScores(), pollInterval);
 
+  // Countdown progress bar — resets when pollInterval changes
   useEffect(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
     if (countdownRef.current) clearInterval(countdownRef.current);
-
-    intervalRef.current = setInterval(() => fetchScores(), pollInterval);
-
-    // Countdown progress bar — tick every 100ms
     const tickMs = 100;
     let elapsed = 0;
     countdownRef.current = setInterval(() => {
       elapsed += tickMs;
       setCountdownPct(Math.min((elapsed / pollInterval) * 100, 100));
     }, tickMs);
-
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
       if (countdownRef.current) clearInterval(countdownRef.current);
     };
-  }, [fetchScores, pollInterval]);
+  }, [pollInterval, games]);
 
   // Filter by event (tournament) name
   const eventFiltered = eventFilter

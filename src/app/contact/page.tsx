@@ -17,10 +17,19 @@ import {
 } from "@/lib/constants";
 import { INPUT_CLASS, LABEL_CLASS } from "@/lib/form-styles";
 
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length === 0) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [phone, setPhone] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -174,6 +183,8 @@ export default function ContactPage() {
                           id="phone"
                           name="phone"
                           autoComplete="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(formatPhone(e.target.value))}
                           className={INPUT_CLASS}
                           placeholder="(480) 555-1234"
                         />
@@ -205,6 +216,8 @@ export default function ContactPage() {
                         name="message"
                         rows={5}
                         required
+                        maxLength={5000}
+                        aria-required="true"
                         className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50 resize-vertical"
                         placeholder="Tell us what you need..."
                       />
@@ -213,6 +226,7 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={loading}
+                      aria-busy={loading}
                       className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
                       {loading ? "Sending..." : "Send Message"}{" "}
@@ -299,7 +313,7 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  <div className="bg-off-white border border-light-gray rounded-xl overflow-hidden aspect-[4/3]">
+                  <div className="bg-off-white border border-light-gray rounded-xl overflow-hidden aspect-[4/3] relative">
                     <iframe
                       src="https://maps.google.com/maps?q=1090+N+Fiesta+Blvd,+Gilbert,+AZ+85233&output=embed"
                       width="100%"
@@ -310,6 +324,11 @@ export default function ContactPage() {
                       referrerPolicy="no-referrer-when-downgrade"
                       title="Inspire Courts AZ Location"
                     />
+                    <noscript>
+                      <div className="absolute inset-0 flex items-center justify-center bg-off-white text-text-muted text-sm p-4 text-center">
+                        <p>1090 N Fiesta Blvd, Ste 101 &amp; 102, Gilbert, AZ 85233</p>
+                      </div>
+                    </noscript>
                   </div>
                 </div>
               </AnimateIn>

@@ -2,27 +2,40 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { games, gameScores } from "@/lib/db/schema";
 import { desc, inArray } from "drizzle-orm";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 // GET /api/scores/live — public endpoint for live scores and recent finals
-export async function GET() {
+export async function GET(request: Request) {
+  // Rate limit: 60 requests per minute per IP
+  const ip = getClientIp(request);
+  if (isRateLimited(ip + ":scores", 60, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": "10" } }
+    );
+  }
+
   try {
-    // Query 1: Get all relevant games
+    // Query 1: Get relevant games (limit to 100 most recent to prevent unbounded responses)
     const allGames = await db
       .select()
       .from(games)
       .where(inArray(games.status, ["live", "final", "scheduled"]))
-      .orderBy(desc(games.createdAt));
+      .orderBy(desc(games.createdAt))
+      .limit(100);
 
     if (allGames.length === 0) {
       return NextResponse.json([], {
-        headers: { "Cache-Control": "public, max-age=15" },
+        headers: { "Cache-Control": "public, max-age=15, stale-while-revalidate=30" },
       });
     }
 
-    // Query 2: Get all scores in one query
+    // Query 2: Get scores only for the games we fetched (not all scores in DB)
+    const gameIds = allGames.map((g) => g.id);
     const allScores = await db
       .select()
       .from(gameScores)
+      .where(inArray(gameScores.gameId, gameIds))
       .orderBy(desc(gameScores.updatedAt));
 
     // Build maps: latest score per game + all quarter scores per game
@@ -81,7 +94,7 @@ export async function GET() {
     });
 
     return NextResponse.json(gamesWithScores, {
-      headers: { "Cache-Control": "public, max-age=15" },
+      headers: { "Cache-Control": "public, max-age=10, stale-while-revalidate=20" },
     });
   } catch (err) {
     console.error("[api/scores/live] Failed to fetch live scores:", err);

@@ -63,7 +63,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Tabs */}
       <div className="flex gap-1 bg-bg-secondary border border-border rounded-sm p-1 w-fit" role="tablist" aria-label="Scores view">
         {(["games", "standings"] as const).map((t) => (

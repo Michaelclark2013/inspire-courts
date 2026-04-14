@@ -112,7 +112,7 @@ export default function RegistrationsPage() {
     .reduce((sum, r) => sum + (r.entryFee ?? 0), 0);
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       <Link
         href={`/admin/tournaments/${id}`}
         className="text-text-secondary text-xs hover:text-white flex items-center gap-1 mb-4 transition-colors"
@@ -122,7 +122,7 @@ export default function RegistrationsPage() {
 
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             Registrations
           </h1>
           <p className="text-text-secondary text-sm mt-1">

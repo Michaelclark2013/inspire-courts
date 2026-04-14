@@ -12,16 +12,16 @@ export const revalidate = 300;
 export default async function StaffPage() {
   if (!isGoogleConfigured()) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+      <div className="p-3 sm:p-6 lg:p-8">
+        <div className="mb-4 md:mb-8">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             Staff & Refs
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-text-secondary text-sm mt-1 hidden md:block">
             Staff Check-Out & Ref Check-Out from Google Sheets
           </p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
+        <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
           <UserCheck className="w-10 h-10 text-text-secondary mx-auto mb-3" />
           <p className="text-white font-semibold mb-1">Google Sheets not connected</p>
           <p className="text-text-secondary text-sm">
@@ -101,26 +101,26 @@ export default async function StaffPage() {
   const totalRefPay = refs.reduce((s, r) => s + r.pay, 0);
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8">
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
           Staff & Refs
         </h1>
-        <p className="text-text-secondary text-sm mt-1">
+        <p className="text-text-secondary text-sm mt-1 hidden md:block">
           {staff.length} staff shifts · {refs.length} ref check-outs
         </p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4 md:mb-8">
         {[
           { label: "Staff Hours", value: totalStaffHours.toFixed(1) + "h" },
           { label: "Staff Pay", value: totalStaffPay > 0 ? `$${Math.round(totalStaffPay).toLocaleString()}` : "—" },
           { label: "Ref Games", value: totalRefGames.toString() },
           { label: "Ref Pay", value: totalRefPay > 0 ? `$${Math.round(totalRefPay).toLocaleString()}` : "—" },
         ].map((k) => (
-          <div key={k.label} className="bg-bg-secondary border border-border rounded-sm p-4">
+          <div key={k.label} className="bg-bg-secondary border border-border rounded-sm p-3 md:p-4">
             <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">{k.label}</p>
-            <p className="text-white font-bold text-2xl">{k.value}</p>
+            <p className="text-white font-bold text-xl md:text-2xl">{k.value}</p>
           </div>
         ))}
       </div>

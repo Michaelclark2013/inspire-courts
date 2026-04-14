@@ -383,7 +383,15 @@ export default function RegisterPage() {
                 <input
                   type="tel"
                   value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    let formatted = "";
+                    if (digits.length === 0) formatted = "";
+                    else if (digits.length <= 3) formatted = `(${digits}`;
+                    else if (digits.length <= 6) formatted = `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+                    else formatted = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+                    setForm({ ...form, phone: formatted });
+                  }}
                   autoComplete="tel"
                   className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25"
                   placeholder="(555) 123-4567"
@@ -393,6 +401,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
+                aria-busy={loading}
                 className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-all shadow-lg shadow-red/20 mt-2"
               >
                 {loading ? (

@@ -43,9 +43,9 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <div className="bg-bg-secondary border border-border rounded-sm p-5">
           <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
             Hours Worked (Top Staff)

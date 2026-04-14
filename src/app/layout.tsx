@@ -36,11 +36,20 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} — Indoor Basketball & Volleyball Facility in Gilbert, AZ`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
     description: "Arizona's premier indoor basketball & volleyball facility.",
+    images: ["/opengraph-image"],
   },
   metadataBase: new URL(SITE_URL),
   ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && {
@@ -63,6 +72,34 @@ export default function RootLayout({
         <link rel="preconnect" href="https://i.ytimg.com" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SportsActivityLocation",
+              name: "Inspire Courts AZ",
+              description: "Arizona's premier indoor basketball & volleyball facility. 7 regulation courts, tournaments, leagues, and private court rentals in Gilbert, AZ.",
+              url: SITE_URL,
+              telephone: "+14806244220",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
+                addressLocality: "Gilbert",
+                addressRegion: "AZ",
+                postalCode: "85233",
+                addressCountry: "US",
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 33.3579,
+                longitude: -111.7890,
+              },
+              sport: ["Basketball", "Volleyball"],
+              image: `${SITE_URL}/opengraph-image`,
+            }),
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <a

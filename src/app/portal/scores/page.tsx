@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
+import { useVisibilityPolling } from "@/hooks/useVisibilityPolling";
 import { Trophy, Loader2, AlertTriangle, RefreshCw, Radio } from "lucide-react";
 import StandingsTable from "@/components/scores/StandingsTable";
 
@@ -19,7 +20,6 @@ export default function PortalScoresPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedDivision, setSelectedDivision] = useState<string>("all");
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchGames = useCallback(async () => {
     try {
@@ -38,14 +38,8 @@ export default function PortalScoresPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchGames();
-    // 30s polling
-    intervalRef.current = setInterval(fetchGames, 30_000);
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [fetchGames]);
+  // Visibility-aware polling: pauses when tab hidden, resumes on focus
+  useVisibilityPolling(fetchGames, 30_000);
 
   const hasLive = games.some((g) => g.status === "live");
   const divisions = Array.from(new Set(games.map((g) => g.division).filter(Boolean))) as string[];

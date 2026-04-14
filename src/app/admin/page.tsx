@@ -190,9 +190,9 @@ export default async function AdminDashboard() {
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
-    <div className="p-4 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-bg/95 backdrop-blur-sm border-b border-border/50 -mx-6 lg:-mx-8 px-6 lg:px-8 py-3 lg:py-4 mb-6 lg:mb-8">
+      <div className="sticky top-0 z-10 bg-bg/95 backdrop-blur-sm border-b border-border/50 -mx-3 sm:-mx-6 lg:-mx-8 px-3 sm:px-6 lg:px-8 py-3 lg:py-4 mb-4 lg:mb-8">
         <div className="flex items-center justify-between gap-2">
           <div>
             <p className="text-text-secondary text-[10px] lg:text-xs mb-0.5">{greeting}</p>
@@ -231,7 +231,7 @@ export default async function AdminDashboard() {
       {/* Google Sheets KPIs */}
       <CollapsibleSection title={`Google Sheets KPIs · ${kpis.length} sources`}>
         {/* Mobile: horizontal scroll snap. Desktop: 4-col grid */}
-        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory -mx-4 px-4 pb-3 lg:grid lg:grid-cols-4 lg:overflow-visible lg:mx-0 lg:px-0 lg:pb-0 mb-3 lg:mb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory -mx-3 sm:-mx-0 px-3 sm:px-0 pb-3 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0 mb-3 lg:mb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {kpis.map((kpi, i) => (
             <div key={kpi.title} className={`snap-start flex-shrink-0 lg:w-auto ${i === 0 ? "w-[75%]" : "w-[60%]"}`}>
               <KPICard {...kpi} />

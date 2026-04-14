@@ -168,9 +168,9 @@ export default function ScoreEntryPage() {
   const finalGames = filtered.filter((g) => g.status === "final");
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8 flex items-start justify-between gap-4">
+      <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             Score Entry
@@ -282,7 +282,7 @@ export default function ScoreEntryPage() {
 
       {/* Game Count KPIs */}
       {!loading && gameList.length > 0 && (
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-3 mb-4 md:mb-8">
           <div className="bg-card border border-emerald-500/20 rounded-xl p-4 text-center">
             <p className="text-emerald-400 text-2xl font-bold font-heading">{liveGames.length}</p>
             <p className="text-emerald-400/60 text-xs font-semibold uppercase tracking-wider mt-1">Live</p>
@@ -299,7 +299,7 @@ export default function ScoreEntryPage() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-white/40">
+        <div className="flex items-center justify-center py-8 md:py-16 text-white/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading games...
         </div>
       ) : (

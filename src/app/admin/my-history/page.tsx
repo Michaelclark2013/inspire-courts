@@ -47,8 +47,8 @@ export default function MyHistoryPage() {
   const totalPay = shifts.reduce((sum, s) => sum + (parseFloat(s.amount.replace(/[$,]/g, "")) || 0), 0);
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8">
         <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
           My Work History
         </h1>
@@ -58,30 +58,30 @@ export default function MyHistoryPage() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-4 mb-8">
-        <div className="bg-card border border-white/10 rounded-xl p-5">
-          <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-wider mb-2">
-            <History className="w-3.5 h-3.5" /> Total Shifts
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mb-4 md:mb-8">
+        <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
+          <div className="flex items-center gap-1.5 text-white/50 text-[10px] uppercase tracking-wider mb-1.5">
+            <History className="w-3 h-3" /> Shifts
           </div>
-          <p className="text-white text-2xl font-bold">{shifts.length}</p>
+          <p className="text-white text-xl md:text-2xl font-bold">{shifts.length}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-5">
-          <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-wider mb-2">
-            <Clock className="w-3.5 h-3.5" /> Total Hours
+        <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
+          <div className="flex items-center gap-1.5 text-white/50 text-[10px] uppercase tracking-wider mb-1.5">
+            <Clock className="w-3 h-3" /> Hours
           </div>
-          <p className="text-white text-2xl font-bold">{totalHours.toFixed(1)}</p>
+          <p className="text-white text-xl md:text-2xl font-bold">{totalHours.toFixed(1)}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-5">
-          <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-wider mb-2">
-            <DollarSign className="w-3.5 h-3.5" /> Total Earned
+        <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
+          <div className="flex items-center gap-1.5 text-white/50 text-[10px] uppercase tracking-wider mb-1.5">
+            <DollarSign className="w-3 h-3" /> Earned
           </div>
-          <p className="text-white text-2xl font-bold">${totalPay.toFixed(2)}</p>
+          <p className="text-white text-xl md:text-2xl font-bold">${totalPay.toFixed(2)}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-5">
-          <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-wider mb-2">
-            <DollarSign className="w-3.5 h-3.5" /> Avg / Shift
+        <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
+          <div className="flex items-center gap-1.5 text-white/50 text-[10px] uppercase tracking-wider mb-1.5">
+            <DollarSign className="w-3 h-3" /> Avg
           </div>
-          <p className="text-white text-2xl font-bold">
+          <p className="text-white text-xl md:text-2xl font-bold">
             {shifts.length > 0 ? `$${(totalPay / shifts.length).toFixed(2)}` : "—"}
           </p>
         </div>
@@ -89,7 +89,7 @@ export default function MyHistoryPage() {
 
       {/* Shift table */}
       <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/10 flex items-center gap-3 flex-wrap">
+        <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3 flex-wrap">
           <History className="w-4 h-4 text-red flex-shrink-0" />
           <h2 className="text-white font-bold text-sm uppercase tracking-wider flex-1">Shift History</h2>
           <div className="relative">
@@ -105,7 +105,7 @@ export default function MyHistoryPage() {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-16 text-white/40">
+          <div className="flex items-center justify-center py-8 md:py-16 text-white/40">
             <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading history...
           </div>
         ) : shifts.length === 0 ? (

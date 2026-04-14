@@ -104,13 +104,13 @@ export default function AnnouncementsPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8 flex items-start justify-between gap-4">
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             Announcements
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-text-secondary text-sm mt-1 hidden md:block">
             Send announcements to coaches, parents, or everyone
           </p>
         </div>
@@ -135,7 +135,7 @@ export default function AnnouncementsPage() {
       )}
 
       {showForm && (
-        <div className="bg-card border border-white/10 rounded-xl p-6 mb-8">
+        <div className="bg-card border border-white/10 rounded-xl p-4 md:p-6 mb-4 md:mb-8">
           <form onSubmit={handleCreate} className="space-y-4">
             {saveError && (
               <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center justify-between">
@@ -227,11 +227,11 @@ export default function AnnouncementsPage() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-white/40">
+        <div className="flex items-center justify-center py-8 md:py-16 text-white/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading announcements...
         </div>
       ) : list.length === 0 ? (
-        <div className="text-center py-16 text-white/40">
+        <div className="text-center py-8 md:py-14 text-white/40">
           <Megaphone className="w-8 h-8 mx-auto mb-3 opacity-40" />
           <p className="text-sm mb-4">No announcements yet.</p>
           <button

@@ -38,10 +38,19 @@ function ChevronDown() {
   );
 }
 
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length === 0) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 export default function BookingForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [phone, setPhone] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -141,6 +150,8 @@ export default function BookingForm() {
               name="phone"
               required
               autoComplete="tel"
+              value={phone}
+              onChange={(e) => setPhone(formatPhone(e.target.value))}
               pattern="[0-9\s\-\(\)\+]{10,}"
               title="Please enter a valid phone number (at least 10 digits)"
               className={INPUT_CLASS_LG}
@@ -234,6 +245,7 @@ export default function BookingForm() {
               id="notes"
               name="notes"
               rows={4}
+              maxLength={2000}
               className={TEXTAREA_CLASS}
               placeholder="Any special requests, questions, or details…"
             />
@@ -254,6 +266,7 @@ export default function BookingForm() {
           <button
             type="submit"
             disabled={loading}
+            aria-busy={loading}
             className="w-full inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors shadow-lg focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
           >
             {loading ? "Submitting…" : "Submit Booking Request"}

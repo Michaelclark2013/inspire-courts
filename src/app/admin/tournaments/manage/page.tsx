@@ -207,14 +207,14 @@ export default function TournamentManagePage() {
   }
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8 flex items-start justify-between gap-4">
+      <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
-            Tournament Manager
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
+            Tournaments
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-text-secondary text-sm mt-1 hidden md:block">
             Create tournaments, manage brackets, and run game day
           </p>
         </div>
@@ -578,12 +578,11 @@ export default function TournamentManagePage() {
 
       {/* Tournament List */}
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-white/40">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading
-          tournaments...
+        <div className="flex items-center justify-center py-8 md:py-16 text-white/40">
+          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading tournaments...
         </div>
       ) : tournamentList.length === 0 ? (
-        <div className="text-center py-20 text-white/40">
+        <div className="text-center py-8 md:py-14 text-white/40">
           <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
           <h3 className="text-white font-bold text-lg mb-1">Create Your First Tournament</h3>
           <p className="text-white/40 text-sm mb-6">

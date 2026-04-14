@@ -19,6 +19,7 @@ export default function SubmitButton({
     <button
       type="submit"
       disabled={loading}
+      aria-busy={loading}
       className={`${
         fullWidth ? "w-full" : "w-full sm:w-auto"
       } inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)] shadow-sm`}

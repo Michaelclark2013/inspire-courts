@@ -6,9 +6,18 @@ import {
   tournamentRegistrations,
 } from "@/lib/db/schema";
 import { inArray, sql } from "drizzle-orm";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 // GET /api/tournaments — public tournament listing
-export async function GET() {
+export async function GET(request: Request) {
+  // Rate limit: 30 requests per minute per IP
+  const ip = getClientIp(request);
+  if (isRateLimited(ip + ":tournaments", 30, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": "15" } }
+    );
+  }
   try {
     const allTournaments = await db
       .select()

@@ -4,7 +4,7 @@ export default async function AnalyticsPage() {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold uppercase tracking-tight text-white">
@@ -27,7 +27,7 @@ export default async function AnalyticsPage() {
       </div>
 
       {!gaId ? (
-        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
+        <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
           <BarChart3 className="w-10 h-10 text-accent mx-auto mb-4" />
           <h3 className="text-white font-bold text-lg uppercase tracking-tight mb-2">
             Connect Google Analytics

@@ -158,6 +158,7 @@ export default function DashboardCharts({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
+              <caption className="sr-only">Recent game scores</caption>
               <thead>
                 <tr className="border-b border-border">
                   <th className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">

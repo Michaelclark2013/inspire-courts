@@ -12,12 +12,12 @@ export const revalidate = 300;
 export default async function RevenuePage() {
   if (!isGoogleConfigured()) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">Revenue</h1>
-          <p className="text-text-secondary text-sm mt-1">Mom Money — Revenue Tracking</p>
+      <div className="p-3 sm:p-6 lg:p-8">
+        <div className="mb-4 md:mb-8">
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">Revenue</h1>
+          <p className="text-text-secondary text-sm mt-1 hidden md:block">Mom Money — Revenue Tracking</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
+        <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
           <DollarSign className="w-10 h-10 text-text-secondary mx-auto mb-3" />
           <p className="text-white font-semibold mb-1">Google Sheets not connected</p>
           <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>
@@ -82,18 +82,18 @@ export default async function RevenuePage() {
   ].filter((d) => d.value > 0);
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-white font-heading">
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8">
+        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
           Revenue
         </h1>
-        <p className="text-text-secondary text-sm mt-1">
+        <p className="text-text-secondary text-sm mt-1 hidden md:block">
           Mom Money — {transactions.length} entries
         </p>
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4 md:mb-8">
         {[
           { label: "Grand Total", value: `$${Math.round(grandTotal).toLocaleString()}`, highlight: true },
           { label: "Cash", value: `$${Math.round(totalCash).toLocaleString()}` },
@@ -102,14 +102,14 @@ export default async function RevenuePage() {
         ].map((k) => (
           <div
             key={k.label}
-            className={`border rounded-sm p-4 ${
+            className={`border rounded-sm p-3 md:p-4 ${
               k.highlight
                 ? "bg-accent/10 border-accent/30"
                 : "bg-bg-secondary border-border"
             }`}
           >
             <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">{k.label}</p>
-            <p className={`font-bold text-2xl ${k.highlight ? "text-accent" : "text-white"}`}>
+            <p className={`font-bold text-xl md:text-2xl ${k.highlight ? "text-accent" : "text-white"}`}>
               {k.value}
             </p>
           </div>

@@ -40,8 +40,8 @@ export default function MySchedulePage() {
   const recent = games.filter((g) => g.status === "final").slice(0, 5);
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8 flex items-start justify-between gap-4">
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-white font-heading">
             My Schedule
@@ -69,11 +69,11 @@ export default function MySchedulePage() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-white/40">
+        <div className="flex items-center justify-center py-8 md:py-16 text-white/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading schedule...
         </div>
       ) : games.length === 0 ? (
-        <div className="bg-card border border-white/10 rounded-xl p-8 text-center">
+        <div className="bg-card border border-white/10 rounded-xl p-5 text-center">
           <Calendar className="w-8 h-8 text-white/30 mx-auto mb-3" />
           <p className="text-white font-semibold mb-1">No games on the schedule</p>
           <p className="text-text-secondary text-sm mb-4">Games will appear here once they&apos;re created.</p>
@@ -85,7 +85,7 @@ export default function MySchedulePage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-5 md:space-y-8">
           {live.length > 0 && (
             <section>
               <div className="flex items-center gap-2 mb-3">
@@ -144,7 +144,7 @@ function GameRow({ game }: { game: Game }) {
   })();
 
   return (
-    <div className="bg-card border border-white/10 rounded-xl px-5 py-4 flex items-center justify-between gap-4">
+    <div className="bg-card border border-white/10 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 text-sm min-w-0">
           <span className="text-white font-semibold truncate">{game.homeTeam}</span>

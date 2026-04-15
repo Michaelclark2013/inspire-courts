@@ -1,159 +1,194 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState, useCallback } from "react";
-import { useVisibilityPolling } from "@/hooks/useVisibilityPolling";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Trophy,
-  Users,
-  Calendar,
-  Radio,
-  FileCheck,
-  UserCheck,
-  CreditCard,
-  ChevronRight,
-  CheckCircle2,
-  Circle,
-  ArrowRight,
-  Zap,
-  Megaphone,
   AlertTriangle,
+  Calendar,
+  CreditCard,
+  FileCheck,
   RefreshCw,
-  Eye,
+  Trophy,
+  UserCheck,
+  Users,
 } from "lucide-react";
-import Link from "next/link";
+
+import { useVisibilityPolling } from "@/hooks/useVisibilityPolling";
 import { usePortalView } from "@/components/portal/PortalViewContext";
-
-type LiveGame = {
-  id: number;
-  homeTeam: string;
-  awayTeam: string;
-  homeScore: number;
-  awayScore: number;
-  status: string;
-  quarter: string | null;
-  division: string | null;
-};
-
-type RegistrationStep = {
-  label: string;
-  description: string;
-  href: string;
-  done: boolean;
-  icon: typeof FileCheck;
-};
+import { ActionCard } from "@/components/portal/ActionCard";
+import { DashboardSkeleton } from "@/components/portal/DashboardSkeleton";
+import { LiveGamesBanner } from "@/components/portal/LiveGamesBanner";
+import { MyRegistrationsList } from "@/components/portal/MyRegistrationsList";
+import { PortalAnnouncements } from "@/components/portal/PortalAnnouncements";
+import { PortalHeader } from "@/components/portal/PortalHeader";
+import { RecentResults } from "@/components/portal/RecentResults";
+import { RegistrationProgress } from "@/components/portal/RegistrationProgress";
+import { ViewAsBanner } from "@/components/portal/ViewAsBanner";
+import type {
+  Announcement,
+  LiveGame,
+  PortalErrors,
+  Registration,
+  RegistrationStep,
+} from "@/types/portal";
 
 export default function PortalDashboard() {
   const { data: session } = useSession();
   const { viewAsRole } = usePortalView();
+
   const [liveGames, setLiveGames] = useState<LiveGame[]>([]);
   const [rosterCount, setRosterCount] = useState<number | null>(null);
   const [waiverSubmitted, setWaiverSubmitted] = useState(false);
-  const [portalAnnouncements, setPortalAnnouncements] = useState<
-    { id: number; title: string; body: string; audience: string; createdAt: string }[]
-  >([]);
-  const [myRegistrations, setMyRegistrations] = useState<
-    { id: number; tournamentId: number; tournamentName: string; tournamentDate: string; teamName: string; division: string | null; paymentStatus: string; status: string }[]
-  >([]);
-  const [error, setError] = useState(false);
+  const [portalAnnouncements, setPortalAnnouncements] = useState<Announcement[]>([]);
+  const [myRegistrations, setMyRegistrations] = useState<Registration[]>([]);
+  const [errors, setErrors] = useState<PortalErrors>({
+    games: false,
+    announcements: false,
+    registrations: false,
+  });
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [secondsAgo, setSecondsAgo] = useState(0);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const abortRef = useRef<AbortController | null>(null);
 
   const actualRole = session?.user?.role;
-  const role = (actualRole === "admin" && viewAsRole) ? viewAsRole : actualRole;
+  const role = actualRole === "admin" && viewAsRole ? viewAsRole : actualRole;
   const name = session?.user?.name?.split(" ")[0] || "there";
-  const liveNow = liveGames.filter((g) => g.status === "live");
 
   const fetchData = useCallback(async () => {
+    // Cancel any in-flight request so the retry button can't stampede the API.
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    const { signal } = controller;
+
+    setIsFetching(true);
     try {
-      const [gamesRes, announcementsRes, registrationsRes] = await Promise.allSettled([
-        fetch("/api/scores/live").then((r) => r.json()),
-        fetch("/api/portal/announcements").then((r) => r.json()),
-        fetch("/api/portal/registrations").then((r) => r.json()),
-      ]);
+      const res = await fetch("/api/portal/summary", { signal });
+      if (!res.ok) throw new Error(`summary ${res.status}`);
+      const data = await res.json();
 
-      if (gamesRes.status === "fulfilled") setLiveGames(gamesRes.value);
-      if (announcementsRes.status === "fulfilled") setPortalAnnouncements(announcementsRes.value);
-      if (registrationsRes.status === "fulfilled" && Array.isArray(registrationsRes.value)) setMyRegistrations(registrationsRes.value);
+      if (signal.aborted) return;
 
+      setLiveGames(Array.isArray(data.liveGames) ? data.liveGames : []);
+      setPortalAnnouncements(Array.isArray(data.announcements) ? data.announcements : []);
+      setMyRegistrations(Array.isArray(data.registrations) ? data.registrations : []);
+      if (typeof data.rosterCount === "number") setRosterCount(data.rosterCount);
+      else if (data.rosterCount === null) setRosterCount(null);
+      setWaiverSubmitted(Boolean(data.waiverSubmitted));
+
+      setErrors({ games: false, announcements: false, registrations: false });
       setLastUpdated(new Date());
-      setSecondsAgo(0);
-      setError(false);
-    } catch {
-      setError(true);
+    } catch (err) {
+      if ((err as Error)?.name === "AbortError") return;
+      // Fall back to per-endpoint fetches so a partial outage still shows what it can.
+      const [gamesRes, announcementsRes, registrationsRes] = await Promise.allSettled([
+        fetch("/api/scores/live", { signal }).then((r) => r.json()),
+        fetch("/api/portal/announcements", { signal }).then((r) => r.json()),
+        fetch("/api/portal/registrations", { signal }).then((r) => r.json()),
+      ]);
+      if (signal.aborted) return;
+
+      const nextErrors: PortalErrors = { games: false, announcements: false, registrations: false };
+
+      if (gamesRes.status === "fulfilled" && Array.isArray(gamesRes.value)) {
+        setLiveGames(gamesRes.value);
+      } else {
+        nextErrors.games = true;
+      }
+      if (announcementsRes.status === "fulfilled" && Array.isArray(announcementsRes.value)) {
+        setPortalAnnouncements(announcementsRes.value);
+      } else {
+        nextErrors.announcements = true;
+      }
+      if (
+        registrationsRes.status === "fulfilled" &&
+        Array.isArray(registrationsRes.value)
+      ) {
+        setMyRegistrations(registrationsRes.value);
+      } else {
+        nextErrors.registrations = true;
+      }
+      setErrors(nextErrors);
+      setLastUpdated(new Date());
+    } finally {
+      if (!signal.aborted) {
+        setIsFetching(false);
+        setIsInitialLoad(false);
+      }
     }
   }, []);
 
-  // Visibility-aware polling: pauses when tab is hidden, resumes on focus.
-  // 30s interval — saves 50-70% of requests from background tabs.
   useVisibilityPolling(fetchData, 30_000);
 
-  // Seconds-ago ticker
+  // Cleanup: abort any in-flight fetches on unmount.
   useEffect(() => {
-    const tick = setInterval(() => {
-      if (lastUpdated) setSecondsAgo(Math.floor((Date.now() - lastUpdated.getTime()) / 1000));
-    }, 1000);
-    return () => clearInterval(tick);
-  }, [lastUpdated]);
+    return () => {
+      if (abortRef.current) abortRef.current.abort();
+    };
+  }, []);
 
-  // Fetch roster count for coaches
-  useEffect(() => {
-    if (role === "coach") {
-      fetch("/api/portal/roster")
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.players) setRosterCount(data.players.length);
-        })
-        .catch(() => {});
-    }
-  }, [role]);
+  // Memoized derived values
+  const liveNow = useMemo(() => liveGames.filter((g) => g.status === "live"), [liveGames]);
+  const finalGames = useMemo(() => liveGames.filter((g) => g.status === "final"), [liveGames]);
 
-  // Coach registration steps
-  const registrationSteps: RegistrationStep[] = role === "coach" ? [
-    {
-      label: "Submit Waiver",
-      description: "Required for all players before game day",
-      href: "/portal/waiver",
-      done: waiverSubmitted,
-      icon: FileCheck,
-    },
-    {
-      label: "Upload Roster",
-      description: "Add all players to your team",
-      href: "/portal/roster",
-      done: (rosterCount ?? 0) >= 1,
-      icon: Users,
-    },
-    {
-      label: "Team Check-In",
-      description: "Check in your players on game day",
-      href: "/portal/checkin",
-      done: false,
-      icon: UserCheck,
-    },
-    {
-      label: "Confirm Payment",
-      description: "Contact admin to confirm tournament entry",
-      href: "/portal/profile",
-      done: false,
-      icon: CreditCard,
-    },
-  ] : [];
+  const greeting = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 12) return "Good morning";
+    if (h < 17) return "Good afternoon";
+    return "Good evening";
+  }, []);
 
-  const completedSteps = registrationSteps.filter((s) => s.done).length;
-  const totalSteps = registrationSteps.length;
-  const progressPercent = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+  const registrationSteps: RegistrationStep[] = useMemo(() => {
+    if (role !== "coach") return [];
+    return [
+      {
+        label: "Submit Waiver",
+        description: "Required for all players before game day",
+        href: "/portal/waiver",
+        done: waiverSubmitted,
+        icon: FileCheck,
+      },
+      {
+        label: "Upload Roster",
+        description: "Add all players to your team",
+        href: "/portal/roster",
+        done: (rosterCount ?? 0) >= 1,
+        icon: Users,
+      },
+      {
+        label: "Team Check-In",
+        description: "Check in your players on game day",
+        href: "/portal/checkin",
+        done: false,
+        icon: UserCheck,
+      },
+      {
+        label: "Confirm Payment",
+        description: "Contact admin to confirm tournament entry",
+        href: "/portal/profile",
+        done: false,
+        icon: CreditCard,
+      },
+    ];
+  }, [role, waiverSubmitted, rosterCount]);
 
-  const greeting = new Date().getHours() < 12
-    ? "Good morning"
-    : new Date().getHours() < 17
-    ? "Good afternoon"
-    : "Good evening";
+  const { completedSteps, totalSteps, progressPercent } = useMemo(() => {
+    const done = registrationSteps.filter((s) => s.done).length;
+    const total = registrationSteps.length;
+    const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+    return { completedSteps: done, totalSteps: total, progressPercent: percent };
+  }, [registrationSteps]);
 
-  // Error state
-  if (error && liveGames.length === 0 && myRegistrations.length === 0) {
+  // Hard error — everything failed and we have no cached data at all.
+  const allErrored = errors.games && errors.announcements && errors.registrations;
+  const hasAnyData =
+    liveGames.length > 0 || myRegistrations.length > 0 || portalAnnouncements.length > 0;
+
+  if (allErrored && !hasAnyData && !isInitialLoad) {
     return (
-      <div className="p-5 lg:p-8 max-w-5xl">
+      <div className="p-5 lg:p-8 max-w-5xl pb-[env(safe-area-inset-bottom)]">
         <div className="mb-6">
           <p className="text-text-muted text-xs uppercase tracking-widest mb-1">
             {role === "coach" ? "Coach Portal" : role === "parent" ? "Parent Portal" : "Portal"}
@@ -169,358 +204,145 @@ export default function PortalDashboard() {
             Could not connect to the server. Check your connection and try again.
           </p>
           <button
-            onClick={() => { setError(false); fetchData(); }}
-            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+            type="button"
+            onClick={fetchData}
+            disabled={isFetching}
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-60 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
-            <RefreshCw className="w-4 h-4" /> Retry
+            <RefreshCw className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`} /> Retry
           </button>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="p-5 lg:p-8 max-w-5xl">
-      {/* View-As Banner */}
-      {actualRole === "admin" && viewAsRole && (
-        <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 flex items-center gap-2 text-amber-600 text-xs font-semibold">
-          <Eye className="w-3.5 h-3.5" />
-          Viewing as {viewAsRole === "coach" ? "Coach" : "Parent"} — This is what a {viewAsRole} sees on their dashboard.
-        </div>
-      )}
+  const partialError = errors.games || errors.announcements || errors.registrations;
 
-      {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <p className="text-text-muted text-xs uppercase tracking-widest mb-1">
-            {role === "coach" ? "Coach Portal" : role === "parent" ? "Parent Portal" : "Portal"}
-          </p>
-          <h1 className="text-navy text-xl lg:text-2xl font-bold font-heading">
-            {greeting}, {name}
-          </h1>
-        </div>
-        {lastUpdated && (
-          <button
-            onClick={fetchData}
-            className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1.5 rounded-lg transition-colors ${
-              secondsAgo > 60
-                ? "text-amber-600 bg-amber-50 hover:bg-amber-100"
-                : "text-text-muted bg-off-white hover:bg-navy/[0.04]"
-            }`}
-            title="Click to refresh"
-          >
-            <RefreshCw className="w-3 h-3" />
-            {secondsAgo < 5 ? "Just now" : `${secondsAgo}s ago`}
-          </button>
-        )}
-      </div>
+  // Consolidated empty state for non-coaches with nothing going on.
+  const isEmpty =
+    role !== "coach" &&
+    liveNow.length === 0 &&
+    finalGames.length === 0 &&
+    myRegistrations.length === 0 &&
+    portalAnnouncements.length === 0;
 
-      {/* Announcements */}
-      {portalAnnouncements.length > 0 && (
-        <div className="mb-6 space-y-2">
-          {portalAnnouncements.slice(0, 3).map((a) => (
-            <div
-              key={a.id}
-              className="bg-amber-50 border border-amber-200 rounded-2xl p-4"
-            >
-              <div className="flex items-start gap-3">
-                <Megaphone className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-amber-600 text-xs font-bold uppercase tracking-wider mb-0.5">
-                    {a.title}
-                  </p>
-                  <p className="text-navy/70 text-sm">{a.body}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+  let body: React.ReactNode;
+  try {
+    body = (
+      <>
+        <PortalAnnouncements announcements={portalAnnouncements} />
+        <LiveGamesBanner games={liveNow} />
 
-      {/* Live Games Banner */}
-      {liveNow.length > 0 && (
-        <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 lg:p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Radio className="w-4 h-4 text-emerald-600 animate-pulse" />
-            <span className="text-emerald-600 text-xs font-bold uppercase tracking-wider">
-              Live Now
-            </span>
-          </div>
-          <div className="space-y-2">
-            {liveNow.map((game) => (
-              <div
-                key={game.id}
-                className="flex items-center justify-between bg-white border border-light-gray rounded-xl px-4 py-3"
-              >
-                <div className="flex items-center gap-3 text-sm min-w-0">
-                  <span className="text-navy font-semibold truncate">{game.homeTeam}</span>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-navy font-bold text-lg tabular-nums">{game.homeScore}</span>
-                    <span className="text-light-gray text-xs">vs</span>
-                    <span className="text-navy font-bold text-lg tabular-nums">{game.awayScore}</span>
-                  </div>
-                  <span className="text-navy font-semibold truncate">{game.awayTeam}</span>
-                </div>
-                {game.quarter && (
-                  <span className="bg-emerald-500/20 text-emerald-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase">
-                    Q{game.quarter}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Coach Registration Progress */}
-      {role === "coach" && (
-        <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl p-5 lg:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
-                <Zap className="w-4 h-4 text-red" />
-              </div>
-              <div>
-                <h2 className="text-navy font-bold text-sm">Event Registration</h2>
-                <p className="text-text-muted text-xs">
-                  {completedSteps === totalSteps
-                    ? "All set! You're fully registered."
-                    : `${completedSteps} of ${totalSteps} steps complete`}
-                </p>
-              </div>
-            </div>
-            <span className="text-navy font-bold text-lg tabular-nums">{progressPercent}%</span>
-          </div>
-
-          {/* Progress bar */}
-          <div className="w-full h-2 bg-light-gray rounded-full mb-5 overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-700 ease-out"
-              style={{
-                width: `${progressPercent}%`,
-                background: progressPercent === 100
-                  ? "linear-gradient(90deg, #22C55E, #16A34A)"
-                  : "linear-gradient(90deg, #CC0000, #E31B23)",
-              }}
-            />
-          </div>
-
-          {/* Steps */}
-          <div className="space-y-2">
-            {registrationSteps.map((step, i) => {
-              const Icon = step.icon;
-              return (
-                <Link
-                  key={i}
-                  href={step.href}
-                  className={`flex items-center gap-3 p-3 rounded-xl transition-all group ${
-                    step.done
-                      ? "bg-emerald-50 hover:bg-emerald-100"
-                      : "bg-off-white hover:bg-navy/[0.04]"
-                  }`}
-                >
-                  {step.done ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                  ) : (
-                    <Circle className="w-5 h-5 text-light-gray flex-shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-semibold ${step.done ? "text-emerald-600" : "text-navy"}`}>
-                      {step.label}
-                    </p>
-                    <p className="text-text-muted text-xs truncate">{step.description}</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-navy/40 transition-colors flex-shrink-0" />
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* My Registrations */}
-      {myRegistrations.length === 0 && (
-        <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl p-6 text-center">
-          <div className="w-12 h-12 rounded-full bg-off-white flex items-center justify-center mx-auto mb-3">
-            <Trophy className="w-6 h-6 text-light-gray" />
-          </div>
-          <h3 className="text-navy font-semibold text-sm mb-1">No Tournaments Yet</h3>
-          <p className="text-text-muted text-xs mb-4 max-w-xs mx-auto">
-            Register for an upcoming tournament to see your events here.
-          </p>
-          <Link
-            href="/tournaments"
-            className="inline-flex items-center gap-1.5 text-red text-xs font-semibold hover:text-red-hover transition-colors"
-          >
-            Browse Tournaments <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-      )}
-      {myRegistrations.length > 0 && (
-        <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
-                <Trophy className="w-4 h-4 text-red" />
-              </div>
-              <h2 className="text-navy font-bold text-sm">My Tournaments</h2>
-            </div>
-            <Link href="/tournaments" className="text-red text-xs font-semibold hover:text-red-hover transition-colors flex items-center gap-1">
-              Browse <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-          <div className="divide-y divide-light-gray">
-            {myRegistrations.map((reg) => (
-              <Link
-                key={reg.id}
-                href={`/tournaments/${reg.tournamentId}`}
-                className="px-5 py-3 flex items-center justify-between hover:bg-off-white transition-colors"
-              >
-                <div className="min-w-0">
-                  <p className="text-navy text-sm font-semibold truncate">{reg.tournamentName}</p>
-                  <p className="text-text-muted text-xs">{reg.teamName}{reg.division ? ` · ${reg.division}` : ""}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                    reg.paymentStatus === "paid" || reg.paymentStatus === "waived"
-                      ? "bg-emerald-500/20 text-emerald-400"
-                      : "bg-amber-500/20 text-amber-400"
-                  }`}>
-                    {reg.paymentStatus}
-                  </span>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                    reg.status === "approved"
-                      ? "bg-emerald-500/20 text-emerald-400"
-                      : reg.status === "rejected"
-                      ? "bg-red/20 text-red"
-                      : "bg-amber-500/20 text-amber-400"
-                  }`}>
-                    {reg.status}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Quick Actions */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 mb-6">
         {role === "coach" && (
-          <ActionCard
-            href="/portal/roster"
-            icon={Users}
-            title="My Roster"
-            desc={rosterCount !== null ? `${rosterCount} player${rosterCount !== 1 ? "s" : ""}` : "Manage your team"}
-            color="cyan"
+          <RegistrationProgress
+            steps={registrationSteps}
+            completedSteps={completedSteps}
+            totalSteps={totalSteps}
+            progressPercent={progressPercent}
           />
         )}
-        <ActionCard
-          href="/portal/schedule"
-          icon={Calendar}
-          title="Schedule"
-          desc="Games & events"
-          color="blue"
-        />
-        <ActionCard
-          href="/portal/scores"
-          icon={Trophy}
-          title="Scores"
-          desc="Results & standings"
-          color="amber"
-        />
-        {(role === "coach" || role === "parent") && (
-          <ActionCard
-            href="/portal/waiver"
-            icon={FileCheck}
-            title="Waivers"
-            desc="Submit player waivers"
-            color="emerald"
-          />
-        )}
-      </div>
 
-      {/* Recent Games */}
-      {liveGames.filter((g) => g.status === "final").length > 0 && (
-        <div className="bg-white shadow-sm border border-light-gray rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 flex items-center justify-between">
-            <h2 className="text-navy font-bold text-sm">Recent Results</h2>
-            <Link href="/portal/scores" className="text-red text-xs font-semibold hover:text-red-hover transition-colors flex items-center gap-1">
-              View All <ArrowRight className="w-3 h-3" />
-            </Link>
+        {isEmpty ? (
+          <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl p-8 text-center">
+            <div className="w-12 h-12 rounded-full bg-off-white flex items-center justify-center mx-auto mb-3">
+              <Trophy className="w-6 h-6 text-light-gray" />
+            </div>
+            <h3 className="text-navy font-semibold text-sm mb-1">Welcome to Your Portal</h3>
+            <p className="text-text-muted text-xs max-w-xs mx-auto">
+              Your dashboard will populate as events go live.
+            </p>
           </div>
-          <div className="divide-y divide-light-gray">
-            {liveGames
-              .filter((g) => g.status === "final")
-              .slice(0, 5)
-              .map((game) => (
-                <div key={game.id} className="px-5 py-3 flex items-center justify-between">
-                  <div className="flex items-center gap-3 min-w-0 text-sm">
-                    <span className={`font-semibold truncate ${game.homeScore > game.awayScore ? "text-navy" : "text-text-muted"}`}>
-                      {game.homeTeam}
-                    </span>
-                    <div className="flex items-center gap-1.5 flex-shrink-0 tabular-nums">
-                      <span className={`font-bold ${game.homeScore > game.awayScore ? "text-navy" : "text-text-muted"}`}>
-                        {game.homeScore}
-                      </span>
-                      <span className="text-light-gray">-</span>
-                      <span className={`font-bold ${game.awayScore > game.homeScore ? "text-navy" : "text-text-muted"}`}>
-                        {game.awayScore}
-                      </span>
-                    </div>
-                    <span className={`font-semibold truncate ${game.awayScore > game.homeScore ? "text-navy" : "text-text-muted"}`}>
-                      {game.awayTeam}
-                    </span>
-                  </div>
-                  {game.division && (
-                    <span className="text-text-muted text-[10px] font-semibold uppercase">{game.division}</span>
-                  )}
-                </div>
-              ))}
-          </div>
+        ) : (
+          <MyRegistrationsList registrations={myRegistrations} />
+        )}
+
+        {/* Quick Actions — 1 col mobile, 2 col tablet, 3 col desktop */}
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-6">
+          {role === "coach" && (
+            <ActionCard
+              href="/portal/roster"
+              icon={Users}
+              title="My Roster"
+              desc={
+                rosterCount !== null
+                  ? `${rosterCount} player${rosterCount !== 1 ? "s" : ""}`
+                  : "Manage your team"
+              }
+              color="cyan"
+              prefetchOnHover
+            />
+          )}
+          <ActionCard
+            href="/portal/schedule"
+            icon={Calendar}
+            title="Schedule"
+            desc="Games & events"
+            color="blue"
+            prefetchOnHover
+          />
+          <ActionCard
+            href="/portal/scores"
+            icon={Trophy}
+            title="Scores"
+            desc="Results & standings"
+            color="amber"
+            prefetchOnHover
+          />
+          {(role === "coach" || role === "parent") && (
+            <ActionCard
+              href="/portal/waiver"
+              icon={FileCheck}
+              title="Waivers"
+              desc="Submit player waivers"
+              color="emerald"
+            />
+          )}
+        </div>
+
+        <RecentResults games={finalGames} />
+      </>
+    );
+  } catch (err) {
+    // Last-ditch guard against a runtime error in map renders.
+    // Real errors still get surfaced by the error boundary at error.tsx.
+    body = (
+      <div className="bg-red/10 border border-red/20 rounded-2xl p-6 text-center">
+        <AlertTriangle className="w-8 h-8 text-red mx-auto mb-2" />
+        <p className="text-navy text-sm font-semibold mb-2">Something went wrong while rendering your dashboard.</p>
+        <p className="text-text-muted text-xs">{(err as Error)?.message ?? "Unknown error"}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-5 lg:p-8 max-w-5xl pb-[env(safe-area-inset-bottom)]">
+      <ViewAsBanner viewAsRole={actualRole === "admin" ? viewAsRole : null} />
+
+      <PortalHeader
+        role={role}
+        greeting={greeting}
+        name={name}
+        lastUpdated={lastUpdated}
+        onRefresh={fetchData}
+        isFetching={isFetching}
+      />
+
+      {partialError && !allErrored && (
+        <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 flex items-center gap-2 text-amber-600 text-xs font-semibold">
+          <AlertTriangle className="w-3.5 h-3.5" />
+          Some sections couldn&apos;t load. Showing what we have.
+          <button
+            type="button"
+            onClick={fetchData}
+            disabled={isFetching}
+            className="ml-auto underline hover:no-underline disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded"
+          >
+            Retry
+          </button>
         </div>
       )}
+
+      {isInitialLoad ? <DashboardSkeleton /> : body}
     </div>
-  );
-}
-
-const COLOR_MAP = {
-  cyan: { bg: "bg-cyan-50", border: "border-cyan-200 hover:border-cyan-300", icon: "text-cyan-600", count: "text-cyan-600" },
-  blue: { bg: "bg-blue-50", border: "border-blue-200 hover:border-blue-300", icon: "text-blue-600", count: "text-blue-600" },
-  amber: { bg: "bg-amber-50", border: "border-amber-200 hover:border-amber-300", icon: "text-amber-600", count: "text-amber-600" },
-  emerald: { bg: "bg-emerald-50", border: "border-emerald-200 hover:border-emerald-300", icon: "text-emerald-600", count: "text-emerald-600" },
-  red: { bg: "bg-red/[0.08]", border: "border-red/20 hover:border-red/30", icon: "text-red", count: "text-red" },
-};
-
-function ActionCard({
-  href,
-  icon: Icon,
-  title,
-  desc,
-  color,
-}: {
-  href: string;
-  icon: typeof Users;
-  title: string;
-  desc: string;
-  color: keyof typeof COLOR_MAP;
-}) {
-  const c = COLOR_MAP[color];
-  return (
-    <Link
-      href={href}
-      className={`${c.bg} border ${c.border} rounded-2xl p-4 transition-all group`}
-    >
-      <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-xl ${c.bg} flex items-center justify-center`}>
-          <Icon className={`w-5 h-5 ${c.icon}`} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-navy font-semibold text-sm">{title}</h3>
-          <p className="text-text-muted text-xs">{desc}</p>
-        </div>
-        <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-navy/30 transition-colors" />
-      </div>
-    </Link>
   );
 }

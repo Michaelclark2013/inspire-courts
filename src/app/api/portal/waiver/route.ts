@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { waivers } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import {
   appendSheetRow,
   isGoogleConfigured,
@@ -10,6 +13,29 @@ import {
   findOrCreateDriveFolder,
   createDriveDoc,
 } from "@/lib/google-sheets";
+
+// GET /api/portal/waiver — returns whether the current user has a waiver on file.
+// Used by the portal dashboard to drive the "Submit Waiver" registration step.
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ submitted: false }, { status: 200 });
+  }
+
+  try {
+    const rows = await db
+      .select({ id: waivers.id })
+      .from(waivers)
+      .where(eq(waivers.email, session.user.email))
+      .limit(1);
+    return NextResponse.json(
+      { submitted: rows.length > 0 },
+      { headers: { "Cache-Control": "private, max-age=30, stale-while-revalidate=60" } }
+    );
+  } catch {
+    return NextResponse.json({ submitted: false });
+  }
+}
 
 // POST /api/portal/waiver — submit a player waiver
 // Waivers are saved to Google Sheets (playerCheckIn sheet) with full event + waiver data.
@@ -38,6 +64,32 @@ export async function POST(request: NextRequest) {
       { error: "Player name, parent name, and email are required" },
       { status: 400 }
     );
+  }
+
+  // Validate field lengths to prevent oversized data in Sheets/Drive
+  if (typeof playerName !== "string" || playerName.trim().length === 0 || playerName.length > 100) {
+    return NextResponse.json({ error: "Player name must be 1–100 characters" }, { status: 400 });
+  }
+  if (typeof parentName !== "string" || parentName.trim().length === 0 || parentName.length > 100) {
+    return NextResponse.json({ error: "Parent name must be 1–100 characters" }, { status: 400 });
+  }
+  if (typeof parentEmail !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail) || parentEmail.length > 254) {
+    return NextResponse.json({ error: "A valid parent email is required" }, { status: 400 });
+  }
+  if (parentPhone && (typeof parentPhone !== "string" || parentPhone.length > 30)) {
+    return NextResponse.json({ error: "Parent phone must be 30 characters or less" }, { status: 400 });
+  }
+  if (emergencyContact && (typeof emergencyContact !== "string" || emergencyContact.length > 100)) {
+    return NextResponse.json({ error: "Emergency contact must be 100 characters or less" }, { status: 400 });
+  }
+  if (emergencyPhone && (typeof emergencyPhone !== "string" || emergencyPhone.length > 30)) {
+    return NextResponse.json({ error: "Emergency phone must be 30 characters or less" }, { status: 400 });
+  }
+  if (allergies && (typeof allergies !== "string" || allergies.length > 500)) {
+    return NextResponse.json({ error: "Allergies must be 500 characters or less" }, { status: 400 });
+  }
+  if (eventName && (typeof eventName !== "string" || eventName.length > 200)) {
+    return NextResponse.json({ error: "Event name must be 200 characters or less" }, { status: 400 });
   }
 
   const timestamp = new Date().toLocaleString("en-US", {
@@ -121,7 +173,7 @@ export async function POST(request: NextRequest) {
           `Submitted at: ${timestamp}`,
         ].join("\n");
 
-        await createDriveDoc(eventFolderId, docTitle, docContent);
+          await createDriveDoc(eventFolderId, docTitle, docContent);
         }
       }
     } catch {

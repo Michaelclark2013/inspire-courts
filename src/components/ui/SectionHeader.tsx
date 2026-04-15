@@ -4,6 +4,7 @@ interface SectionHeaderProps {
   description?: string;
   align?: "left" | "center";
   dark?: boolean;
+  titleId?: string;
 }
 
 export default function SectionHeader({
@@ -12,6 +13,7 @@ export default function SectionHeader({
   description,
   align = "center",
   dark = false,
+  titleId,
 }: SectionHeaderProps) {
   const alignClass = align === "center" ? "text-center" : "text-left";
   return (
@@ -22,6 +24,7 @@ export default function SectionHeader({
         </p>
       )}
       <h2
+        id={titleId}
         className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight font-[var(--font-chakra)] ${
           dark ? "text-white" : "text-navy"
         }`}

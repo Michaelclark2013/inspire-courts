@@ -31,17 +31,17 @@ type Registration = {
 };
 
 const PAYMENT_STYLES: Record<string, string> = {
-  pending: "bg-amber-500/20 text-amber-400",
-  paid: "bg-emerald-500/20 text-emerald-400",
-  waived: "bg-blue-500/20 text-blue-400",
-  refunded: "bg-white/10 text-navy/40",
+  pending: "bg-amber-50 text-amber-600",
+  paid: "bg-emerald-50 text-emerald-600",
+  waived: "bg-blue-50 text-blue-600",
+  refunded: "bg-gray-100 text-gray-500",
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  pending: "bg-amber-500/20 text-amber-400",
-  approved: "bg-emerald-500/20 text-emerald-400",
-  rejected: "bg-red/20 text-red",
-  waitlisted: "bg-purple-500/20 text-purple-400",
+  pending: "bg-amber-50 text-amber-600",
+  approved: "bg-emerald-50 text-emerald-600",
+  rejected: "bg-red/10 text-red",
+  waitlisted: "bg-purple-50 text-purple-600",
 };
 
 export default function RegistrationsPage() {
@@ -140,20 +140,20 @@ export default function RegistrationsPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">Total</p>
+        <div className="bg-white border border-border shadow-sm rounded-xl p-4">
+          <p className="text-text-muted text-xs font-semibold uppercase tracking-wider mb-1">Total</p>
           <p className="text-navy text-2xl font-bold font-heading">{regs.length}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">Approved</p>
-          <p className="text-emerald-400 text-2xl font-bold font-heading">{approved}</p>
+        <div className="bg-white border border-border shadow-sm rounded-xl p-4">
+          <p className="text-text-muted text-xs font-semibold uppercase tracking-wider mb-1">Approved</p>
+          <p className="text-emerald-600 text-2xl font-bold font-heading">{approved}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">Pending Payment</p>
-          <p className="text-amber-400 text-2xl font-bold font-heading">{pending}</p>
+        <div className="bg-white border border-border shadow-sm rounded-xl p-4">
+          <p className="text-text-muted text-xs font-semibold uppercase tracking-wider mb-1">Pending Payment</p>
+          <p className="text-amber-600 text-2xl font-bold font-heading">{pending}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">Revenue</p>
+        <div className="bg-white border border-border shadow-sm rounded-xl p-4">
+          <p className="text-text-muted text-xs font-semibold uppercase tracking-wider mb-1">Revenue</p>
           <p className="text-navy text-2xl font-bold font-heading">
             ${(totalRevenue / 100).toFixed(0)}
           </p>
@@ -162,7 +162,7 @@ export default function RegistrationsPage() {
 
       {/* Walk-in form */}
       {showForm && (
-        <div className="bg-card border border-white/10 rounded-xl p-6 mb-6">
+        <div className="bg-white border border-border shadow-sm rounded-xl p-6 mb-6">
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">Add Walk-In / Comp</h2>
           <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <input
@@ -171,7 +171,7 @@ export default function RegistrationsPage() {
               onChange={(e) => setForm({ ...form, teamName: e.target.value })}
               placeholder="Team name *"
               required
-              className="bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
             />
             <input
               type="text"
@@ -179,26 +179,26 @@ export default function RegistrationsPage() {
               onChange={(e) => setForm({ ...form, coachName: e.target.value })}
               placeholder="Coach name *"
               required
-              className="bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
             />
             <input
               type="email"
               value={form.coachEmail}
               onChange={(e) => setForm({ ...form, coachEmail: e.target.value })}
               placeholder="Coach email"
-              className="bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
             />
             <input
               type="text"
               value={form.division}
               onChange={(e) => setForm({ ...form, division: e.target.value })}
               placeholder="Division"
-              className="bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
             />
             <select
               value={form.paymentStatus}
               onChange={(e) => setForm({ ...form, paymentStatus: e.target.value })}
-              className="bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
             >
               <option value="waived">Waived (Comp)</option>
               <option value="paid">Paid (Cash/Other)</option>
@@ -209,7 +209,7 @@ export default function RegistrationsPage() {
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
               placeholder="Notes"
-              className="bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
             />
             <button
               type="submit"
@@ -224,13 +224,13 @@ export default function RegistrationsPage() {
       )}
 
       {/* Registrations table */}
-      <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
+      <div className="bg-white border border-border shadow-sm rounded-xl overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center py-16 text-navy/40">
+          <div className="flex items-center justify-center py-16 text-text-muted">
             <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading registrations...
           </div>
         ) : regs.length === 0 ? (
-          <div className="text-center py-16 text-navy/40">
+          <div className="text-center py-16 text-text-muted">
             <Users className="w-8 h-8 mx-auto mb-3 opacity-40" />
             <p className="text-sm">No registrations yet.</p>
           </div>
@@ -238,7 +238,7 @@ export default function RegistrationsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-navy/50 text-xs uppercase tracking-wider">
+                <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wider">
                   <th className="text-left px-5 py-3 font-semibold">Team</th>
                   <th className="text-left px-3 py-3 font-semibold">Coach</th>
                   <th className="text-left px-3 py-3 font-semibold">Division</th>
@@ -248,20 +248,20 @@ export default function RegistrationsPage() {
                   <th className="px-3 py-3"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-border">
                 {regs.map((reg) => (
-                  <tr key={reg.id} className="hover:bg-white/[0.02]">
+                  <tr key={reg.id} className="hover:bg-off-white">
                     <td className="px-5 py-3 text-navy font-semibold">{reg.teamName}</td>
                     <td className="px-3 py-3">
                       <div className="text-navy/70 text-xs">{reg.coachName}</div>
-                      <div className="text-navy/40 text-xs">{reg.coachEmail}</div>
+                      <div className="text-text-muted text-xs">{reg.coachEmail}</div>
                     </td>
-                    <td className="px-3 py-3 text-navy/50 text-xs">{reg.division || "—"}</td>
+                    <td className="px-3 py-3 text-text-muted text-xs">{reg.division || "—"}</td>
                     <td className="px-3 py-3">
                       <select
                         value={reg.paymentStatus}
                         onChange={(e) => updateReg(reg.id, { paymentStatus: e.target.value })}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none ${PAYMENT_STYLES[reg.paymentStatus] || "bg-white/10 text-navy/40"}`}
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none ${PAYMENT_STYLES[reg.paymentStatus] || "bg-gray-100 text-gray-500"}`}
                       >
                         <option value="pending">Pending</option>
                         <option value="paid">Paid</option>
@@ -273,7 +273,7 @@ export default function RegistrationsPage() {
                       <select
                         value={reg.status}
                         onChange={(e) => updateReg(reg.id, { status: e.target.value })}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none ${STATUS_STYLES[reg.status] || "bg-white/10 text-navy/40"}`}
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none ${STATUS_STYLES[reg.status] || "bg-gray-100 text-gray-500"}`}
                       >
                         <option value="pending">Pending</option>
                         <option value="approved">Approved</option>
@@ -281,7 +281,7 @@ export default function RegistrationsPage() {
                         <option value="waitlisted">Waitlisted</option>
                       </select>
                     </td>
-                    <td className="px-3 py-3 text-navy/30 text-xs whitespace-nowrap">
+                    <td className="px-3 py-3 text-text-muted text-xs whitespace-nowrap">
                       {new Date(reg.createdAt).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -290,7 +290,7 @@ export default function RegistrationsPage() {
                     <td className="px-3 py-3">
                       <button
                         onClick={() => deleteReg(reg.id)}
-                        className="text-navy/20 hover:text-red transition-colors"
+                        className="text-text-muted/50 hover:text-red transition-colors"
                         title="Cancel registration"
                       >
                         <XCircle className="w-4 h-4" />

@@ -20,9 +20,9 @@ interface Props {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  scheduled: "border-white/10",
-  live: "border-emerald-500/40 bg-emerald-500/[0.04]",
-  final: "border-white/5 opacity-70",
+  scheduled: "border-border",
+  live: "border-emerald-500/40 bg-emerald-50",
+  final: "border-border opacity-70",
 };
 
 export default function ScheduleGrid({ bracket, courts }: Props) {
@@ -51,7 +51,7 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
 
   if (bracket.length === 0) {
     return (
-      <div className="text-center py-16 text-white/40">
+      <div className="text-center py-16 text-text-muted">
         <Calendar className="w-8 h-8 mx-auto mb-3 opacity-40" />
         <p className="text-sm">No games scheduled yet.</p>
       </div>
@@ -65,11 +65,11 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
         return (
           <div
             key={court}
-            className="bg-card border border-white/10 rounded-xl overflow-hidden"
+            className="bg-white border border-border shadow-sm rounded-xl overflow-hidden"
           >
-            <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2">
+            <div className="px-5 py-3 border-b border-border flex items-center gap-2">
               <MapPin className="w-4 h-4 text-red" />
-              <h3 className="text-white font-bold text-sm uppercase tracking-wider">
+              <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
                 {court}
               </h3>
               <span className="text-text-secondary text-xs">
@@ -77,11 +77,11 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
               </span>
             </div>
             {courtGames.length === 0 ? (
-              <div className="px-5 py-4 text-white/20 text-xs">
+              <div className="px-5 py-4 text-text-muted text-xs">
                 No games on this court
               </div>
             ) : (
-              <div className="divide-y divide-white/5">
+              <div className="divide-y divide-border">
                 {courtGames.map((game) => (
                   <div
                     key={game.gameId}
@@ -90,7 +90,7 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
                     {/* Time */}
                     <div className="w-16 flex-shrink-0 text-center">
                       {game.scheduledTime ? (
-                        <span className="text-white/40 text-xs font-mono tabular-nums">
+                        <span className="text-text-muted text-xs font-mono tabular-nums">
                           {new Date(game.scheduledTime).toLocaleTimeString(
                             "en-US",
                             {
@@ -101,7 +101,7 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
                           )}
                         </span>
                       ) : (
-                        <span className="text-white/20 text-xs">TBD</span>
+                        <span className="text-text-muted/50 text-xs">TBD</span>
                       )}
                     </div>
 
@@ -111,20 +111,20 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
                         className={`text-sm font-semibold truncate ${
                           game.status === "final" &&
                           game.homeScore > game.awayScore
-                            ? "text-white"
+                            ? "text-navy"
                             : game.homeTeam === "TBD"
-                              ? "text-white/20"
-                              : "text-white/70"
+                              ? "text-text-muted/50"
+                              : "text-navy/70"
                         }`}
                       >
                         {game.homeTeam}
                       </span>
                       <div className="flex items-center gap-1.5 flex-shrink-0 tabular-nums text-sm">
-                        <span className="text-white font-bold">
+                        <span className="text-navy font-bold">
                           {game.homeScore}
                         </span>
-                        <span className="text-white/15">-</span>
-                        <span className="text-white font-bold">
+                        <span className="text-text-muted/30">-</span>
+                        <span className="text-navy font-bold">
                           {game.awayScore}
                         </span>
                       </div>
@@ -132,10 +132,10 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
                         className={`text-sm font-semibold truncate ${
                           game.status === "final" &&
                           game.awayScore > game.homeScore
-                            ? "text-white"
+                            ? "text-navy"
                             : game.awayTeam === "TBD"
-                              ? "text-white/20"
-                              : "text-white/70"
+                              ? "text-text-muted/50"
+                              : "text-navy/70"
                         }`}
                       >
                         {game.awayTeam}
@@ -145,17 +145,17 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
                     {/* Status + Round */}
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {game.round && (
-                        <span className="text-[10px] text-white/30 font-semibold uppercase">
+                        <span className="text-[10px] text-text-muted font-semibold uppercase">
                           {game.round}
                         </span>
                       )}
                       <span
                         className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
                           game.status === "live"
-                            ? "bg-emerald-500/20 text-emerald-400"
+                            ? "bg-emerald-50 text-emerald-600"
                             : game.status === "final"
-                              ? "bg-white/10 text-white/40"
-                              : "bg-white/5 text-white/20"
+                              ? "bg-gray-100 text-gray-500"
+                              : "bg-gray-50 text-gray-500"
                         }`}
                       >
                         {game.status}

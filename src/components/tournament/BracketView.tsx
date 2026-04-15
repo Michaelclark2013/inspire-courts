@@ -39,8 +39,8 @@ interface Props {
 }
 
 const STATUS_DOT: Record<string, string> = {
-  scheduled: "bg-white/20",
-  live: "bg-emerald-400 animate-pulse",
+  scheduled: "bg-gray-300",
+  live: "bg-emerald-500 animate-pulse",
   final: "bg-red",
 };
 
@@ -143,7 +143,7 @@ export default function BracketView({
 
   if (bracket.length === 0) {
     return (
-      <div className="text-center py-16 text-white/40">
+      <div className="text-center py-16 text-text-muted">
         <Trophy className="w-8 h-8 mx-auto mb-3 opacity-40" />
         <p className="text-sm">
           No bracket generated yet. Add teams and generate the bracket to see it
@@ -160,7 +160,7 @@ export default function BracketView({
           const games = rounds.get(roundKey) || [];
           return (
             <div key={roundKey} className="flex-shrink-0 w-[280px]">
-              <h3 className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-3 text-center">
+              <h3 className="text-text-muted text-[10px] font-bold uppercase tracking-widest mb-3 text-center">
                 {ROUND_LABELS[roundKey] || roundKey}
               </h3>
               <div className="space-y-3 flex flex-col justify-around min-h-full">
@@ -172,53 +172,53 @@ export default function BracketView({
                   return (
                     <div
                       key={game.id}
-                      className="bg-card border border-white/10 rounded-xl overflow-hidden"
+                      className="bg-white border border-border shadow-sm rounded-xl overflow-hidden"
                     >
                       {/* Game header */}
-                      <div className="px-3 py-1.5 flex items-center justify-between bg-white/[0.02] border-b border-white/5">
+                      <div className="px-3 py-1.5 flex items-center justify-between bg-off-white border-b border-border">
                         <div className="flex items-center gap-2">
                           <div
                             className={`w-2 h-2 rounded-full ${STATUS_DOT[game.status] || STATUS_DOT.scheduled}`}
                           />
-                          <span className="text-[10px] text-white/30 font-semibold uppercase">
+                          <span className="text-[10px] text-text-muted font-semibold uppercase">
                             {game.status}
                           </span>
                           {game.lastQuarter && game.status === "live" && (
-                            <span className="text-[10px] text-emerald-400 font-bold">
+                            <span className="text-[10px] text-emerald-600 font-bold">
                               Q{game.lastQuarter}
                             </span>
                           )}
                         </div>
-                        <div className="text-[10px] text-white/20">
+                        <div className="text-[10px] text-text-muted">
                           {game.court && <span>{game.court}</span>}
                         </div>
                       </div>
 
                       {/* Teams */}
-                      <div className="divide-y divide-white/5">
+                      <div className="divide-y divide-border">
                         <div
                           className={`px-3 py-2 flex items-center justify-between ${homeWins ? "bg-emerald-500/[0.06]" : ""}`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             {homeWins && (
-                              <Trophy className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                              <Trophy className="w-3 h-3 text-emerald-600 flex-shrink-0" />
                             )}
                             <span
                               className={`text-sm font-semibold truncate ${
                                 game.homeTeam === "TBD"
-                                  ? "text-white/20 italic"
+                                  ? "text-text-muted/50 italic"
                                   : homeWins
-                                    ? "text-white"
+                                    ? "text-navy"
                                     : isFinal
-                                      ? "text-white/40"
-                                      : "text-white"
+                                      ? "text-navy/40"
+                                      : "text-navy"
                               }`}
                             >
                               {game.homeTeam || "TBD"}
                             </span>
                           </div>
                           <span
-                            className={`text-sm font-bold tabular-nums ${homeWins ? "text-emerald-400" : isFinal ? "text-white/40" : "text-white"}`}
+                            className={`text-sm font-bold tabular-nums ${homeWins ? "text-emerald-600" : isFinal ? "text-navy/40" : "text-navy"}`}
                           >
                             {game.homeScore}
                           </span>
@@ -228,24 +228,24 @@ export default function BracketView({
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             {awayWins && (
-                              <Trophy className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                              <Trophy className="w-3 h-3 text-emerald-600 flex-shrink-0" />
                             )}
                             <span
                               className={`text-sm font-semibold truncate ${
                                 game.awayTeam === "TBD"
-                                  ? "text-white/20 italic"
+                                  ? "text-text-muted/50 italic"
                                   : awayWins
-                                    ? "text-white"
+                                    ? "text-navy"
                                     : isFinal
-                                      ? "text-white/40"
-                                      : "text-white"
+                                      ? "text-navy/40"
+                                      : "text-navy"
                               }`}
                             >
                               {game.awayTeam || "TBD"}
                             </span>
                           </div>
                           <span
-                            className={`text-sm font-bold tabular-nums ${awayWins ? "text-emerald-400" : isFinal ? "text-white/40" : "text-white"}`}
+                            className={`text-sm font-bold tabular-nums ${awayWins ? "text-emerald-600" : isFinal ? "text-navy/40" : "text-navy"}`}
                           >
                             {game.awayScore}
                           </span>
@@ -256,7 +256,7 @@ export default function BracketView({
                       {isAdmin &&
                         game.homeTeam !== "TBD" &&
                         game.awayTeam !== "TBD" && (
-                          <div className="px-3 py-2 border-t border-white/5">
+                          <div className="px-3 py-2 border-t border-border">
                             {updatingGame === game.gameId ? (
                               <div className="space-y-2">
                                 <div className="grid grid-cols-2 gap-2">
@@ -271,7 +271,7 @@ export default function BracketView({
                                       })
                                     }
                                     aria-label={`${game.homeTeam} score`}
-                                    className="bg-navy border border-white/10 rounded px-2 py-1.5 text-white text-xs text-center focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
+                                    className="bg-off-white border border-border rounded px-2 py-1.5 text-navy text-xs text-center focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                                   />
                                   <input
                                     type="number"
@@ -284,7 +284,7 @@ export default function BracketView({
                                       })
                                     }
                                     aria-label={`${game.awayTeam} score`}
-                                    className="bg-navy border border-white/10 rounded px-2 py-1.5 text-white text-xs text-center focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
+                                    className="bg-off-white border border-border rounded px-2 py-1.5 text-navy text-xs text-center focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                                   />
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
@@ -296,7 +296,7 @@ export default function BracketView({
                                         quarter: e.target.value,
                                       })
                                     }
-                                    className="bg-navy border border-white/10 rounded px-2 py-1.5 text-white text-xs focus:outline-none focus:border-red"
+                                    className="bg-off-white border border-border rounded px-2 py-1.5 text-navy text-xs focus:outline-none focus:border-red"
                                   >
                                     <option value="">Qtr</option>
                                     <option value="1">Q1</option>
@@ -316,7 +316,7 @@ export default function BracketView({
                                           | "final",
                                       })
                                     }
-                                    className="bg-navy border border-white/10 rounded px-2 py-1.5 text-white text-xs focus:outline-none focus:border-red"
+                                    className="bg-off-white border border-border rounded px-2 py-1.5 text-navy text-xs focus:outline-none focus:border-red"
                                   >
                                     <option value="">Status</option>
                                     <option value="live">Live</option>
@@ -340,7 +340,7 @@ export default function BracketView({
                                   </button>
                                   <button
                                     onClick={() => { setUpdatingGame(null); setSaveError(null); }}
-                                    className="text-white/30 hover:text-white px-3 py-1.5 rounded text-[10px] transition-colors"
+                                    className="text-text-muted hover:text-navy px-3 py-1.5 rounded text-[10px] transition-colors"
                                   >
                                     Cancel
                                   </button>
@@ -352,7 +352,7 @@ export default function BracketView({
                             ) : (
                               <button
                                 onClick={() => startScoreUpdate(game)}
-                                className="w-full text-center text-[10px] text-white/30 hover:text-white font-semibold uppercase tracking-wider py-1 transition-colors"
+                                className="w-full text-center text-[10px] text-text-muted hover:text-navy font-semibold uppercase tracking-wider py-1 transition-colors"
                               >
                                 {game.status === "final"
                                   ? "Edit Score"
@@ -364,7 +364,7 @@ export default function BracketView({
 
                       {/* Advancement indicator */}
                       {game.winnerAdvancesTo && game.status === "final" && (
-                        <div className="px-3 py-1.5 border-t border-white/5 flex items-center gap-1 text-[10px] text-emerald-400/60">
+                        <div className="px-3 py-1.5 border-t border-border flex items-center gap-1 text-[10px] text-emerald-600">
                           <ArrowRight className="w-3 h-3" />
                           Advances to slot #{game.winnerAdvancesTo}
                         </div>

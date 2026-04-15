@@ -1,189 +1,275 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import {
-  Trophy,
-  Users,
-  Calendar,
-  BarChart3,
-  Plus,
-  Loader2,
-  ChevronLeft,
-  Play,
-  CheckCircle2,
-  Trash2,
-  Zap,
-  X,
-  ArrowRight,
-} from "lucide-react";
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  Suspense,
+} from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import BracketView from "@/components/tournament/BracketView";
 import ScheduleGrid from "@/components/tournament/ScheduleGrid";
 import PoolStandings from "@/components/tournament/PoolStandings";
+import TournamentHeader from "@/components/admin/tournament-detail/TournamentHeader";
+import KPICards from "@/components/admin/tournament-detail/KPICards";
+import TabNav from "@/components/admin/tournament-detail/TabNav";
+import TeamsTab from "@/components/admin/tournament-detail/TeamsTab";
+import TournamentDetailSkeleton from "@/components/admin/tournament-detail/TournamentDetailSkeleton";
+import ErrorBanner from "@/components/admin/tournament-detail/ErrorBanner";
+import {
+  TABS,
+  type Tab,
+  type Team,
+  type Player,
+  type TournamentDetail,
+} from "@/types/tournament-admin";
+import { Trophy, Calendar, BarChart3 } from "lucide-react";
 
-type Team = {
-  id: number;
-  teamName: string;
-  seed: number | null;
-  division: string | null;
-  poolGroup: string | null;
-  eliminated: boolean;
-};
+function isTab(value: string | null): value is Tab {
+  return !!value && (TABS as readonly string[]).includes(value);
+}
 
-type BracketGame = {
-  id: number;
-  gameId: number;
-  bracketPosition: number | null;
-  round: string | null;
-  poolGroup: string | null;
-  winnerAdvancesTo: number | null;
-  loserDropsTo: number | null;
-  homeTeam: string;
-  awayTeam: string;
-  homeScore: number;
-  awayScore: number;
-  lastQuarter: string | null;
-  status: string;
-  court: string | null;
-  scheduledTime: string | null;
-  division: string | null;
-};
-
-type TournamentDetail = {
-  id: number;
-  name: string;
-  startDate: string;
-  endDate: string | null;
-  location: string | null;
-  format: string;
-  status: string;
-  divisions: string[];
-  courts: string[];
-  gameLength: number;
-  breakLength: number;
-  teams: Team[];
-  bracket: BracketGame[];
-};
-
-const FORMAT_LABELS: Record<string, string> = {
-  single_elim: "Single Elimination",
-  double_elim: "Double Elimination",
-  round_robin: "Round Robin",
-  pool_play: "Pool Play",
-};
-
-const STATUS_STYLES: Record<string, string> = {
-  draft: "bg-white/10 text-navy/60",
-  published: "bg-blue-500/20 text-blue-400",
-  active: "bg-emerald-500/20 text-emerald-400",
-  completed: "bg-white/10 text-navy/40",
-};
-
-const TABS = ["teams", "bracket", "schedule", "standings"] as const;
-type Tab = (typeof TABS)[number];
-
-export default function TournamentDetailPage() {
+function TournamentDetailInner() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [data, setData] = useState<TournamentDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<Tab>("teams");
-  const [saving, setSaving] = useState(false);
-  const [teamName, setTeamName] = useState("");
-  const [teamSeed, setTeamSeed] = useState("");
-  const [teamPool, setTeamPool] = useState("");
-  const [teamDivision, setTeamDivision] = useState("");
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [mutationError, setMutationError] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [confirmGenerate, setConfirmGenerate] = useState(false);
+  const [confirmRemoveId, setConfirmRemoveId] = useState<number | null>(null);
+  const autoSwitchedRef = useRef(false);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/admin/tournaments/${id}`);
-      if (res.ok) {
-        const d = await res.json();
-        setData(d);
-        // Auto-switch to bracket tab if bracket exists
-        if (d.bracket.length > 0 && tab === "teams") setTab("bracket");
-      }
-    } catch {
-      // ignore
-    } finally {
-      setLoading(false);
+  const urlTab = searchParams.get("tab");
+  const initialTab: Tab = isTab(urlTab) ? urlTab : "teams";
+  const [tab, setTabState] = useState<Tab>(initialTab);
+
+  // Sync URL when user changes tab
+  const setTab = useCallback(
+    (t: Tab) => {
+      setTabState(t);
+      const sp = new URLSearchParams(searchParams.toString());
+      sp.set("tab", t);
+      router.replace(`?${sp.toString()}`, { scroll: false });
+    },
+    [router, searchParams],
+  );
+
+  // React to external URL changes (back/forward)
+  useEffect(() => {
+    if (isTab(urlTab) && urlTab !== tab) {
+      setTabState(urlTab);
     }
-  }, [id]);
+  }, [urlTab, tab]);
+
+  const fetchData = useCallback(
+    async (signal?: AbortSignal) => {
+      try {
+        const res = await fetch(`/api/admin/tournaments/${id}`, { signal });
+        if (!res.ok) {
+          setFetchError(`Failed to load tournament (${res.status})`);
+          return;
+        }
+        const d = (await res.json()) as TournamentDetail;
+        setData(d);
+        setFetchError(null);
+        // Auto-switch to bracket once, if bracket just appeared and user is still on default teams
+        if (
+          !autoSwitchedRef.current &&
+          d.bracket.length > 0 &&
+          tab === "teams" &&
+          !isTab(urlTab)
+        ) {
+          autoSwitchedRef.current = true;
+          setTab("bracket");
+        }
+      } catch (err) {
+        if ((err as { name?: string })?.name === "AbortError") return;
+        setFetchError("Network error loading tournament");
+      } finally {
+        setLoading(false);
+      }
+    },
+    // intentionally omit tab/setTab to avoid refetch on tab change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [id],
+  );
 
   useEffect(() => {
-    fetchData();
+    const ctrl = new AbortController();
+    fetchData(ctrl.signal);
+    return () => ctrl.abort();
   }, [fetchData]);
 
-  async function addTeam(e: React.FormEvent) {
-    e.preventDefault();
-    if (!teamName.trim()) return;
-    setSaving(true);
-    await fetch(`/api/admin/tournaments/${id}/teams`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        teamName: teamName.trim(),
-        seed: teamSeed ? Number(teamSeed) : undefined,
-        poolGroup: teamPool || undefined,
-        division: teamDivision || undefined,
-      }),
-    });
-    setTeamName("");
-    setTeamSeed("");
-    setTeamPool("");
-    setTeamDivision("");
-    fetchData();
-    setSaving(false);
-  }
+  // ----- Mutations -----
 
-  async function removeTeam(teamEntryId: number) {
-    await fetch(`/api/admin/tournaments/${id}/teams`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ teamEntryId }),
-    });
-    fetchData();
-  }
+  const addTeam = useCallback(
+    async (payload: {
+      teamName: string;
+      seed?: number;
+      poolGroup?: string;
+      division?: string;
+    }) => {
+      if (!data) return;
+      // Optimistic insert
+      const tempId = -Date.now();
+      const optimistic: Team = {
+        id: tempId,
+        teamName: payload.teamName,
+        seed: payload.seed ?? null,
+        division: payload.division ?? null,
+        poolGroup: payload.poolGroup ?? null,
+        eliminated: false,
+        players: null,
+      };
+      setData({ ...data, teams: [...data.teams, optimistic] });
+      try {
+        const res = await fetch(`/api/admin/tournaments/${id}/teams`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Failed to add team");
+        await fetchData();
+      } catch {
+        // rollback
+        setData((cur) =>
+          cur
+            ? { ...cur, teams: cur.teams.filter((t) => t.id !== tempId) }
+            : cur,
+        );
+        setMutationError("Failed to add team");
+      }
+    },
+    [data, id, fetchData],
+  );
 
-  async function generateBracket() {
+  const removeTeam = useCallback(
+    async (teamEntryId: number) => {
+      if (!data) return;
+      const snapshot = data.teams;
+      // Optimistic
+      setData({ ...data, teams: data.teams.filter((t) => t.id !== teamEntryId) });
+      setConfirmRemoveId(null);
+      try {
+        const res = await fetch(`/api/admin/tournaments/${id}/teams`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ teamEntryId }),
+        });
+        if (!res.ok) throw new Error("Failed to remove team");
+      } catch {
+        setData((cur) => (cur ? { ...cur, teams: snapshot } : cur));
+        setMutationError("Failed to remove team");
+      }
+    },
+    [data, id],
+  );
+
+  const updatePlayers = useCallback(
+    async (team: Team, players: Player[]) => {
+      const res = await fetch(`/api/admin/tournaments/${id}/teams`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ teamEntryId: team.id, players }),
+      });
+      if (!res.ok) {
+        setMutationError("Failed to update roster");
+        return;
+      }
+      // Optimistic local update
+      setData((cur) =>
+        cur
+          ? {
+              ...cur,
+              teams: cur.teams.map((t) =>
+                t.id === team.id ? { ...t, players: JSON.stringify(players) } : t,
+              ),
+            }
+          : cur,
+      );
+    },
+    [id],
+  );
+
+  const generateBracket = useCallback(async () => {
+    setConfirmGenerate(false);
     setGenerating(true);
-    const res = await fetch(`/api/admin/tournaments/${id}/generate`, {
-      method: "POST",
-    });
-    if (res.ok) {
-      setTab("bracket");
-      fetchData();
-    } else {
-      const err = await res.json();
-      alert(err.error || "Failed to generate bracket");
+    try {
+      const res = await fetch(`/api/admin/tournaments/${id}/generate`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setMutationError(err.error || "Failed to generate bracket");
+      } else {
+        setTab("bracket");
+        await fetchData();
+      }
+    } catch {
+      setMutationError("Failed to generate bracket");
+    } finally {
+      setGenerating(false);
     }
-    setGenerating(false);
-  }
+  }, [id, fetchData, setTab]);
 
-  async function updateStatus(status: string) {
-    await fetch(`/api/admin/tournaments/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    fetchData();
-  }
+  const updateStatus = useCallback(
+    async (status: string) => {
+      try {
+        const res = await fetch(`/api/admin/tournaments/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        });
+        if (!res.ok) throw new Error();
+        await fetchData();
+      } catch {
+        setMutationError("Failed to update status");
+      }
+    },
+    [id, fetchData],
+  );
 
-  async function advanceWinner(gameId: number) {
-    await fetch(`/api/admin/tournaments/${id}/advance`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ gameId }),
-    });
-    fetchData();
-  }
+  const advanceWinner = useCallback(
+    async (gameId: number) => {
+      try {
+        await fetch(`/api/admin/tournaments/${id}/advance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ gameId }),
+        });
+        await fetchData();
+      } catch {
+        setMutationError("Failed to advance winner");
+      }
+    },
+    [id, fetchData],
+  );
+
+  const kpis = useMemo(() => {
+    if (!data) return { live: 0, final: 0 };
+    let live = 0;
+    let final = 0;
+    for (const g of data.bracket) {
+      if (g.status === "live") live++;
+      else if (g.status === "final") final++;
+    }
+    return { live, final };
+  }, [data]);
 
   if (loading) {
+    return <TournamentDetailSkeleton />;
+  }
+
+  if (fetchError && !data) {
     return (
-      <div className="flex items-center justify-center py-16 text-navy/40">
-        <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading tournament details...
+      <div className="p-6">
+        <ErrorBanner message={fetchError} onRetry={() => fetchData()} />
       </div>
     );
   }
@@ -194,296 +280,178 @@ export default function TournamentDetailPage() {
     );
   }
 
-  const liveGames = data.bracket.filter((g) => g.status === "live").length;
-  const finalGames = data.bracket.filter((g) => g.status === "final").length;
-
   return (
-    <div className="p-3 sm:p-6 lg:p-8">
-      {/* Back link + Header */}
-      <Link
-        href="/admin/tournaments/manage"
-        className="text-text-secondary text-xs hover:text-navy flex items-center gap-1 mb-4 transition-colors"
-      >
-        <ChevronLeft className="w-3 h-3" /> Back to Tournaments
-      </Link>
+    <div className="p-3 sm:p-6 lg:p-8 pb-[env(safe-area-inset-bottom)]">
+      <TournamentHeader
+        data={data}
+        generating={generating}
+        onGenerate={() => setConfirmGenerate(true)}
+        onPublish={() => updateStatus("active")}
+        onComplete={() => updateStatus("completed")}
+      />
 
-      <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl font-bold text-navy font-heading">
-              {data.name}
-            </h1>
-            <span
-              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${STATUS_STYLES[data.status]}`}
+      {fetchError && (
+        <ErrorBanner message={fetchError} onRetry={() => fetchData()} />
+      )}
+      {mutationError && (
+        <ErrorBanner
+          message={mutationError}
+          onRetry={() => setMutationError(null)}
+        />
+      )}
+
+      <KPICards
+        teams={data.teams.length}
+        games={data.bracket.length}
+        live={kpis.live}
+        complete={kpis.final}
+      />
+
+      {confirmGenerate && (
+        <div
+          role="alertdialog"
+          aria-modal="true"
+          className="mb-6 bg-white border-2 border-red shadow-sm rounded-xl p-5 flex items-center justify-between gap-4 flex-wrap"
+        >
+          <div>
+            <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">
+              Generate bracket?
+            </h3>
+            <p className="text-text-secondary text-xs">
+              This will create games from your current team list. You can
+              re-seed teams before generating.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setConfirmGenerate(false)}
+              className="min-h-[44px] px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-navy rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              {data.status}
-            </span>
-          </div>
-          <div className="flex items-center gap-4 text-text-secondary text-xs">
-            <span>{FORMAT_LABELS[data.format] || data.format}</span>
-            <span>
-              {new Date(data.startDate + "T00:00:00").toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </span>
-            {data.location && <span>{data.location}</span>}
-            <span>{data.teams.length} teams</span>
-            <span>{data.bracket.length} games</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/admin/tournaments/${id}/registrations`}
-            className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-white/10 rounded-lg hover:border-white/20 transition-colors"
-          >
-            <Users className="w-4 h-4" /> Registrations
-          </Link>
-          {data.status === "draft" && data.teams.length >= 2 && (
+              Cancel
+            </button>
             <button
               onClick={generateBracket}
-              disabled={generating}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              className="min-h-[44px] px-4 py-2.5 bg-red hover:bg-red-hover text-white rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              {generating ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Zap className="w-4 h-4" />
-              )}
-              Generate Bracket
+              Generate
             </button>
-          )}
-          {data.status === "published" && (
-            <button
-              onClick={() => updateStatus("active")}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
-            >
-              <Play className="w-4 h-4" /> Start Tournament
-            </button>
-          )}
-          {data.status === "active" && (
-            <button
-              onClick={() => updateStatus("completed")}
-              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-navy px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
-            >
-              <CheckCircle2 className="w-4 h-4" /> Complete
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
-            Teams
-          </p>
-          <p className="text-navy text-2xl font-bold font-heading">
-            {data.teams.length}
-          </p>
-        </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
-            Games
-          </p>
-          <p className="text-navy text-2xl font-bold font-heading">
-            {data.bracket.length}
-          </p>
-        </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
-            Live
-          </p>
-          <p className="text-emerald-400 text-2xl font-bold font-heading">
-            {liveGames}
-          </p>
-        </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
-            Complete
-          </p>
-          <p className="text-navy text-2xl font-bold font-heading">
-            {finalGames}
-            <span className="text-navy/30 text-lg">
-              /{data.bracket.length}
-            </span>
-          </p>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex items-center gap-1 mb-6 bg-card border border-white/10 rounded-xl p-1">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
-              tab === t
-                ? "bg-red text-white"
-                : "text-navy/40 hover:text-navy hover:bg-white/5"
-            }`}
-          >
-            {t === "teams" && <Users className="w-3.5 h-3.5 inline mr-1.5" />}
-            {t === "bracket" && (
-              <Trophy className="w-3.5 h-3.5 inline mr-1.5" />
-            )}
-            {t === "schedule" && (
-              <Calendar className="w-3.5 h-3.5 inline mr-1.5" />
-            )}
-            {t === "standings" && (
-              <BarChart3 className="w-3.5 h-3.5 inline mr-1.5" />
-            )}
-            {t}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content */}
-      {tab === "teams" && (
-        <div className="space-y-4">
-          {/* Add team form (only for draft) */}
-          {data.status === "draft" && (
-            <form
-              onSubmit={addTeam}
-              className="bg-card border border-white/10 rounded-xl p-5"
-            >
-              <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-                <Plus className="w-4 h-4 text-red" /> Add Team
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                <input
-                  type="text"
-                  value={teamName}
-                  onChange={(e) => setTeamName(e.target.value)}
-                  placeholder="Team name *"
-                  required
-                  className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
-                />
-                <input
-                  type="number"
-                  min={1}
-                  value={teamSeed}
-                  onChange={(e) => setTeamSeed(e.target.value)}
-                  placeholder="Seed #"
-                  className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
-                />
-                {data.format === "pool_play" && (
-                  <input
-                    type="text"
-                    value={teamPool}
-                    onChange={(e) => setTeamPool(e.target.value)}
-                    placeholder="Pool (A, B...)"
-                    className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
-                  />
-                )}
-                {data.divisions.length > 0 && (
-                  <select
-                    value={teamDivision}
-                    onChange={(e) => setTeamDivision(e.target.value)}
-                    className="bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red cursor-pointer"
-                  >
-                    <option value="">Division</option>
-                    {data.divisions.map((d) => (
-                      <option key={d} value={d}>
-                        {d}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
-                >
-                  {saving ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Plus className="w-4 h-4" />
-                  )}
-                  Add
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* Team list */}
-          <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
-            <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2">
-              <Users className="w-4 h-4 text-red" />
-              <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
-                Teams ({data.teams.length})
-              </h3>
-            </div>
-            {data.teams.length === 0 ? (
-              <div className="px-5 py-8 text-center text-navy/30 text-sm">
-                No teams added yet
-              </div>
-            ) : (
-              <div className="divide-y divide-white/5">
-                {data.teams.map((team) => (
-                  <div
-                    key={team.id}
-                    className="px-5 py-3 flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-navy/30 text-xs font-bold w-6 text-center tabular-nums">
-                        #{team.seed ?? "—"}
-                      </span>
-                      <span
-                        className={`text-sm font-semibold ${team.eliminated ? "text-navy/30 line-through" : "text-navy"}`}
-                      >
-                        {team.teamName}
-                      </span>
-                      {team.division && (
-                        <span className="text-[10px] bg-red/10 text-red px-1.5 py-0.5 rounded font-bold">
-                          {team.division}
-                        </span>
-                      )}
-                      {team.poolGroup && (
-                        <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-bold">
-                          Pool {team.poolGroup}
-                        </span>
-                      )}
-                    </div>
-                    {data.status === "draft" && (
-                      <button
-                        onClick={() => removeTeam(team.id)}
-                        className="text-navy/20 hover:text-red transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
+      )}
+
+      <TabNav tab={tab} onChange={setTab} />
+
+      {tab === "teams" && (
+        <TeamsTab
+          teams={data.teams}
+          format={data.format}
+          divisions={data.divisions}
+          draft={data.status === "draft"}
+          confirmRemoveId={confirmRemoveId}
+          onRequestRemove={setConfirmRemoveId}
+          onConfirmRemove={removeTeam}
+          onAddTeam={addTeam}
+          onAddPlayer={updatePlayers}
+          onRemovePlayer={updatePlayers}
+        />
       )}
 
       {tab === "bracket" && (
-        <BracketView
-          bracket={data.bracket}
-          format={data.format}
-          tournamentId={data.id}
-          isAdmin={true}
-          onAdvance={advanceWinner}
-          onRefresh={fetchData}
-        />
+        <div
+          id="tabpanel-bracket"
+          role="tabpanel"
+          aria-labelledby="tab-bracket"
+        >
+          {data.bracket.length === 0 ? (
+            <EmptyState
+              icon={<Trophy className="w-8 h-8" />}
+              title="No bracket generated yet"
+              subtitle={
+                data.status === "draft"
+                  ? "Add at least 2 teams, then click Generate Bracket."
+                  : "The bracket has not been created for this tournament."
+              }
+            />
+          ) : (
+            <BracketView
+              bracket={data.bracket}
+              format={data.format}
+              tournamentId={data.id}
+              isAdmin={true}
+              onAdvance={advanceWinner}
+              onRefresh={() => fetchData()}
+            />
+          )}
+        </div>
       )}
 
       {tab === "schedule" && (
-        <ScheduleGrid
-          bracket={data.bracket}
-          courts={data.courts}
-        />
+        <div
+          id="tabpanel-schedule"
+          role="tabpanel"
+          aria-labelledby="tab-schedule"
+        >
+          {data.bracket.length === 0 ? (
+            <EmptyState
+              icon={<Calendar className="w-8 h-8" />}
+              title="No games scheduled yet"
+              subtitle="Generate the bracket to create a schedule."
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <ScheduleGrid bracket={data.bracket} courts={data.courts} />
+            </div>
+          )}
+        </div>
       )}
 
       {tab === "standings" && (
-        <PoolStandings bracket={data.bracket} />
+        <div
+          id="tabpanel-standings"
+          role="tabpanel"
+          aria-labelledby="tab-standings"
+        >
+          {kpis.final === 0 ? (
+            <EmptyState
+              icon={<BarChart3 className="w-8 h-8" />}
+              title="No results yet"
+              subtitle="Standings will appear as games are completed."
+            />
+          ) : (
+            <PoolStandings bracket={data.bracket} />
+          )}
+        </div>
       )}
     </div>
+  );
+}
+
+function EmptyState({
+  icon,
+  title,
+  subtitle,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <div className="bg-white border border-border shadow-sm rounded-xl px-6 py-12 text-center">
+      <div className="w-14 h-14 bg-off-white text-text-muted rounded-full flex items-center justify-center mx-auto mb-3">
+        {icon}
+      </div>
+      <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">
+        {title}
+      </h3>
+      <p className="text-text-secondary text-xs">{subtitle}</p>
+    </div>
+  );
+}
+
+export default function TournamentDetailPage() {
+  return (
+    <Suspense fallback={<TournamentDetailSkeleton />}>
+      <TournamentDetailInner />
+    </Suspense>
   );
 }

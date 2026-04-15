@@ -19,7 +19,7 @@ export default function CollapsibleSection({
     <div>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 mb-4 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 rounded-sm"
+        className="flex items-center gap-2 mb-4 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red rounded-sm"
         aria-expanded={open}
       >
         <h2 className="text-navy/50 text-xs font-bold uppercase tracking-wider group-hover:text-navy/70 transition-colors">

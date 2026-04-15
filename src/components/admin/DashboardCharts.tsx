@@ -38,7 +38,7 @@ export default function DashboardCharts({
       {/* Charts row */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
         {/* Teams by Division */}
-        <div className="bg-bg-secondary border border-border rounded-sm p-5">
+        <div className="bg-white border border-light-gray shadow-sm rounded-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
@@ -69,7 +69,7 @@ export default function DashboardCharts({
         </div>
 
         {/* Revenue breakdown */}
-        <div className="bg-bg-secondary border border-border rounded-sm p-5">
+        <div className="bg-white border border-light-gray shadow-sm rounded-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
@@ -117,8 +117,8 @@ export default function DashboardCharts({
       </div>
 
       {/* Recent Game Scores */}
-      <div className="bg-bg-secondary border border-border rounded-sm">
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+      <div className="bg-white border border-light-gray shadow-sm rounded-sm">
+        <div className="px-5 py-4 border-b border-light-gray flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trophy className="w-4 h-4 text-accent" aria-hidden="true" />
             <h2 className="text-navy font-bold text-sm uppercase tracking-tight">
@@ -134,12 +134,12 @@ export default function DashboardCharts({
         </div>
 
         {divisions.length > 1 && (
-          <div className="flex gap-1.5 px-4 py-2 border-b border-border overflow-x-auto no-scrollbar" role="tablist" aria-label="Filter games by division">
-            <button role="tab" aria-selected={!selectedDivision} onClick={() => setSelectedDivision(null)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${!selectedDivision ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-navy"}`}>
+          <div className="flex gap-1.5 px-4 py-2 border-b border-light-gray overflow-x-auto no-scrollbar" role="tablist" aria-label="Filter games by division">
+            <button role="tab" aria-selected={!selectedDivision} onClick={() => setSelectedDivision(null)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red ${!selectedDivision ? "bg-red text-white" : "bg-off-white text-text-secondary hover:text-navy"}`}>
               All
             </button>
             {divisions.map(d => (
-              <button role="tab" aria-selected={selectedDivision === d} key={d} onClick={() => setSelectedDivision(d)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] ${selectedDivision === d ? "bg-red text-white" : "bg-white/5 text-text-secondary hover:text-navy"}`}>
+              <button role="tab" aria-selected={selectedDivision === d} key={d} onClick={() => setSelectedDivision(d)} className={`flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-wider transition-colors min-h-[32px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red ${selectedDivision === d ? "bg-red text-white" : "bg-off-white text-text-secondary hover:text-navy"}`}>
                 {d}
               </button>
             ))}
@@ -160,7 +160,7 @@ export default function DashboardCharts({
             <table className="w-full text-sm">
               <caption className="sr-only">Recent game scores</caption>
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-light-gray">
                   <th className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
                     Home
                   </th>
@@ -181,7 +181,7 @@ export default function DashboardCharts({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-light-gray">
                 {filteredGames.map((game, i) => {
                   const homeWon =
                     game.winner &&
@@ -197,7 +197,7 @@ export default function DashboardCharts({
                       <tr
                         key={i}
                         onClick={() => setExpandedRow(expandedRow === i ? null : i)}
-                        className={`cursor-pointer hover:bg-white/[0.04] transition-colors ${i % 2 === 1 ? "bg-white/[0.015]" : ""}`}
+                        className={`cursor-pointer hover:bg-off-white transition-colors ${i % 2 === 1 ? "bg-off-white/40" : ""}`}
                       >
                         <td
                           className={`px-4 py-3 font-medium ${
@@ -247,12 +247,12 @@ export default function DashboardCharts({
                       </tr>
                       {expandedRow === i && (
                         <tr key={`${i}-detail`}>
-                          <td colSpan={7} className="px-4 py-3 bg-white/[0.02] border-b border-white/5">
+                          <td colSpan={7} className="px-4 py-3 bg-off-white border-b border-light-gray">
                             <div className="flex items-center gap-6 text-xs text-text-secondary">
                               <span><strong className="text-navy/60">Court:</strong> {game.court}</span>
                               <span><strong className="text-navy/60">Division:</strong> {game.division}</span>
                               <span><strong className="text-navy/60">Time:</strong> {game.time}</span>
-                              <span><strong className="text-navy/60">Winner:</strong> <span className="text-emerald-400">{game.winner}</span></span>
+                              <span><strong className="text-navy/60">Winner:</strong> <span className="text-emerald-600">{game.winner}</span></span>
                             </div>
                           </td>
                         </tr>

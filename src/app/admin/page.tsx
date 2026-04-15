@@ -1,23 +1,11 @@
 import Link from "next/link";
-import {
-  Users,
-  Trophy,
-  DollarSign,
-  UserCheck,
-  ClipboardList,
-  TrendingUp,
-  Activity,
-  ChevronDown,
-  ArrowRight,
-} from "lucide-react";
+import { Activity } from "lucide-react";
 import CollapsibleSection from "@/components/admin/CollapsibleSection";
 import KPICard from "@/components/dashboard/KPICard";
 import DashboardRefreshButton from "@/components/admin/DashboardRefreshButton";
 import DashboardCharts from "@/components/admin/DashboardCharts";
-import DashboardAlerts from "@/components/admin/DashboardAlerts";
-import DashboardDBStats from "@/components/admin/DashboardDBStats";
-import DashboardLeads from "@/components/admin/DashboardLeads";
-import DashboardActivity from "@/components/admin/DashboardActivity";
+import AdminDashboardClient from "@/components/admin/dashboard/AdminDashboardClient";
+import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
 import {
   fetchSheetWithHeaders,
   getCol,
@@ -35,7 +23,6 @@ async function getDashboardData() {
     fetchSheetWithHeaders(SHEETS.gameScores),
   ]);
 
-  // ── Teams by division ──────────────────────────────────────────────────────
   const divisionCounts: Record<string, number> = {};
   const DIVISION_COLS = ["Division", "Age Group", "Age", "Grade"];
   teamsData.rows.forEach((row) => {
@@ -43,7 +30,6 @@ async function getDashboardData() {
     divisionCounts[div] = (divisionCounts[div] || 0) + 1;
   });
 
-  // ── Revenue by source (Mom Money) ──────────────────────────────────────────
   let totalCash = 0;
   let totalCard = 0;
   let totalSquare = 0;
@@ -57,22 +43,16 @@ async function getDashboardData() {
     totalSquare += parseFloat(getCol(row, ...SQUARE_COLS).replace(/[$,]/g, "") || "0") || 0;
   });
 
-  // Try "Total" column if sources don't parse
   const TOTAL_COLS = ["Total", "Amount", "Revenue", "Total $"];
-  const totalRevenue = totalCash + totalCard + totalSquare ||
+  const totalRevenue =
+    totalCash + totalCard + totalSquare ||
     moneyData.rows.reduce((sum, row) => {
-      return sum + (parseFloat(getCol(row, ...TOTAL_COLS).replace(/[$,]/g, "") || "0") || 0);
+      return (
+        sum +
+        (parseFloat(getCol(row, ...TOTAL_COLS).replace(/[$,]/g, "") || "0") || 0)
+      );
     }, 0);
 
-  // ── Players by division ────────────────────────────────────────────────────
-  const playerDivCounts: Record<string, number> = {};
-  const PLAYER_DIV_COLS = ["Division", "Age Group", "Team Division", "Grade Level"];
-  playersData.rows.forEach((row) => {
-    const div = getCol(row, ...PLAYER_DIV_COLS) || "Unknown";
-    playerDivCounts[div] = (playerDivCounts[div] || 0) + 1;
-  });
-
-  // ── Recent game scores ─────────────────────────────────────────────────────
   const HOME_COLS = ["Home Team", "Home", "Team 1"];
   const AWAY_COLS = ["Away Team", "Away", "Team 2"];
   const HOME_SCORE_COLS = ["Home Score", "Score 1", "Home Points"];
@@ -82,16 +62,19 @@ async function getDashboardData() {
   const COURT_COLS = ["Court", "Court Number", "Court #"];
   const TIME_COLS = ["Timestamp", "Date", "Time", "Game Time"];
 
-  const recentGames = scoresData.rows.slice(-10).reverse().map((row) => ({
-    home: getCol(row, ...HOME_COLS) || "—",
-    away: getCol(row, ...AWAY_COLS) || "—",
-    homeScore: getCol(row, ...HOME_SCORE_COLS) || "—",
-    awayScore: getCol(row, ...AWAY_SCORE_COLS) || "—",
-    winner: getCol(row, ...WINNER_COLS) || "—",
-    division: getCol(row, ...DIV_COLS) || "—",
-    court: getCol(row, ...COURT_COLS) || "—",
-    time: getCol(row, ...TIME_COLS) || "—",
-  }));
+  const recentGames = scoresData.rows
+    .slice(-10)
+    .reverse()
+    .map((row) => ({
+      home: getCol(row, ...HOME_COLS) || "—",
+      away: getCol(row, ...AWAY_COLS) || "—",
+      homeScore: getCol(row, ...HOME_SCORE_COLS) || "—",
+      awayScore: getCol(row, ...AWAY_SCORE_COLS) || "—",
+      winner: getCol(row, ...WINNER_COLS) || "—",
+      division: getCol(row, ...DIV_COLS) || "—",
+      court: getCol(row, ...COURT_COLS) || "—",
+      time: getCol(row, ...TIME_COLS) || "—",
+    }));
 
   return {
     totalTeams: teamsData.rows.length,
@@ -102,7 +85,6 @@ async function getDashboardData() {
     totalPlayers: playersData.rows.length,
     totalGames: scoresData.rows.length,
     divisionCounts,
-    playerDivCounts,
     recentGames,
   };
 }
@@ -112,19 +94,25 @@ export default async function AdminDashboard() {
 
   if (!configured) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">
+      <main
+        className="p-6 lg:p-8 pt-[max(env(safe-area-inset-top),1.5rem)] pb-[max(env(safe-area-inset-bottom),1.5rem)]"
+        aria-labelledby="dashboard-heading"
+      >
+        <header className="mb-8">
+          <h1
+            id="dashboard-heading"
+            className="text-2xl font-bold uppercase tracking-tight text-navy font-heading"
+          >
             Dashboard
           </h1>
           <p className="text-text-secondary text-sm mt-1">
             Inspire Courts AZ — Operations Overview
           </p>
-        </div>
+        </header>
 
-        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
-          <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Activity className="w-6 h-6 text-accent" />
+        <section className="bg-white border border-light-gray shadow-sm rounded-sm p-8 text-center">
+          <div className="w-12 h-12 bg-red/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Activity className="w-6 h-6 text-red" aria-hidden="true" />
           </div>
           <h2 className="text-navy font-bold text-lg mb-2">
             Connect Google Sheets
@@ -134,16 +122,22 @@ export default async function AdminDashboard() {
             your Google Sheets — game scores, revenue, team registrations, and
             more.
           </p>
-          <div className="bg-bg rounded-sm p-4 text-left max-w-sm mx-auto font-mono text-xs text-text-secondary space-y-1">
-            <p className="text-accent"># Add to .env.local</p>
+          <div className="bg-off-white border border-light-gray rounded-sm p-4 text-left max-w-sm mx-auto font-mono text-xs text-text-secondary space-y-1">
+            <p className="text-red"># Add to .env.local</p>
             <p>GOOGLE_SERVICE_ACCOUNT_EMAIL=...</p>
-            <p>GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY..."</p>
+            <p>GOOGLE_PRIVATE_KEY=&quot;-----BEGIN PRIVATE KEY...&quot;</p>
           </div>
           <p className="text-text-secondary text-xs mt-4">
             Then share each Google Sheet with your service account email.
           </p>
-        </div>
-      </div>
+          <p className="mt-6 text-text-secondary text-xs">
+            Meanwhile, your DB-powered dashboard still works below.
+          </p>
+          <div className="mt-6">
+            <AdminDashboardClient />
+          </div>
+        </section>
+      </main>
     );
   }
 
@@ -187,39 +181,50 @@ export default async function AdminDashboard() {
   ].filter((d) => d.value > 0);
 
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8">
+    <main
+      className="p-3 sm:p-6 lg:p-8 pt-[max(env(safe-area-inset-top),0.75rem)] pb-[max(env(safe-area-inset-bottom),1rem)]"
+      aria-labelledby="dashboard-heading"
+    >
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-border/50 -mx-3 sm:-mx-6 lg:-mx-8 px-3 sm:px-6 lg:px-8 py-3 lg:py-4 mb-4 lg:mb-8">
+      <header className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-light-gray/60 -mx-3 sm:-mx-6 lg:-mx-8 px-3 sm:px-6 lg:px-8 py-3 lg:py-4 mb-4 lg:mb-8">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <p className="text-text-secondary text-[10px] lg:text-xs mb-0.5">{greeting}</p>
-            <h1 className="text-xl lg:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
+            <p className="text-text-secondary text-[10px] lg:text-xs mb-0.5">
+              {greeting}
+            </p>
+            <h1
+              id="dashboard-heading"
+              className="text-xl lg:text-2xl font-bold uppercase tracking-tight text-navy font-heading"
+            >
               Dashboard
             </h1>
           </div>
           <div className="flex items-center gap-2">
             <DashboardRefreshButton />
             <p className="text-text-secondary text-[10px] lg:text-xs uppercase tracking-wider text-right hidden sm:block">
-              {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              {new Date().toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Recent Activity feed */}
-      <DashboardActivity />
+      {/* DB-powered overview (consolidated summary endpoint) */}
+      <section aria-label="Overview" className="mb-8">
+        <AdminDashboardClient />
+      </section>
 
-      {/* Tournament & Registration Overview (DB-powered) + Alerts */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 mb-8">
-        <DashboardDBStats />
-        <DashboardAlerts />
-      </div>
-
-      {/* Charts row */}
-      <CollapsibleSection title={`Charts & Recent Scores · last ${data.recentGames.length} games`}>
+      {/* Charts & Recent Scores */}
+      <CollapsibleSection
+        title={`Charts & Recent Scores · last ${data.recentGames.length} games`}
+      >
         <DashboardCharts
           divisionData={divisionData}
           revenueData={revenueData}
@@ -230,10 +235,12 @@ export default async function AdminDashboard() {
 
       {/* Google Sheets KPIs */}
       <CollapsibleSection title={`Google Sheets KPIs · ${kpis.length} sources`}>
-        {/* Mobile: horizontal scroll snap. Desktop: 4-col grid */}
         <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory -mx-3 sm:-mx-0 px-3 sm:px-0 pb-3 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0 mb-3 lg:mb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {kpis.map((kpi, i) => (
-            <div key={kpi.title} className={`snap-start flex-shrink-0 lg:w-auto ${i === 0 ? "w-[75%]" : "w-[60%]"}`}>
+            <div
+              key={kpi.title}
+              className={`snap-start flex-shrink-0 lg:w-auto ${i === 0 ? "w-[75%]" : "w-[60%]"}`}
+            >
               <KPICard {...kpi} />
             </div>
           ))}
@@ -243,12 +250,20 @@ export default async function AdminDashboard() {
         </p>
       </CollapsibleSection>
 
-      {/* Leads Pipeline */}
+      {/* Quick link to leads (detail live inside AdminDashboardClient when leads exist) */}
       <CollapsibleSection title="Leads Pipeline" defaultOpen={false}>
-        <div className="mb-8">
-          <DashboardLeads />
-        </div>
+        <p className="text-text-secondary text-xs mb-4">
+          Open the{" "}
+          <Link
+            href="/admin/leads"
+            prefetch
+            className="text-red font-semibold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red rounded"
+          >
+            full leads pipeline
+          </Link>{" "}
+          to view contacts, statuses, and follow-ups.
+        </p>
       </CollapsibleSection>
-    </div>
+    </main>
   );
 }

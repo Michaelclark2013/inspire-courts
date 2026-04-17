@@ -241,7 +241,7 @@ export default function UsersPage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
-                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-gray-400"
                 placeholder="Coach name"
               />
             </div>
@@ -254,7 +254,7 @@ export default function UsersPage() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
-                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-gray-400"
                 placeholder="coach@email.com"
               />
             </div>
@@ -267,7 +267,8 @@ export default function UsersPage() {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
-                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                autoComplete="new-password"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-gray-400"
                 placeholder="Initial password"
               />
             </div>
@@ -301,7 +302,7 @@ export default function UsersPage() {
                 max={new Date().getFullYear()}
                 value={form.memberSince}
                 onChange={(e) => setForm({ ...form, memberSince: e.target.value })}
-                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-gray-400"
                 placeholder={String(new Date().getFullYear())}
               />
             </div>
@@ -313,7 +314,7 @@ export default function UsersPage() {
                 type="tel"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-gray-400"
                 placeholder="(555) 123-4567"
               />
             </div>
@@ -345,7 +346,7 @@ export default function UsersPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name or email..."
             aria-label="Search users"
-            className="w-full bg-white border border-border rounded-lg pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+            className="w-full bg-white border border-border rounded-lg pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-gray-400"
           />
         </div>
         <select

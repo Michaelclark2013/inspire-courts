@@ -333,6 +333,7 @@ export default function RegisterPage() {
                     onChange={(e) => setCoachEmail(e.target.value)}
                     onBlur={() => markTouched("coachEmail")}
                     required
+                    autoComplete="email"
                     className={fieldClass("coachEmail")}
                     placeholder="coach@email.com"
                     aria-invalid={touched.coachEmail && !!fieldErrors.coachEmail}
@@ -368,6 +369,7 @@ export default function RegisterPage() {
                   </label>
                   <input
                     type="number"
+                    inputMode="numeric"
                     min={1}
                     max={25}
                     value={playerCount}

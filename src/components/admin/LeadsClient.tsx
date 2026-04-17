@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, MessageSquare, Mail, Flame, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, MessageSquare, Mail, Flame, ChevronDown, ChevronUp, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Lead {
@@ -167,7 +167,10 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
           </div>
         ))}
         {filtered.length === 0 && (
-          <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary">No leads found</div>
+          <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary">
+            <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" />
+            No leads found
+          </div>
         )}
       </div>
 

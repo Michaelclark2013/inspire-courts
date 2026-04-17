@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Users, Flame, Phone, Mail, Download } from "lucide-react";
+import { Search, Users, Flame, Phone, Mail, Download, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SearchHighlight from "@/components/ui/SearchHighlight";
 
@@ -179,7 +179,10 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
           </div>
         ))}
         {filtered.length === 0 && (
-          <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary text-sm">No teams found</div>
+          <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary text-sm">
+            <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" />
+            No teams found
+          </div>
         )}
       </div>
 

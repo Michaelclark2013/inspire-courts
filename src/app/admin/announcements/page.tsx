@@ -172,7 +172,7 @@ export default function AnnouncementsPage() {
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 required
-                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-gray-400"
                 placeholder="Announcement title"
               />
             </div>
@@ -185,7 +185,7 @@ export default function AnnouncementsPage() {
                 onChange={(e) => setForm({ ...form, body: e.target.value })}
                 required
                 rows={4}
-                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25 resize-vertical"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-gray-400 resize-vertical"
                 placeholder="Write your announcement..."
               />
             </div>

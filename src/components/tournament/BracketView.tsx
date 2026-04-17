@@ -262,6 +262,7 @@ export default function BracketView({
                                 <div className="grid grid-cols-2 gap-2">
                                   <input
                                     type="number"
+                                    inputMode="numeric"
                                     min={0}
                                     value={scoreForm.homeScore}
                                     onChange={(e) =>
@@ -275,6 +276,7 @@ export default function BracketView({
                                   />
                                   <input
                                     type="number"
+                                    inputMode="numeric"
                                     min={0}
                                     value={scoreForm.awayScore}
                                     onChange={(e) =>

@@ -186,6 +186,7 @@ export default function RegistrationsPage() {
               value={form.coachEmail}
               onChange={(e) => setForm({ ...form, coachEmail: e.target.value })}
               placeholder="Coach email"
+              autoComplete="email"
               className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
             />
             <input

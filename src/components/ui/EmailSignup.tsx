@@ -83,6 +83,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
             required
             placeholder="Enter your email"
             aria-label="Email address"
+            autoComplete="email"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);

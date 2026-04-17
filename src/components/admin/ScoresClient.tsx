@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Trophy } from "lucide-react";
+import { Search, Trophy, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Game {
@@ -137,7 +137,10 @@ export default function ScoresClient({ games }: { games: Game[] }) {
       ))}
 
       {filtered.length === 0 && (
-        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary">No games found</div>
+        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary">
+          <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" />
+          No games found
+        </div>
       )}
 
       <p className="text-text-secondary text-xs mt-3">Showing {filtered.length} of {games.length} games</p>

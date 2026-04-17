@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Phone, Trophy } from "lucide-react";
+import { Mail, Phone, Trophy, ExternalLink } from "lucide-react";
 import {
   FACILITY_EMAIL,
   FACILITY_PHONE,
@@ -105,6 +105,7 @@ export default function Footer() {
               <br />
               {FACILITY_ADDRESS.city}, {FACILITY_ADDRESS.state}{" "}
               {FACILITY_ADDRESS.zip}
+              <ExternalLink className="inline w-3 h-3 ml-1 opacity-50" />
             </a>
             <a
               href={`tel:${FACILITY_PHONE.replace(/\D/g, "")}`}

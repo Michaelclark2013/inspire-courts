@@ -30,6 +30,7 @@ function ScoreControlsImpl({
         </button>
         <input
           type="number"
+          inputMode="numeric"
           min={0}
           value={value}
           onChange={(e) => onChange(Math.max(0, Number(e.target.value) || 0))}

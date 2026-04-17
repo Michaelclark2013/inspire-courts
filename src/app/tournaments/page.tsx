@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 import {
   Trophy,
   Calendar,
@@ -197,7 +198,7 @@ async function TournamentList() {
   try {
     allTournaments = await getTournaments();
   } catch (err) {
-    console.error("[tournaments] Failed to fetch:", err);
+    logger.error("Failed to fetch tournaments", { error: String(err) });
     return <TournamentListError />;
   }
 

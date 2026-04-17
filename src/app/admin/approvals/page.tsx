@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { UserCheck, Loader2, CheckCircle2, XCircle, Clock, Shield } from "lucide-react";
+import { UserCheck, Loader2, CheckCircle2, XCircle, Clock, Shield, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PendingUser {
@@ -28,18 +28,22 @@ const ROLE_LABELS: Record<string, string> = {
 export default function ApprovalsPage() {
   const [pending, setPending] = useState<PendingUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [message, setMessage] = useState("");
 
   const fetchPending = useCallback(async () => {
+    setFetchError(false);
     try {
       const res = await fetch("/api/admin/approvals");
       if (res.ok) {
         const data = await res.json();
         setPending(data.users || []);
+      } else {
+        setFetchError(true);
       }
     } catch {
-      console.error("Failed to fetch approvals");
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -110,8 +114,27 @@ export default function ApprovalsPage() {
         </div>
       )}
 
+      {/* Error state */}
+      {!loading && fetchError && (
+        <div className="bg-white border border-light-gray rounded-2xl p-10 text-center shadow-sm">
+          <div className="w-14 h-14 rounded-full bg-red/10 flex items-center justify-center mx-auto mb-4">
+            <AlertTriangle className="w-7 h-7 text-red" />
+          </div>
+          <p className="text-navy font-bold text-base mb-1">Failed to load approvals</p>
+          <p className="text-text-secondary text-sm max-w-xs mx-auto mb-4">
+            Something went wrong. Please try again.
+          </p>
+          <button
+            onClick={fetchPending}
+            className="text-sm font-semibold text-red hover:text-red/80 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* Empty state */}
-      {!loading && pending.length === 0 && (
+      {!loading && !fetchError && pending.length === 0 && (
         <div className="bg-white border border-light-gray rounded-2xl p-10 text-center shadow-sm">
           <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="w-7 h-7 text-emerald-500" />
@@ -124,7 +147,7 @@ export default function ApprovalsPage() {
       )}
 
       {/* Pending users */}
-      {!loading && pending.length > 0 && (
+      {!loading && !fetchError && pending.length > 0 && (
         <div className="space-y-3">
           <p className="text-text-secondary text-xs uppercase tracking-widest font-bold">
             {pending.length} pending {pending.length === 1 ? "request" : "requests"}

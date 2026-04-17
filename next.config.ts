@@ -56,6 +56,12 @@ const nextConfig: NextConfig = {
       ],
     },
     {
+      source: "/api/:path*",
+      headers: [
+        { key: "X-Robots-Tag", value: "noindex, nofollow" },
+      ],
+    },
+    {
       source: "/(.*)",
       headers: [
         { key: "Content-Security-Policy", value: ContentSecurityPolicy },

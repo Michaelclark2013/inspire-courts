@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import path from "path";
 import { FACILITY_EMAIL } from "@/lib/constants";
+import { logger } from "@/lib/logger";
 
 const CONTENT_FILE = path.join(process.cwd(), "content.json");
 
@@ -427,7 +428,7 @@ export function getContent(): SiteContent {
       return DEFAULT_CONTENT;
     }
   } catch (e) {
-    console.error("Failed to read content file:", e);
+    logger.error("Failed to read content file", { error: String(e) });
   }
   return DEFAULT_CONTENT;
 }

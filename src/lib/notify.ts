@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { logger } from "@/lib/logger";
 
 export interface LeadData {
   name?: string;
@@ -93,6 +94,6 @@ export async function sendLeadEmail(lead: LeadData): Promise<void> {
     });
     // Email sent successfully
   } catch (error) {
-    console.error("Failed to send lead notification email:", error);
+    logger.error("Failed to send lead notification email", { error: String(error) });
   }
 }

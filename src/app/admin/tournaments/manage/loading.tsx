@@ -1,6 +1,6 @@
 export default function TournamentsManageLoading() {
   return (
-    <div className="p-6 lg:p-8 animate-pulse">
+    <div className="p-6 lg:p-8 ">
       <div className="mb-8 flex items-start justify-between">
         <div>
           <div className="h-8 w-40 bg-white/[0.06] rounded mb-2" />

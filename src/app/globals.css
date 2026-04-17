@@ -78,6 +78,41 @@ html {
   -webkit-mask-image: linear-gradient(to right, transparent, black 24px);
 }
 
+/* ── Shimmer / skeleton loading effect ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--color-light-gray) 25%, #f0f2f5 37%, var(--color-light-gray) 63%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ── Card ripple effect ── */
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 0.35; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-container .ripple-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(204, 0, 0, 0.15);
+  width: 80px;
+  height: 80px;
+  margin-top: -40px;
+  margin-left: -40px;
+  pointer-events: none;
+  animation: ripple 0.6s ease-out forwards;
+}
+
 /* Keyframe definitions */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(24px); }

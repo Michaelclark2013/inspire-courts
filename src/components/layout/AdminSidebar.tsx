@@ -27,6 +27,8 @@ import {
   History,
   Megaphone,
   MoreHorizontal,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { canAccess, ROLE_LABELS } from "@/lib/permissions";
@@ -89,8 +91,23 @@ const BOTTOM_TABS: NavItem[] = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [showMore, setShowMore] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const { data: session } = useSession();
   const role = (session?.user?.role || "admin") as UserRole;
+
+  // Persist collapsed state in localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("sidebar-collapsed");
+    if (saved === "true") setCollapsed(true);
+  }, []);
+
+  function toggleCollapsed() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem("sidebar-collapsed", String(next));
+      return next;
+    });
+  }
 
   const visibleEventSetup = EVENT_SETUP.filter((item) => canAccess(role, item.page));
   const visibleGameDay = GAME_DAY.filter((item) => canAccess(role, item.page));
@@ -116,20 +133,31 @@ export default function AdminSidebar() {
     return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
   }
 
+  // Pages that show a notification dot (pending items likely exist)
+  const BADGE_PAGES = new Set(["approvals", "announcements"]);
+
   function SidebarLink({ item }: { item: NavItem }) {
     const active = isActive(item.href);
+    const showBadge = BADGE_PAGES.has(item.page) && !active;
     return (
       <Link
         href={item.href}
+        title={collapsed ? item.label : undefined}
         className={cn(
           "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative",
+          collapsed && "justify-center px-2",
           active
             ? "bg-red/10 text-red before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-red before:rounded-full"
             : "text-text-muted hover:text-navy hover:bg-off-white"
         )}
       >
-        <item.icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-        {item.label}
+        <span className="relative flex-shrink-0">
+          <item.icon className="w-4 h-4" aria-hidden="true" />
+          {showBadge && (
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-red rounded-full ring-2 ring-white" aria-label="Has pending items" />
+          )}
+        </span>
+        {!collapsed && item.label}
       </Link>
     );
   }
@@ -137,41 +165,51 @@ export default function AdminSidebar() {
   return (
     <>
       {/* ── Desktop sidebar (lg+) ──────────────────────────────────────────── */}
-      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-light-gray sticky top-0 h-screen" aria-label="Admin navigation">
+      <aside
+        className={cn(
+          "hidden lg:flex flex-col bg-white border-r border-light-gray sticky top-0 h-screen transition-all duration-300",
+          collapsed ? "w-[68px]" : "w-64"
+        )}
+        aria-label="Admin navigation"
+      >
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-light-gray flex-shrink-0">
-          <Link href="/admin" className="flex items-center gap-3">
+        <div className={cn("py-5 border-b border-light-gray flex-shrink-0", collapsed ? "px-3" : "px-5")}>
+          <Link href="/admin" className="flex items-center gap-3" title={collapsed ? "Inspire Courts Dashboard" : undefined}>
             <Image
               src="/images/inspire-athletics-logo.png"
               alt="Inspire Courts"
               width={36}
               height={36}
-              className="object-contain"
+              className="object-contain flex-shrink-0"
             />
-            <div>
-              <span className="text-navy font-bold text-sm uppercase tracking-tight block">
-                Inspire Courts
-              </span>
-              <span className="text-text-muted text-[10px] uppercase tracking-widest">
-                {ROLE_LABELS[role] || "Dashboard"}
-              </span>
-            </div>
+            {!collapsed && (
+              <div>
+                <span className="text-navy font-bold text-sm uppercase tracking-tight block">
+                  Inspire Courts
+                </span>
+                <span className="text-text-muted text-[10px] uppercase tracking-widest">
+                  {ROLE_LABELS[role] || "Dashboard"}
+                </span>
+              </div>
+            )}
           </Link>
         </div>
 
         {/* User info */}
-        <div className="px-5 py-3 border-b border-light-gray flex-shrink-0 flex items-center gap-3">
-          <div className="w-9 h-9 bg-navy rounded-full flex items-center justify-center flex-shrink-0">
+        <div className={cn("py-3 border-b border-light-gray flex-shrink-0 flex items-center gap-3", collapsed ? "px-3 justify-center" : "px-5")}>
+          <div className="w-9 h-9 bg-navy rounded-full flex items-center justify-center flex-shrink-0" title={collapsed ? (session?.user?.name || "Admin") : undefined}>
             <span className="text-white text-xs font-bold">
               {(session?.user?.name || "A").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
             </span>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-navy text-sm font-medium truncate">
-              {session?.user?.name || "Admin"}
-            </p>
-            <p className="text-text-muted text-xs truncate">{session?.user?.email}</p>
-          </div>
+          {!collapsed && (
+            <div className="min-w-0 flex-1">
+              <p className="text-navy text-sm font-medium truncate">
+                {session?.user?.name || "Admin"}
+              </p>
+              <p className="text-text-muted text-xs truncate">{session?.user?.email}</p>
+            </div>
+          )}
         </div>
 
         {/* Nav */}
@@ -182,9 +220,11 @@ export default function AdminSidebar() {
 
           {visibleEventSetup.length > 0 && (
             <div>
-              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
-                Events & Scheduling
-              </p>
+              {!collapsed && (
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                  Events & Scheduling
+                </p>
+              )}
               <div className="space-y-0.5">
                 {visibleEventSetup.map((item) => (
                   <SidebarLink key={item.href} item={item} />
@@ -195,9 +235,11 @@ export default function AdminSidebar() {
 
           {visibleGameDay.length > 0 && (
             <div>
-              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
-                Game Day
-              </p>
+              {!collapsed && (
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                  Game Day
+                </p>
+              )}
               <div className="space-y-0.5">
                 {visibleGameDay.map((item) => (
                   <SidebarLink key={item.href} item={item} />
@@ -208,9 +250,11 @@ export default function AdminSidebar() {
 
           {visibleFinance.length > 0 && (
             <div>
-              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
-                Finance
-              </p>
+              {!collapsed && (
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                  Finance
+                </p>
+              )}
               <div className="space-y-0.5">
                 {visibleFinance.map((item) => (
                   <SidebarLink key={item.href} item={item} />
@@ -221,9 +265,11 @@ export default function AdminSidebar() {
 
           {visibleAdmin.length > 0 && (
             <div>
-              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
-                Admin
-              </p>
+              {!collapsed && (
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                  Admin
+                </p>
+              )}
               <div className="space-y-0.5">
                 {visibleAdmin.map((item) => (
                   <SidebarLink key={item.href} item={item} />
@@ -234,9 +280,11 @@ export default function AdminSidebar() {
 
           {visiblePersonal.length > 0 && (
             <div>
-              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
-                My Dashboard
-              </p>
+              {!collapsed && (
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                  My Dashboard
+                </p>
+              )}
               <div className="space-y-0.5">
                 {visiblePersonal.map((item) => (
                   <SidebarLink key={item.href} item={item} />
@@ -247,21 +295,25 @@ export default function AdminSidebar() {
 
           {role === "admin" && (
             <div>
-              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
-                Portals
-              </p>
+              {!collapsed && (
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                  Portals
+                </p>
+              )}
               <div className="space-y-0.5">
                 <Link
                   href="/portal"
+                  title={collapsed ? "Coach/Parent Portal" : undefined}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                    collapsed && "justify-center px-2",
                     pathname.startsWith("/portal")
                       ? "bg-red/10 text-red"
                       : "text-text-muted hover:text-navy hover:bg-off-white"
                   )}
                 >
                   <Columns3 className="w-4 h-4 flex-shrink-0" />
-                  Coach/Parent Portal
+                  {!collapsed && "Coach/Parent Portal"}
                 </Link>
               </div>
             </div>
@@ -272,24 +324,52 @@ export default function AdminSidebar() {
         <div className="px-3 py-4 border-t border-light-gray space-y-1 flex-shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all duration-200"
+            title={collapsed ? "View Public Site" : undefined}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all duration-200",
+              collapsed && "justify-center px-2"
+            )}
           >
-            <ExternalLink className="w-4 h-4" />
-            View Public Site
+            <ExternalLink className="w-4 h-4 flex-shrink-0" />
+            {!collapsed && "View Public Site"}
           </Link>
           <Link
             href="/scores"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all duration-200"
+            title={collapsed ? "Live Scores" : undefined}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all duration-200",
+              collapsed && "justify-center px-2"
+            )}
           >
-            <Trophy className="w-4 h-4" />
-            Live Scores
+            <Trophy className="w-4 h-4 flex-shrink-0" />
+            {!collapsed && "Live Scores"}
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-danger hover:bg-red/5 transition-all duration-200 w-full text-left"
+            title={collapsed ? "Sign Out" : undefined}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-danger hover:bg-red/5 transition-all duration-200 w-full text-left",
+              collapsed && "justify-center px-2"
+            )}
           >
-            <LogOut className="w-4 h-4" />
-            Sign Out
+            <LogOut className="w-4 h-4 flex-shrink-0" />
+            {!collapsed && "Sign Out"}
+          </button>
+          {/* Collapse toggle */}
+          <button
+            onClick={toggleCollapsed}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all duration-200 w-full text-left justify-center"
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? (
+              <PanelLeftOpen className="w-4 h-4 flex-shrink-0" />
+            ) : (
+              <>
+                <PanelLeftClose className="w-4 h-4 flex-shrink-0" />
+                Collapse
+              </>
+            )}
           </button>
         </div>
       </aside>

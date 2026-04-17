@@ -206,7 +206,7 @@ export default function Home() {
           >
             Arizona&apos;s Premier
             <br />
-            <span className="text-red drop-shadow-[0_0_30px_rgba(204,0,0,0.3)]">
+            <span className="bg-gradient-to-r from-white via-red to-red-hover bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(204,0,0,0.3)]">
               Basketball &amp; Volleyball
             </span>
             <br />
@@ -247,7 +247,7 @@ export default function Home() {
       <StatsBar />
 
       {/* JALEN WILLIAMS FEATURE */}
-      <section className="py-14 lg:py-20 bg-off-white" aria-labelledby="jalen-heading">
+      <section id="about" className="py-14 lg:py-20 bg-off-white scroll-mt-20" aria-labelledby="jalen-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <AnimateIn>
@@ -297,7 +297,7 @@ export default function Home() {
       <ProgramsGrid />
 
       {/* SECONDARY PROGRAMS */}
-      <section className="py-14 lg:py-20 bg-off-white" aria-labelledby="secondary-programs-heading">
+      <section id="programs" className="py-14 lg:py-20 bg-off-white scroll-mt-20" aria-labelledby="secondary-programs-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Programs"
@@ -329,6 +329,7 @@ export default function Home() {
       </section>
 
       {/* UPCOMING TOURNAMENTS (streamed, isolated errors) */}
+      <div id="tournaments" className="scroll-mt-20" />
       <TournamentsErrorBoundary>
         <Suspense fallback={<UpcomingTournamentsSkeleton />}>
           <UpcomingTournaments />

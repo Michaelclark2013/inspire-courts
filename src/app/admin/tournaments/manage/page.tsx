@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
   Trophy,
@@ -16,6 +16,7 @@ import {
   Check,
   Sparkles,
 } from "lucide-react";
+import ProgressRing from "@/components/ui/ProgressRing";
 
 type Tournament = {
   id: number;
@@ -292,6 +293,7 @@ export default function TournamentManagePage() {
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     required
+                    autoFocus={showForm}
                     className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-text-muted/50"
                     placeholder="e.g. Spring Classic 2026"
                   />
@@ -599,67 +601,130 @@ export default function TournamentManagePage() {
       ) : (
         <div className="space-y-3">
           {tournamentList.map((t) => (
-            <Link
-              key={t.id}
-              href={`/admin/tournaments/${t.id}`}
-              className="block bg-white border border-border shadow-sm hover:border-red/30 hover:shadow-md rounded-xl p-5 transition-all group"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="text-navy font-bold text-base truncate">
-                      {t.name}
-                    </h3>
-                    <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${STATUS_STYLES[t.status] || STATUS_STYLES.draft}`}
-                    >
-                      {t.status}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4 text-text-secondary text-xs">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {new Date(t.startDate + "T00:00:00").toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                    {t.location && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {t.location}
-                      </span>
-                    )}
-                    <span className="flex items-center gap-1">
-                      <Users className="w-3 h-3" />
-                      {t.teamCount} teams
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Gamepad2 className="w-3 h-3" />
-                      {t.gameCount} games
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold uppercase">
-                      {FORMAT_LABELS[t.format] || t.format}
-                    </span>
-                    {t.divisions.map((d) => (
-                      <span
-                        key={d}
-                        className="text-[10px] bg-red/10 text-red px-2 py-0.5 rounded-full font-semibold"
-                      >
-                        {d}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 text-navy/20 group-hover:text-navy/40 transition-colors flex-shrink-0" />
-              </div>
-            </Link>
+            <TournamentCard key={t.id} tournament={t} />
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+/* ── Tournament Card with ripple, progress ring, hover preview ── */
+function TournamentCard({ tournament: t }: { tournament: Tournament }) {
+  const cardRef = useRef<HTMLAnchorElement>(null);
+  const [hovered, setHovered] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  function handleRipple(e: React.MouseEvent) {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const circle = document.createElement("span");
+    circle.className = "ripple-circle";
+    circle.style.left = `${x}px`;
+    circle.style.top = `${y}px`;
+    card.appendChild(circle);
+    setTimeout(() => circle.remove(), 600);
+  }
+
+  // Compute a simple progress: teamCount vs a reasonable max (8 per division)
+  const maxTeams = Math.max(t.divisions.length * 8, 8);
+  const progressPct = Math.min(100, Math.round((t.teamCount / maxTeams) * 100));
+
+  return (
+    <Link
+      ref={cardRef}
+      key={t.id}
+      href={`/admin/tournaments/${t.id}`}
+      className="block bg-white border border-border shadow-sm hover:border-red/30 hover:shadow-md rounded-xl p-5 transition-all group ripple-container"
+      onClick={handleRipple}
+      onMouseEnter={(e) => {
+        setHovered(true);
+        const rect = e.currentTarget.getBoundingClientRect();
+        setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      }}
+      onMouseMove={(e) => {
+        if (hovered) {
+          const rect = e.currentTarget.getBoundingClientRect();
+          setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        }
+      }}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 mb-1">
+            <h3 className="text-navy font-bold text-base truncate">
+              {t.name}
+            </h3>
+            <span
+              className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${STATUS_STYLES[t.status] || STATUS_STYLES.draft}`}
+            >
+              {t.status}
+            </span>
+          </div>
+          <div className="flex items-center gap-4 text-text-secondary text-xs">
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              {new Date(t.startDate + "T00:00:00").toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </span>
+            {t.location && (
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
+                {t.location}
+              </span>
+            )}
+            <span className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              {t.teamCount} teams
+            </span>
+            <span className="flex items-center gap-1">
+              <Gamepad2 className="w-3 h-3" />
+              {t.gameCount} games
+            </span>
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold uppercase">
+              {FORMAT_LABELS[t.format] || t.format}
+            </span>
+            {t.divisions.map((d) => (
+              <span
+                key={d}
+                className="text-[10px] bg-red/10 text-red px-2 py-0.5 rounded-full font-semibold"
+              >
+                {d}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <ProgressRing percent={progressPct} size={36} strokeWidth={3} />
+          <ChevronRight className="w-5 h-5 text-navy/20 group-hover:text-navy/40 transition-colors" />
+        </div>
+      </div>
+
+      {/* Hover preview tooltip */}
+      {hovered && (
+        <div
+          className="absolute z-30 bg-navy text-white text-xs rounded-lg shadow-xl px-4 py-3 pointer-events-none min-w-[180px]"
+          style={{
+            left: Math.min(mousePos.x + 12, 280),
+            top: mousePos.y - 80,
+          }}
+        >
+          <p className="font-bold mb-1 text-sm">{t.name}</p>
+          <p className="text-white/70">Teams: {t.teamCount} &middot; Games: {t.gameCount}</p>
+          <p className="text-white/70">Format: {FORMAT_LABELS[t.format] || t.format}</p>
+          <p className="text-white/70">Status: {t.status}</p>
+          <p className="text-white/50 mt-1">Registration: {progressPct}% full</p>
+        </div>
+      )}
+    </Link>
   );
 }

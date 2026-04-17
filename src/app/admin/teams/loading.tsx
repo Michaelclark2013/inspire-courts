@@ -1,6 +1,6 @@
 export default function TeamsLoading() {
   return (
-    <div className="p-6 lg:p-8 animate-pulse">
+    <div className="p-6 lg:p-8 ">
       <div className="mb-8">
         <div className="h-8 w-32 bg-white/[0.06] rounded mb-2" />
         <div className="h-4 w-44 bg-white/[0.04] rounded" />

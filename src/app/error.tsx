@@ -39,9 +39,15 @@ export default function GlobalError({
           </span>
         </div>
 
-        {/* Icon */}
+        {/* Basketball icon */}
         <div className="w-20 h-20 bg-red/10 border border-red/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <RefreshCw className="w-8 h-8 text-red" aria-hidden="true" />
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="20" cy="20" r="18" stroke="#CC0000" strokeWidth="2" fill="none" />
+            <path d="M20 2C20 2 20 38 20 38" stroke="#CC0000" strokeWidth="1.5" strokeDasharray="3 2" />
+            <path d="M2 20C2 20 38 20 38 20" stroke="#CC0000" strokeWidth="1.5" strokeDasharray="3 2" />
+            <path d="M6 6C13 13 13 27 6 34" stroke="#CC0000" strokeWidth="1.5" fill="none" strokeDasharray="3 2" />
+            <path d="M34 6C27 13 27 27 34 34" stroke="#CC0000" strokeWidth="1.5" fill="none" strokeDasharray="3 2" />
+          </svg>
         </div>
 
         <h1 className="text-white font-bold text-2xl uppercase tracking-tight font-[var(--font-chakra)] mb-3">

@@ -78,6 +78,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${workSans.variable} ${chakra.variable} h-full antialiased`}>
       <head>
+        <link rel="manifest" href="/manifest.json" />
         <link rel="preconnect" href="https://maps.google.com" />
         <link rel="preconnect" href="https://www.youtube.com" />
         <link rel="preconnect" href="https://i.ytimg.com" />

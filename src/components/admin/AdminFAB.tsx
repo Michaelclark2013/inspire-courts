@@ -21,13 +21,13 @@ export default function AdminFAB() {
       {/* Backdrop */}
       {open && (
         <div
-          className="fixed inset-0 z-[53] bg-black/40 md:hidden"
+          className="fixed inset-0 z-[53] bg-black/40"
           onClick={() => setOpen(false)}
         />
       )}
 
       {/* FAB + action items */}
-      <div className="fixed bottom-[68px] right-4 z-[54] md:hidden flex flex-col items-end gap-2.5">
+      <div className="fixed bottom-[68px] right-4 md:bottom-6 md:right-6 z-[54] flex flex-col items-end gap-2.5">
         {open &&
           ACTIONS.map((action, i) => (
             <Link

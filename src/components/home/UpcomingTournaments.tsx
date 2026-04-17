@@ -76,7 +76,8 @@ export default async function UpcomingTournaments() {
                           month: "long",
                           day: "numeric",
                           year: "numeric",
-                        })}
+                        })}{" "}
+                        <span className="text-text-muted/60" title="Mountain Standard Time (Arizona)">MST</span>
                       </p>
                       {t.location && (
                         <p className="flex items-center gap-2 text-text-muted text-xs">

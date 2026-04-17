@@ -31,9 +31,15 @@ export default async function AdminLayout({
     <SessionProvider>
       <ToastProvider>
         <ScrollToTop />
+        <a
+          href="#admin-main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-red focus:text-white focus:px-6 focus:py-3 focus:rounded-lg focus:text-sm focus:font-bold focus:uppercase focus:tracking-wider focus:shadow-lg"
+        >
+          Skip to content
+        </a>
         <div className="min-h-screen bg-off-white lg:flex">
           <AdminSidebar />
-          <main className="flex-1 min-w-0 pb-20 lg:pb-0 page-transition">{children}</main>
+          <main id="admin-main" className="flex-1 min-w-0 pb-20 lg:pb-0 page-transition">{children}</main>
           <AdminFAB />
           <KeyboardShortcutsHint />
         </div>

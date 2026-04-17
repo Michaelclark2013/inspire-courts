@@ -29,6 +29,17 @@ export default function NotFound() {
           </span>
         </div>
 
+        {/* Basketball illustration */}
+        <div className="mb-6 select-none" aria-hidden="true">
+          <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto opacity-60">
+            <circle cx="48" cy="48" r="44" stroke="#CC0000" strokeWidth="3" fill="none" />
+            <path d="M48 4C48 4 48 92 48 92" stroke="#CC0000" strokeWidth="2" strokeDasharray="4 3" />
+            <path d="M4 48C4 48 92 48 92 48" stroke="#CC0000" strokeWidth="2" strokeDasharray="4 3" />
+            <path d="M14 14C30 30 30 66 14 82" stroke="#CC0000" strokeWidth="2" fill="none" strokeDasharray="4 3" />
+            <path d="M82 14C66 30 66 66 82 82" stroke="#CC0000" strokeWidth="2" fill="none" strokeDasharray="4 3" />
+          </svg>
+        </div>
+
         {/* 404 */}
         <div className="text-[120px] font-bold text-red leading-none font-[var(--font-chakra)] drop-shadow-[0_0_40px_rgba(204,0,0,0.3)] mb-4 select-none">
           404

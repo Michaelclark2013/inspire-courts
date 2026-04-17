@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import type { TournamentPublic } from "@/types/tournament-public";
 import { FORMAT_LABELS } from "@/types/tournament-public";
+import { relativeDate } from "@/lib/utils";
+import ExpandableText from "@/components/ui/ExpandableText";
 
 function TournamentCardInner({
   tournament: t,
@@ -22,6 +24,7 @@ function TournamentCardInner({
     t.registrationDeadline &&
     new Date(t.registrationDeadline + "T23:59:59") < new Date();
   const canRegister = t.registrationOpen && !isPast;
+  const relative = relativeDate(t.startDate);
 
   if (compact) {
     return (
@@ -80,6 +83,10 @@ function TournamentCardInner({
                     { month: "long", day: "numeric", year: "numeric" }
                   )}
                 </time>
+                <span className="text-text-muted/60 text-xs ml-1" title="Mountain Standard Time (Arizona)">MST</span>
+                {relative && (
+                  <span className="ml-2 text-xs font-semibold text-red/80 bg-red/10 px-2 py-0.5 rounded-full">{relative}</span>
+                )}
               </span>
               {t.location && (
                 <span className="flex items-center gap-1.5">
@@ -111,9 +118,7 @@ function TournamentCardInner({
             )}
 
             {t.description && (
-              <p className="text-text-muted text-sm line-clamp-2">
-                {t.description}
-              </p>
+              <ExpandableText text={t.description} lines={2} />
             )}
           </div>
 

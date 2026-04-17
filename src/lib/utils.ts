@@ -31,6 +31,24 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+export function relativeDate(dateStr: string): string | null {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const target = new Date(dateStr + "T00:00:00");
+  const diffMs = target.getTime() - today.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) return null;
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Tomorrow";
+  if (diffDays <= 6) {
+    const dayName = target.toLocaleDateString("en-US", { weekday: "long" });
+    return `This ${dayName}`;
+  }
+  if (diffDays <= 13) return `In ${diffDays} days`;
+  return null;
+}
+
 export function slugify(str: string): string {
   return str
     .toLowerCase()

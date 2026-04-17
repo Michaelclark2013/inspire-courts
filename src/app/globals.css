@@ -255,13 +255,13 @@ html, body {
 /* ── Shared heading size utilities ── */
 @layer components {
   .heading-hero {
-    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl;
+    font-size: clamp(2.25rem, 5vw + 1rem, 6rem);
   }
   .heading-page {
-    @apply text-4xl md:text-5xl lg:text-6xl;
+    font-size: clamp(2.25rem, 4vw + 0.75rem, 3.75rem);
   }
   .heading-section {
-    @apply text-3xl md:text-5xl lg:text-6xl;
+    font-size: clamp(1.875rem, 3.5vw + 0.5rem, 3.75rem);
   }
   .heading-subsection {
     @apply text-3xl md:text-4xl;

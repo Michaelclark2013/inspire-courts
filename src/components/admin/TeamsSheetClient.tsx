@@ -247,6 +247,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
         {/* Desktop table view */}
         <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-sm">
+            <caption className="sr-only">Teams directory</caption>
             <thead>
               <tr className="border-b border-border">
                 {(

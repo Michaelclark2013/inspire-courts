@@ -58,6 +58,7 @@ function UpcomingGames({
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
+            <caption className="sr-only">Upcoming games</caption>
             <thead>
               <tr className="border-b border-light-gray text-text-secondary text-[10px] uppercase tracking-wider">
                 <th className="text-left px-4 py-2 font-semibold">Time</th>

@@ -150,6 +150,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
         <div className="overflow-x-auto">
           {tab === "staff" ? (
             <table className="w-full text-sm">
+              <caption className="sr-only">Staff members</caption>
               <thead>
                 <tr className="border-b border-border">
                   {(["name","role","shifts","hoursWorked","totalPay","payMethod","payAccount","lastShift"] as (keyof StaffMember)[]).map((k) => {
@@ -190,6 +191,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
             </table>
           ) : (
             <table className="w-full text-sm">
+              <caption className="sr-only">Referees</caption>
               <thead>
                 <tr className="border-b border-border">
                   {(["name","gamesReffed","totalPay","payMethod","payAccount","court","lastGame"] as (keyof Referee)[]).map((k) => {

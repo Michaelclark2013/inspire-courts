@@ -114,6 +114,7 @@ export default function PoolStandings({ bracket }: Props) {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
+                <caption className="sr-only">Pool standings</caption>
                 <thead>
                   <tr className="border-b border-border">
                     <th className="text-left text-text-muted text-[10px] font-bold uppercase tracking-wider px-5 py-2.5 w-8">

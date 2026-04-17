@@ -667,9 +667,10 @@ function GameCard({
           {quarterScores.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
+                <caption className="sr-only">Quarter-by-quarter box score</caption>
                 <thead>
                   <tr className="text-white/40 uppercase tracking-wider">
-                    <th className="text-left py-1 pr-3 font-semibold">Team</th>
+                    <th scope="col" className="text-left py-1 pr-3 font-semibold">Team</th>
                     {quarterScores.map((s) => (
                       <th key={s.quarter} className="text-center py-1 px-2 font-semibold min-w-[32px]">
                         {s.quarter === "OT" ? "OT" : `Q${s.quarter}`}

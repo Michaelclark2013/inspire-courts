@@ -193,6 +193,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
             {/* Desktop table view */}
             <div className="hidden md:block overflow-x-auto scroll-shadow-x">
               <table className="w-full text-sm">
+                <caption className="sr-only">Game scores history</caption>
                 <thead>
                   <tr className="border-b border-border bg-off-white">
                     {["Date", "Home", "Score", "Away", "Winner", "Division", "Court"].map((h) => (
@@ -279,6 +280,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
+                <caption className="sr-only">Team standings summary</caption>
                 <thead>
                   <tr className="border-b border-border">
                     {["#", "Team", "W", "L", "Win%"].map((h) => (

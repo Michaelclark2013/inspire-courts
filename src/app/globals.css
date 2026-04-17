@@ -41,6 +41,16 @@ body {
   background: var(--color-white);
 }
 
+/* ── Brand text selection color ── */
+::selection {
+  background: var(--color-red);
+  color: #FFFFFF;
+}
+::-moz-selection {
+  background: var(--color-red);
+  color: #FFFFFF;
+}
+
 /* ── Transition timing tokens ──
  * Use these for consistency across the site:
  *   --transition-fast:   150ms  (buttons, links, icons)
@@ -222,6 +232,14 @@ html {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Disable hover scale transforms for reduced motion */
+  .hover\:scale-\[1\.03\]:hover,
+  .group:hover .group-hover\:translate-x-1,
+  .hover\:-translate-y-1:hover,
+  .hover\:-translate-y-2:hover {
+    transform: none !important;
   }
 }
 

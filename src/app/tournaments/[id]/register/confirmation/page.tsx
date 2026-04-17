@@ -105,7 +105,7 @@ export default function ConfirmationPage() {
         ) : isConfirmed ? (
           <>
             <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+              <CheckCircle2 className="w-8 h-8 text-emerald-500" />
             </div>
             <h1 className="text-2xl font-bold text-navy font-heading mb-2">
               You&apos;re Registered!
@@ -163,7 +163,7 @@ export default function ConfirmationPage() {
         ) : timedOut ? (
           <>
             <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Clock className="w-8 h-8 text-amber-400" />
+              <Clock className="w-8 h-8 text-amber-500" />
             </div>
             <h1 className="text-2xl font-bold text-navy font-heading mb-2">
               Still Processing
@@ -193,7 +193,7 @@ export default function ConfirmationPage() {
         ) : isPending ? (
           <>
             <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Clock className="w-8 h-8 text-amber-400" />
+              <Clock className="w-8 h-8 text-amber-500" />
             </div>
             <h1 className="text-2xl font-bold text-navy font-heading mb-2">
               Payment Processing
@@ -205,7 +205,7 @@ export default function ConfirmationPage() {
             <p className="text-text-muted text-sm mb-4">
               This page will update automatically once your payment is confirmed.
             </p>
-            <Loader2 className="w-5 h-5 animate-spin text-amber-400 mx-auto" />
+            <Loader2 className="w-5 h-5 animate-spin text-amber-500 mx-auto" />
           </>
         ) : (
           <>

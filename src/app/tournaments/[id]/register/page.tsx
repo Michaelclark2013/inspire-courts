@@ -202,7 +202,7 @@ export default function RegisterPage() {
             </span>
             {tournament.location && <span>{tournament.location}</span>}
             {fee > 0 && (
-              <span className="text-emerald-400 font-semibold">
+              <span className="text-emerald-600 font-semibold">
                 ${(fee / 100).toFixed(0)} entry fee
               </span>
             )}
@@ -220,7 +220,7 @@ export default function RegisterPage() {
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                     done
-                      ? "bg-emerald-500/20 text-emerald-400"
+                      ? "bg-emerald-500/20 text-emerald-600"
                       : active
                       ? "bg-red/20 text-red"
                       : "bg-light-gray text-text-muted"
@@ -240,7 +240,7 @@ export default function RegisterPage() {
                   {s.label}
                 </span>
                 {i < steps.length - 1 && (
-                  <div className="flex-1 h-px bg-white/10 mx-2" />
+                  <div className="flex-1 h-px bg-light-gray mx-2" />
                 )}
               </div>
             );
@@ -477,7 +477,7 @@ export default function RegisterPage() {
               {needsPayment && (
                 <div className="flex justify-between text-sm pt-2 border-t border-light-gray">
                   <span className="text-text-muted">Entry Fee</span>
-                  <span className="text-emerald-400 font-bold">
+                  <span className="text-emerald-600 font-bold">
                     ${(fee / 100).toFixed(2)}
                   </span>
                 </div>

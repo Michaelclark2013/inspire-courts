@@ -310,7 +310,7 @@ export default function Home() {
               <AnimateIn key={item.title} delay={i * 80}>
                 <Link
                   href={item.href}
-                  className={`group bg-white border border-light-gray rounded-2xl p-5 lg:p-6 hover:border-red/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col ${FOCUS_RING}`}
+                  className={`group bg-white border border-light-gray rounded-2xl p-5 lg:p-6 hover:border-red/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col ${FOCUS_RING}`}
                 >
                   <div className="w-10 h-10 bg-navy rounded-lg flex items-center justify-center mb-4">
                     <item.icon className="w-5 h-5 text-red" aria-hidden="true" />
@@ -362,6 +362,7 @@ export default function Home() {
                   alt=""
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  loading="lazy"
                   className="object-cover object-center opacity-[0.07]"
                 />
                 <div className="relative z-10 flex flex-col h-full">
@@ -371,6 +372,7 @@ export default function Home() {
                       alt="Inspire Courts"
                       width={96}
                       height={96}
+                      loading="lazy"
                       className="object-contain"
                     />
                   </div>
@@ -571,6 +573,7 @@ export default function Home() {
           alt=""
           fill
           sizes="100vw"
+          loading="lazy"
           className="object-cover object-center opacity-[0.05]"
         />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(204,0,0,0.08),transparent_60%)]" aria-hidden="true" />

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Camera, Mail, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import {
   FACILITY_EMAIL,
   FACILITY_PHONE,
@@ -10,6 +10,25 @@ import {
   SOCIAL_LINKS,
 } from "@/lib/constants";
 import { trackConversion } from "@/lib/analytics";
+
+function YouTubeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+      <path d="m10 15 5-3-5-3z" />
+    </svg>
+  );
+}
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -123,21 +142,37 @@ export default function Footer() {
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2.5 min-h-[44px] text-white/60 hover:text-white text-sm transition-colors"
+                className="flex items-center gap-2.5 min-h-[44px] text-white/60 hover:text-white text-sm transition-colors group"
                 aria-label="@inspirecourts on Instagram"
               >
-                <Camera className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                <span className="w-8 h-8 rounded-lg bg-white/5 group-hover:bg-white/15 flex items-center justify-center transition-colors">
+                  <InstagramIcon className="w-4 h-4 flex-shrink-0" />
+                </span>
                 {SOCIAL_LINKS.instagramHandle}
               </a>
               <a
                 href={SOCIAL_LINKS.instagramMixtape}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2.5 min-h-[44px] text-white/60 hover:text-white text-sm transition-colors"
+                className="flex items-center gap-2.5 min-h-[44px] text-white/60 hover:text-white text-sm transition-colors group"
                 aria-label="@azfinestmixtape on Instagram"
               >
-                <Camera className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                <span className="w-8 h-8 rounded-lg bg-white/5 group-hover:bg-white/15 flex items-center justify-center transition-colors">
+                  <InstagramIcon className="w-4 h-4 flex-shrink-0" />
+                </span>
                 {SOCIAL_LINKS.instagramMixtapeHandle}
+              </a>
+              <a
+                href={SOCIAL_LINKS.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 min-h-[44px] text-white/60 hover:text-white text-sm transition-colors group"
+                aria-label="Inspire Courts on YouTube"
+              >
+                <span className="w-8 h-8 rounded-lg bg-white/5 group-hover:bg-white/15 flex items-center justify-center transition-colors">
+                  <YouTubeIcon className="w-4 h-4 flex-shrink-0" />
+                </span>
+                YouTube
               </a>
               <a
                 href={`mailto:${FACILITY_EMAIL}`}

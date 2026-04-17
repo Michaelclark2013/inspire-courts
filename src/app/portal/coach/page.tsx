@@ -222,7 +222,7 @@ export default function CoachPortalPage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 bg-white border border-light-gray rounded-xl p-1 overflow-x-auto scrollbar-none">
+            <div className="flex gap-1 bg-white border border-light-gray rounded-xl p-1 overflow-x-auto no-scrollbar" style={{ scrollSnapType: "x mandatory" }}>
               {[
                 { key: "roster", icon: Users, label: "Roster" },
                 { key: "schedule", icon: Calendar, label: "Schedule" },
@@ -233,6 +233,7 @@ export default function CoachPortalPage() {
                 <button
                   key={key}
                   onClick={() => setActiveTab(key as Tab)}
+                  style={{ scrollSnapAlign: "start" }}
                   className={`flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all text-xs font-semibold ${
                     activeTab === key
                       ? "bg-blue-600 text-white"

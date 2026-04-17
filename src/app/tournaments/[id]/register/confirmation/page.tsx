@@ -35,6 +35,8 @@ export default function ConfirmationPage() {
     }
   }, []);
 
+  const abortRef = useRef<AbortController | null>(null);
+
   const poll = useCallback(async () => {
     if (!regId) return;
     pollCountRef.current += 1;
@@ -42,15 +44,21 @@ export default function ConfirmationPage() {
       setTimedOut(true);
       return;
     }
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
       const res = await fetch(
-        `/api/tournaments/${id}/registration-status?reg=${regId}`
+        `/api/tournaments/${id}/registration-status?reg=${regId}`,
+        { signal: controller.signal }
       );
       if (res.ok) {
         const data = await res.json();
         setRegStatus(data);
       }
-    } catch {}
+    } catch (err) {
+      if ((err as Error).name === "AbortError") return;
+    }
     setLoading(false);
   }, [id, regId]);
 
@@ -58,7 +66,10 @@ export default function ConfirmationPage() {
   useEffect(() => {
     poll();
     intervalRef.current = setInterval(poll, 3000);
-    return () => stopPolling();
+    return () => {
+      stopPolling();
+      abortRef.current?.abort();
+    };
   }, [poll, stopPolling]);
 
   // Stop polling once confirmed or timed out
@@ -94,14 +105,14 @@ export default function ConfirmationPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href={`/tournaments/${id}`}
-                className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
                 <Trophy className="w-4 h-4" />
                 View Bracket
               </Link>
               <Link
                 href="/portal"
-                className="flex items-center justify-center gap-2 border border-light-gray hover:border-light-gray/80 text-navy px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="flex items-center justify-center gap-2 border border-light-gray hover:border-light-gray/80 text-navy px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
                 Coach Portal
                 <ArrowRight className="w-4 h-4" />
@@ -126,13 +137,13 @@ export default function ConfirmationPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/portal"
-                className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
                 Check Coach Portal <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/contact?type=Tournament+Registration"
-                className="flex items-center justify-center gap-2 border border-light-gray hover:border-light-gray/80 text-navy px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="flex items-center justify-center gap-2 border border-light-gray hover:border-light-gray/80 text-navy px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
                 Contact Us
               </Link>

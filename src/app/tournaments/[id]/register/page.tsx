@@ -70,7 +70,8 @@ export default function RegisterPage() {
     }`;
 
   useEffect(() => {
-    fetch(`/api/tournaments/${id}`)
+    const controller = new AbortController();
+    fetch(`/api/tournaments/${id}`, { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
         setTournament({
@@ -91,6 +92,7 @@ export default function RegisterPage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+    return () => controller.abort();
   }, [id]);
 
   async function handleSubmit() {
@@ -386,7 +388,7 @@ export default function RegisterPage() {
                   setError("");
                   setStep(tournament.requireWaivers ? 2 : totalSteps);
                 }}
-                className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
                 Continue
               </button>
@@ -424,7 +426,7 @@ export default function RegisterPage() {
             <div className="mt-6 flex justify-between">
               <button
                 onClick={() => setStep(1)}
-                className="text-text-muted hover:text-navy text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="text-text-muted hover:text-navy text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 rounded min-h-[44px] inline-flex items-center"
               >
                 Back
               </button>
@@ -437,7 +439,7 @@ export default function RegisterPage() {
                   setError("");
                   setStep(totalSteps);
                 }}
-                className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
                 Continue
               </button>
@@ -487,14 +489,14 @@ export default function RegisterPage() {
                 onClick={() =>
                   setStep(tournament.requireWaivers ? 2 : 1)
                 }
-                className="text-text-muted hover:text-navy text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="text-text-muted hover:text-navy text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 rounded min-h-[44px] inline-flex items-center"
               >
                 Back
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
                 {submitting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

@@ -3,11 +3,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pushSubscriptions } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import {
   sendPushNotification,
   isVapidConfigured,
 } from "@/lib/push-notifications";
+import { logger } from "@/lib/logger";
 
 const ADMIN_ROLES = ["admin", "staff"];
 
@@ -45,9 +46,10 @@ export async function POST(req: NextRequest) {
 
     if (audience && audience !== "all" && roleMap[audience]) {
       const roles = roleMap[audience];
-      // Drizzle doesn't have an .in() for text easily, so we query all and filter
-      const allSubs = await db.select().from(pushSubscriptions);
-      subs = allSubs.filter((s) => roles.includes(s.userRole ?? ""));
+      subs = await db
+        .select()
+        .from(pushSubscriptions)
+        .where(inArray(pushSubscriptions.userRole, roles));
     } else {
       subs = await db.select().from(pushSubscriptions);
     }
@@ -91,7 +93,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ sent, failed, expired });
   } catch (err) {
-    console.error("[push/send] Error:", err);
+    logger.error("Push send failed", { error: String(err) });
     return NextResponse.json(
       { error: "Failed to send notifications" },
       { status: 500 }

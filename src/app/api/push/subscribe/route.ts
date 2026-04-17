@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pushSubscriptions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[push/subscribe] Error:", err);
+    logger.error("Push subscribe failed", { error: String(err) });
     return NextResponse.json(
       { error: "Failed to save subscription" },
       { status: 500 }
@@ -69,7 +70,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[push/subscribe] DELETE error:", err);
+    logger.error("Push unsubscribe failed", { error: String(err) });
     return NextResponse.json(
       { error: "Failed to remove subscription" },
       { status: 500 }

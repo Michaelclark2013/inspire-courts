@@ -110,7 +110,7 @@ export default function RootLayout({
           <RouteLoadingBar />
           <ScrollProgress />
           <Header />
-          <main id="main-content" className="flex-1 page-transition">{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-1 page-transition focus:outline-none">{children}</main>
           <Footer />
           <MobileRegisterBar />
           <ChatWidget />

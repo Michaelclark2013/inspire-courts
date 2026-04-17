@@ -7,7 +7,7 @@ import {
   games,
   gameScores,
 } from "@/lib/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, inArray } from "drizzle-orm";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
@@ -57,38 +57,42 @@ export async function GET(_request: NextRequest, { params }: Params) {
       .from(tournamentGames)
       .where(eq(tournamentGames.tournamentId, tournamentId));
 
-    // Get game details with scores
-    const bracket = await Promise.all(
-      bracketEntries.map(async (bg) => {
-        const [game] = await db
-          .select()
-          .from(games)
-          .where(eq(games.id, bg.gameId));
-        const [score] = await db
-          .select()
-          .from(gameScores)
-          .where(eq(gameScores.gameId, bg.gameId))
-          .orderBy(desc(gameScores.updatedAt))
-          .limit(1);
+    // Batch-fetch game details + scores (avoids N+1 queries)
+    const gameIds = bracketEntries.map((bg) => bg.gameId);
+    const [allGames, allScores] = gameIds.length > 0
+      ? await Promise.all([
+          db.select().from(games).where(inArray(games.id, gameIds)),
+          db.select().from(gameScores).where(inArray(gameScores.gameId, gameIds)).orderBy(desc(gameScores.updatedAt)),
+        ])
+      : [[], []];
 
-        return {
-          bracketPosition: bg.bracketPosition,
-          round: bg.round,
-          poolGroup: bg.poolGroup,
-          winnerAdvancesTo: bg.winnerAdvancesTo,
-          loserDropsTo: bg.loserDropsTo,
-          gameId: bg.gameId,
-          homeTeam: game?.homeTeam ?? "TBD",
-          awayTeam: game?.awayTeam ?? "TBD",
-          homeScore: score?.homeScore ?? 0,
-          awayScore: score?.awayScore ?? 0,
-          status: game?.status ?? "scheduled",
-          court: game?.court ?? null,
-          scheduledTime: game?.scheduledTime ?? null,
-          lastQuarter: score?.quarter ?? null,
-        };
-      })
-    );
+    const gamesMap = new Map(allGames.map((g) => [g.id, g]));
+    // Latest score per game (first occurrence since ordered by updatedAt desc)
+    const scoresMap = new Map<number, typeof allScores[0]>();
+    for (const s of allScores) {
+      if (!scoresMap.has(s.gameId)) scoresMap.set(s.gameId, s);
+    }
+
+    const bracket = bracketEntries.map((bg) => {
+      const game = gamesMap.get(bg.gameId);
+      const score = scoresMap.get(bg.gameId);
+      return {
+        bracketPosition: bg.bracketPosition,
+        round: bg.round,
+        poolGroup: bg.poolGroup,
+        winnerAdvancesTo: bg.winnerAdvancesTo,
+        loserDropsTo: bg.loserDropsTo,
+        gameId: bg.gameId,
+        homeTeam: game?.homeTeam ?? "TBD",
+        awayTeam: game?.awayTeam ?? "TBD",
+        homeScore: score?.homeScore ?? 0,
+        awayScore: score?.awayScore ?? 0,
+        status: game?.status ?? "scheduled",
+        court: game?.court ?? null,
+        scheduledTime: game?.scheduledTime ?? null,
+        lastQuarter: score?.quarter ?? null,
+      };
+    });
 
     return NextResponse.json(
       {
@@ -116,7 +120,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
         })),
         bracket,
       },
-      { headers: { "Cache-Control": "public, max-age=15" } }
+      { headers: { "Cache-Control": "public, max-age=15, stale-while-revalidate=30" } }
     );
   } catch (err) {
     logger.error("Tournament detail fetch failed", { error: String(err), tournamentId });

@@ -524,7 +524,9 @@ export default function CoachCheckInPage() {
       {checkedIn.length > 0 && (
         <div className="bg-white border border-emerald-500/20 rounded-xl overflow-hidden mt-6">
           <button
+            type="button"
             onClick={() => setShowSummary(!showSummary)}
+            aria-expanded={showSummary}
             className="w-full px-6 py-4 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">

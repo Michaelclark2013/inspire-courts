@@ -335,6 +335,7 @@ export default function RegisterPage() {
                     onChange={(e) => setCoachName(e.target.value)}
                     onBlur={() => markTouched("coachName")}
                     required
+                    autoComplete="name"
                     className={fieldClass("coachName")}
                     placeholder="Full name"
                     aria-invalid={touched.coachName && !!fieldErrors.coachName}
@@ -375,6 +376,7 @@ export default function RegisterPage() {
                     value={coachPhone}
                     onChange={(e) => setCoachPhone(e.target.value)}
                     onBlur={() => markTouched("coachPhone")}
+                    autoComplete="tel"
                     className={fieldClass("coachPhone")}
                     placeholder="(555) 123-4567"
                     aria-invalid={touched.coachPhone && !!fieldErrors.coachPhone}

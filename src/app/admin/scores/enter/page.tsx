@@ -324,7 +324,9 @@ export default function ScoreEntryPage() {
             options={tournamentOptions}
           />
           <button
+            type="button"
             onClick={() => setShowForm(!showForm)}
+            aria-expanded={showForm}
             className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none min-h-[44px]"
           >
             {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}

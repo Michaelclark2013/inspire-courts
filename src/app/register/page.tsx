@@ -242,6 +242,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowStaffRoles(!showStaffRoles)}
+                aria-expanded={showStaffRoles}
                 className="text-white/30 hover:text-white/50 text-xs font-medium uppercase tracking-wider transition-colors flex items-center gap-1.5"
               >
                 {showStaffRoles ? "Hide" : "Staff or Referee?"}

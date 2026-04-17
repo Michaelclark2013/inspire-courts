@@ -61,10 +61,12 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
   const [logos, setLogos] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    fetch("/api/teams/logo")
+    const controller = new AbortController();
+    fetch("/api/teams/logo", { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => { if (data && typeof data === "object") setLogos(data); })
-      .catch(() => {});
+      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; });
+    return () => controller.abort();
   }, []);
 
   const fetchScores = useCallback(async (showRefresh = false) => {

@@ -98,6 +98,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 <Icon className={cn("w-5 h-5 flex-shrink-0 mt-0.5", ICON_STYLES[t.type])} />
                 <p className="text-sm font-medium flex-1">{t.message}</p>
                 <button
+                  type="button"
                   onClick={() => dismiss(t.id)}
                   className="text-text-muted hover:text-navy flex-shrink-0 p-0.5"
                   aria-label="Dismiss"

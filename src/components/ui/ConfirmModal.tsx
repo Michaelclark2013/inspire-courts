@@ -86,6 +86,7 @@ export default function ConfirmModal({
         aria-describedby="confirm-desc"
       >
         <button
+          type="button"
           onClick={onCancel}
           className="absolute top-4 right-4 text-text-muted hover:text-navy transition-colors"
           aria-label="Close"
@@ -118,12 +119,14 @@ export default function ConfirmModal({
 
         <div className="flex items-center justify-end gap-3 mt-6">
           <button
+            type="button"
             onClick={onCancel}
             className="px-5 py-2.5 rounded-lg text-sm font-semibold text-text-muted hover:text-navy hover:bg-off-white transition-colors"
           >
             {cancelLabel}
           </button>
           <button
+            type="button"
             ref={confirmRef}
             onClick={onConfirm}
             className={`px-5 py-2.5 rounded-lg text-sm font-bold uppercase tracking-wider text-white transition-colors ${

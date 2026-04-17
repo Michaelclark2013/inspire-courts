@@ -26,19 +26,22 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
   const [divisionFilter, setDivisionFilter] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
     async function fetchGames() {
       try {
-        const res = await fetch("/api/scores/live");
+        const res = await fetch("/api/scores/live", { signal: controller.signal });
         if (!res.ok) return;
         const games: GameData[] = await res.json();
         setAllGames(games);
-      } catch {
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         // API not available
       } finally {
         setLoading(false);
       }
     }
     fetchGames();
+    return () => controller.abort();
   }, []);
 
   // Filter by event then division, compute standings from final games
@@ -89,7 +92,7 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
   return (
     <div className="overflow-x-auto">
       {divisions.length > 0 && (
-        <div className="px-4 py-3 border-b border-white/10 flex flex-wrap items-center gap-2 sm:gap-2">
+        <div className="px-4 py-3 border-b border-white/10 flex flex-wrap items-center gap-2 sm:gap-2" role="group" aria-label="Filter by division">
           <span className="text-white/40 text-xs font-semibold uppercase tracking-wider">Division:</span>
           <button
             type="button"

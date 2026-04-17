@@ -338,6 +338,17 @@ html, body {
   }
 }
 
+/* ── Content-visibility for below-fold rendering performance ── */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* ── Email signup success check animation ── */
+@keyframes dash {
+  to { stroke-dashoffset: 0; }
+}
+
 /* ── Print styles ── */
 @media print {
   header, footer, aside, nav,

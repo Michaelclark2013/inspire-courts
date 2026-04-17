@@ -53,13 +53,13 @@ function TournamentCardInner({
   }
 
   return (
-    <article className="bg-white border border-light-gray shadow-sm rounded-2xl overflow-hidden hover:border-red/30 hover:shadow-md transition-colors">
+    <article className="bg-white border border-light-gray shadow-sm rounded-2xl overflow-hidden hover:border-red/30 hover:shadow-md transition-all duration-200">
       <div className="p-6 lg:p-8">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-3 mb-2">
               <Trophy className="w-5 h-5 text-red flex-shrink-0" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-navy font-heading truncate" title={t.name}>
+              <h3 className="text-xl lg:text-2xl font-bold text-navy font-heading truncate" title={t.name}>
                 {t.name}
               </h3>
               {t.status === "active" && (

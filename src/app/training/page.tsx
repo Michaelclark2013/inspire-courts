@@ -250,9 +250,9 @@ export default function TrainingPage() {
                     </ul>
                     <Link
                       href="/contact?type=Private+Training"
-                      className={`group inline-flex items-center justify-center gap-2 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all font-[var(--font-chakra)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 ${
+                      className={`group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wide transition-all font-[var(--font-chakra)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 shadow-md hover:shadow-lg hover:scale-[1.03] ${
                         opt.highlighted
-                          ? "bg-red hover:bg-red-hover text-white focus-visible:ring-offset-navy"
+                          ? "bg-red hover:bg-red-hover text-white focus-visible:ring-offset-navy shadow-[0_4px_20px_rgba(204,0,0,0.3)]"
                           : "bg-navy hover:bg-navy-dark text-white focus-visible:ring-offset-white"
                       }`}
                     >
@@ -485,7 +485,7 @@ export default function TrainingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link
               href="/teams"
-              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all cursor-pointer"
             >
               <div>
                 <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
@@ -497,7 +497,7 @@ export default function TrainingPage() {
             </Link>
             <Link
               href="/events"
-              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all cursor-pointer"
             >
               <div>
                 <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
@@ -509,7 +509,7 @@ export default function TrainingPage() {
             </Link>
             <Link
               href="/prep"
-              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+              className="group flex items-center justify-between bg-off-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all cursor-pointer"
             >
               <div>
                 <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">

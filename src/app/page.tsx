@@ -227,14 +227,14 @@ export default function Home() {
                 href="https://inspirecourts.leagueapps.com/tournaments"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)] ${FOCUS_RING_ON_DARK}`}
+                className={`group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 sm:px-12 sm:py-5 rounded-full font-bold text-base sm:text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_6px_28px_rgba(204,0,0,0.5)] font-[var(--font-chakra)] ${FOCUS_RING_ON_DARK}`}
               >
                 {page ? getField(page, "Hero", "ctaPrimary") : "Register for Next Event"}{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </a>
               <Link
                 href="/book"
-                className={`group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)] ${FOCUS_RING_ON_DARK}`}
+                className={`group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/40 text-white/90 hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)] ${FOCUS_RING_ON_DARK}`}
               >
                 {page ? getField(page, "Hero", "ctaSecondary") : "Book a Court"}{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -294,7 +294,9 @@ export default function Home() {
         </div>
       </section>
 
-      <ProgramsGrid />
+      <div className="cv-auto">
+        <ProgramsGrid />
+      </div>
 
       {/* SECONDARY PROGRAMS */}
       <section id="programs" className="py-14 lg:py-20 bg-off-white scroll-mt-20" aria-labelledby="secondary-programs-heading">
@@ -446,7 +448,7 @@ export default function Home() {
       </section>
 
       {/* VIDEO SHOWCASE */}
-      <section className="py-14 lg:py-20 bg-navy" aria-labelledby="showcase-heading">
+      <section className="py-14 lg:py-20 bg-navy cv-auto" aria-labelledby="showcase-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="On the Map"
@@ -460,7 +462,7 @@ export default function Home() {
       </section>
 
       {/* LOCATION + CTA */}
-      <section className="py-12 lg:py-20 bg-off-white" aria-labelledby="location-heading">
+      <section className="py-12 lg:py-20 bg-off-white cv-auto" aria-labelledby="location-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimateIn>

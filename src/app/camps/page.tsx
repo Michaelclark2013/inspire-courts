@@ -640,7 +640,7 @@ export default function CampsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link
               href="/training"
-              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all cursor-pointer"
             >
               <div>
                 <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
@@ -654,7 +654,7 @@ export default function CampsPage() {
             </Link>
             <Link
               href="/teams"
-              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all cursor-pointer"
             >
               <div>
                 <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
@@ -668,7 +668,7 @@ export default function CampsPage() {
             </Link>
             <Link
               href="/prep"
-              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all"
+              className="group flex items-center justify-between bg-white border border-light-gray rounded-xl p-5 hover:border-red/40 hover:shadow-md transition-all cursor-pointer"
             >
               <div>
                 <p className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">

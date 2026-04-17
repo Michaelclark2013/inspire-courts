@@ -147,7 +147,7 @@ export default function AdminSidebar() {
           "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative",
           collapsed && "justify-center px-2",
           active
-            ? "bg-red/10 text-red before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-red before:rounded-full"
+            ? "bg-red/10 text-red font-semibold before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[3px] before:bg-red before:rounded-full"
             : "text-text-muted hover:text-navy hover:bg-off-white"
         )}
       >

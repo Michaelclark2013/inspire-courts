@@ -180,7 +180,7 @@ export default function ContactPageClient() {
                         <select
                           id="inquiryType"
                           name="inquiryType"
-                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors"
+                          className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors cursor-pointer"
                         >
                           {INQUIRY_TYPES.map((type) => (
                             <option key={type} value={type}>
@@ -215,9 +215,14 @@ export default function ContactPageClient() {
                     </div>
 
                     {error && (
-                      <p className="text-red text-sm bg-red/5 border border-red/20 rounded-xl px-4 py-3">
-                        {error}
-                      </p>
+                      <div className="flex items-start gap-2.5 text-red text-sm bg-red/5 border border-red/20 rounded-xl px-4 py-3" role="alert">
+                        <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="12" y1="8" x2="12" y2="12" />
+                          <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                        <span>{error}</span>
+                      </div>
                     )}
 
                     <SubmitButton loading={loading} loadingText="Sending...">

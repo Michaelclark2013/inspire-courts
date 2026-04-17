@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     });
     appendSheetRow(SHEETS.playerCheckIn, "A:F", [
       sanitizeSheetRow([timestamp, playerName, teamName || "", division || "", "CHECKIN", session.user.name || ""]),
-    ]).catch(() => {});
+    ]).catch((err) => logger.warn("Failed to sync check-in to Google Sheets", { error: String(err) }));
   }
 
   return NextResponse.json({ success: true });

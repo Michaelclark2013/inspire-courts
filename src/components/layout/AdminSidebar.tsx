@@ -144,6 +144,7 @@ export default function AdminSidebar() {
       <Link
         href={item.href}
         title={collapsed ? item.label : undefined}
+        aria-current={active ? "page" : undefined}
         className={cn(
           "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative",
           collapsed && "justify-center px-2",
@@ -361,6 +362,7 @@ export default function AdminSidebar() {
             {!collapsed && "Live Scores"}
           </Link>
           <button
+            type="button"
             onClick={() => signOut({ callbackUrl: "/login" })}
             title={collapsed ? "Sign Out" : undefined}
             className={cn(
@@ -373,6 +375,7 @@ export default function AdminSidebar() {
           </button>
           {/* Collapse toggle */}
           <button
+            type="button"
             onClick={toggleCollapsed}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all duration-200 w-full text-left justify-center"
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -402,6 +405,7 @@ export default function AdminSidebar() {
             <Link
               key={tab.href}
               href={tab.href}
+              aria-current={active ? "page" : undefined}
               className="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 min-h-[56px] transition-colors"
             >
               <div
@@ -434,7 +438,10 @@ export default function AdminSidebar() {
           const drawerActive = !showMore && drawerItems.some((item) => isActive(item.href));
           return (
             <button
+              type="button"
               onClick={() => setShowMore((v) => !v)}
+              aria-expanded={showMore}
+              aria-label="More navigation options"
               className="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 min-h-[56px] transition-colors relative"
             >
               {drawerActive && !showMore && (
@@ -615,6 +622,7 @@ export default function AdminSidebar() {
                   Live Scores
                 </Link>
                 <button
+                  type="button"
                   onClick={() => signOut({ callbackUrl: "/login" })}
                   className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-red/5 text-red text-sm col-span-2 min-h-[44px]"
                 >

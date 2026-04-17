@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
           "Active",
         ]),
       ]),
-    ]).catch(() => {});
+    ]).catch((err) => logger.warn("Failed to sync registration to Google Sheets/Drive", { error: String(err) }));
 
     return NextResponse.json(
       { success: true, pendingApproval: needsApproval },

@@ -41,6 +41,7 @@ const OPTIONAL_VARS = [
   // Push notifications (VAPID)
   "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
   "VAPID_PRIVATE_KEY",
+  "VAPID_EMAIL",
 ] as const;
 
 function validateEnv() {

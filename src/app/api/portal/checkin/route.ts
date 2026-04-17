@@ -9,6 +9,7 @@ import {
   SHEETS,
   isGoogleConfigured,
 } from "@/lib/google-sheets";
+import { logger } from "@/lib/logger";
 
 // POST /api/portal/checkin — coach check-in for their team players
 export async function POST(request: NextRequest) {
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
       const timestamp = new Date().toISOString();
       appendSheetRow(SHEETS.playerCheckIn, "Sheet1!A:F", [
         sanitizeSheetRow([timestamp, playerName, teamName || "", division || "", "CHECKIN", session.user.name || ""]),
-      ]).catch(() => {});
+      ]).catch((err) => logger.warn("Failed to sync portal check-in to Google Sheets", { error: String(err) }));
     }
 
     return NextResponse.json({ success: true });

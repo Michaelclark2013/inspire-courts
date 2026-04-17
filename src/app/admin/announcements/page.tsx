@@ -173,10 +173,11 @@ export default function AnnouncementsPage() {
               </div>
             )}
             <div>
-              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="ann-title" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Title<span className="text-red ml-0.5">*</span>
               </label>
               <input
+                id="ann-title"
                 type="text"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -186,10 +187,11 @@ export default function AnnouncementsPage() {
               />
             </div>
             <div>
-              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="ann-body" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Message<span className="text-red ml-0.5">*</span>
               </label>
               <textarea
+                id="ann-body"
                 value={form.body}
                 onChange={(e) => setForm({ ...form, body: e.target.value })}
                 required
@@ -214,10 +216,11 @@ export default function AnnouncementsPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="ann-audience" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Audience
                 </label>
                 <select
+                  id="ann-audience"
                   value={form.audience}
                   onChange={(e) => setForm({ ...form, audience: e.target.value })}
                   className={SELECT_CLASS}
@@ -228,10 +231,11 @@ export default function AnnouncementsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="ann-expires" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Expires (optional)
                 </label>
                 <input
+                  id="ann-expires"
                   type="date"
                   value={form.expiresAt}
                   min={new Date().toISOString().split("T")[0]}

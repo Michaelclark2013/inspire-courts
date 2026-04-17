@@ -234,10 +234,11 @@ export default function UsersPage() {
           )}
           <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="user-name" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Name <span className="text-red">*</span>
               </label>
               <input
+                id="user-name"
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -247,10 +248,11 @@ export default function UsersPage() {
               />
             </div>
             <div>
-              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="user-email" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Email <span className="text-red">*</span>
               </label>
               <input
+                id="user-email"
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -260,10 +262,11 @@ export default function UsersPage() {
               />
             </div>
             <div>
-              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="user-password" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Password <span className="text-red">*</span>
               </label>
               <input
+                id="user-password"
                 type="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -274,10 +277,11 @@ export default function UsersPage() {
               />
             </div>
             <div>
-              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="user-role" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Role
               </label>
               <select
+                id="user-role"
                 value={form.role}
                 onChange={(e) => setForm({ ...form, role: e.target.value })}
                 className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all"
@@ -294,10 +298,11 @@ export default function UsersPage() {
               </p>
             </div>
             <div>
-              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="user-memberSince" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Member Since Year
               </label>
               <input
+                id="user-memberSince"
                 type="number"
                 min={2015}
                 max={new Date().getFullYear()}
@@ -308,10 +313,11 @@ export default function UsersPage() {
               />
             </div>
             <div>
-              <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="user-phone" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Phone (optional)
               </label>
               <input
+                id="user-phone"
                 type="tel"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}

@@ -248,7 +248,7 @@ export default function RegisterPage() {
         </div>
 
         {error && (
-          <div role="alert" aria-live="assertive" className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-6">
+          <div role="alert" aria-live="assertive" className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-6 input-shake">
             {error}
           </div>
         )}

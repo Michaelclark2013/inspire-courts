@@ -11,6 +11,54 @@ import {
   Users,
   CheckCircle2,
 } from "lucide-react";
+
+const trainingSchema = {
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  name: "Inspire Courts AZ — Private Basketball Training",
+  description:
+    "1-on-1 and small group basketball training in Gilbert, AZ. Skill development, shooting, ball handling, and sport-specific work for all ages.",
+  url: "https://inspirecourtsaz.com/training",
+  telephone: "+14805551234",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
+    addressLocality: "Gilbert",
+    addressRegion: "AZ",
+    postalCode: "85233",
+    addressCountry: "US",
+  },
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Basketball Training Sessions",
+    itemListElement: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "1-on-1 Basketball Training",
+          description: "Fully personalized sessions tailored to your player's strengths, weaknesses, and goals.",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Small Group Training (2-4)",
+          description: "Train with a small group for competitive drills and game-like situations.",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Shooting Sessions",
+          description: "Dedicated shooting workouts focused on form, footwork, consistency, and game-speed shooting.",
+        },
+      },
+    ],
+  },
+};
 import AnimateIn from "@/components/ui/AnimateIn";
 import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -78,6 +126,10 @@ export default function TrainingPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(trainingSchema) }}
+      />
       {/* Hero */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         <Image src="/images/courts-bg.jpg" alt="Inspire Courts basketball training facility" fill priority sizes="100vw" className="object-cover object-center" />
@@ -294,6 +346,7 @@ export default function TrainingPage() {
                         alt={trainer.name}
                         width={400}
                         height={300}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
                         className="w-full h-full object-cover"
                       />
                     ) : (

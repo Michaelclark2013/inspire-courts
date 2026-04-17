@@ -41,6 +41,18 @@ body {
   background: var(--color-white);
 }
 
+/* ── Transition timing tokens ──
+ * Use these for consistency across the site:
+ *   --transition-fast:   150ms  (buttons, links, icons)
+ *   --transition-normal: 200ms  (cards, form inputs)
+ *   --transition-slow:   300ms  (modals, panels, drawers)
+ */
+:root {
+  --transition-fast: 150ms;
+  --transition-normal: 200ms;
+  --transition-slow: 300ms;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -113,6 +125,23 @@ html {
   animation: ripple 0.6s ease-out forwards;
 }
 
+/* ── Z-index scale (canonical reference for the project) ──
+ * z-0   : base content
+ * z-10  : sticky headers, table headers
+ * z-20  : dropdowns, sticky sub-nav
+ * z-30  : sidebar overlays, sub-nav bars
+ * z-40  : mobile backdrop
+ * z-50  : header / fixed nav / mobile-register bar
+ * z-60  : mobile bottom tab bar
+ * z-65  : mobile drawer backdrop
+ * z-66  : mobile drawer panel
+ * z-70  : modal backdrop
+ * z-71  : modal content
+ * z-80  : toast notifications
+ * z-100 : toast/snackbar (admin content)
+ * z-[9999]: skip-to-content link
+ */
+
 /* Keyframe definitions */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(24px); }
@@ -128,6 +157,11 @@ html {
   0%, 100% { transform: translateX(0); }
   10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
   20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+/* ── Input error shake — applied via .input-shake class ── */
+.input-shake {
+  animation: shake 0.4s ease-in-out;
 }
 
 /* ── Mobile nav slide-down ── */

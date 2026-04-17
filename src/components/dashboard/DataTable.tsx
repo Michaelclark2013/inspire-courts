@@ -47,7 +47,7 @@ export default function DataTable({
         </div>
       )}
 
-      <div className="overflow-x-auto scroll-shadow-x rounded-xl border border-border">
+      <div className="overflow-x-auto scroll-shadow-x rounded-xl border border-border min-h-[200px]">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-off-white border-b border-border">
@@ -66,9 +66,12 @@ export default function DataTable({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-8 text-center text-text-secondary"
+                  className="px-4 py-16 text-center text-text-secondary align-middle"
                 >
-                  No data found
+                  <div className="flex flex-col items-center gap-2">
+                    <Search className="w-5 h-5 text-text-secondary/40" />
+                    <span>No data found</span>
+                  </div>
                 </td>
               </tr>
             ) : (

@@ -353,6 +353,7 @@ export default function FacilityPage() {
                     alt="Team Inspire basketball team posing with championship trophy"
                     width={800}
                     height={600}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 66vw, 500px"
                     className="w-full h-auto object-cover"
                   />
                   <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-navy/80 to-transparent px-5 py-3">

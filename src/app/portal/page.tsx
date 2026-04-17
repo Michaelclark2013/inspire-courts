@@ -243,14 +243,35 @@ export default function PortalDashboard() {
         )}
 
         {isEmpty ? (
-          <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl p-8 text-center">
-            <div className="w-12 h-12 rounded-full bg-off-white flex items-center justify-center mx-auto mb-3">
-              <Trophy className="w-6 h-6 text-light-gray" />
+          <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl p-6 lg:p-8">
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 rounded-full bg-red/10 flex items-center justify-center mx-auto mb-3">
+                <Trophy className="w-6 h-6 text-red" />
+              </div>
+              <h3 className="text-navy font-bold text-base mb-1">Welcome to Inspire Courts</h3>
+              <p className="text-text-muted text-sm max-w-sm mx-auto">
+                Get started by completing your profile and exploring upcoming events.
+              </p>
             </div>
-            <h3 className="text-navy font-semibold text-sm mb-1">Welcome to Your Portal</h3>
-            <p className="text-text-muted text-xs max-w-xs mx-auto">
-              Your dashboard will populate as events go live.
-            </p>
+            <div className="grid gap-2 max-w-sm mx-auto">
+              <a href="/portal/profile" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
+                <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                <span className="text-navy text-sm font-medium">Complete your profile</span>
+                <Calendar className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+              {(role === "parent" || role === "coach") && (
+                <a href="/portal/waiver" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
+                  <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                  <span className="text-navy text-sm font-medium">Submit player waivers</span>
+                  <FileCheck className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                </a>
+              )}
+              <a href="/tournaments" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
+                <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">{role === "parent" || role === "coach" ? "3" : "2"}</span>
+                <span className="text-navy text-sm font-medium">Browse upcoming tournaments</span>
+                <Trophy className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+            </div>
           </div>
         ) : (
           <MyRegistrationsList registrations={myRegistrations} />

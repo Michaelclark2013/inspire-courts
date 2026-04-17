@@ -18,3 +18,8 @@ export const SELECT_CLASS =
 
 export const TEXTAREA_CLASS =
   "w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:shadow-[0_0_0_3px_rgba(227,27,35,0.1)] focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-all duration-200 placeholder:text-text-muted/50 resize-vertical";
+
+/** Error state modifier — add alongside INPUT_CLASS when validation fails.
+ *  Includes a red border + the CSS shake animation defined in globals.css. */
+export const INPUT_ERROR_CLASS =
+  "border-red! shadow-[0_0_0_3px_rgba(204,0,0,0.1)] input-shake";

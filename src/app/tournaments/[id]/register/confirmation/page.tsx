@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle2, Clock, Loader2, Trophy, ArrowRight } from "lucide-react";
+import { CheckCircle2, Clock, Loader2, Trophy, ArrowRight, Share2, Copy, CalendarPlus } from "lucide-react";
 
 type RegStatus = {
   id: number;
@@ -81,6 +81,22 @@ export default function ConfirmationPage() {
 
   const isPending = regStatus && !isConfirmed;
 
+  const [copied, setCopied] = useState(false);
+
+  const tournamentUrl = typeof window !== "undefined" ? `${window.location.origin}/tournaments/${id}` : "";
+
+  async function handleShare() {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ title: "Tournament Registration", url: tournamentUrl });
+      } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(tournamentUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-off-white flex items-center justify-center">
       <div className="max-w-md mx-auto px-4 text-center">
@@ -98,11 +114,27 @@ export default function ConfirmationPage() {
               <span className="text-navy font-semibold">{regStatus?.teamName}</span>{" "}
               has been added to the tournament.
             </p>
-            <p className="text-text-muted text-sm mb-8">
-              You&apos;ll receive tournament updates at your registered email.
-              Submit waivers and manage your roster through the coach portal.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+
+            {/* Next steps checklist */}
+            <div className="bg-white border border-light-gray rounded-xl p-4 mb-6 text-left">
+              <h2 className="text-navy text-xs font-bold uppercase tracking-wider mb-3 font-[var(--font-chakra)]">Next Steps</h2>
+              <ol className="space-y-2 text-sm text-text-muted">
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-500 font-bold mt-0.5">1.</span>
+                  <span>Submit <Link href="/portal/waiver" className="text-red font-semibold hover:underline">player waivers</Link> before game day</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-500 font-bold mt-0.5">2.</span>
+                  <span>Upload your <Link href="/portal/roster" className="text-red font-semibold hover:underline">team roster</Link></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-500 font-bold mt-0.5">3.</span>
+                  <span>Check in on <Link href="/portal/checkin" className="text-red font-semibold hover:underline">game day</Link></span>
+                </li>
+              </ol>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
               <Link
                 href={`/tournaments/${id}`}
                 className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
@@ -118,6 +150,15 @@ export default function ConfirmationPage() {
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
+
+            {/* Share / Copy link */}
+            <button
+              type="button"
+              onClick={handleShare}
+              className="inline-flex items-center gap-2 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide transition-colors"
+            >
+              {copied ? <><Copy className="w-3.5 h-3.5" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" /> Share Tournament</>}
+            </button>
           </>
         ) : timedOut ? (
           <>

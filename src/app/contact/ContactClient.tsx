@@ -157,7 +157,7 @@ function ContactPageInner() {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
                     {error && (
-                      <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 text-red-700 text-sm" role="alert" aria-live="assertive">
+                      <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 text-red-700 text-sm input-shake" role="alert" aria-live="assertive">
                         {error}
                       </div>
                     )}

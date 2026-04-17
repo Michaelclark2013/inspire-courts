@@ -11,6 +11,9 @@ import {
   Users,
   DollarSign,
   Calendar,
+  Share2,
+  Copy,
+  Link2,
 } from "lucide-react";
 import BracketView from "@/components/tournament/BracketView";
 import PoolStandings from "@/components/tournament/PoolStandings";
@@ -22,6 +25,7 @@ export default function PublicTournamentPage() {
   const [data, setData] = useState<TournamentDetailPublic | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [copied, setCopied] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   const fetchData = useCallback(async () => {
@@ -214,6 +218,37 @@ export default function PublicTournamentPage() {
             </time>
             {data.location && <span>{data.location}</span>}
             <span>{data.teams.length} teams</span>
+          </div>
+
+          {/* Share buttons */}
+          <div className="flex items-center gap-2 mt-4">
+            <button
+              type="button"
+              onClick={async () => {
+                const url = window.location.href;
+                if (navigator.share) {
+                  try {
+                    await navigator.share({ title: data.name, url });
+                  } catch { /* user cancelled */ }
+                } else {
+                  await navigator.clipboard.writeText(url);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }
+              }}
+              className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+            >
+              {copied ? <><Copy className="w-3.5 h-3.5" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" /> Share</>}
+            </button>
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(data.name + " at Inspire Courts")}&url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+              aria-label="Share on X (Twitter)"
+            >
+              <Link2 className="w-3.5 h-3.5" /> Post on X
+            </a>
           </div>
         </header>
 

@@ -221,6 +221,7 @@ export default function EventsPage() {
                 alt="2026 Inspire Courts Tournament Schedule"
                 width={1080}
                 height={1080}
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 448px"
                 className="w-full h-auto rounded-2xl shadow-2xl shadow-black/40"
                 priority
               />

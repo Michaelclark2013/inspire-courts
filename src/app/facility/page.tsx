@@ -249,7 +249,7 @@ export default function FacilityPage() {
       {/* Stats Bar */}
       <section className="bg-navy border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-3 sm:grid-cols-5">
             {[
               { icon: Trophy, label: "7 Courts" },
               { icon: LayoutGrid, label: "52,000 Sq Ft" },
@@ -259,9 +259,9 @@ export default function FacilityPage() {
             ].map(({ icon: Icon, label }, i) => (
               <div
                 key={label}
-                className={`flex items-center justify-center gap-2.5 py-5 px-4 text-white/80 ${
-                  i < 4 ? "border-r border-white/10" : ""
-                } ${i >= 3 ? "hidden sm:flex" : ""} ${i >= 2 ? "border-t border-white/10 sm:border-t-0" : ""}`}
+                className={`flex items-center justify-center gap-2.5 py-4 sm:py-5 px-3 sm:px-4 text-white/80 ${
+                  i < 4 ? "lg:border-r border-white/10" : ""
+                } ${i >= 2 ? "border-t border-white/10 sm:border-t-0" : ""}`}
               >
                 <Icon className="w-4 h-4 text-red flex-shrink-0" />
                 <span className="text-sm font-semibold font-[var(--font-chakra)] uppercase tracking-wide whitespace-nowrap">
@@ -495,7 +495,7 @@ export default function FacilityPage() {
       </section>
 
       {/* Facility Video Tour */}
-      <section className="py-16 lg:py-28 bg-navy">
+      <section className="py-16 lg:py-28 bg-navy border-t border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimateIn>
             <div className="text-center mb-10">

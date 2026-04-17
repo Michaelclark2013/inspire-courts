@@ -142,7 +142,7 @@ export default function LoginPage() {
                 autoFocus
                 autoComplete="email"
                 className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3.5 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-text-muted/50"
-                placeholder="Admin email"
+                placeholder="you@example.com"
               />
             </div>
 

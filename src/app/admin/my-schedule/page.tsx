@@ -78,10 +78,10 @@ export default function MySchedulePage() {
           <p className="text-navy font-semibold mb-1">No games on the schedule</p>
           <p className="text-text-secondary text-sm mb-4">Games will appear here once they&apos;re created.</p>
           <Link
-            href="/admin/scores/enter"
+            href="/admin/scores"
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
-            <PenLine className="w-4 h-4" /> Create First Game
+            <PenLine className="w-4 h-4" /> Go to Scores
           </Link>
         </div>
       ) : (

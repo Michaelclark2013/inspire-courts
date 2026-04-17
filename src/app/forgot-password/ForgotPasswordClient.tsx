@@ -107,7 +107,7 @@ export default function ForgotPasswordClient() {
                     autoComplete="email"
                     autoFocus
                     className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25"
-                    placeholder="Admin email"
+                    placeholder="you@example.com"
                   />
                 </div>
 

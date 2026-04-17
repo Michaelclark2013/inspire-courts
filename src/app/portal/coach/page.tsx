@@ -466,7 +466,7 @@ export default function CoachPortalPage() {
             {/* Back to lookup */}
             <button
               onClick={() => setStep("lookup")}
-              className="w-full border border-light-gray hover:border-light-gray text-text-muted hover:text-navy rounded-xl py-3.5 text-sm font-semibold transition-colors"
+              className="w-full border border-light-gray hover:border-navy/30 text-text-muted hover:text-navy rounded-xl py-3.5 text-sm font-semibold transition-colors"
             >
               ← Not you? Look up a different coach
             </button>

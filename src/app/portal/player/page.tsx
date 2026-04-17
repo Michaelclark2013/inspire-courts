@@ -150,7 +150,9 @@ export default function PlayerPortalPage() {
         {step === "lookup" && (
           <div className="space-y-6">
             <div className="flex items-center gap-3 pt-2">
-              <button onClick={() => setStep("select")} className="text-text-muted hover:text-navy transition-colors text-sm">← Back</button>
+              <button onClick={() => setStep("select")} className="text-red hover:text-red-hover transition-colors text-sm font-semibold flex items-center gap-1">
+                <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Back
+              </button>
               <h2 className="text-navy font-bold text-lg">Find Your Info</h2>
             </div>
 
@@ -401,7 +403,7 @@ export default function PlayerPortalPage() {
             {/* Back to lookup */}
             <button
               onClick={() => setStep("lookup")}
-              className="w-full border border-light-gray hover:border-light-gray text-text-muted hover:text-navy rounded-xl py-3.5 text-sm font-semibold transition-colors"
+              className="w-full border border-light-gray hover:border-navy/30 text-text-muted hover:text-navy rounded-xl py-3.5 text-sm font-semibold transition-colors"
             >
               ← Not you? Look up a different player
             </button>

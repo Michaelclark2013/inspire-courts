@@ -130,7 +130,11 @@ export default function BookingForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-8">
+
+          {/* Contact Information */}
+          <fieldset className="space-y-5">
+            <legend className="text-navy font-bold text-sm uppercase tracking-wider font-[var(--font-chakra)] pb-2 border-b border-light-gray w-full">Contact Information</legend>
 
           <div>
             <label htmlFor="name" className={LABEL_CLASS}>Full Name *</label>
@@ -178,6 +182,11 @@ export default function BookingForm() {
               placeholder="you@example.com"
             />
           </div>
+          </fieldset>
+
+          {/* Booking Details */}
+          <fieldset className="space-y-5">
+            <legend className="text-navy font-bold text-sm uppercase tracking-wider font-[var(--font-chakra)] pb-2 border-b border-light-gray w-full">Booking Details</legend>
 
           <div>
             <label htmlFor="sport" className={LABEL_CLASS}>Sport *</label>
@@ -215,6 +224,7 @@ export default function BookingForm() {
               min={new Date().toISOString().split("T")[0]}
               className={INPUT_CLASS_LG}
             />
+            <p className="text-text-muted text-xs mt-1.5">Select a future date for your booking</p>
           </div>
 
           <div>
@@ -257,6 +267,7 @@ export default function BookingForm() {
               placeholder="Any special requests, questions, or details…"
             />
           </div>
+          </fieldset>
 
           {/* Honeypot — hidden from real users, catches bots */}
           <div className="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true">

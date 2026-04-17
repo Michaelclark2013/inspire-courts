@@ -79,7 +79,7 @@ export default function MyHistoryPage() {
         </div>
         <div className="bg-white border border-border rounded-xl p-3 md:p-5">
           <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
-            <DollarSign className="w-3 h-3" /> Avg
+            <DollarSign className="w-3 h-3" /> Avg/Shift
           </div>
           <p className="text-navy text-xl md:text-2xl font-bold">
             {shifts.length > 0 ? `$${(totalPay / shifts.length).toFixed(2)}` : "—"}

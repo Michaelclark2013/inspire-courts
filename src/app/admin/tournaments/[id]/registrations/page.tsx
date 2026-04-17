@@ -48,6 +48,7 @@ export default function RegistrationsPage() {
   const { id } = useParams<{ id: string }>();
   const [regs, setRegs] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -62,8 +63,15 @@ export default function RegistrationsPage() {
   const fetchRegs = useCallback(async () => {
     try {
       const res = await fetch(`/api/admin/tournaments/${id}/registrations`);
-      if (res.ok) setRegs(await res.json());
-    } catch {} finally {
+      if (res.ok) {
+        setRegs(await res.json());
+        setFetchError(false);
+      } else {
+        setFetchError(true);
+      }
+    } catch {
+      setFetchError(true);
+    } finally {
       setLoading(false);
     }
   }, [id]);
@@ -224,13 +232,25 @@ export default function RegistrationsPage() {
         </div>
       )}
 
+      {fetchError && !loading && (
+        <div className="mb-6 bg-red/10 border border-red/20 rounded-xl p-6 text-center" role="alert">
+          <p className="text-navy font-semibold text-sm mb-2">Failed to load registrations</p>
+          <button
+            onClick={() => { setLoading(true); setFetchError(false); fetchRegs(); }}
+            className="text-red hover:text-red-hover text-xs font-bold uppercase tracking-wider"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* Registrations table */}
       <div className="bg-white border border-border shadow-sm rounded-xl overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16 text-text-muted">
             <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading registrations...
           </div>
-        ) : regs.length === 0 ? (
+        ) : regs.length === 0 && !fetchError ? (
           <div className="text-center py-16 text-text-muted">
             <Users className="w-8 h-8 mx-auto mb-3 opacity-40" />
             <p className="text-sm">No registrations yet.</p>

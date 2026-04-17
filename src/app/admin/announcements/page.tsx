@@ -30,13 +30,14 @@ const AUDIENCE_LABELS: Record<string, string> = {
 
 const AUDIENCE_STYLES: Record<string, string> = {
   all: "bg-navy/10 text-navy/70",
-  coaches: "bg-emerald-500/15 text-emerald-700",
-  parents: "bg-cyan-500/15 text-cyan-700",
+  coaches: "bg-emerald-50 text-emerald-700",
+  parents: "bg-cyan-50 text-cyan-700",
 };
 
 export default function AnnouncementsPage() {
   const [list, setList] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -51,8 +52,15 @@ export default function AnnouncementsPage() {
   const fetchAll = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/announcements");
-      if (res.ok) setList(await res.json());
-    } catch {} finally {
+      if (res.ok) {
+        setList(await res.json());
+        setFetchError(false);
+      } else {
+        setFetchError(true);
+      }
+    } catch {
+      setFetchError(true);
+    } finally {
       setLoading(false);
     }
   }, []);
@@ -245,11 +253,23 @@ export default function AnnouncementsPage() {
         </div>
       )}
 
+      {fetchError && !loading && (
+        <div className="mb-6 bg-red/10 border border-red/20 rounded-xl p-6 text-center" role="alert">
+          <p className="text-navy font-semibold text-sm mb-2">Failed to load announcements</p>
+          <button
+            onClick={() => { setLoading(true); setFetchError(false); fetchAll(); }}
+            className="text-red hover:text-red-hover text-xs font-bold uppercase tracking-wider"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading announcements...
         </div>
-      ) : list.length === 0 ? (
+      ) : list.length === 0 && !fetchError ? (
         <div className="text-center py-8 md:py-14 text-navy/40">
           <Megaphone className="w-8 h-8 mx-auto mb-3 opacity-40" />
           <p className="text-sm mb-4">No announcements yet.</p>

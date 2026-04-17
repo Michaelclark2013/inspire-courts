@@ -260,7 +260,7 @@ export default function PublicTournamentPage() {
               {copied ? <><Copy className="w-3.5 h-3.5" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" /> Share</>}
             </button>
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(data.name + " at Inspire Courts")}&url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(data.name + " at Inspire Courts")}&url=${encodeURIComponent(`https://inspirecourtsaz.com/tournaments/${data.id}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"

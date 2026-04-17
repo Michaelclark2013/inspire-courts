@@ -20,15 +20,23 @@ type Game = {
 export default function MySchedulePage() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadGames = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
     try {
       const r = await fetch("/api/scores/live");
-      const data = await r.json();
-      setGames(data);
-    } catch {}
+      if (r.ok) {
+        const data = await r.json();
+        setGames(data);
+        setFetchError(false);
+      } else {
+        setFetchError(true);
+      }
+    } catch {
+      setFetchError(true);
+    }
     if (isRefresh) setRefreshing(false);
     else setLoading(false);
   }, []);
@@ -68,11 +76,23 @@ export default function MySchedulePage() {
         </div>
       </div>
 
+      {fetchError && !loading && (
+        <div className="mb-6 bg-red/10 border border-red/20 rounded-xl p-6 text-center" role="alert">
+          <p className="text-navy font-semibold text-sm mb-2">Failed to load schedule</p>
+          <button
+            onClick={() => { setLoading(true); setFetchError(false); loadGames(); }}
+            className="text-red hover:text-red-hover text-xs font-bold uppercase tracking-wider"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading schedule...
         </div>
-      ) : games.length === 0 ? (
+      ) : games.length === 0 && !fetchError ? (
         <div className="bg-white border border-border rounded-xl p-5 text-center">
           <Calendar className="w-8 h-8 text-navy/30 mx-auto mb-3" />
           <p className="text-navy font-semibold mb-1">No games on the schedule</p>
@@ -89,9 +109,9 @@ export default function MySchedulePage() {
           {live.length > 0 && (
             <section>
               <div className="flex items-center gap-2 mb-3">
-                <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <h2 className="text-emerald-400 font-bold text-sm uppercase tracking-wider">Live Now</h2>
-                <span className="text-emerald-400/60 text-xs">{live.length}</span>
+                <Radio className="w-4 h-4 text-emerald-600 animate-pulse" />
+                <h2 className="text-emerald-600 font-bold text-sm uppercase tracking-wider">Live Now</h2>
+                <span className="text-emerald-600/60 text-xs">{live.length}</span>
               </div>
               <div className="space-y-2">
                 {live.map((g) => <GameRow key={g.id} game={g} />)}
@@ -131,7 +151,7 @@ function GameRow({ game }: { game: Game }) {
       const d = new Date(game.scheduledTime);
       const minutesUntil = Math.round((d.getTime() - Date.now()) / 60000);
       if (game.status === "scheduled" && minutesUntil > 0 && minutesUntil <= 60) {
-        return <span className="text-amber-400 font-bold">in {minutesUntil}m</span>;
+        return <span className="text-amber-600 font-bold">in {minutesUntil}m</span>;
       }
       return (
         <span>
@@ -168,7 +188,7 @@ function GameRow({ game }: { game: Game }) {
       <div className="flex items-center gap-3 text-xs text-text-secondary flex-shrink-0">
         {timeLabel && <span className="text-xs text-text-secondary">{timeLabel}</span>}
         {game.court && <span>{game.court}</span>}
-        <span className={`font-bold uppercase ${game.status === "live" ? "text-emerald-400" : game.status === "final" ? "text-navy/40" : "text-navy/30"}`}>
+        <span className={`font-bold uppercase ${game.status === "live" ? "text-emerald-600" : game.status === "final" ? "text-navy/40" : "text-navy/30"}`}>
           {game.status}
         </span>
       </div>

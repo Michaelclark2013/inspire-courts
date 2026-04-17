@@ -151,6 +151,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
         </div>
         <div className="overflow-x-auto scroll-shadow-x">
           <table className="w-full text-sm">
+            <caption className="sr-only">Registered players</caption>
             <thead>
               <tr className="border-b border-border bg-off-white">
                 {["Player", "Parent/Guardian", "Team", "Division", "Date", "Contact"].map((h) => (

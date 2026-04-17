@@ -54,6 +54,7 @@ export default function EditToolbar() {
         <LayoutDashboard className="w-3.5 h-3.5" />
       </Link>
       <button
+        type="button"
         onClick={() => signOut({ callbackUrl: "/login" })}
         className="flex items-center gap-1.5 text-white/70 hover:text-red text-xs font-semibold px-2 py-2 rounded-full transition-colors"
         title="Sign Out"
@@ -62,6 +63,7 @@ export default function EditToolbar() {
         <LogOut className="w-3.5 h-3.5" />
       </button>
       <button
+        type="button"
         onClick={() => setDismissed(true)}
         className="text-white/40 hover:text-white/70 px-1 py-2 transition-colors"
         title="Dismiss"

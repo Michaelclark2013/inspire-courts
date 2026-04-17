@@ -226,7 +226,7 @@ export default function LeadsPage() {
                   </tr>
                 ) : (
                   filtered.map((lead, i) => (
-                    <tr key={i} className="hover:bg-off-white cursor-pointer" onClick={() => setExpandedLead(expandedLead === i ? null : i)}>
+                    <tr key={i} className="hover:bg-off-white cursor-pointer" tabIndex={0} onClick={() => setExpandedLead(expandedLead === i ? null : i)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpandedLead(expandedLead === i ? null : i); } }}>
                       <td className="px-5 py-3 text-navy font-semibold">
                         {lead.name || "—"}
                       </td>

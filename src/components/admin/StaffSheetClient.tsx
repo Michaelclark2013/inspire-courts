@@ -138,6 +138,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto scroll-shadow-x">
             <table className="w-full text-sm">
+              <caption className="sr-only">Staff shifts</caption>
               <thead>
                 <tr className="border-b border-border bg-off-white">
                   {["Name", "Role", "Date", "Hours", "Rate", "Est. Pay", "Payment"].map((h) => (
@@ -238,6 +239,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto scroll-shadow-x">
             <table className="w-full text-sm">
+              <caption className="sr-only">Referee assignments</caption>
               <thead>
                 <tr className="border-b border-border bg-off-white">
                   {["Name", "Date", "Games", "Courts", "Rate", "Pay", "Method"].map((h) => (

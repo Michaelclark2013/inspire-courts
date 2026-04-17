@@ -185,6 +185,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
         </div>
         <div className="overflow-x-auto scroll-shadow-x">
           <table className="w-full text-sm">
+            <caption className="sr-only">Prospect teams</caption>
             <thead>
               <tr className="border-b border-border bg-off-white">
                 {([["team","Team"],["coach","Coach"],["division","Division"],["status","Status"],["date","Date"],["","Contact"],["notes","Notes"]] as const).map(([key, label]) => (

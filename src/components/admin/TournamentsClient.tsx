@@ -220,6 +220,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
+            <caption className="sr-only">Tournaments list</caption>
             <thead>
               <tr className="border-b border-border">
                 {columns.map(([key, label]) => (

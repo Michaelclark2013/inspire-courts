@@ -151,8 +151,8 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16 text-white/40">
-        <div className="w-5 h-5 border-2 border-white/20 border-t-red rounded-full animate-spin mr-3" />
+      <div className="flex items-center justify-center py-16 text-white/40" role="status" aria-live="polite">
+        <div className="w-5 h-5 border-2 border-white/20 border-t-red rounded-full animate-spin mr-3" aria-hidden="true" />
         Loading scores...
       </div>
     );

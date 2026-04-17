@@ -44,6 +44,7 @@ export default function AdminFAB() {
 
         <Tooltip content={open ? "Close" : "Quick actions"} position="left">
           <button
+            type="button"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close quick actions" : "Open quick actions"}
             aria-expanded={open}

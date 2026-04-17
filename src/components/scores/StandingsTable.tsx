@@ -70,8 +70,8 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8 text-white/40">
-        <div className="w-4 h-4 border-2 border-white/20 border-t-red rounded-full animate-spin mr-2" />
+      <div className="flex items-center justify-center py-8 text-white/40" role="status" aria-live="polite">
+        <div className="w-4 h-4 border-2 border-white/20 border-t-red rounded-full animate-spin mr-2" aria-hidden="true" />
         Loading standings...
       </div>
     );
@@ -120,17 +120,17 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
         <caption className="sr-only">Team standings</caption>
         <thead>
           <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
-            <th className="text-left px-4 py-3 font-semibold">#</th>
-            <th className="text-left px-4 py-3 font-semibold">Team</th>
-            <th className="text-center px-3 py-3 font-semibold">W</th>
-            <th className="text-center px-3 py-3 font-semibold">L</th>
-            <th className="text-center px-3 py-3 font-semibold">PCT</th>
-            <th className="text-center px-3 py-3 font-semibold hidden sm:table-cell">GB</th>
-            <th className="text-center px-3 py-3 font-semibold">+/-</th>
-            <th className="text-center px-3 py-3 font-semibold hidden md:table-cell">PF</th>
-            <th className="text-center px-3 py-3 font-semibold hidden md:table-cell">PA</th>
-            <th className="text-center px-3 py-3 font-semibold">STRK</th>
-            <th className="text-center px-3 py-3 font-semibold hidden sm:table-cell">L5</th>
+            <th scope="col" className="text-left px-4 py-3 font-semibold">#</th>
+            <th scope="col" className="text-left px-4 py-3 font-semibold">Team</th>
+            <th scope="col" className="text-center px-3 py-3 font-semibold">W</th>
+            <th scope="col" className="text-center px-3 py-3 font-semibold">L</th>
+            <th scope="col" className="text-center px-3 py-3 font-semibold">PCT</th>
+            <th scope="col" className="text-center px-3 py-3 font-semibold hidden sm:table-cell">GB</th>
+            <th scope="col" className="text-center px-3 py-3 font-semibold">+/-</th>
+            <th scope="col" className="text-center px-3 py-3 font-semibold hidden md:table-cell">PF</th>
+            <th scope="col" className="text-center px-3 py-3 font-semibold hidden md:table-cell">PA</th>
+            <th scope="col" className="text-center px-3 py-3 font-semibold">STRK</th>
+            <th scope="col" className="text-center px-3 py-3 font-semibold hidden sm:table-cell">L5</th>
           </tr>
         </thead>
         <tbody>

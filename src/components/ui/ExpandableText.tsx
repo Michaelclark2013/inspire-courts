@@ -26,6 +26,7 @@ export default function ExpandableText({
       </p>
       {text.length > 120 && (
         <button
+          type="button"
           onClick={() => setExpanded((v) => !v)}
           className="text-red hover:text-red-hover text-xs font-semibold uppercase tracking-wider mt-1 transition-colors"
         >

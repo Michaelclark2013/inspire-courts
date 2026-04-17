@@ -9,6 +9,7 @@ import {
   sanitizeSheetRow,
   SHEETS,
 } from "@/lib/google-sheets";
+import { logger } from "@/lib/logger";
 
 // POST /api/admin/checkin — check in a player (dual-write: DB + Sheets)
 export async function POST(request: NextRequest) {

@@ -1,4 +1,5 @@
 import { Client } from "@notionhq/client";
+import { logger } from "@/lib/logger";
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -52,14 +53,14 @@ export async function queryDatabase(
     );
 
     if (!response.ok) {
-      console.error(`Notion query failed: ${response.status}`);
+      logger.error("Notion query failed", { status: response.status, databaseId });
       return [];
     }
 
     const data = await response.json();
     return data.results || [];
   } catch (error) {
-    console.error(`Notion query failed for ${databaseId}:`, error);
+    logger.error("Notion query exception", { databaseId, error: String(error) });
     return [];
   }
 }
@@ -196,7 +197,7 @@ export async function createNotionPage(
   try {
     const apiKey = process.env.NOTION_API_KEY;
     if (!apiKey || !databaseId) {
-      console.warn("Notion not configured, skipping page creation");
+      logger.warn("Notion not configured, skipping page creation");
       return null;
     }
 
@@ -214,13 +215,13 @@ export async function createNotionPage(
     });
 
     if (!response.ok) {
-      console.error(`Notion page creation failed: ${response.status}`);
+      logger.error("Notion page creation failed", { status: response.status });
       return null;
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Notion page creation error:", error);
+    logger.error("Notion page creation error", { error: String(error) });
     return null;
   }
 }
@@ -246,13 +247,13 @@ export async function updateNotionPage(
     });
 
     if (!response.ok) {
-      console.error(`Notion page update failed: ${response.status}`);
+      logger.error("Notion page update failed", { status: response.status, pageId });
       return null;
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Notion page update error:", error);
+    logger.error("Notion page update error", { error: String(error) });
     return null;
   }
 }

@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { tournaments, tournamentTeams, tournamentGames } from "@/lib/db/schema";
 import { desc, eq, sql, inArray } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { revalidatePath } from "next/cache";
 
 // GET /api/admin/tournaments — list all tournaments
 export async function GET() {
@@ -131,6 +132,8 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
+    revalidatePath("/tournaments");
+    revalidatePath("/admin/tournaments");
     return NextResponse.json(tournament, { status: 201 });
   } catch (err) {
     logger.error("Failed to create tournament", { error: String(err) });

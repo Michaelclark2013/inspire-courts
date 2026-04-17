@@ -11,6 +11,8 @@ import {
   gameScores,
 } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { logger } from "@/lib/logger";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -157,6 +159,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
     .set(updates)
     .where(eq(tournaments.id, tournamentId));
 
+  revalidatePath(`/admin/tournaments/${id}`);
+  revalidatePath(`/tournaments/${id}`);
+  revalidatePath("/tournaments");
   return NextResponse.json({ success: true });
 }
 
@@ -195,5 +200,7 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
     .where(eq(tournamentTeams.tournamentId, tournamentId));
   await db.delete(tournaments).where(eq(tournaments.id, tournamentId));
 
+  revalidatePath("/tournaments");
+  revalidatePath("/admin/tournaments");
   return NextResponse.json({ success: true });
 }

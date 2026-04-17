@@ -5,6 +5,8 @@ import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { tournamentTeams, tournaments } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { logger } from "@/lib/logger";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -18,13 +20,18 @@ export async function GET(_request: NextRequest, { params }: Params) {
   const { id } = await params;
   const tournamentId = Number(id);
 
-  const teams = await db
-    .select()
-    .from(tournamentTeams)
-    .where(eq(tournamentTeams.tournamentId, tournamentId))
-    .orderBy(tournamentTeams.seed);
+  try {
+    const teams = await db
+      .select()
+      .from(tournamentTeams)
+      .where(eq(tournamentTeams.tournamentId, tournamentId))
+      .orderBy(tournamentTeams.seed);
 
-  return NextResponse.json(teams);
+    return NextResponse.json(teams);
+  } catch (err) {
+    logger.error("Failed to fetch tournament teams", { tournamentId, error: String(err) });
+    return NextResponse.json({ error: "Failed to fetch teams" }, { status: 500 });
+  }
 }
 
 // POST /api/admin/tournaments/[id]/teams — add a team
@@ -36,35 +43,41 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const { id } = await params;
   const tournamentId = Number(id);
-  const body = await request.json();
 
-  const { teamName, teamId, division, seed, poolGroup } = body;
-  if (!teamName) {
-    return NextResponse.json({ error: "Team name is required" }, { status: 400 });
+  try {
+    const body = await request.json();
+    const { teamName, teamId, division, seed, poolGroup } = body;
+    if (!teamName) {
+      return NextResponse.json({ error: "Team name is required" }, { status: 400 });
+    }
+
+    // Get current team count for auto-seeding
+    const existing = await db
+      .select()
+      .from(tournamentTeams)
+      .where(eq(tournamentTeams.tournamentId, tournamentId));
+
+    const [team] = await db
+      .insert(tournamentTeams)
+      .values({
+        tournamentId,
+        teamId: teamId || null,
+        teamName,
+        division: division || null,
+        seed: seed ?? existing.length + 1,
+        poolGroup: poolGroup || null,
+      })
+      .returning();
+
+    revalidatePath(`/admin/tournaments/${id}`);
+    return NextResponse.json(team, { status: 201 });
+  } catch (err) {
+    logger.error("Failed to add tournament team", { tournamentId, error: String(err) });
+    return NextResponse.json({ error: "Failed to add team" }, { status: 500 });
   }
-
-  // Get current team count for auto-seeding
-  const existing = await db
-    .select()
-    .from(tournamentTeams)
-    .where(eq(tournamentTeams.tournamentId, tournamentId));
-
-  const [team] = await db
-    .insert(tournamentTeams)
-    .values({
-      tournamentId,
-      teamId: teamId || null,
-      teamName,
-      division: division || null,
-      seed: seed ?? existing.length + 1,
-      poolGroup: poolGroup || null,
-    })
-    .returning();
-
-  return NextResponse.json(team, { status: 201 });
 }
 
-// PUT /api/admin/tournaments/[id]/teams — update team seed/pool
+// PUT /api/admin/tournaments/[id]/teams — update team seed/pool/players
 export async function PUT(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
   if (!session || !canAccess(session.user.role, "tournaments")) {
@@ -72,24 +85,44 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 
   const { id } = await params;
-  const body = await request.json();
-  const { teamEntryId, seed, poolGroup, eliminated } = body;
 
-  if (!teamEntryId) {
-    return NextResponse.json({ error: "teamEntryId required" }, { status: 400 });
+  try {
+    const body = await request.json();
+    const { teamEntryId, seed, poolGroup, eliminated, players } = body;
+
+    if (!teamEntryId) {
+      return NextResponse.json({ error: "teamEntryId required" }, { status: 400 });
+    }
+
+    const updates: Record<string, unknown> = {};
+    if (seed !== undefined) updates.seed = seed;
+    if (poolGroup !== undefined) updates.poolGroup = poolGroup;
+    if (eliminated !== undefined) updates.eliminated = eliminated;
+    if (players !== undefined) {
+      // players is an array of {name, jersey} — validate and sanitize
+      if (!Array.isArray(players)) {
+        return NextResponse.json({ error: "players must be an array" }, { status: 400 });
+      }
+      const sanitized = players
+        .filter((p) => p && typeof p.name === "string" && p.name.trim())
+        .map((p) => ({
+          name: String(p.name).trim().slice(0, 100),
+          jersey: p.jersey ? String(p.jersey).trim().slice(0, 10) : "",
+        }));
+      updates.players = JSON.stringify(sanitized);
+    }
+
+    await db
+      .update(tournamentTeams)
+      .set(updates)
+      .where(eq(tournamentTeams.id, teamEntryId));
+
+    revalidatePath(`/admin/tournaments/${id}`);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    logger.error("Failed to update tournament team", { error: String(err) });
+    return NextResponse.json({ error: "Failed to update team" }, { status: 500 });
   }
-
-  const updates: Record<string, unknown> = {};
-  if (seed !== undefined) updates.seed = seed;
-  if (poolGroup !== undefined) updates.poolGroup = poolGroup;
-  if (eliminated !== undefined) updates.eliminated = eliminated;
-
-  await db
-    .update(tournamentTeams)
-    .set(updates)
-    .where(eq(tournamentTeams.id, teamEntryId));
-
-  return NextResponse.json({ success: true });
 }
 
 // DELETE /api/admin/tournaments/[id]/teams — remove a team
@@ -102,23 +135,29 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   const { id } = await params;
   const tournamentId = Number(id);
 
-  // Check tournament status
-  const [tournament] = await db
-    .select()
-    .from(tournaments)
-    .where(eq(tournaments.id, tournamentId));
+  try {
+    // Check tournament status
+    const [tournament] = await db
+      .select()
+      .from(tournaments)
+      .where(eq(tournaments.id, tournamentId));
 
-  if (tournament && tournament.status !== "draft") {
-    return NextResponse.json(
-      { error: "Cannot remove teams after bracket is generated" },
-      { status: 400 }
-    );
+    if (tournament && tournament.status !== "draft") {
+      return NextResponse.json(
+        { error: "Cannot remove teams after bracket is generated" },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    const { teamEntryId } = body;
+
+    await db.delete(tournamentTeams).where(eq(tournamentTeams.id, teamEntryId));
+
+    revalidatePath(`/admin/tournaments/${id}`);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    logger.error("Failed to delete tournament team", { tournamentId, error: String(err) });
+    return NextResponse.json({ error: "Failed to delete team" }, { status: 500 });
   }
-
-  const body = await request.json();
-  const { teamEntryId } = body;
-
-  await db.delete(tournamentTeams).where(eq(tournamentTeams.id, teamEntryId));
-
-  return NextResponse.json({ success: true });
 }

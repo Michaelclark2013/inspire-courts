@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
+import { logger } from "@/lib/logger";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -59,7 +60,7 @@ export const authOptions: NextAuthOptions = {
             }
           }
         } catch (err) {
-          console.error("DB auth error:", err);
+          logger.error("DB auth error", { error: String(err) });
         }
 
         // 2. Fallback: check env-var admin (bootstrap login before DB user exists)
@@ -137,7 +138,7 @@ export const authOptions: NextAuthOptions = {
               ]).catch(() => {});
             }
           } catch (err) {
-            console.error("Google OAuth DB error:", err);
+            logger.error("Google OAuth DB error", { error: String(err) });
             token.role = "parent";
             token.userId = user.id;
           }

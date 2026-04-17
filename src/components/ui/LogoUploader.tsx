@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import Image from "next/image";
 import { Camera, Upload, X, Check, Loader2, ImageIcon } from "lucide-react";
 
 interface LogoUploaderProps {
@@ -87,8 +88,7 @@ export default function LogoUploader({
       className="w-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border hover:border-navy/30 rounded-2xl py-8 transition-colors group"
     >
       {currentLogoUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={currentLogoUrl} alt={teamName} className="w-16 h-16 object-contain rounded-full mb-1" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+        <Image src={currentLogoUrl} alt={teamName} width={64} height={64} className="w-16 h-16 object-contain rounded-full mb-1" unoptimized />
       ) : (
         <div className="w-16 h-16 bg-light-gray rounded-full flex items-center justify-center mb-1">
           <ImageIcon className="w-7 h-7 text-text-muted" />
@@ -185,8 +185,7 @@ export default function LogoUploader({
                   {/* Current logo if exists */}
                   {currentLogoUrl && (
                     <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={currentLogoUrl} alt="current" className="w-8 h-8 object-contain rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      <Image src={currentLogoUrl} alt="current" width={32} height={32} className="w-8 h-8 object-contain rounded-full" unoptimized />
                       <p className="text-text-secondary text-xs">Current logo — upload a new one to replace</p>
                     </div>
                   )}

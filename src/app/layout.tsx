@@ -11,10 +11,12 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MetaPixel from "@/components/analytics/MetaPixel";
 import SessionProvider from "@/components/layout/SessionProvider";
 import ScrollProgress from "@/components/ui/ScrollProgress";
+import { RouteLoadingBar } from "@/components/ui/RouteLoadingBar";
 import { NativeStatusBar } from "@/components/native/NativeStatusBar";
 import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { UpdatePrompt } from "@/components/pwa/UpdatePrompt";
+import { AppleSplashScreens } from "@/components/pwa/AppleSplashScreens";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/lib/constants";
 
 const workSans = Work_Sans({
@@ -88,6 +90,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Inspire Courts" />
         <link rel="apple-touch-icon" href="/images/inspire-athletics-logo.png" />
+        <AppleSplashScreens />
         <link rel="preconnect" href="https://maps.google.com" />
         <link rel="preconnect" href="https://www.youtube.com" />
         <link rel="preconnect" href="https://i.ytimg.com" />
@@ -103,6 +106,7 @@ export default function RootLayout({
         </a>
         <SessionProvider>
           <NativeStatusBar />
+          <RouteLoadingBar />
           <ScrollProgress />
           <Header />
           <main id="main-content" className="flex-1 page-transition">{children}</main>

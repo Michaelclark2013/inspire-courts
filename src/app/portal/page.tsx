@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 
 import { useVisibilityPolling } from "@/hooks/useVisibilityPolling";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import { PullToRefreshIndicator } from "@/components/ui/PullToRefreshIndicator";
 import { usePortalView } from "@/components/portal/PortalViewContext";
 import { ActionCard } from "@/components/portal/ActionCard";
 import { DashboardSkeleton } from "@/components/portal/DashboardSkeleton";
@@ -122,6 +124,10 @@ export default function PortalDashboard() {
   }, []);
 
   useVisibilityPolling(fetchData, 30_000);
+
+  const { pullDistance, refreshing: pullRefreshing, progress: pullProgress } = usePullToRefresh({
+    onRefresh: fetchData,
+  });
 
   // Cleanup: abort any in-flight fetches on unmount.
   useEffect(() => {
@@ -338,6 +344,7 @@ export default function PortalDashboard() {
 
   return (
     <div className="p-5 lg:p-8 max-w-5xl pb-[env(safe-area-inset-bottom)]">
+      <PullToRefreshIndicator pullDistance={pullDistance} refreshing={pullRefreshing} progress={pullProgress} />
       <ViewAsBanner viewAsRole={actualRole === "admin" ? viewAsRole : null} />
 
       <PushNotificationPrompt />

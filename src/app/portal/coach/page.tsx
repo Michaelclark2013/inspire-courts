@@ -104,7 +104,7 @@ export default function CoachPortalPage() {
           <span className="text-navy font-bold text-sm uppercase tracking-tight">Inspire</span>
         </Link>
         <span className="text-text-muted text-xs font-semibold uppercase tracking-widest">Coach Portal</span>
-        <Link href="/portal/player" className="text-blue-600 text-xs font-semibold hover:text-blue-500 transition-colors">
+        <Link href="/portal/player" className="text-red text-xs font-semibold hover:text-red-hover transition-colors">
           Player →
         </Link>
       </header>

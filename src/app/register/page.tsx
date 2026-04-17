@@ -139,8 +139,6 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-navy flex flex-col items-center justify-center px-4 py-12">
-      <title>Create Account | Inspire Courts AZ</title>
-      <meta name="description" content="Create your Inspire Courts AZ account. Register as a coach, parent, staff member, or referee." />
       <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy-dark to-navy pointer-events-none" />
 
       <div className="relative w-full max-w-md z-10">

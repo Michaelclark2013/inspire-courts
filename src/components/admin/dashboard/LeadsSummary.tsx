@@ -62,7 +62,7 @@ function LeadsSummary({ counts }: { counts: AdminLeadCounts }) {
             prefetch
             className="text-center group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red rounded"
           >
-            <span className="block text-2xl font-bold text-blue-500 tabular-nums group-hover:scale-110 transition-transform">
+            <span className="block text-2xl font-bold text-sky-600 tabular-nums group-hover:scale-110 transition-transform">
               {counts.cold}
             </span>
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">

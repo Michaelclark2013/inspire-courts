@@ -159,7 +159,9 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                 {lead.transcript && lead.transcript !== "—" && (
                   <div>
                     <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Chat Transcript</p>
-                    <pre className="text-navy/80 text-xs bg-bg rounded-sm p-3 whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto">{lead.transcript}</pre>
+                    <div className="relative">
+                      <pre className="text-navy/80 text-xs bg-bg rounded-sm p-3 whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto border border-border">{lead.transcript}</pre>
+                    </div>
                   </div>
                 )}
               </div>

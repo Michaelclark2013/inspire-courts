@@ -144,10 +144,10 @@ export default async function FilesPage() {
         <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
           <FolderOpen className="w-10 h-10 text-text-secondary mx-auto mb-3" />
           <p className="text-navy font-semibold mb-1">
-            Connect Google Drive
+            Google Drive Not Connected
           </p>
           <p className="text-text-secondary text-sm max-w-sm mx-auto">
-            Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local to browse your Drive folders.
+            Drive browsing requires configuration by your administrator. Contact your admin to enable this feature.
           </p>
           <p className="text-text-secondary text-xs mt-3">
             The key spreadsheet links above will always work — click any to open in Google Sheets.

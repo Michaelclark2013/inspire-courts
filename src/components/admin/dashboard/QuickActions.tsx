@@ -46,7 +46,7 @@ const ACTIONS: Action[] = [
     href: "/admin/teams",
     icon: Users,
     label: "Teams",
-    color: "text-blue-600",
+    color: "text-navy",
   },
 ];
 

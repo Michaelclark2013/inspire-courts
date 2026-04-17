@@ -25,7 +25,7 @@ const transporter =
 
 export async function sendLeadEmail(lead: LeadData): Promise<void> {
   if (!transporter) {
-    console.warn("Gmail not configured, skipping notification email");
+    logger.warn("Gmail not configured, skipping notification email");
     return;
   }
 

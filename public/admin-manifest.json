@@ -10,6 +10,7 @@
   "background_color": "#FFFFFF",
   "id": "inspire-admin",
   "categories": ["sports", "business"],
+  "lang": "en",
   "icons": [
     {
       "src": "/icon.png",

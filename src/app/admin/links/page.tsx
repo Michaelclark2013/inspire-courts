@@ -44,7 +44,7 @@ export default async function LinksPage() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-bg-secondary border border-border rounded-sm p-5 hover:border-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-all group hover:scale-[1.02] active:scale-[0.98]"
+                  className="bg-bg-secondary border border-border rounded-sm p-5 hover:border-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:ring-offset-white transition-all group hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="text-navy font-bold text-sm group-hover:text-accent transition-colors">

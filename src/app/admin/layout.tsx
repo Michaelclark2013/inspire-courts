@@ -14,6 +14,7 @@ const CommandPalette = dynamic(() => import("@/components/admin/CommandPalette")
 
 export const metadata = {
   title: "Admin Dashboard | Inspire Courts AZ",
+  description: "Inspire Courts AZ admin dashboard — manage tournaments, scores, check-ins, revenue, and team operations.",
   robots: "noindex, nofollow",
 };
 

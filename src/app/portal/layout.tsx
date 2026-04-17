@@ -8,6 +8,7 @@ import { PortalViewProvider } from "@/components/portal/PortalViewContext";
 
 export const metadata = {
   title: "Portal | Inspire Courts AZ",
+  description: "Coach and parent portal — manage rosters, check-ins, waivers, and game schedules at Inspire Courts AZ.",
   robots: "noindex, nofollow",
 };
 
@@ -40,9 +41,15 @@ export default async function PortalLayout({
   return (
     <SessionProvider>
       <PortalViewProvider>
+        <a
+          href="#portal-main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-red focus:text-white focus:px-6 focus:py-3 focus:rounded-lg focus:text-sm focus:font-bold focus:uppercase focus:tracking-wider focus:shadow-lg"
+        >
+          Skip to content
+        </a>
         <div className="min-h-screen bg-off-white flex">
           <PortalSidebar />
-          <div className="flex-1 min-w-0">{children}</div>
+          <main id="portal-main" className="flex-1 min-w-0">{children}</main>
         </div>
       </PortalViewProvider>
     </SessionProvider>

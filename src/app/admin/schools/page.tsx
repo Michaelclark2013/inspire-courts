@@ -31,7 +31,17 @@ export default async function SchoolsPage() {
     );
   }
 
-  const schools = data.map((s: any) => ({
+  interface School {
+    school: string;
+    city: string;
+    state: string;
+    classification: string;
+    headCoach: string;
+    status: string;
+    programs: string;
+  }
+
+  const schools: School[] = data.map((s: Record<string, unknown>) => ({
     school: getProperty(s, "School") || getProperty(s, "Name") || "—",
     city: getProperty(s, "City") || "—",
     state: getProperty(s, "State") || "AZ",
@@ -60,8 +70,8 @@ export default async function SchoolsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <KPICard title="Total Schools" value={schools.length.toString()} icon={GraduationCap} />
-        <KPICard title="States" value={[...new Set(schools.map((s: any) => s.state))].length.toString()} icon={GraduationCap} />
-        <KPICard title="Classifications" value={[...new Set(schools.map((s: any) => s.classification).filter((c: string) => c !== "—"))].length.toString()} icon={GraduationCap} />
+        <KPICard title="States" value={[...new Set(schools.map((s) => s.state))].length.toString()} icon={GraduationCap} />
+        <KPICard title="Classifications" value={[...new Set(schools.map((s) => s.classification).filter((c) => c !== "—"))].length.toString()} icon={GraduationCap} />
       </div>
 
       <div className="bg-white border border-border rounded-xl p-5 shadow-sm">

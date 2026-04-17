@@ -34,7 +34,7 @@ async function getEventContext(): Promise<string> {
       cachedEvents = `No upcoming events currently listed. Direct visitors to /events or email ${FACILITY_EMAIL} for the latest schedule.`;
     } else {
       const eventList = events
-        .map((e: any) => {
+        .map((e: Record<string, unknown>) => {
           const name = getProperty(e, "Tournament Name") || "Unnamed Event";
           const date = getProperty(e, "Event Date") || "TBD";
           const status = getProperty(e, "Status") || "TBD";

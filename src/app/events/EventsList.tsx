@@ -24,7 +24,7 @@ export default async function EventsList() {
       getPastEvents(),
     ]);
 
-    upcoming = upcomingEvents.map((e: any) => {
+    upcoming = upcomingEvents.map((e: Record<string, unknown>) => {
       const divisions = getProperty(e, "Divisions") || "";
       const fee = getProperty(e, "Entry Fee") || "";
       const date = getProperty(e, "Event Date") || "";
@@ -70,7 +70,7 @@ export default async function EventsList() {
       };
     });
 
-    past = pastEvents.slice(0, 8).map((e: any) => {
+    past = pastEvents.slice(0, 8).map((e: Record<string, unknown>) => {
       const date = getProperty(e, "Event Date") || "";
       const teams = getProperty(e, "Team Count") || 0;
       return {

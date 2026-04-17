@@ -194,6 +194,7 @@ export default function UsersPage() {
           </p>
         </div>
         <button
+          type="button"
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
         >
@@ -386,12 +387,14 @@ export default function UsersPage() {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <button
+                    type="button"
                     onClick={() => handleApproval(u.id, true)}
                     className="flex items-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
                   >
                     <CheckCircle className="w-3.5 h-3.5" /> Approve
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleDelete(u.id, u.name)}
                     className="flex items-center gap-1.5 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
                   >
@@ -466,6 +469,7 @@ export default function UsersPage() {
                       <span className="flex items-center gap-1.5 group">
                         <span className="truncate max-w-[180px]">{u.email}</span>
                         <button
+                          type="button"
                           onClick={() => handleCopyEmail(u.id, u.email)}
                           title="Copy email"
                           aria-label="Copy email address"
@@ -499,6 +503,7 @@ export default function UsersPage() {
                         </select>
                       ) : (
                         <button
+                          type="button"
                           onClick={() => {
                             setEditingId(u.id);
                             setEditRole(u.role);
@@ -513,6 +518,7 @@ export default function UsersPage() {
                     <td className="px-6 py-4 hidden lg:table-cell">
                       {u.approved === false ? (
                         <button
+                          type="button"
                           onClick={() => handleApproval(u.id, true)}
                           className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-50 text-amber-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer"
                           title="Click to approve"
@@ -533,6 +539,7 @@ export default function UsersPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
+                        type="button"
                         onClick={() => handleDelete(u.id, u.name)}
                         className="text-navy/30 hover:text-red transition-colors"
                         title="Delete user"

@@ -97,6 +97,7 @@ export default function LeadsPage() {
           </p>
         </div>
         <button
+          type="button"
           onClick={fetchLeads}
           className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-border rounded-lg hover:border-navy/30 transition-colors"
         >
@@ -179,6 +180,7 @@ export default function LeadsPage() {
           <h3 className="text-navy font-semibold mb-1">Failed to Load Leads</h3>
           <p className="text-text-secondary text-sm mb-4">Could not fetch lead data. Check your connection or try again.</p>
           <button
+            type="button"
             onClick={fetchLeads}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >

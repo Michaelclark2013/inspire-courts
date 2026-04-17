@@ -1,3 +1,5 @@
+export const revalidate = 300;
+
 import NotionFallback from "@/components/dashboard/NotionFallback";
 import LeadsClient from "@/components/admin/LeadsClient";
 import { getChatLeads, getProperty, isNotionConfigured } from "@/lib/notion";

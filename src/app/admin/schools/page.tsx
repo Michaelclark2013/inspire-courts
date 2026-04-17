@@ -1,3 +1,5 @@
+export const revalidate = 300;
+
 import { GraduationCap } from "lucide-react";
 import KPICard from "@/components/dashboard/KPICard";
 import DataTable from "@/components/dashboard/DataTable";

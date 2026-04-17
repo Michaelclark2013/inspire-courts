@@ -19,6 +19,7 @@ import {
 import { nativeShare } from "@/lib/capacitor";
 import { downloadICS } from "@/lib/calendar";
 import { DeadlineCountdown } from "@/components/ui/DeadlineCountdown";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import BracketView from "@/components/tournament/BracketView";
 import PoolStandings from "@/components/tournament/PoolStandings";
 import type { TournamentDetailPublic } from "@/types/tournament-public";
@@ -31,6 +32,7 @@ export default function PublicTournamentPage() {
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const { addItem: trackView } = useRecentlyViewed();
 
   const fetchData = useCallback(async () => {
     // Abort any in-flight request (Area 6)
@@ -43,8 +45,11 @@ export default function PublicTournamentPage() {
         signal: controller.signal,
       });
       if (res.ok) {
-        setData(await res.json());
+        const d = await res.json();
+        setData(d);
         setError(false);
+        // Track recently viewed tournaments
+        trackView({ id: String(d.id), name: d.name, path: `/tournaments/${d.id}` });
       } else if (res.status !== 404) {
         setError(true);
       }

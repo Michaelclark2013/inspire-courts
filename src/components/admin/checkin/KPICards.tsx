@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import CountUp from "@/components/ui/CountUp";
 import type { CheckInKPIs } from "@/types/checkin";
 
 function Card({
@@ -30,9 +31,9 @@ function Card({
         {label}
       </p>
       <p className={`${color} text-2xl font-bold font-heading tabular-nums`}>
-        {value}
+        <CountUp end={value} />
         {typeof total === "number" && (
-          <span className="text-text-muted text-lg">/{total}</span>
+          <span className="text-text-muted text-lg">/<CountUp end={total} /></span>
         )}
       </p>
     </div>

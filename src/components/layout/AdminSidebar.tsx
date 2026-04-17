@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Users,
   Trophy,
+  Search,
   DollarSign,
   UserCheck,
   ClipboardList,
@@ -211,6 +212,21 @@ export default function AdminSidebar() {
             </div>
           )}
         </div>
+
+        {/* Quick search shortcut */}
+        {!collapsed && (
+          <button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }));
+            }}
+            className="mx-3 mt-3 flex items-center gap-2 w-[calc(100%-24px)] px-3 py-2 bg-off-white border border-border rounded-lg text-text-muted text-xs hover:border-navy/20 hover:text-navy transition-colors"
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span className="flex-1 text-left">Search pages...</span>
+            <kbd className="text-[10px] font-mono bg-white border border-border rounded px-1.5 py-0.5">⌘K</kbd>
+          </button>
+        )}
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5" aria-label="Admin pages">

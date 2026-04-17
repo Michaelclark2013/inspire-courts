@@ -266,6 +266,7 @@ export default function RosterPage() {
             <button
               type="submit"
               disabled={saving}
+              aria-busy={saving}
               className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors w-full sm:w-auto"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}

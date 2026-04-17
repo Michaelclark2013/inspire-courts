@@ -156,6 +156,7 @@ function ResetPasswordForm() {
             <button
               type="submit"
               disabled={loading || !password || !confirmPassword}
+              aria-busy={loading}
               className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-all shadow-lg shadow-red/20"
             >
               {loading ? (

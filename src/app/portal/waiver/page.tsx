@@ -248,6 +248,7 @@ export default function WaiverPage() {
             <button
               type="submit"
               disabled={saving || !form.agreed}
+              aria-busy={saving}
               className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover disabled:opacity-40 text-white py-3.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileCheck className="w-4 h-4" />}

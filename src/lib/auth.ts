@@ -135,7 +135,7 @@ export const authOptions: NextAuthOptions = {
                     "Active",
                   ]),
                 ]),
-              ]).catch(() => {});
+              ]).catch((err) => logger.warn("Failed to sync OAuth registration to Sheets/Drive", { error: String(err) }));
             }
           } catch (err) {
             logger.error("Google OAuth DB error", { error: String(err) });

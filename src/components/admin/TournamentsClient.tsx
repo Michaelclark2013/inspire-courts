@@ -63,8 +63,8 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
     }
 
     return [...list].sort((a, b) => {
-      const av = (a as any)[sortKey] ?? "";
-      const bv = (b as any)[sortKey] ?? "";
+      const av = a[sortKey as keyof Tournament] ?? "";
+      const bv = b[sortKey as keyof Tournament] ?? "";
       if (NUMERIC_KEYS.has(sortKey)) {
         return sortDir === "asc" ? Number(av) - Number(bv) : Number(bv) - Number(av);
       }

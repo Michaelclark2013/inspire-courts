@@ -69,6 +69,11 @@ export function formatDateTime(dateStr: string): string {
   });
 }
 
+/** Arizona-locale timestamp for Google Sheets rows and logs. */
+export function timestampAZ(date: Date = new Date()): string {
+  return date.toLocaleString("en-US", { timeZone: "America/Phoenix" });
+}
+
 export function slugify(str: string): string {
   return str
     .toLowerCase()

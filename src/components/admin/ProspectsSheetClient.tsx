@@ -95,8 +95,8 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
       );
     }
     return [...list].sort((a, b) => {
-      const av = (a as any)[sortKey] ?? "";
-      const bv = (b as any)[sortKey] ?? "";
+      const av = a[sortKey as keyof Prospect] ?? "";
+      const bv = b[sortKey as keyof Prospect] ?? "";
       return sortDir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
     });
   }, [prospects, search, statusFilter, divFilter, sortKey, sortDir]);

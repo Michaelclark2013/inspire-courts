@@ -125,11 +125,11 @@ export default function DashboardDBStats() {
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="bg-bg-secondary border border-border rounded-sm p-5">
               <div className="flex items-start justify-between mb-3">
-                <div className="h-3 w-20 bg-white/10 rounded" />
-                <div className="h-4 w-4 bg-white/10 rounded" />
+                <div className="h-3 w-20 bg-light-gray rounded" />
+                <div className="h-4 w-4 bg-light-gray rounded" />
               </div>
-              <div className="h-7 w-16 bg-white/10 rounded mb-2" />
-              <div className="h-3 w-24 bg-white/10 rounded" />
+              <div className="h-7 w-16 bg-light-gray rounded mb-2" />
+              <div className="h-3 w-24 bg-light-gray rounded" />
             </div>
           ))}
         </div>
@@ -308,11 +308,11 @@ export default function DashboardDBStats() {
                       )}
                     </div>
                     {pct !== null ? (() => {
-                      const barColor = pct >= 90 ? "bg-red" : pct >= 70 ? "bg-amber-400" : "bg-emerald-400";
+                      const barColor = pct >= 90 ? "bg-red" : pct >= 70 ? "bg-amber-500" : "bg-emerald-500";
                       const textColor = pct >= 90 ? "text-red" : "text-text-secondary";
                       return (
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2.5 bg-white/10 rounded-full overflow-hidden">
+                          <div className="flex-1 h-2.5 bg-light-gray rounded-full overflow-hidden">
                             <div
                               className={`h-full ${barColor} rounded-full transition-all`}
                               style={{ width: `${pct}%` }}
@@ -371,7 +371,7 @@ export default function DashboardDBStats() {
               </div>
               <p className="text-navy font-semibold text-sm mb-1">No Games Scheduled</p>
               <p className="text-text-secondary text-xs mb-4">Games will appear here once you create a tournament and set up the bracket</p>
-              <Link href="/admin/scores/enter" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-navy text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
+              <Link href="/admin/scores/enter" className="inline-flex items-center gap-2 bg-off-white hover:bg-light-gray text-navy text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
                 <ClipboardList className="w-3.5 h-3.5" /> Add a Game
               </Link>
             </div>

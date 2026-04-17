@@ -79,10 +79,10 @@ export default function DashboardLeads() {
         </div>
         {/* Pipeline bar */}
         {counts.total > 0 && (
-          <div className="flex h-2 rounded-full overflow-hidden bg-white/5">
+          <div className="flex h-2 rounded-full overflow-hidden bg-light-gray">
             {counts.hot > 0 && <div className="bg-red transition-all" style={{ width: `${(counts.hot / counts.total) * 100}%` }} />}
-            {counts.warm > 0 && <div className="bg-amber-400 transition-all" style={{ width: `${(counts.warm / counts.total) * 100}%` }} />}
-            {counts.cold > 0 && <div className="bg-blue-400 transition-all" style={{ width: `${(counts.cold / counts.total) * 100}%` }} />}
+            {counts.warm > 0 && <div className="bg-amber-500 transition-all" style={{ width: `${(counts.warm / counts.total) * 100}%` }} />}
+            {counts.cold > 0 && <div className="bg-blue-500 transition-all" style={{ width: `${(counts.cold / counts.total) * 100}%` }} />}
           </div>
         )}
       </div>

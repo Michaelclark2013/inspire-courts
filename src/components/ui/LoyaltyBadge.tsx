@@ -3,11 +3,11 @@
 import { Award } from "lucide-react";
 
 const BADGE_STYLES: Record<number, { bg: string; text: string; label: string }> = {
-  1: { bg: "bg-white/10", text: "text-white/60", label: "1st Year" },
-  2: { bg: "bg-blue-500/15", text: "text-blue-400", label: "2 Years" },
-  3: { bg: "bg-emerald-500/15", text: "text-emerald-400", label: "3 Years" },
-  4: { bg: "bg-amber-500/15", text: "text-amber-400", label: "4 Years" },
-  5: { bg: "bg-red/15", text: "text-red", label: "5+ Years" },
+  1: { bg: "bg-gray-100", text: "text-gray-600", label: "1st Year" },
+  2: { bg: "bg-blue-50", text: "text-blue-600", label: "2 Years" },
+  3: { bg: "bg-emerald-50", text: "text-emerald-600", label: "3 Years" },
+  4: { bg: "bg-amber-50", text: "text-amber-600", label: "4 Years" },
+  5: { bg: "bg-red/10", text: "text-red", label: "5+ Years" },
 };
 
 export default function LoyaltyBadge({

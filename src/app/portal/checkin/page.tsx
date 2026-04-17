@@ -370,10 +370,11 @@ export default function CoachCheckInPage() {
         {coachSlotsRemaining > 0 ? (
           <form onSubmit={handleCoachCheckIn} className="flex gap-3 items-end">
             <div className="flex-1">
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="checkin-coach" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Coach Name
               </label>
               <input
+                id="checkin-coach"
                 type="text"
                 value={coachName}
                 onChange={(e) => setCoachName(e.target.value)}
@@ -429,12 +430,13 @@ export default function CoachCheckInPage() {
       <div className="bg-white border border-light-gray rounded-xl p-5 mb-6">
         <form onSubmit={handleManualCheckIn} className="flex gap-3 items-end">
           <div className="flex-1">
-            <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+            <label htmlFor="checkin-manual" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
               Manual Check-In
             </label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-light-gray" />
               <input
+                id="checkin-manual"
                 type="text"
                 value={manualName}
                 onChange={(e) => setManualName(e.target.value)}

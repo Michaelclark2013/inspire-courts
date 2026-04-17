@@ -346,10 +346,11 @@ export default function ProfilePage() {
                   )}
 
                   <div>
-                    <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    <label htmlFor="profile-deleteConfirm" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                       Type DELETE to confirm
                     </label>
                     <input
+                      id="profile-deleteConfirm"
                       type="text"
                       value={deleteTyped}
                       onChange={(e) => setDeleteTyped(e.target.value)}
@@ -361,10 +362,11 @@ export default function ProfilePage() {
 
                   {!isOAuthUser && (
                     <div>
-                      <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                      <label htmlFor="profile-deletePw" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                         Enter your password
                       </label>
                       <input
+                        id="profile-deletePw"
                         type="password"
                         value={deletePassword}
                         onChange={(e) => setDeletePassword(e.target.value)}

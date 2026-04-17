@@ -19,7 +19,7 @@ export default async function TournamentsPage() {
 
   const data = await getAllTournaments();
 
-  const tournaments = data.map((t: any) => {
+  const tournaments = data.map((t: Record<string, unknown>) => {
     const fee = getProperty(t, "Registration Fee") || getProperty(t, "Fee") || getProperty(t, "Entry Fee") || 0;
     const revenue = getProperty(t, "Revenue") || getProperty(t, "Total Revenue") || 0;
     const teams = getProperty(t, "Teams Registered") || getProperty(t, "Teams") || getProperty(t, "Team Count") || 0;

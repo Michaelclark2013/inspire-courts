@@ -32,7 +32,18 @@ export default async function SponsorsPage() {
     );
   }
 
-  const sponsors = data.map((s: any) => ({
+  interface Sponsor {
+    company: string;
+    contact: string;
+    status: string;
+    tier: string;
+    amount: string | number;
+    amountDisplay: string;
+    event: string;
+    startDate: string;
+  }
+
+  const sponsors: Sponsor[] = data.map((s: Record<string, unknown>) => ({
     company: getProperty(s, "Company") || getProperty(s, "Name") || "—",
     contact: getProperty(s, "Contact") || getProperty(s, "Contact Name") || "—",
     status: getProperty(s, "Status") || "—",
@@ -49,8 +60,8 @@ export default async function SponsorsPage() {
     })(),
   }));
 
-  const activeCount = sponsors.filter((s: any) => s.status === "Active").length;
-  const totalValue = sponsors.reduce((sum: number, s: any) => sum + (Number(s.amount) || 0), 0);
+  const activeCount = sponsors.filter((s) => s.status === "Active").length;
+  const totalValue = sponsors.reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
 
   const kpis = [
     { title: "Total Sponsors", value: sponsors.length.toLocaleString(), icon: Handshake },

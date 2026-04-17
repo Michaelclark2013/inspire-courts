@@ -17,7 +17,7 @@ export default async function ContactsPage() {
 
   const data = await getChatLeads();
 
-  const leads = data.map((l: any) => {
+  const leads = data.map((l: Record<string, unknown> & { created_time?: string }) => {
     const date = getProperty(l, "Created") || l.created_time || "";
     return {
       name: getProperty(l, "Name") || "Unknown",

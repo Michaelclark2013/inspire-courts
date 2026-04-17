@@ -13,6 +13,7 @@ type GameData = {
   status: string;
   division: string | null;
   scheduledTime: string | null;
+  eventName?: string;
 };
 
 type Props = {
@@ -44,7 +45,7 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
   const { standings, divisions } = useMemo(() => {
     let games = allGames;
     if (eventFilter) {
-      games = games.filter((g: any) => g.eventName === eventFilter);
+      games = games.filter((g) => g.eventName === eventFilter);
     }
 
     const divs = [...new Set(games.map((g) => g.division).filter(Boolean))] as string[];

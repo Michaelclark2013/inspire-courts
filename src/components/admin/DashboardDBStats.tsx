@@ -96,7 +96,7 @@ export default function DashboardDBStats() {
         const res = await fetch("/api/scores/live");
         if (res.ok) {
           const games = await res.json();
-          setLiveGamesDetail(Array.isArray(games) ? games.filter((g: any) => g.status === "live") : []);
+          setLiveGamesDetail(Array.isArray(games) ? games.filter((g: { status?: string }) => g.status === "live") : []);
         }
       } catch {}
     }

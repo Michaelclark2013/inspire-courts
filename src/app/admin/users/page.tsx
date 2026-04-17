@@ -380,7 +380,7 @@ export default function UsersPage() {
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="text-navy font-medium text-sm truncate">{u.name}</span>
                   <span className="text-navy/40 text-xs truncate hidden sm:inline">{u.email}</span>
-                  <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${ROLE_COLORS[u.role] || "bg-white/10 text-navy/60"}`}>
+                  <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${ROLE_COLORS[u.role] || "bg-off-white text-navy/60"}`}>
                     {u.role}
                   </span>
                 </div>
@@ -503,7 +503,7 @@ export default function UsersPage() {
                             setEditingId(u.id);
                             setEditRole(u.role);
                           }}
-                          className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full cursor-pointer hover:ring-1 hover:ring-white/20 transition-all ${ROLE_COLORS[u.role] || "bg-white/10 text-navy/60"}`}
+                          className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full cursor-pointer hover:ring-1 hover:ring-white/20 transition-all ${ROLE_COLORS[u.role] || "bg-off-white text-navy/60"}`}
                           title="Click to change role"
                         >
                           {ROLE_LABELS[u.role] || u.role}

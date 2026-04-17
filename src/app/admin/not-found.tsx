@@ -5,7 +5,7 @@ export default function AdminNotFound() {
   return (
     <div className="p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
       <div className="text-center max-w-md">
-        <div className="w-16 h-16 bg-white/[0.04] rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-off-white rounded-full flex items-center justify-center mx-auto mb-4">
           <Search className="w-8 h-8 text-text-secondary" />
         </div>
         <h2 className="text-navy font-bold text-xl mb-2">Page Not Found</h2>

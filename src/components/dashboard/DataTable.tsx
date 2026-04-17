@@ -47,14 +47,14 @@ export default function DataTable({
         </div>
       )}
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto scroll-shadow-x rounded-xl border border-border">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border">
+            <tr className="bg-off-white border-b border-border">
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3"
+                  className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 sticky top-0 bg-off-white z-10 whitespace-nowrap"
                 >
                   {col.label}
                 </th>
@@ -75,7 +75,7 @@ export default function DataTable({
               filtered.map((row, i) => (
                 <tr
                   key={i}
-                  className="border-b border-border/50 hover:bg-bg-secondary/50 transition-colors"
+                  className={`border-b border-border/50 hover:bg-off-white transition-colors ${i % 2 === 1 ? "bg-bg-secondary/30" : ""}`}
                 >
                   {columns.map((col) => (
                     <td key={col.key} className="px-4 py-3 text-navy">

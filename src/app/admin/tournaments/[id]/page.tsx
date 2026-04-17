@@ -26,6 +26,7 @@ import {
   type TournamentDetail,
 } from "@/types/tournament-admin";
 import { Trophy, Calendar, BarChart3 } from "lucide-react";
+import Breadcrumbs from "@/components/admin/Breadcrumbs";
 
 function isTab(value: string | null): value is Tab {
   return !!value && (TABS as readonly string[]).includes(value);
@@ -282,6 +283,7 @@ function TournamentDetailInner() {
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 pb-[env(safe-area-inset-bottom)]">
+      <Breadcrumbs />
       <TournamentHeader
         data={data}
         generating={generating}

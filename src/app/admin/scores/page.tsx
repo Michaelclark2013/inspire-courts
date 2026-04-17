@@ -1,4 +1,5 @@
 import { ClipboardList } from "lucide-react";
+import PageHeader from "@/components/admin/PageHeader";
 import ScoresSheetClient from "@/components/admin/ScoresSheetClient";
 import {
   fetchSheetWithHeaders,
@@ -111,14 +112,11 @@ export default async function ScoresPage() {
 
   return (
     <div className="p-3 sm:p-6 lg:p-8">
-      <div className="mb-4 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
-          Game Scores
-        </h1>
-        <p className="text-text-secondary text-sm mt-1 hidden md:block">
-          {games.length} games recorded from Google Sheets
-        </p>
-      </div>
+      <PageHeader
+        title="Game Scores"
+        subtitle={`${games.length} games recorded from Google Sheets`}
+        icon={ClipboardList}
+      />
       <ScoresSheetClient games={games} standings={standings} />
     </div>
   );

@@ -403,13 +403,13 @@ export default async function TournamentsPage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/contact?type=Tournament+Registration"
-              className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
+              className="cta-primary shadow-lg hover:shadow-xl font-[var(--font-chakra)] focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
             >
               Contact Us <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/faq"
-              className="inline-flex items-center justify-center gap-2 border border-light-gray hover:border-red/30 text-navy/60 hover:text-navy px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
+              className="cta-outline font-[var(--font-chakra)] focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
             >
               FAQ
             </Link>

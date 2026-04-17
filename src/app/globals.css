@@ -51,6 +51,33 @@ html {
 ::-webkit-scrollbar-thumb { background: var(--color-navy); border-radius: 5px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-navy-light); }
 
+/* ── Page-level fade-in transition ── */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-transition {
+  animation: pageIn 0.2s ease-out both;
+}
+
+/* ── Scroll shadows for overflow containers ── */
+.scroll-shadow-x {
+  mask-image: linear-gradient(to right, transparent, black 24px, black calc(100% - 24px), transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 24px, black calc(100% - 24px), transparent);
+}
+
+/* Only apply mask when content overflows (use with JS toggle or always-on for known-overflow containers) */
+.scroll-shadow-x-start {
+  mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+}
+
+.scroll-shadow-x-end {
+  mask-image: linear-gradient(to right, transparent, black 24px);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 24px);
+}
+
 /* Keyframe definitions */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(24px); }
@@ -66,6 +93,44 @@ html {
   0%, 100% { transform: translateX(0); }
   10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
   20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+/* ── Mobile nav slide-down ── */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.25s ease-out both;
+}
+
+.animate-backdrop-in {
+  animation: backdropIn 0.2s ease-out both;
+}
+
+/* ── Toast notifications ── */
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-12px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-12px) scale(0.95); }
+}
+
+.toast-enter {
+  animation: toastIn 0.25s ease-out both;
+}
+
+.toast-exit {
+  animation: toastOut 0.2s ease-in both;
 }
 
 /* Only apply animations when user has no motion preference */
@@ -172,6 +237,17 @@ html, body {
   /* Stats/numbers display — used in stat bars */
   .stats-number {
     @apply text-4xl sm:text-5xl md:text-7xl lg:text-8xl;
+  }
+
+  /* ── Standardized CTA buttons ── */
+  .cta-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white font-bold rounded-xl px-8 py-3.5 shadow-lg hover:shadow-xl transition-all text-sm uppercase tracking-wide;
+  }
+  .cta-secondary {
+    @apply inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy font-bold rounded-xl px-8 py-3.5 transition-all text-sm uppercase tracking-wide;
+  }
+  .cta-outline {
+    @apply inline-flex items-center justify-center gap-2 border-2 border-light-gray hover:border-red/30 text-navy hover:text-red font-bold rounded-xl px-8 py-3.5 transition-all text-sm uppercase tracking-wide;
   }
 }
 

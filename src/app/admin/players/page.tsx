@@ -1,4 +1,5 @@
 import { UserCheck } from "lucide-react";
+import PageHeader from "@/components/admin/PageHeader";
 import PlayersSheetClient from "@/components/admin/PlayersSheetClient";
 import {
   fetchSheetWithHeaders,
@@ -69,14 +70,11 @@ export default async function PlayersPage() {
 
   return (
     <div className="p-3 sm:p-6 lg:p-8">
-      <div className="mb-4 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
-          Players
-        </h1>
-        <p className="text-text-secondary text-sm mt-1 hidden md:block">
-          {players.length} players checked in
-        </p>
-      </div>
+      <PageHeader
+        title="Players"
+        subtitle={`${players.length} players checked in`}
+        icon={UserCheck}
+      />
 
       <PlayersSheetClient players={players} divData={divData} teamData={teamData} />
     </div>

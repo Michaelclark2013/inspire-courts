@@ -1,4 +1,5 @@
 import { UserCheck } from "lucide-react";
+import PageHeader from "@/components/admin/PageHeader";
 import StaffSheetClient from "@/components/admin/StaffSheetClient";
 import {
   fetchSheetWithHeaders,
@@ -102,14 +103,11 @@ export default async function StaffPage() {
 
   return (
     <div className="p-3 sm:p-6 lg:p-8">
-      <div className="mb-4 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
-          Staff & Refs
-        </h1>
-        <p className="text-text-secondary text-sm mt-1 hidden md:block">
-          {staff.length} staff shifts · {refs.length} ref check-outs
-        </p>
-      </div>
+      <PageHeader
+        title="Staff & Refs"
+        subtitle={`${staff.length} staff shifts \u00B7 ${refs.length} ref check-outs`}
+        icon={UserCheck}
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4 md:mb-8">
         {[

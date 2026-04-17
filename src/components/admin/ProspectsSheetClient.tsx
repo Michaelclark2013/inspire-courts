@@ -171,10 +171,10 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
             <span className="text-navy font-semibold">{filtered.length}</span> prospects
           </p>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scroll-shadow-x">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border">
+              <tr className="border-b border-border bg-off-white">
                 {["Team", "Coach", "Division", "Status", "Date", "Contact", "Notes"].map((h) => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
                     {h}

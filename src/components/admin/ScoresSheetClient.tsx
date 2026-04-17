@@ -188,10 +188,10 @@ export default function ScoresSheetClient({ games, standings }: Props) {
             </div>
 
             {/* Desktop table view */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden md:block overflow-x-auto scroll-shadow-x">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border">
+                  <tr className="border-b border-border bg-off-white">
                     {["Date", "Home", "Score", "Away", "Winner", "Division", "Court"].map((h) => (
                       <th key={h} className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
                         {h}

@@ -136,10 +136,10 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
             )}
           </div>
           {/* Desktop table */}
-          <div className="hidden md:block overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto scroll-shadow-x">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-border bg-off-white">
                   {["Name", "Role", "Date", "Hours", "Rate", "Est. Pay", "Payment"].map((h) => (
                     <th key={h} className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
                       {h}
@@ -236,10 +236,10 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
             )}
           </div>
           {/* Desktop table */}
-          <div className="hidden md:block overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto scroll-shadow-x">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-border bg-off-white">
                   {["Name", "Date", "Games", "Courts", "Rate", "Pay", "Method"].map((h) => (
                     <th key={h} className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
                       {h}

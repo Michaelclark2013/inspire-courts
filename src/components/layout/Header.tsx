@@ -73,6 +73,7 @@ function DropdownMenu({
         )}
         aria-expanded={open}
         aria-haspopup="true"
+        aria-label={`${label} menu`}
       >
         {label}
         <ChevronDown
@@ -128,6 +129,8 @@ function MobileAccordion({
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-navy-light rounded-lg transition-colors"
         aria-expanded={open}
+        aria-haspopup="true"
+        aria-label={`${label} menu`}
       >
         {label}
         <ChevronDown
@@ -270,7 +273,7 @@ export default function Header() {
       {/* Mobile backdrop */}
       {open && (
         <div
-          className="fixed inset-0 top-20 bg-black/60 backdrop-blur-sm lg:hidden z-40"
+          className="fixed inset-0 top-20 bg-black/60 backdrop-blur-sm lg:hidden z-40 animate-backdrop-in"
           onClick={() => setOpen(false)}
         />
       )}
@@ -280,7 +283,7 @@ export default function Header() {
         id="mobile-nav"
         className={cn(
           "lg:hidden bg-navy-dark border-t border-border-dark transition-all duration-300 overflow-hidden relative z-50",
-          open ? "max-h-[85vh] opacity-100 overflow-y-auto" : "max-h-0 opacity-0"
+          open ? "max-h-[85vh] opacity-100 overflow-y-auto animate-slide-down" : "max-h-0 opacity-0"
         )}
       >
         <nav aria-label="Mobile navigation" className="px-4 py-4 space-y-1">

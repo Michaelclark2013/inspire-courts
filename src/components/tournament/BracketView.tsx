@@ -154,7 +154,7 @@ export default function BracketView({
   }
 
   return (
-    <div className="overflow-x-auto pb-4">
+    <div className="overflow-x-auto pb-4 scroll-shadow-x">
       <div className="flex gap-6 min-w-max">
         {roundOrder.map((roundKey) => {
           const games = rounds.get(roundKey) || [];

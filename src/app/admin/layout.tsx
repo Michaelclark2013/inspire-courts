@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import AdminSidebar from "@/components/layout/AdminSidebar";
 import AdminFAB from "@/components/admin/AdminFAB";
 import SessionProvider from "@/components/layout/SessionProvider";
+import { ToastProvider } from "@/components/ui/Toast";
+import ScrollToTop from "@/components/ui/ScrollToTop";
 import { isAdminRole } from "@/lib/permissions";
 
 export const metadata = {
@@ -26,11 +28,14 @@ export default async function AdminLayout({
 
   return (
     <SessionProvider>
-      <div className="min-h-screen bg-off-white lg:flex">
-        <AdminSidebar />
-        <main className="flex-1 min-w-0 pb-20 lg:pb-0">{children}</main>
-        <AdminFAB />
-      </div>
+      <ToastProvider>
+        <ScrollToTop />
+        <div className="min-h-screen bg-off-white lg:flex">
+          <AdminSidebar />
+          <main className="flex-1 min-w-0 pb-20 lg:pb-0 page-transition">{children}</main>
+          <AdminFAB />
+        </div>
+      </ToastProvider>
     </SessionProvider>
   );
 }

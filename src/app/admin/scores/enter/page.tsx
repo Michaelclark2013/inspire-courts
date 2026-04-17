@@ -15,6 +15,7 @@ import { TournamentFilter } from "@/components/admin/scores/TournamentFilter";
 import { CourtFilter } from "@/components/admin/scores/CourtFilter";
 import { ScoreEntrySkeleton } from "@/components/admin/scores/ScoreEntrySkeleton";
 import { useVisibilityPolling } from "@/hooks/useVisibilityPolling";
+import Breadcrumbs from "@/components/admin/Breadcrumbs";
 
 export default function ScoreEntryPage() {
   const [gameList, setGameList] = useState<Game[]>([]);
@@ -255,6 +256,7 @@ export default function ScoreEntryPage() {
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 pb-[env(safe-area-inset-bottom)] overscroll-none">
+      <Breadcrumbs />
       {/* Header */}
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-4 flex-wrap">
         <div>

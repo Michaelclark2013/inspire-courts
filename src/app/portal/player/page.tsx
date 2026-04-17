@@ -108,6 +108,7 @@ export default function PlayerPortalPage() {
             {/* Role cards */}
             <div className="space-y-3">
               <button
+                type="button"
                 onClick={() => setStep("lookup")}
                 className="w-full bg-white border border-light-gray hover:border-red/40 rounded-2xl p-5 flex items-center gap-4 transition-all group text-left"
               >
@@ -402,6 +403,7 @@ export default function PlayerPortalPage() {
 
             {/* Back to lookup */}
             <button
+              type="button"
               onClick={() => setStep("lookup")}
               className="w-full border border-light-gray hover:border-navy/30 text-text-muted hover:text-navy rounded-xl py-3.5 text-sm font-semibold transition-colors"
             >

@@ -32,6 +32,7 @@ export default function OfflinePage() {
       </p>
 
       <button
+        type="button"
         onClick={() => window.location.reload()}
         className="bg-red hover:bg-red/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
       >

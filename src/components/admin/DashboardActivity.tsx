@@ -21,11 +21,13 @@ export default function DashboardActivity() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/scores/live")
+    const controller = new AbortController();
+    fetch("/api/scores/live", { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => setGames(Array.isArray(data) ? data : []))
-      .catch(() => {})
+      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; })
       .finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const live = games.filter((g) => g.status === "live");

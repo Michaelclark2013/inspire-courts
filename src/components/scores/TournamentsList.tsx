@@ -24,10 +24,12 @@ export default function TournamentsList({ selectedEvent, onSelectEvent }: Props)
   const [tournaments, setTournaments] = useState<TournamentSummary[]>([]);
 
   useEffect(() => {
-    fetch("/api/scores/tournaments")
+    const controller = new AbortController();
+    fetch("/api/scores/tournaments", { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : []))
       .then(setTournaments)
-      .catch(() => {});
+      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; });
+    return () => controller.abort();
   }, []);
 
   if (tournaments.length === 0) return null;

@@ -89,6 +89,7 @@ export default function GlobalError({
 
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: error.digest ? 0 : 32 }}>
           <button
+            type="button"
             onClick={reset}
             style={{
               display: "inline-flex",

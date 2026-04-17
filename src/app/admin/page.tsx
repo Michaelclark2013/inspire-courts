@@ -7,6 +7,7 @@ import KPICard from "@/components/dashboard/KPICard";
 import DashboardRefreshButton from "@/components/admin/DashboardRefreshButton";
 import DashboardCharts from "@/components/admin/DashboardCharts";
 import AdminDashboardClient from "@/components/admin/dashboard/AdminDashboardClient";
+import PushNotificationPrompt from "@/components/pwa/PushNotificationPrompt";
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
 import {
   fetchSheetWithHeaders,
@@ -223,6 +224,9 @@ export default async function AdminDashboard() {
           </div>
         </div>
       </header>
+
+      {/* Push notification opt-in */}
+      <PushNotificationPrompt />
 
       {/* DB-powered overview (consolidated summary endpoint) */}
       <section aria-label="Overview" className="mb-8">

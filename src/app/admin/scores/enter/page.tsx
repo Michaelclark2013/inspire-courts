@@ -9,12 +9,14 @@ import type {
   TournamentOption,
   GameStatus,
 } from "@/types/score-entry";
+import { triggerHaptic } from "@/lib/capacitor";
 import { GameCard } from "@/components/admin/scores/GameCard";
 import { QuickAddForm } from "@/components/admin/scores/QuickAddForm";
 import { TournamentFilter } from "@/components/admin/scores/TournamentFilter";
 import { CourtFilter } from "@/components/admin/scores/CourtFilter";
 import { ScoreEntrySkeleton } from "@/components/admin/scores/ScoreEntrySkeleton";
 import { useVisibilityPolling } from "@/hooks/useVisibilityPolling";
+import { useOfflineSync } from "@/hooks/useOfflineSync";
 import Breadcrumbs from "@/components/admin/Breadcrumbs";
 
 export default function ScoreEntryPage() {
@@ -30,6 +32,9 @@ export default function ScoreEntryPage() {
   const [tournamentFilter, setTournamentFilter] = useState("");
   const [courtFilter, setCourtFilter] = useState("");
   const [tournamentOptions, setTournamentOptions] = useState<TournamentOption[]>([]);
+
+  // Offline sync
+  const { isOnline, queueMutation, pendingCount } = useOfflineSync();
 
   // Per-endpoint error tracking
   const [errors, setErrors] = useState<{ games: boolean; tournaments: boolean }>({
@@ -119,6 +124,7 @@ export default function ScoreEntryPage() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
+        triggerHaptic("medium");
         setForm({ homeTeam: "", awayTeam: "", division: "", court: "", eventName: "" });
         setShowForm(false);
         fetchGames();
@@ -175,17 +181,32 @@ export default function ScoreEntryPage() {
           : g
       )
     );
+    const scorePayload = {
+      gameId: scoreForm.gameId,
+      homeScore: scoreForm.homeScore,
+      awayScore: scoreForm.awayScore,
+      quarter: scoreForm.quarter || undefined,
+      status: scoreForm.status || undefined,
+    };
+    if (!isOnline) {
+      // Queue for later sync
+      await queueMutation({
+        url: "/api/admin/scores",
+        method: "PUT",
+        body: scorePayload,
+        type: "score",
+      });
+      setUpdatingId(null);
+      setScoreSuccess("Saved offline");
+      setTimeout(() => setScoreSuccess(""), 2000);
+      setSaving(false);
+      return;
+    }
     try {
       const res = await fetch("/api/admin/scores", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          gameId: scoreForm.gameId,
-          homeScore: scoreForm.homeScore,
-          awayScore: scoreForm.awayScore,
-          quarter: scoreForm.quarter || undefined,
-          status: scoreForm.status || undefined,
-        }),
+        body: JSON.stringify(scorePayload),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -195,10 +216,21 @@ export default function ScoreEntryPage() {
         return;
       }
     } catch {
-      setScoreError("Network error — please try again");
-      setGameList(prevList);
+      // Network error — queue offline instead of showing error
+      await queueMutation({
+        url: "/api/admin/scores",
+        method: "PUT",
+        body: scorePayload,
+        type: "score",
+      });
+      setUpdatingId(null);
+      setScoreSuccess("Saved offline");
+      setTimeout(() => setScoreSuccess(""), 2000);
       setSaving(false);
       return;
+    }
+    if (scoreForm.status === "final") {
+      triggerHaptic("success");
     }
     setUpdatingId(null);
     setScoreSuccess("Score saved");
@@ -214,19 +246,36 @@ export default function ScoreEntryPage() {
       setGameList((list) =>
         list.map((g) => (g.id === gameId ? { ...g, homeScore, awayScore } : g))
       );
+      const payload = { gameId, homeScore, awayScore };
+      if (!isOnline) {
+        await queueMutation({
+          url: "/api/admin/scores",
+          method: "PUT",
+          body: payload,
+          type: "score",
+        });
+        return true; // Optimistic success — queued offline
+      }
       try {
         const res = await fetch("/api/admin/scores", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gameId, homeScore, awayScore }),
+          body: JSON.stringify(payload),
         });
         if (!res.ok) return false;
         return true;
       } catch {
-        return false;
+        // Network error — queue offline
+        await queueMutation({
+          url: "/api/admin/scores",
+          method: "PUT",
+          body: payload,
+          type: "score",
+        });
+        return true;
       }
     },
-    []
+    [isOnline, queueMutation]
   );
 
   // Derived/memoised lists

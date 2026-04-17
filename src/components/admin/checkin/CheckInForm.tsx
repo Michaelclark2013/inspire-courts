@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { UserCheck, Loader2, CheckCircle2 } from "lucide-react";
+import { triggerHaptic } from "@/lib/capacitor";
+import { UserCheck, Loader2, CheckCircle2, WifiOff } from "lucide-react";
 import type { TeamStatus, RecentCheckin } from "@/types/checkin";
 import { relativeTime } from "@/lib/relative-time";
+import { useOfflineSync } from "@/hooks/useOfflineSync";
 
 interface CheckInFormProps {
   teams: TeamStatus[];
@@ -25,8 +27,10 @@ export default function CheckInForm({
   const [division, setDivision] = useState("");
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [savedOffline, setSavedOffline] = useState(false);
   const [checkInError, setCheckInError] = useState("");
   const abortRef = useRef<AbortController | null>(null);
+  const { isOnline, queueMutation } = useOfflineSync();
 
   // Sync prefill from parent
   useEffect(() => {
@@ -52,6 +56,7 @@ export default function CheckInForm({
 
       setSaving(true);
       setSuccess(false);
+      setSavedOffline(false);
       setCheckInError("");
 
       const id = crypto.randomUUID();
@@ -68,25 +73,45 @@ export default function CheckInForm({
       };
       onCheckInSuccess(optimisticEntry);
 
+      const checkinPayload = {
+        playerName: playerName.trim(),
+        teamName: teamName.trim(),
+        division: division.trim(),
+      };
+
+      // If offline, queue immediately
+      if (!isOnline) {
+        await queueMutation({
+          url: "/api/admin/checkin",
+          method: "POST",
+          body: checkinPayload,
+          type: "checkin",
+        });
+        onCheckInSuccess({ ...optimisticEntry, pending: false });
+        setPlayerName("");
+        setSavedOffline(true);
+        setTimeout(() => setSavedOffline(false), 2000);
+        setSaving(false);
+        return;
+      }
+
       try {
         const res = await fetch("/api/admin/checkin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            playerName: playerName.trim(),
-            teamName: teamName.trim(),
-            division: division.trim(),
-          }),
+          body: JSON.stringify(checkinPayload),
           signal: controller.signal,
         });
 
         if (res.ok) {
+          triggerHaptic("light");
           // Confirm optimistic entry
           onCheckInSuccess({ ...optimisticEntry, pending: false });
           setPlayerName("");
           setSuccess(true);
           setTimeout(() => setSuccess(false), 2000);
         } else {
+          triggerHaptic("warning");
           const data = await res.json().catch(() => ({}));
           setCheckInError(
             data.error || "Check-in failed -- please try again"
@@ -96,12 +121,21 @@ export default function CheckInForm({
         }
       } catch (err: unknown) {
         if (err instanceof Error && err.name === "AbortError") return;
-        setCheckInError("Network error -- please try again");
-        onCheckInSuccess({ ...optimisticEntry, id, pending: undefined });
+        // Network error — queue offline instead of showing error
+        await queueMutation({
+          url: "/api/admin/checkin",
+          method: "POST",
+          body: checkinPayload,
+          type: "checkin",
+        });
+        onCheckInSuccess({ ...optimisticEntry, pending: false });
+        setPlayerName("");
+        setSavedOffline(true);
+        setTimeout(() => setSavedOffline(false), 2000);
       }
       setSaving(false);
     },
-    [playerName, teamName, division, saving, onCheckInSuccess]
+    [playerName, teamName, division, saving, onCheckInSuccess, isOnline, queueMutation]
   );
 
   return (
@@ -138,6 +172,17 @@ export default function CheckInForm({
             aria-live="polite"
           >
             Player checked in successfully!
+          </div>
+        )}
+
+        {savedOffline && (
+          <div
+            className="bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-lg px-3 py-2.5 flex items-center gap-1.5"
+            role="status"
+            aria-live="polite"
+          >
+            <WifiOff className="w-3 h-3" />
+            Checked in (offline) — will sync when reconnected
           </div>
         )}
 

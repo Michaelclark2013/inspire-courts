@@ -16,6 +16,7 @@ import {
   Link2,
   CalendarPlus,
 } from "lucide-react";
+import { nativeShare } from "@/lib/capacitor";
 import BracketView from "@/components/tournament/BracketView";
 import PoolStandings from "@/components/tournament/PoolStandings";
 import type { TournamentDetailPublic } from "@/types/tournament-public";
@@ -227,14 +228,17 @@ export default function PublicTournamentPage() {
               type="button"
               onClick={async () => {
                 const url = window.location.href;
-                if (navigator.share) {
-                  try {
-                    await navigator.share({ title: data.name, url });
-                  } catch { /* user cancelled */ }
-                } else {
-                  await navigator.clipboard.writeText(url);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 2000);
+                const shared = await nativeShare({ title: data.name, url });
+                if (!shared) {
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({ title: data.name, url });
+                    } catch { /* user cancelled */ }
+                  } else {
+                    await navigator.clipboard.writeText(url);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }
                 }
               }}
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"

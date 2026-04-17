@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
+import { triggerHaptic } from "@/lib/capacitor";
 import { Minus, Plus, Loader2, CheckCircle2, X, AlertCircle, Check } from "lucide-react";
 import type { Game, ScoreFormState } from "@/types/score-entry";
 import { GameStatusBadge } from "./GameStatusBadge";
@@ -86,11 +87,13 @@ function GameCardImpl({
   }, []);
 
   function bumpHome(delta: number) {
+    triggerHaptic("light");
     const next = Math.max(0, optHome + delta);
     setOptHome(next);
     scheduleSync(next, optAway);
   }
   function bumpAway(delta: number) {
+    triggerHaptic("light");
     const next = Math.max(0, optAway + delta);
     setOptAway(next);
     scheduleSync(optHome, next);

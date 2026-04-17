@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { triggerHaptic } from "@/lib/capacitor";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -106,6 +107,8 @@ export default function RegisterPage() {
         setLoading(false);
         return;
       }
+
+      triggerHaptic("success");
 
       // Staff/ref need admin approval — don't auto-login
       if (data.pendingApproval) {

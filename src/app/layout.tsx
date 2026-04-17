@@ -11,7 +11,10 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MetaPixel from "@/components/analytics/MetaPixel";
 import SessionProvider from "@/components/layout/SessionProvider";
 import ScrollProgress from "@/components/ui/ScrollProgress";
+import { NativeStatusBar } from "@/components/native/NativeStatusBar";
 import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { UpdatePrompt } from "@/components/pwa/UpdatePrompt";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/lib/constants";
 
 const workSans = Work_Sans({
@@ -99,6 +102,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <SessionProvider>
+          <NativeStatusBar />
           <ScrollProgress />
           <Header />
           <main id="main-content" className="flex-1 page-transition">{children}</main>
@@ -110,6 +114,8 @@ export default function RootLayout({
           <MetaPixel />
         </SessionProvider>
         <ServiceWorkerRegistrar />
+        <InstallPrompt />
+        <UpdatePrompt />
       </body>
     </html>
   );

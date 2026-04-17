@@ -24,6 +24,7 @@ import { PortalHeader } from "@/components/portal/PortalHeader";
 import { RecentResults } from "@/components/portal/RecentResults";
 import { RegistrationProgress } from "@/components/portal/RegistrationProgress";
 import { ViewAsBanner } from "@/components/portal/ViewAsBanner";
+import PushNotificationPrompt from "@/components/pwa/PushNotificationPrompt";
 import type {
   Announcement,
   LiveGame,
@@ -338,6 +339,8 @@ export default function PortalDashboard() {
   return (
     <div className="p-5 lg:p-8 max-w-5xl pb-[env(safe-area-inset-bottom)]">
       <ViewAsBanner viewAsRole={actualRole === "admin" ? viewAsRole : null} />
+
+      <PushNotificationPrompt />
 
       <PortalHeader
         role={role}

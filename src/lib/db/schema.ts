@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
 
 // ── Users ───────────────────────────────────────────────────────────────────
 
@@ -280,3 +281,16 @@ export const announcements = sqliteTable("announcements", {
 }, (table) => [
   index("announcements_audience_idx").on(table.audience),
 ]);
+
+// ── Push Subscriptions ─────────────────────────────────────────────────────
+
+export const pushSubscriptions = sqliteTable("push_subscriptions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id"),
+  userEmail: text("user_email"),
+  userRole: text("user_role"),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: text("created_at").default(sql`(datetime('now'))`),
+});

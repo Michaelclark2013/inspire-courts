@@ -5,6 +5,7 @@ import { signIn, getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const ADMIN_ROLES = ["admin", "staff", "ref", "front_desk"];
+import { triggerHaptic } from "@/lib/capacitor";
 import Image from "next/image";
 import { ArrowRight, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -49,6 +50,7 @@ export default function LoginPage() {
       setTimeout(() => setShake(false), 600);
       setLoading(false);
     } else {
+      triggerHaptic("success");
       // Route based on user role
       const session = await getSession();
       const role = session?.user?.role;

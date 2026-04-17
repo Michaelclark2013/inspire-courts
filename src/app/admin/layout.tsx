@@ -8,6 +8,7 @@ import SessionProvider from "@/components/layout/SessionProvider";
 import { ToastProvider } from "@/components/ui/Toast";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import { isAdminRole } from "@/lib/permissions";
+import OfflineBanner from "@/components/pwa/OfflineBanner";
 
 export const metadata = {
   title: "Admin Dashboard | Inspire Courts AZ",
@@ -44,7 +45,10 @@ export default async function AdminLayout({
         </a>
         <div className="min-h-screen bg-off-white lg:flex">
           <AdminSidebar />
-          <main id="admin-main" className="flex-1 min-w-0 pb-20 lg:pb-0 page-transition">{children}</main>
+          <main id="admin-main" className="flex-1 min-w-0 pb-20 lg:pb-0 page-transition">
+            <OfflineBanner />
+            {children}
+          </main>
           <AdminFAB />
           <KeyboardShortcutsHint />
         </div>

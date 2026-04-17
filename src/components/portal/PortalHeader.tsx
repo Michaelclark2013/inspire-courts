@@ -1,6 +1,7 @@
 "use client";
 
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
+import { triggerHaptic } from "@/lib/capacitor";
 import { RefreshCw } from "lucide-react";
 
 type RefreshIndicatorProps = {
@@ -57,6 +58,11 @@ type Props = {
 };
 
 export function PortalHeader({ role, greeting, name, lastUpdated, onRefresh, isFetching }: Props) {
+  const handleRefresh = useCallback(() => {
+    triggerHaptic("light");
+    onRefresh();
+  }, [onRefresh]);
+
   return (
     <div className="mb-6 flex items-start justify-between">
       <div>
@@ -67,7 +73,7 @@ export function PortalHeader({ role, greeting, name, lastUpdated, onRefresh, isF
           {greeting}, {name}
         </h1>
       </div>
-      <RefreshIndicator lastUpdated={lastUpdated} onRefresh={onRefresh} isFetching={isFetching} />
+      <RefreshIndicator lastUpdated={lastUpdated} onRefresh={handleRefresh} isFetching={isFetching} />
     </div>
   );
 }

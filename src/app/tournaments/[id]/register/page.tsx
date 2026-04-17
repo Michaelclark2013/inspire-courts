@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { triggerHaptic } from "@/lib/capacitor";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -119,6 +120,8 @@ export default function RegisterPage() {
         setSubmitting(false);
         return;
       }
+
+      triggerHaptic("success");
 
       // If checkout URL, redirect to Square
       if (data.checkoutUrl) {

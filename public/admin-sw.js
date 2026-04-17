@@ -76,16 +76,124 @@ self.addEventListener('sync', (event) => {
 });
 
 async function syncScores() {
-  // Phase 1C: replay queued score updates from IndexedDB
-  // Placeholder — will be implemented when offline score entry is built
+  await replayFromIndexedDB('score');
 }
 
 async function syncCheckins() {
-  // Phase 1C: replay queued check-in actions from IndexedDB
-  // Placeholder — will be implemented when offline check-in is built
+  await replayFromIndexedDB('checkin');
+}
+
+// ── IndexedDB replay (vanilla JS — SW cannot import TS modules) ──────
+async function replayFromIndexedDB(filterType) {
+  const db = await openOfflineDB();
+  const pending = await getPendingMutations(db, filterType);
+
+  for (const mutation of pending) {
+    try {
+      const res = await fetch(mutation.url, {
+        method: mutation.method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mutation.body),
+      });
+      if (res.ok) {
+        await updateMutationStatus(db, mutation.id, 'synced');
+      } else {
+        const errText = await res.text().catch(() => res.statusText);
+        await updateMutationStatus(db, mutation.id, 'failed', errText);
+      }
+    } catch (err) {
+      await updateMutationStatus(db, mutation.id, 'failed', err.message || 'Unknown error');
+    }
+  }
+  db.close();
+}
+
+function openOfflineDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('inspire-offline-db', 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains('offline-mutations')) {
+        const store = db.createObjectStore('offline-mutations', { keyPath: 'id', autoIncrement: true });
+        store.createIndex('status', 'status', { unique: false });
+        store.createIndex('type', 'type', { unique: false });
+        store.createIndex('timestamp', 'timestamp', { unique: false });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function getPendingMutations(db, filterType) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('offline-mutations', 'readonly');
+    const store = tx.objectStore('offline-mutations');
+    const index = store.index('status');
+    const request = index.getAll('pending');
+    request.onsuccess = () => {
+      let results = request.result || [];
+      if (filterType) {
+        results = results.filter((m) => m.type === filterType);
+      }
+      results.sort((a, b) => a.timestamp - b.timestamp);
+      resolve(results);
+    };
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function updateMutationStatus(db, id, status, error) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('offline-mutations', 'readwrite');
+    const store = tx.objectStore('offline-mutations');
+    const getReq = store.get(id);
+    getReq.onsuccess = () => {
+      if (getReq.result) {
+        const updated = { ...getReq.result, status };
+        if (error) updated.error = error;
+        store.put(updated);
+      }
+    };
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────
+
+// ── Push notification handler ────────────────────────────────────────
+self.addEventListener('push', (event) => {
+  const data = event.data?.json() ?? {};
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Inspire Courts', {
+      body: data.body || '',
+      icon: '/apple-icon-180x180.png',
+      badge: '/icons/icon-72x72.png',
+      data: { url: data.url || '/' },
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then((windowClients) => {
+      for (const client of windowClients) {
+        if (client.url.includes(url) && 'focus' in client) return client.focus();
+      }
+      return clients.openWindow(url);
+    })
+  );
+});
+
+// ── Message handler (SKIP_WAITING for UpdatePrompt) ──────────────────
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 async function networkFirstWithTimeout(request, timeout) {
   try {

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Mail, Phone, Camera, ArrowRight, Check, Loader2 } from "lucide-react";
+import { triggerHaptic } from "@/lib/capacitor";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
 import { trackConversion } from "@/lib/analytics";
@@ -74,6 +75,7 @@ function ContactPageInner() {
         body: JSON.stringify(data),
       });
       if (res.ok) {
+        triggerHaptic("success");
         trackConversion("contact_form_submit");
         setSubmitted(true);
       } else {

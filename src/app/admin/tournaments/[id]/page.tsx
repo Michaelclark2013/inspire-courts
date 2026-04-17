@@ -26,6 +26,7 @@ import {
   type TournamentDetail,
 } from "@/types/tournament-admin";
 import { Trophy, Calendar, BarChart3 } from "lucide-react";
+import { triggerHaptic } from "@/lib/capacitor";
 import Breadcrumbs from "@/components/admin/Breadcrumbs";
 
 function isTab(value: string | null): value is Tab {
@@ -136,6 +137,7 @@ function TournamentDetailInner() {
           body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error("Failed to add team");
+        triggerHaptic("light");
         await fetchData();
       } catch {
         // rollback
@@ -209,6 +211,7 @@ function TournamentDetailInner() {
         const err = await res.json().catch(() => ({}));
         setMutationError(err.error || "Failed to generate bracket");
       } else {
+        triggerHaptic("medium");
         setTab("bracket");
         await fetchData();
       }
@@ -244,6 +247,7 @@ function TournamentDetailInner() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ gameId }),
         });
+        triggerHaptic("success");
         await fetchData();
       } catch {
         setMutationError("Failed to advance winner");

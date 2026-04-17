@@ -331,10 +331,11 @@ export default function RegisterPage() {
 
             <form onSubmit={handleRegister} className="space-y-4">
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="reg-name" className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Full Name
                 </label>
                 <input
+                  id="reg-name"
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -346,10 +347,11 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="reg-email" className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Email
                 </label>
                 <input
+                  id="reg-email"
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -361,11 +363,12 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="reg-password" className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Password
                 </label>
                 <div className="relative">
                   <input
+                    id="reg-password"
                     type={showPassword ? "text" : "password"}
                     value={form.password}
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -389,10 +392,11 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="reg-phone" className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Phone <span className="text-white/20">(optional)</span>
                 </label>
                 <input
+                  id="reg-phone"
                   type="tel"
                   value={form.phone}
                   onChange={(e) => {

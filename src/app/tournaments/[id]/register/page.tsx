@@ -286,10 +286,11 @@ export default function RegisterPage() {
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="treg-teamName" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Team Name *
                 </label>
                 <input
+                  id="treg-teamName"
                   type="text"
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
@@ -306,10 +307,11 @@ export default function RegisterPage() {
               </div>
               {tournament.divisions.length > 0 && (
                 <div>
-                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="treg-division" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Division *
                   </label>
                   <select
+                    id="treg-division"
                     value={division}
                     onChange={(e) => setDivision(e.target.value)}
                     required
@@ -326,10 +328,11 @@ export default function RegisterPage() {
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="treg-coachName" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Coach Name *
                   </label>
                   <input
+                    id="treg-coachName"
                     type="text"
                     value={coachName}
                     onChange={(e) => setCoachName(e.target.value)}
@@ -346,10 +349,11 @@ export default function RegisterPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="treg-coachEmail" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Coach Email *
                   </label>
                   <input
+                    id="treg-coachEmail"
                     type="email"
                     value={coachEmail}
                     onChange={(e) => setCoachEmail(e.target.value)}
@@ -368,10 +372,11 @@ export default function RegisterPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="treg-coachPhone" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Phone (optional)
                   </label>
                   <input
+                    id="treg-coachPhone"
                     type="tel"
                     value={coachPhone}
                     onChange={(e) => setCoachPhone(e.target.value)}

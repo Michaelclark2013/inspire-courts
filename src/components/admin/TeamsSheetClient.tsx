@@ -42,10 +42,12 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
   const [logos, setLogos] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    fetch("/api/teams/logo")
+    const controller = new AbortController();
+    fetch("/api/teams/logo", { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => { if (data && typeof data === "object") setLogos(data); })
-      .catch(() => {});
+      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; });
+    return () => controller.abort();
   }, []);
 
   function handleLogoSuccess(teamName: string, url: string) {

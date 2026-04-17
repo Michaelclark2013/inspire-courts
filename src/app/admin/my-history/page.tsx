@@ -22,14 +22,16 @@ export default function MyHistoryPage() {
 
   useEffect(() => {
     if (!session?.user?.name) return;
+    const controller = new AbortController();
 
     // Fetch from the appropriate sheet based on role
     const sheetType = role === "ref" ? "ref" : "staff";
-    fetch(`/api/admin/my-history?type=${sheetType}&name=${encodeURIComponent(session.user.name)}`)
+    fetch(`/api/admin/my-history?type=${sheetType}&name=${encodeURIComponent(session.user.name)}`, { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => setShifts(data.shifts || []))
-      .catch(() => {})
+      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; })
       .finally(() => setLoading(false));
+    return () => controller.abort();
   }, [session, role]);
 
   const filteredShifts = useMemo(() => {

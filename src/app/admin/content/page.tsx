@@ -66,7 +66,8 @@ export default function ContentEditorPage() {
 
   // Fetch content from server, check for draft
   useEffect(() => {
-    fetch("/api/content")
+    const controller = new AbortController();
+    fetch("/api/content", { signal: controller.signal })
       .then((r) => r.json())
       .then((serverContent: SiteContent) => {
         savedContentRef.current = serverContent;
@@ -86,7 +87,9 @@ export default function ContentEditorPage() {
           }
         } catch {}
         setContent(serverContent);
-      });
+      })
+      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; });
+    return () => controller.abort();
   }, []);
 
   // Auto-save draft to localStorage (debounced 800ms)

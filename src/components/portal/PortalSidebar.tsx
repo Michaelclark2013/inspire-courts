@@ -64,19 +64,21 @@ export default function PortalSidebar() {
 
   // Fetch announcement count + live game status
   useEffect(() => {
-    fetch("/api/portal/announcements")
+    const controller = new AbortController();
+    fetch("/api/portal/announcements", { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) setAnnouncementCount(data.length);
       })
-      .catch(() => {});
+      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; });
 
-    fetch("/api/scores/live")
+    fetch("/api/scores/live", { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) setHasLiveGames(data.some((g: { status: string }) => g.status === "live"));
       })
-      .catch(() => {});
+      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; });
+    return () => controller.abort();
   }, []);
 
   const navItems = role === "parent" ? PARENT_NAV : role === "admin" ? ADMIN_NAV : COACH_NAV;

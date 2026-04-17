@@ -19,7 +19,7 @@ export default async function AnalyticsPage() {
             href={`https://analytics.google.com/analytics/web/#/p${gaId}/reports`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-bg-secondary border border-border hover:border-accent text-navy px-4 py-2.5 rounded-sm font-bold text-xs uppercase tracking-wide transition-colors"
+            className="flex items-center gap-2 bg-bg-secondary border border-border hover:border-accent text-navy px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wide transition-colors"
           >
             Open Google Analytics <ExternalLink className="w-3.5 h-3.5" />
           </a>
@@ -27,7 +27,7 @@ export default async function AnalyticsPage() {
       </div>
 
       {!gaId ? (
-        <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
+        <div className="bg-bg-secondary border border-border rounded-xl p-5 text-center">
           <BarChart3 className="w-10 h-10 text-accent mx-auto mb-4" />
           <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2">
             Connect Google Analytics
@@ -77,7 +77,7 @@ export default async function AnalyticsPage() {
                 href={`https://analytics.google.com/analytics/web/#/p${gaId}/${item.path}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-bg-secondary border border-border hover:border-accent/50 rounded-sm p-4 transition-colors group"
+                className="bg-white border border-border hover:border-accent/50 hover:shadow-md rounded-xl p-4 transition-all group"
               >
                 <div className="flex items-start justify-between mb-2">
                   <item.icon className="w-4 h-4 text-text-secondary group-hover:text-accent transition-colors" />
@@ -91,7 +91,7 @@ export default async function AnalyticsPage() {
 
           <div className="space-y-6">
             {/* Events Being Tracked */}
-            <div className="bg-bg-secondary border border-border rounded-sm p-6">
+            <div className="bg-bg-secondary border border-border rounded-xl p-6">
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
                 Events Being Tracked
               </h3>
@@ -110,7 +110,7 @@ export default async function AnalyticsPage() {
                 ].map((item) => (
                   <div
                     key={item.event}
-                    className="flex items-center justify-between bg-bg border border-border rounded-sm px-4 py-3"
+                    className="flex items-center justify-between bg-white border border-border rounded-xl px-4 py-3 hover:border-accent/30 transition-colors"
                   >
                     <div>
                       <code className="text-accent text-sm font-bold">{item.event}</code>
@@ -123,12 +123,12 @@ export default async function AnalyticsPage() {
             </div>
 
             {/* Conversion Funnels */}
-            <div className="bg-bg-secondary border border-border rounded-sm p-6">
+            <div className="bg-bg-secondary border border-border rounded-xl p-6">
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
                 Key Conversion Funnels
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-bg border border-border rounded-sm p-4">
+                <div className="bg-bg border border-border rounded-xl p-4">
                   <h4 className="text-navy font-bold text-sm mb-2">Tournament Registration</h4>
                   <div className="space-y-1 text-text-secondary text-xs">
                     <p>1. Homepage visit → <span className="text-accent">page_view</span></p>
@@ -137,7 +137,7 @@ export default async function AnalyticsPage() {
                     <p>4. Contact submit → <span className="text-accent">contact_submit</span></p>
                   </div>
                 </div>
-                <div className="bg-bg border border-border rounded-sm p-4">
+                <div className="bg-bg border border-border rounded-xl p-4">
                   <h4 className="text-navy font-bold text-sm mb-2">Facility Rental</h4>
                   <div className="space-y-1 text-text-secondary text-xs">
                     <p>1. Homepage visit → <span className="text-accent">page_view</span></p>

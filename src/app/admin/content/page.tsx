@@ -341,8 +341,8 @@ export default function ContentEditorPage() {
           aria-live="assertive"
           className={`fixed top-4 right-4 z-[100] flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-sm font-semibold border ${
             toast.type === "success"
-              ? "bg-green-500/20 border-green-500/40 text-green-400"
-              : "bg-red/20 border-red/40 text-red"
+              ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+              : "bg-red-50 border-red-200 text-red-700"
           }`}
         >
           {toast.type === "success" ? (
@@ -724,14 +724,14 @@ export default function ContentEditorPage() {
 
       {/* Floating sticky save toolbar — visible when dirty */}
       {dirty && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[55] flex items-center gap-1 bg-[#0a0a0f]/95 border border-white/20 rounded-full px-2 py-2 shadow-2xl backdrop-blur-sm">
-          <span className="hidden sm:flex items-center gap-1.5 text-amber-400 text-xs font-semibold px-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[55] flex items-center gap-1 bg-white border border-border rounded-full px-2 py-2 shadow-2xl">
+          <span className="hidden sm:flex items-center gap-1.5 text-amber-600 text-xs font-semibold px-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
             Unsaved changes
           </span>
           <button
             onClick={discard}
-            className="flex items-center gap-1.5 text-navy/50 hover:text-navy text-xs font-bold uppercase tracking-wide px-3 py-2 rounded-full hover:bg-white/10 transition-colors"
+            className="flex items-center gap-1.5 text-navy/50 hover:text-navy text-xs font-bold uppercase tracking-wide px-3 py-2 rounded-full hover:bg-off-white transition-colors"
           >
             <X className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Discard</span>

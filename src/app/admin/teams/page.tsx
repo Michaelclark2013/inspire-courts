@@ -81,17 +81,17 @@ export default async function TeamsPage() {
         <div className="flex gap-2 flex-shrink-0 items-center">
           <Link
             href="/admin/teams/logos"
-            className="flex items-center gap-1.5 text-text-secondary hover:text-navy border border-border hover:border-accent/40 rounded-sm px-3 py-1.5 text-xs font-semibold transition-colors"
+            className="flex items-center gap-1.5 text-text-secondary hover:text-navy border border-border hover:border-accent/40 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors"
           >
             <ImageIcon className="w-3.5 h-3.5" /> Logos
           </Link>
-          <div className="bg-success/10 border border-success/20 rounded-sm px-2.5 py-1.5 text-center min-w-[44px]">
-            <p className="text-success font-bold text-base leading-none">{paidCount}</p>
-            <p className="text-success/70 text-[10px] uppercase tracking-wider mt-0.5">Paid</p>
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 text-center min-w-[52px]">
+            <p className="text-emerald-700 font-bold text-base leading-none">{paidCount}</p>
+            <p className="text-emerald-600/70 text-[10px] uppercase tracking-wider font-semibold mt-0.5">Paid</p>
           </div>
-          <div className="bg-danger/10 border border-danger/20 rounded-sm px-2.5 py-1.5 text-center min-w-[44px]">
-            <p className="text-danger font-bold text-base leading-none">{unpaidCount}</p>
-            <p className="text-danger/70 text-[10px] uppercase tracking-wider mt-0.5">Unpaid</p>
+          <div className="bg-red-50 border border-red-200 rounded-xl px-3 py-2 text-center min-w-[52px]">
+            <p className="text-red-700 font-bold text-base leading-none">{unpaidCount}</p>
+            <p className="text-red-600/70 text-[10px] uppercase tracking-wider font-semibold mt-0.5">Unpaid</p>
           </div>
         </div>
       </div>
@@ -108,7 +108,7 @@ function SetupPrompt() {
         <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Teams</h1>
         <p className="text-text-secondary text-sm mt-1 hidden md:block">Master Teams & Payments</p>
       </div>
-      <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
+      <div className="bg-bg-secondary border border-border rounded-xl p-5 text-center">
         <Users className="w-10 h-10 text-text-secondary mx-auto mb-3" />
         <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
         <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>

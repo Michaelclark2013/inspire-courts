@@ -116,8 +116,8 @@ export default async function StaffPage() {
           { label: "Ref Games", value: totalRefGames.toString() },
           { label: "Ref Pay", value: totalRefPay > 0 ? `$${Math.round(totalRefPay).toLocaleString()}` : "—" },
         ].map((k) => (
-          <div key={k.label} className="bg-bg-secondary border border-border rounded-sm p-3 md:p-4">
-            <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">{k.label}</p>
+          <div key={k.label} className="bg-white border border-border rounded-xl p-3 md:p-4 shadow-sm">
+            <p className="text-text-secondary text-xs uppercase tracking-wider font-semibold mb-1">{k.label}</p>
             <p className="text-navy font-bold text-xl md:text-2xl">{k.value}</p>
           </div>
         ))}

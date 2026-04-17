@@ -1,4 +1,4 @@
-import { UserCheck } from "lucide-react";
+import { UserCheck, UsersRound } from "lucide-react";
 import PageHeader from "@/components/admin/PageHeader";
 import PlayersSheetClient from "@/components/admin/PlayersSheetClient";
 import {
@@ -73,7 +73,7 @@ export default async function PlayersPage() {
       <PageHeader
         title="Players"
         subtitle={`${players.length} players checked in`}
-        icon={UserCheck}
+        icon={UsersRound}
       />
 
       <PlayersSheetClient players={players} divData={divData} teamData={teamData} />

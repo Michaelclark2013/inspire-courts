@@ -363,10 +363,10 @@ export default function UsersPage() {
 
       {/* Pending Approvals */}
       {pendingUsers.length > 0 && (
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-5 mb-6">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
-            <h2 className="text-amber-400 font-bold text-sm uppercase tracking-wider">
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <h2 className="text-amber-700 font-bold text-sm uppercase tracking-wider">
               Pending Approval ({pendingUsers.length})
             </h2>
           </div>
@@ -386,13 +386,13 @@ export default function UsersPage() {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <button
                     onClick={() => handleApproval(u.id, true)}
-                    className="flex items-center gap-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
+                    className="flex items-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
                   >
                     <CheckCircle className="w-3.5 h-3.5" /> Approve
                   </button>
                   <button
                     onClick={() => handleDelete(u.id, u.name)}
-                    className="flex items-center gap-1.5 bg-red/20 hover:bg-red/30 text-red px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
+                    className="flex items-center gap-1.5 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
                   >
                     <XCircle className="w-3.5 h-3.5" /> Deny
                   </button>

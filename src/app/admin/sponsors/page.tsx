@@ -85,7 +85,7 @@ export default async function SponsorsPage() {
         ))}
       </div>
 
-      <div className="bg-bg-secondary border border-border rounded-sm p-5">
+      <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
         <DataTable columns={columns} data={sponsors} searchKey="company" searchPlaceholder="Search sponsors..." />
       </div>
     </div>

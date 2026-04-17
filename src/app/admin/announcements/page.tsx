@@ -28,9 +28,9 @@ const AUDIENCE_LABELS: Record<string, string> = {
 };
 
 const AUDIENCE_STYLES: Record<string, string> = {
-  all: "bg-white/10 text-navy/60",
-  coaches: "bg-emerald-500/20 text-emerald-400",
-  parents: "bg-cyan-500/20 text-cyan-400",
+  all: "bg-navy/10 text-navy/70",
+  coaches: "bg-emerald-500/15 text-emerald-700",
+  parents: "bg-cyan-500/15 text-cyan-700",
 };
 
 export default function AnnouncementsPage() {
@@ -264,7 +264,7 @@ export default function AnnouncementsPage() {
           {list.map((a) => (
             <div
               key={a.id}
-              className="bg-white border border-border rounded-xl p-5"
+              className="bg-white border border-border rounded-xl p-5 hover:border-red/30 hover:shadow-sm transition-all"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">

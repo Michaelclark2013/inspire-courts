@@ -58,11 +58,13 @@ export default async function SchoolsPage() {
         <p className="text-text-secondary text-sm mt-1">School Basketball Programs from Notion</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <KPICard title="Total Schools" value={schools.length.toString()} icon={GraduationCap} />
+        <KPICard title="States" value={[...new Set(schools.map((s: any) => s.state))].length.toString()} icon={GraduationCap} />
+        <KPICard title="Classifications" value={[...new Set(schools.map((s: any) => s.classification).filter((c: string) => c !== "—"))].length.toString()} icon={GraduationCap} />
       </div>
 
-      <div className="bg-bg-secondary border border-border rounded-sm p-5">
+      <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
         <DataTable columns={columns} data={schools} searchKey="school" searchPlaceholder="Search schools..." />
       </div>
     </div>

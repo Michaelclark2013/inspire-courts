@@ -1,4 +1,5 @@
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Target } from "lucide-react";
+import PageHeader from "@/components/admin/PageHeader";
 import ProspectsSheetClient from "@/components/admin/ProspectsSheetClient";
 import {
   fetchSheetWithHeaders,
@@ -94,22 +95,19 @@ export default async function ProspectsPage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
-            Prospects
-          </h1>
-          <p className="text-text-secondary text-sm mt-1 hidden md:block">
-            Team Prospect Pipeline — {prospects.length} total
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <div className="bg-success/10 border border-success/20 rounded-sm px-2.5 py-1.5 text-center min-w-[44px]">
-            <p className="text-success font-bold text-base leading-none">{committed}</p>
-            <p className="text-success/70 text-[10px] uppercase tracking-wider mt-0.5">Committed</p>
+        <PageHeader
+          title="Prospects"
+          subtitle={`Team Prospect Pipeline — ${prospects.length} total`}
+          icon={Target}
+        />
+        <div className="flex gap-2 flex-shrink-0">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 text-center min-w-[52px]">
+            <p className="text-emerald-700 font-bold text-base leading-none">{committed}</p>
+            <p className="text-emerald-600/70 text-[10px] uppercase tracking-wider font-semibold mt-0.5">Committed</p>
           </div>
-          <div className="bg-bg-secondary border border-border rounded-sm px-2.5 py-1.5 text-center min-w-[44px]">
+          <div className="bg-white border border-border rounded-xl px-3 py-2 text-center min-w-[52px]">
             <p className="text-navy font-bold text-base leading-none">{prospects.length - committed}</p>
-            <p className="text-text-secondary text-[10px] uppercase tracking-wider mt-0.5">Pipeline</p>
+            <p className="text-text-secondary text-[10px] uppercase tracking-wider font-semibold mt-0.5">Pipeline</p>
           </div>
         </div>
       </div>

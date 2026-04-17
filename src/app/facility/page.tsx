@@ -38,6 +38,10 @@ export const metadata: Metadata = {
     canonical: "https://inspirecourtsaz.com/facility",
   },
   openGraph: {
+    title: "Indoor Court Rental Gilbert AZ | Inspire Courts",
+    description:
+      "Professional indoor court rental for basketball, volleyball, futsal, and jiu-jitsu in Gilbert, AZ. 7 courts, climate-controlled. Book for leagues, practices, and events.",
+    url: "https://inspirecourtsaz.com/facility",
     images: [
       {
         url: "https://inspirecourtsaz.com/images/hero-bg.jpg",
@@ -153,7 +157,7 @@ export default function FacilityPage() {
 
       {/* Hero — with booking CTA as the primary focus */}
       <section className="relative min-h-[70vh] lg:min-h-[80vh] flex items-center overflow-hidden">
-        <Image src="/images/courts-bg.jpg" alt="Inspire Courts basketball facility interior" fill priority sizes="100vw" className="object-cover object-center" />
+        <Image src="/images/courts-bg.jpg" alt="Inspire Courts basketball facility interior" fill priority sizes="100vw" placeholder="blur" blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAIAAoDASIAAhEBAxEB/8QAFAABAAAAAAAAAAAAAAAAAAAABv/EAB4QAAICAgIDAAAAAAAAAAAAAAECAAMEEQUSITFB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAYEQEAAwEAAAAAAAAAAAAAAAABAAIRMf/aAAwDAQACEQMRAD8AoY+RkXWV1rZaAzBQFPgbnuIiVsl2T//Z" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 sm:py-28 lg:py-36">

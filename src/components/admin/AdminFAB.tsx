@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Plus, PenLine, UserCheck, Trophy, Megaphone } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Tooltip from "@/components/ui/Tooltip";
 
 const ACTIONS = [
   { href: "/admin/scores/enter", label: "Enter Score", icon: PenLine },
@@ -41,17 +42,19 @@ export default function AdminFAB() {
             </Link>
           ))}
 
-        <button
-          onClick={() => setOpen((v) => !v)}
-          aria-label={open ? "Close quick actions" : "Open quick actions"}
-          aria-expanded={open}
-          className={cn(
-            "w-14 h-14 rounded-full bg-accent shadow-xl flex items-center justify-center transition-transform duration-200",
-            open ? "rotate-45" : ""
-          )}
-        >
-          <Plus className="w-6 h-6 text-white" strokeWidth={2.5} />
-        </button>
+        <Tooltip content={open ? "Close" : "Quick actions"} position="left">
+          <button
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Close quick actions" : "Open quick actions"}
+            aria-expanded={open}
+            className={cn(
+              "w-14 h-14 rounded-full bg-accent shadow-xl flex items-center justify-center transition-transform duration-200",
+              open ? "rotate-45" : ""
+            )}
+          >
+            <Plus className="w-6 h-6 text-white" strokeWidth={2.5} />
+          </button>
+        </Tooltip>
       </div>
     </>
   );

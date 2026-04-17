@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Search, Users, Flame, Phone, Mail, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
+import SearchHighlight from "@/components/ui/SearchHighlight";
 
 interface Team {
   teamName: string;
@@ -160,8 +161,30 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
         </div>
       )}
 
-      {/* Table */}
-      <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {filtered.map((t, i) => (
+          <div key={i} className={cn("bg-bg-secondary border border-border rounded-sm p-4", selectedIndices.has(i) ? "border-accent/40 bg-accent/5" : "")}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-navy font-semibold text-sm"><SearchHighlight text={t.teamName} query={search} /></span>
+              <span className={cn("inline-block px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider border", STATUS_COLORS[t.status] || "bg-bg text-text-secondary border-border")}>{t.status}</span>
+            </div>
+            <div className="text-xs text-text-secondary space-y-1">
+              <p>Coach: <SearchHighlight text={t.coach} query={search} /></p>
+              <div className="flex items-center gap-3">
+                <span>{t.age} &middot; {t.gender}</span>
+                <span className="ml-auto">{t.source}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+        {filtered.length === 0 && (
+          <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary text-sm">No teams found</div>
+        )}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden md:block bg-bg-secondary border border-border rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -198,8 +221,8 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                       className="accent-accent cursor-pointer"
                     />
                   </td>
-                  <td className="px-4 py-3 text-navy font-medium">{t.teamName}</td>
-                  <td className="px-4 py-3 text-text-secondary">{t.coach}</td>
+                  <td className="px-4 py-3 text-navy font-medium"><SearchHighlight text={t.teamName} query={search} /></td>
+                  <td className="px-4 py-3 text-text-secondary"><SearchHighlight text={t.coach} query={search} /></td>
                   <td className="px-4 py-3">
                     {t.phone && t.phone !== "—" ? (
                       <a

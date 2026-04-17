@@ -84,7 +84,26 @@ export default function ScoresClient({ games }: { games: Game[] }) {
             <Trophy className="w-4 h-4 text-accent" /> {event}
             <span className="text-text-secondary font-normal">({eventGames.length} games)</span>
           </h3>
-          <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+          {/* Mobile card view */}
+          <div className="md:hidden space-y-3">
+            {eventGames.map((g, i) => (
+              <div key={i} className="bg-bg-secondary border border-border rounded-sm p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className={cn("font-semibold text-sm", g.winner === g.home ? "text-accent" : "text-navy")}>{g.home}</span>
+                  <span className="text-navy font-bold font-mono text-sm">{g.score}</span>
+                  <span className={cn("font-semibold text-sm", g.winner === g.away ? "text-accent" : "text-navy")}>{g.away}</span>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-text-secondary">
+                  <span className="bg-accent/10 text-accent px-2 py-0.5 rounded-sm">{g.division}</span>
+                  <span>Court {g.court}</span>
+                  <span className="ml-auto">{g.date} {g.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table view */}
+          <div className="hidden md:block bg-bg-secondary border border-border rounded-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

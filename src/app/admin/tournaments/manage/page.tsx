@@ -41,10 +41,10 @@ const FORMAT_LABELS: Record<string, string> = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  draft: "bg-white/10 text-navy/60",
-  published: "bg-blue-500/20 text-blue-400",
-  active: "bg-emerald-500/20 text-emerald-400",
-  completed: "bg-white/10 text-navy/40",
+  draft: "bg-gray-100 text-gray-600",
+  published: "bg-blue-50 text-blue-600",
+  active: "bg-emerald-50 text-emerald-600",
+  completed: "bg-gray-100 text-gray-500",
 };
 
 export default function TournamentManagePage() {
@@ -233,9 +233,9 @@ export default function TournamentManagePage() {
 
       {/* Success Banner */}
       {successMsg && (
-        <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-xl px-5 py-3 mb-6 flex items-center gap-3">
-          <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-          <p className="text-emerald-300 text-sm font-semibold">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 mb-6 flex items-center gap-3">
+          <Check className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+          <p className="text-emerald-700 text-sm font-semibold">
             &ldquo;{successMsg}&rdquo; created successfully!
           </p>
         </div>
@@ -243,7 +243,7 @@ export default function TournamentManagePage() {
 
       {/* Create Form */}
       {(showForm || (!loading && tournamentList.length === 0)) && (
-        <div className="bg-card border border-white/10 rounded-xl p-6 mb-8">
+        <div className="bg-white border border-border shadow-sm rounded-xl p-6 mb-8">
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-6 flex items-center gap-2">
             <Plus className="w-4 h-4 text-red" /> Create Tournament
           </h2>
@@ -257,7 +257,7 @@ export default function TournamentManagePage() {
 
           {/* Quick-Start Template Presets */}
           <div className="mb-6">
-            <p className="text-navy/40 text-[10px] font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <Sparkles className="w-3 h-3" /> Quick Start — Pick a Template
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -266,13 +266,13 @@ export default function TournamentManagePage() {
                   key={preset.name}
                   type="button"
                   onClick={() => applyPreset(preset)}
-                  className="text-left bg-navy border border-white/10 hover:border-red/40 rounded-lg p-4 transition-all group"
+                  className="text-left bg-off-white border border-border hover:border-red/40 hover:shadow-sm rounded-lg p-4 transition-all group"
                 >
                   <div className="flex items-center gap-2 mb-1.5">
                     <preset.icon className="w-4 h-4 text-red" />
                     <span className="text-navy font-bold text-sm">{preset.name}</span>
                   </div>
-                  <p className="text-navy/40 text-xs leading-relaxed">{preset.desc}</p>
+                  <p className="text-text-muted text-xs leading-relaxed">{preset.desc}</p>
                 </button>
               ))}
             </div>
@@ -281,7 +281,7 @@ export default function TournamentManagePage() {
           <form onSubmit={handleCreate} className="space-y-6">
             {/* Step 1: Basic Info */}
             <div>
-              <p className="text-navy/40 text-[10px] font-bold uppercase tracking-wider mb-3">Step 1 — Basic Info</p>
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3">Step 1 — Basic Info</p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2">
                   <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -292,7 +292,7 @@ export default function TournamentManagePage() {
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     required
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-text-muted/50"
                     placeholder="e.g. Spring Classic 2026"
                   />
                 </div>
@@ -303,21 +303,21 @@ export default function TournamentManagePage() {
                   <select
                     value={form.format}
                     onChange={(e) => setForm({ ...form, format: e.target.value })}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red cursor-pointer"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red cursor-pointer"
                   >
                     <option value="single_elim">Single Elimination</option>
                     <option value="double_elim">Double Elimination</option>
                     <option value="round_robin">Round Robin</option>
                     <option value="pool_play">Pool Play</option>
                   </select>
-                  <p className="text-navy/30 text-[11px] mt-1.5">Pool Play is best for 4+ team brackets. Single Elim for quick events.</p>
+                  <p className="text-text-muted text-[11px] mt-1.5">Pool Play is best for 4+ team brackets. Single Elim for quick events.</p>
                 </div>
               </div>
             </div>
 
             {/* Step 2: Schedule */}
             <div>
-              <p className="text-navy/40 text-[10px] font-bold uppercase tracking-wider mb-3">Step 2 — Schedule</p>
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3">Step 2 — Schedule</p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -328,7 +328,7 @@ export default function TournamentManagePage() {
                     value={form.startDate}
                     onChange={(e) => setForm({ ...form, startDate: e.target.value })}
                     required
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
                   />
                 </div>
                 <div>
@@ -339,7 +339,7 @@ export default function TournamentManagePage() {
                     type="date"
                     value={form.endDate}
                     onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
                   />
                 </div>
                 <div>
@@ -350,7 +350,7 @@ export default function TournamentManagePage() {
                     type="text"
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="Inspire Courts AZ"
                   />
                 </div>
@@ -365,9 +365,9 @@ export default function TournamentManagePage() {
                     onChange={(e) =>
                       setForm({ ...form, gameLength: Number(e.target.value) })
                     }
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
                   />
-                  <p className="text-navy/30 text-[11px] mt-1.5">Standard: 40 min (two 20-min halves)</p>
+                  <p className="text-text-muted text-[11px] mt-1.5">Standard: 40 min (two 20-min halves)</p>
                 </div>
                 <div>
                   <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -380,16 +380,16 @@ export default function TournamentManagePage() {
                     onChange={(e) =>
                       setForm({ ...form, breakLength: Number(e.target.value) })
                     }
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
                   />
-                  <p className="text-navy/30 text-[11px] mt-1.5">Time between games for court changeover</p>
+                  <p className="text-text-muted text-[11px] mt-1.5">Time between games for court changeover</p>
                 </div>
               </div>
             </div>
 
             {/* Step 3: Divisions & Courts */}
             <div>
-              <p className="text-navy/40 text-[10px] font-bold uppercase tracking-wider mb-3">Step 3 — Divisions & Courts</p>
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3">Step 3 — Divisions & Courts</p>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -420,7 +420,7 @@ export default function TournamentManagePage() {
                         className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
                           chipSelected("divisions", d)
                             ? "bg-red/20 border-red/40 text-red"
-                            : "bg-navy border-white/10 text-navy/50 hover:border-white/30 hover:text-navy/80"
+                            : "bg-white border-border text-text-muted hover:border-navy/30 hover:text-navy"
                         }`}
                       >
                         {d}
@@ -431,7 +431,7 @@ export default function TournamentManagePage() {
                     type="text"
                     value={form.divisions}
                     onChange={(e) => setForm({ ...form, divisions: e.target.value })}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="Or type custom: 8U, 10U, 12U"
                   />
                 </div>
@@ -445,7 +445,7 @@ export default function TournamentManagePage() {
                       {form.courts.split(",").map((c) => c.trim()).filter(Boolean).map((c) => (
                         <span
                           key={c}
-                          className="inline-flex items-center gap-1 bg-blue-500/20 text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full cursor-pointer hover:bg-blue-500/30 transition-colors"
+                          className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-1 rounded-full cursor-pointer hover:bg-blue-100 transition-colors"
                           onClick={() => toggleChip("courts", c)}
                         >
                           {c}
@@ -463,8 +463,8 @@ export default function TournamentManagePage() {
                         onClick={() => toggleChip("courts", c)}
                         className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
                           chipSelected("courts", c)
-                            ? "bg-blue-500/20 border-blue-500/40 text-blue-400"
-                            : "bg-navy border-white/10 text-navy/50 hover:border-white/30 hover:text-navy/80"
+                            ? "bg-blue-50 border-blue-300 text-blue-600"
+                            : "bg-white border-border text-text-muted hover:border-navy/30 hover:text-navy"
                         }`}
                       >
                         {c}
@@ -475,7 +475,7 @@ export default function TournamentManagePage() {
                     type="text"
                     value={form.courts}
                     onChange={(e) => setForm({ ...form, courts: e.target.value })}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="Or type custom: Court 1, Court 2"
                   />
                 </div>
@@ -484,7 +484,7 @@ export default function TournamentManagePage() {
 
             {/* Step 4: Registration */}
             <div>
-              <p className="text-navy/40 text-[10px] font-bold uppercase tracking-wider mb-3">Step 4 — Registration</p>
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3">Step 4 — Registration</p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -496,7 +496,7 @@ export default function TournamentManagePage() {
                     step="0.01"
                     value={form.entryFee}
                     onChange={(e) => setForm({ ...form, entryFee: e.target.value })}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="50"
                   />
                 </div>
@@ -509,7 +509,7 @@ export default function TournamentManagePage() {
                     min={2}
                     value={form.maxTeamsPerDivision}
                     onChange={(e) => setForm({ ...form, maxTeamsPerDivision: e.target.value })}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="8"
                   />
                 </div>
@@ -521,7 +521,7 @@ export default function TournamentManagePage() {
                     type="date"
                     value={form.registrationDeadline}
                     onChange={(e) => setForm({ ...form, registrationDeadline: e.target.value })}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
                   />
                 </div>
                 <div className="lg:col-span-2">
@@ -532,7 +532,7 @@ export default function TournamentManagePage() {
                     type="text"
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
                     placeholder="Tournament rules, age requirements, etc."
                   />
                 </div>
@@ -550,8 +550,8 @@ export default function TournamentManagePage() {
               </div>
             </div>
 
-            {/* Submit */}
-            <div className="flex items-center gap-4 pt-2">
+            {/* Submit — sticky bar on long forms */}
+            <div className="sticky bottom-0 z-20 -mx-6 px-6 py-4 bg-white/95 backdrop-blur-sm border-t border-border flex items-center gap-4">
               <button
                 type="submit"
                 disabled={saving}
@@ -578,14 +578,14 @@ export default function TournamentManagePage() {
 
       {/* Tournament List */}
       {loading ? (
-        <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
+        <div className="flex items-center justify-center py-8 md:py-16 text-text-muted">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading tournaments...
         </div>
       ) : tournamentList.length === 0 ? (
-        <div className="text-center py-8 md:py-14 text-navy/40">
+        <div className="text-center py-8 md:py-14 text-text-muted">
           <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
           <h3 className="text-navy font-bold text-lg mb-1">Create Your First Tournament</h3>
-          <p className="text-navy/40 text-sm mb-6">
+          <p className="text-text-muted text-sm mb-6">
             Set up a tournament in under 60 seconds using a template
           </p>
           <button
@@ -602,7 +602,7 @@ export default function TournamentManagePage() {
             <Link
               key={t.id}
               href={`/admin/tournaments/${t.id}`}
-              className="block bg-card border border-white/10 hover:border-white/20 rounded-xl p-5 transition-all group"
+              className="block bg-white border border-border shadow-sm hover:border-red/30 hover:shadow-md rounded-xl p-5 transition-all group"
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -641,7 +641,7 @@ export default function TournamentManagePage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[10px] bg-white/10 text-navy/60 px-2 py-0.5 rounded-full font-semibold uppercase">
+                    <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold uppercase">
                       {FORMAT_LABELS[t.format] || t.format}
                     </span>
                     {t.divisions.map((d) => (

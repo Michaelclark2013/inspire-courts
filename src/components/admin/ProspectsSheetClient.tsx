@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { Search, ExternalLink, Download } from "lucide-react";
 import { HorizontalBarList, CHART_COLORS, BRAND } from "@/components/dashboard/Charts";
+import SearchHighlight from "@/components/ui/SearchHighlight";
 
 function downloadProspectsCSV(rows: Prospect[], filename: string) {
   const headers = ["Team", "Coach", "Phone", "Email", "Status", "Division", "Notes", "Date"];
@@ -63,6 +64,13 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [divFilter, setDivFilter] = useState("All");
+  const [sortKey, setSortKey] = useState<string>("date");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+  function toggleSort(key: string) {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortKey(key); setSortDir("asc"); }
+  }
 
   const statuses = useMemo(
     () => ["All", ...Array.from(new Set(prospects.map((p) => p.status))).sort()],
@@ -86,8 +94,12 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
           p.notes.toLowerCase().includes(q)
       );
     }
-    return list;
-  }, [prospects, search, statusFilter, divFilter]);
+    return [...list].sort((a, b) => {
+      const av = (a as any)[sortKey] ?? "";
+      const bv = (b as any)[sortKey] ?? "";
+      return sortDir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+    });
+  }, [prospects, search, statusFilter, divFilter, sortKey, sortDir]);
 
   return (
     <div className="space-y-6">
@@ -175,9 +187,15 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-off-white">
-                {["Team", "Coach", "Division", "Status", "Date", "Contact", "Notes"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
-                    {h}
+                {([["team","Team"],["coach","Coach"],["division","Division"],["status","Status"],["date","Date"],["","Contact"],["notes","Notes"]] as const).map(([key, label]) => (
+                  <th
+                    key={label}
+                    className={`px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider ${key ? "cursor-pointer hover:text-navy select-none" : ""}`}
+                    onClick={key ? () => toggleSort(key) : undefined}
+                  >
+                    {label}
+                    {key && sortKey === key && <span className="ml-1 text-accent">{sortDir === "asc" ? "\u25B2" : "\u25BC"}</span>}
+                    {key && sortKey !== key && <span className="ml-1 text-text-secondary/30">{"\u21C5"}</span>}
                   </th>
                 ))}
               </tr>
@@ -190,8 +208,8 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
               ) : (
                 filtered.map((p, i) => (
                   <tr key={i} className="hover:bg-bg/40 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-navy max-w-[160px] truncate">{p.team}</td>
-                    <td className="px-4 py-3 text-text-secondary">{p.coach}</td>
+                    <td className="px-4 py-3 font-semibold text-navy max-w-[160px] truncate"><SearchHighlight text={p.team} query={search} /></td>
+                    <td className="px-4 py-3 text-text-secondary"><SearchHighlight text={p.coach} query={search} /></td>
                     <td className="px-4 py-3">
                       {p.division !== "—" && (
                         <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">

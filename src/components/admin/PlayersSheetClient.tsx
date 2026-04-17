@@ -22,6 +22,8 @@ function downloadPlayersCSV(rows: Player[], filename: string) {
   URL.revokeObjectURL(url);
 }
 import { AdminBarChart, HorizontalBarList, CHART_COLORS, BRAND } from "@/components/dashboard/Charts";
+import SearchHighlight from "@/components/ui/SearchHighlight";
+import Badge from "@/components/ui/Badge";
 
 interface Player {
   name: string;
@@ -166,13 +168,11 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
               ) : (
                 filtered.map((p, i) => (
                   <tr key={i} className="hover:bg-bg/40 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-navy">{p.name}</td>
-                    <td className="px-4 py-3 text-text-secondary">{p.parent}</td>
-                    <td className="px-4 py-3 text-text-secondary text-xs max-w-[140px] truncate">{p.team}</td>
+                    <td className="px-4 py-3 font-semibold text-navy"><SearchHighlight text={p.name} query={search} /></td>
+                    <td className="px-4 py-3 text-text-secondary"><SearchHighlight text={p.parent} query={search} /></td>
+                    <td className="px-4 py-3 text-text-secondary text-xs max-w-[140px] truncate"><SearchHighlight text={p.team} query={search} /></td>
                     <td className="px-4 py-3">
-                      <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded font-mono">
-                        {p.division}
-                      </span>
+                      <Badge variant="accent">{p.division}</Badge>
                     </td>
                     <td className="px-4 py-3 text-text-secondary text-xs">{p.date}</td>
                     <td className="px-4 py-3">

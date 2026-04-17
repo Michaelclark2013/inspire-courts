@@ -3,6 +3,7 @@
 import { type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AreaChart, Area, ResponsiveContainer } from "recharts";
+import CountUp from "@/components/ui/CountUp";
 
 interface KPICardProps {
   title: string;
@@ -28,7 +29,15 @@ export default function KPICard({ title, value, icon: Icon, trend, trendUp, spar
         </p>
         <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-text-secondary flex-shrink-0 ml-1" />
       </div>
-      <p className={cn("text-xl lg:text-2xl font-bold", valueColor || "text-navy")}>{value}</p>
+      <p className={cn("text-xl lg:text-2xl font-bold", valueColor || "text-navy")}>
+        {typeof value === "number" ? (
+          <CountUp end={value} />
+        ) : /^\$[\d,]+$/.test(String(value)) ? (
+          <CountUp end={parseInt(String(value).replace(/[$,]/g, ""), 10)} prefix="$" />
+        ) : (
+          value
+        )}
+      </p>
       {trend && (
         <p
           className={cn(

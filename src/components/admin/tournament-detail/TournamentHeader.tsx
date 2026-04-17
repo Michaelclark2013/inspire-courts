@@ -10,6 +10,8 @@ import {
   Zap,
   Users,
 } from "lucide-react";
+import Tooltip from "@/components/ui/Tooltip";
+import StatusTimeline from "./StatusTimeline";
 import {
   FORMAT_LABELS,
   STATUS_STYLES,
@@ -44,6 +46,8 @@ function TournamentHeader({
         <ChevronLeft className="w-3 h-3" /> Back to Tournaments
       </Link>
 
+      <StatusTimeline status={data.status} />
+
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-3 mb-1 flex-wrap">
@@ -73,12 +77,14 @@ function TournamentHeader({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <Link
-            href={`/admin/tournaments/${id}/registrations`}
-            className="min-h-[44px] flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-border rounded-lg hover:border-navy/30 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
-          >
-            <Users className="w-4 h-4" /> Registrations
-          </Link>
+          <Tooltip content="View team registrations">
+            <Link
+              href={`/admin/tournaments/${id}/registrations`}
+              className="min-h-[44px] flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-border rounded-lg hover:border-navy/30 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+            >
+              <Users className="w-4 h-4" /> Registrations
+            </Link>
+          </Tooltip>
           {data.status === "draft" && data.teams.length >= 2 && (
             <button
               onClick={onGenerate}

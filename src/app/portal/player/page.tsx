@@ -123,16 +123,16 @@ export default function PlayerPortalPage() {
 
               <Link
                 href="/portal/coach"
-                className="w-full bg-white border border-light-gray hover:border-blue-500/40 rounded-2xl p-5 flex items-center gap-4 transition-all group"
+                className="w-full bg-white border border-light-gray hover:border-blue-300 rounded-2xl p-5 flex items-center gap-4 transition-all group"
               >
-                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
-                  <Users className="w-6 h-6 text-blue-400" />
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
+                  <Users className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-navy font-bold text-base">I&apos;m a Coach</p>
                   <p className="text-text-muted text-sm">Manage roster, check-in &amp; game day</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-light-gray group-hover:text-blue-400 transition-colors flex-shrink-0" />
+                <ChevronRight className="w-5 h-5 text-light-gray group-hover:text-blue-600 transition-colors flex-shrink-0" />
               </Link>
             </div>
 

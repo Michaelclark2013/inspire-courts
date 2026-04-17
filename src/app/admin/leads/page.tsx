@@ -212,7 +212,7 @@ export default function LeadsPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-border">
                 {filtered.length === 0 ? (
                   <tr>
                     <td

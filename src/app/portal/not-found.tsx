@@ -5,10 +5,10 @@ export default function PortalNotFound() {
   return (
     <div className="p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
       <div className="text-center max-w-md">
-        <div className="w-16 h-16 bg-white/[0.04] rounded-full flex items-center justify-center mx-auto mb-4">
-          <Search className="w-8 h-8 text-text-secondary" />
+        <div className="w-16 h-16 bg-off-white rounded-full flex items-center justify-center mx-auto mb-4">
+          <Search className="w-8 h-8 text-text-muted" />
         </div>
-        <h2 className="text-white font-bold text-xl mb-2">Page Not Found</h2>
+        <h2 className="text-navy font-bold text-xl mb-2">Page Not Found</h2>
         <p className="text-text-secondary text-sm mb-6">
           This portal page doesn&apos;t exist or may have been moved.
         </p>

@@ -530,7 +530,7 @@ export default function ContentEditorPage() {
                     />
                     <button
                       onClick={() => removeSection(activePage, sIdx)}
-                      className="text-navy/30 hover:text-red-400 p-1 transition-colors flex-shrink-0"
+                      className="text-navy/30 hover:text-red p-1 transition-colors flex-shrink-0"
                       title="Remove section"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -544,7 +544,7 @@ export default function ContentEditorPage() {
                         {field.type === "image" ? (
                           <Image className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
                         ) : field.type === "textarea" ? (
-                          <AlignLeft className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
+                          <AlignLeft className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
                         ) : (
                           <Type className="w-3.5 h-3.5 text-navy/40 flex-shrink-0" />
                         )}
@@ -558,7 +558,7 @@ export default function ContentEditorPage() {
                         />
                         <button
                           onClick={() => removeField(activePage, sIdx, key)}
-                          className="text-navy/40 hover:text-red-400 transition-colors flex-shrink-0"
+                          className="text-navy/40 hover:text-red transition-colors flex-shrink-0"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -644,7 +644,7 @@ export default function ContentEditorPage() {
                               </span>
                               <button
                                 onClick={() => removeListItem(activePage, sIdx, iIdx)}
-                                className="text-navy/40 hover:text-red-400 transition-colors"
+                                className="text-navy/40 hover:text-red transition-colors"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>

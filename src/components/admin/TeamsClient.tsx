@@ -91,26 +91,26 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
           </div>
           <p className="text-2xl font-bold text-navy">{teams.length}</p>
         </div>
-        <div className="bg-bg-secondary border border-red-500/20 rounded-sm p-4">
+        <div className="bg-bg-secondary border border-red/20 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-red-400 text-xs font-bold uppercase tracking-wider">Hot</span>
-            <Flame className="w-4 h-4 text-red-400" />
+            <span className="text-red text-xs font-bold uppercase tracking-wider">Hot</span>
+            <Flame className="w-4 h-4 text-red" />
           </div>
-          <p className="text-2xl font-bold text-red-400">{hotCount}</p>
+          <p className="text-2xl font-bold text-red">{hotCount}</p>
         </div>
-        <div className="bg-bg-secondary border border-yellow-500/20 rounded-sm p-4">
+        <div className="bg-bg-secondary border border-amber-200 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider">Warm</span>
-            <Phone className="w-4 h-4 text-yellow-400" />
+            <span className="text-amber-600 text-xs font-bold uppercase tracking-wider">Warm</span>
+            <Phone className="w-4 h-4 text-amber-600" />
           </div>
-          <p className="text-2xl font-bold text-yellow-400">{warmCount}</p>
+          <p className="text-2xl font-bold text-amber-600">{warmCount}</p>
         </div>
-        <div className="bg-bg-secondary border border-green-500/20 rounded-sm p-4">
+        <div className="bg-bg-secondary border border-emerald-200 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-green-400 text-xs font-bold uppercase tracking-wider">Registered</span>
-            <Mail className="w-4 h-4 text-green-400" />
+            <span className="text-emerald-600 text-xs font-bold uppercase tracking-wider">Registered</span>
+            <Mail className="w-4 h-4 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-green-400">{registeredCount}</p>
+          <p className="text-2xl font-bold text-emerald-600">{registeredCount}</p>
         </div>
       </div>
 

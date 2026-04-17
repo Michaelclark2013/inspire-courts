@@ -18,10 +18,10 @@ interface Lead {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  New: "bg-red-500/10 text-red-400 border-red-500/20",
-  Reviewed: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  Responded: "bg-green-500/10 text-green-400 border-green-500/20",
-  Contacted: "bg-green-500/10 text-green-400 border-green-500/20",
+  New: "bg-red/10 text-red border-red/20",
+  Reviewed: "bg-amber-50 text-amber-600 border-amber-200",
+  Responded: "bg-emerald-50 text-emerald-600 border-emerald-200",
+  Contacted: "bg-emerald-50 text-emerald-600 border-emerald-200",
   Converted: "bg-accent/10 text-accent border-accent/20",
 };
 
@@ -73,9 +73,9 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
           <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total Leads</span>
           <p className="text-2xl font-bold text-navy mt-2">{leads.length}</p>
         </div>
-        <div className="bg-bg-secondary border border-red-500/20 rounded-sm p-4">
-          <span className="text-red-400 text-xs font-bold uppercase tracking-wider">New</span>
-          <p className="text-2xl font-bold text-red-400 mt-2">{newCount}</p>
+        <div className="bg-bg-secondary border border-red/20 rounded-sm p-4">
+          <span className="text-red text-xs font-bold uppercase tracking-wider">New</span>
+          <p className="text-2xl font-bold text-red mt-2">{newCount}</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center gap-1.5">

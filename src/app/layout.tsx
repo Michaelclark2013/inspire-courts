@@ -5,7 +5,8 @@ import "@/lib/env"; // validate required env vars at startup
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import MobileRegisterBar from "@/components/layout/MobileRegisterBar";
-import ChatWidget from "@/components/layout/ChatWidget";
+import dynamic from "next/dynamic";
+const ChatWidget = dynamic(() => import("@/components/layout/ChatWidget"));
 import EditToolbar from "@/components/layout/EditToolbar";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MetaPixel from "@/components/analytics/MetaPixel";

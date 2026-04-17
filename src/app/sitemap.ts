@@ -22,6 +22,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/book`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/gallery`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.6 },
     { url: `${base}/faq`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${base}/camps`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/open-gym`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
   ];
 
   // Dynamic tournament pages

@@ -21,8 +21,9 @@ import { downloadICS } from "@/lib/calendar";
 import { DeadlineCountdown } from "@/components/ui/DeadlineCountdown";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
-import BracketView from "@/components/tournament/BracketView";
-import PoolStandings from "@/components/tournament/PoolStandings";
+import dynamic from "next/dynamic";
+const BracketView = dynamic(() => import("@/components/tournament/BracketView"));
+const PoolStandings = dynamic(() => import("@/components/tournament/PoolStandings"));
 import type { TournamentDetailPublic } from "@/types/tournament-public";
 import { FORMAT_LABELS } from "@/types/tournament-public";
 

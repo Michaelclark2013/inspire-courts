@@ -42,17 +42,21 @@ export default function ScoresPage() {
               Live Scores &<br />
               Standings
             </h1>
-            <p className="text-white/50 text-sm max-w-md mx-auto">
+            <p className="text-white/50 text-sm max-w-md mx-auto mb-6">
               Real-time game scores and league standings. Updates automatically
               during live games.
             </p>
+            <div className="flex items-center justify-center gap-2 text-emerald-400/70 text-xs font-semibold">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+              Auto-refreshes during live games
+            </div>
           </AnimateIn>
         </div>
       </section>
 
       {/* Scoreboard — kept dark for live game viewing */}
-      <section className="bg-navy py-8" aria-label="Live scoreboard">
-        <div className="max-w-4xl mx-auto px-4">
+      <section className="bg-navy py-8 sm:py-12" aria-label="Live scoreboard">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <h2 className="sr-only">Live Scoreboard</h2>
           <ScoresPageClient />
         </div>

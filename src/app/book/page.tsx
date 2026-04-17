@@ -87,8 +87,8 @@ export default function BookPage() {
               <div
                 key={label}
                 className={`flex items-center gap-3 py-5 px-4 lg:px-6 ${
-                  i < FEATURES.length - 1 ? "border-r border-light-gray" : ""
-                }`}
+                  i < FEATURES.length - 1 ? "lg:border-r border-light-gray" : ""
+                } ${i < 2 ? "border-b lg:border-b-0 border-light-gray" : ""}`}
               >
                 <div className="w-10 h-10 bg-navy rounded-lg flex items-center justify-center flex-shrink-0" aria-hidden="true">
                   <Icon className="w-5 h-5 text-white" />

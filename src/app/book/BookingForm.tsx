@@ -134,7 +134,10 @@ export default function BookingForm() {
 
           {/* Contact Information */}
           <fieldset className="space-y-5">
-            <legend className="text-navy font-bold text-sm uppercase tracking-wider font-[var(--font-chakra)] pb-2 border-b border-light-gray w-full">Contact Information</legend>
+            <legend className="text-navy font-bold text-sm uppercase tracking-wider font-[var(--font-chakra)] pb-2 border-b border-light-gray w-full flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-red text-white text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
+              Contact Information
+            </legend>
 
           <div>
             <label htmlFor="name" className={LABEL_CLASS}>Full Name *</label>
@@ -186,7 +189,10 @@ export default function BookingForm() {
 
           {/* Booking Details */}
           <fieldset className="space-y-5">
-            <legend className="text-navy font-bold text-sm uppercase tracking-wider font-[var(--font-chakra)] pb-2 border-b border-light-gray w-full">Booking Details</legend>
+            <legend className="text-navy font-bold text-sm uppercase tracking-wider font-[var(--font-chakra)] pb-2 border-b border-light-gray w-full flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-red text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
+              Booking Details
+            </legend>
 
           <div>
             <label htmlFor="sport" className={LABEL_CLASS}>Sport *</label>

@@ -104,7 +104,10 @@ export default function SchedulePage() {
               { name: "MLK Weekend Shootout", date: "January 2026" },
             ].map((event, i) => (
               <AnimateIn key={i} delay={i * 50}>
-                <div className="bg-white border border-light-gray rounded-xl p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-red/20 transition-all">
+                <Link
+                  href="/tournaments"
+                  className="group bg-white border border-light-gray rounded-xl p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-red/20 transition-all block"
+                >
                   <div>
                     <h3 className="text-navy font-semibold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
                       {event.name}
@@ -113,13 +116,12 @@ export default function SchedulePage() {
                       {event.date}
                     </p>
                   </div>
-                  <Link
-                    href="/tournaments"
-                    className="inline-flex items-center gap-1 text-red text-xs font-semibold uppercase hover:underline"
+                  <span
+                    className="inline-flex items-center gap-1 text-red text-xs font-semibold uppercase group-hover:underline flex-shrink-0"
                   >
-                    View Results <ArrowRight className="w-3 h-3" />
-                  </Link>
-                </div>
+                    View Results <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </Link>
               </AnimateIn>
             ))}
           </div>

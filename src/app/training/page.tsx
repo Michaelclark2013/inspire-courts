@@ -178,7 +178,7 @@ export default function TrainingPage() {
             ].map(({ label, sub }, i) => (
               <div
                 key={label}
-                className={`flex flex-col items-center justify-center py-5 px-4 text-center ${i < 3 ? "border-r border-white/10" : ""}`}
+                className={`flex flex-col items-center justify-center py-5 px-4 text-center ${i < 3 ? "sm:border-r border-white/10" : ""} ${i < 2 ? "border-b sm:border-b-0 border-white/10" : i === 2 ? "border-b sm:border-b-0 border-white/10" : ""}`}
               >
                 <span className="text-red font-bold text-sm font-[var(--font-chakra)] uppercase tracking-wide">{label}</span>
                 <span className="text-white/50 text-[10px] uppercase tracking-wider mt-0.5">{sub}</span>
@@ -376,9 +376,17 @@ export default function TrainingPage() {
               </AnimateIn>
             ))}
           </div>
-          <p className="text-text-muted text-xs text-center mt-6">
-            Trainer profiles are placeholders — real names, photos, and credentials coming soon.
-          </p>
+          <div className="mt-8 bg-off-white border border-light-gray rounded-xl p-5 text-center max-w-md mx-auto">
+            <p className="text-text-muted text-xs mb-3">
+              Trainer profiles are placeholders — real names, photos, and credentials coming soon.
+            </p>
+            <Link
+              href="/contact?type=Training+Inquiry"
+              className="inline-flex items-center gap-1.5 text-red hover:text-red-hover text-xs font-bold uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
+            >
+              Interested in training? Contact us <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -407,7 +407,7 @@ export default function CampsPage() {
             ].map((stat) => (
               <AnimateIn key={stat.label}>
                 <div className="text-center">
-                  <p className="text-red font-bold text-3xl sm:text-4xl lg:text-5xl font-[var(--font-chakra)] uppercase tracking-tight leading-none mb-1">
+                  <p className="text-red font-bold text-3xl sm:text-4xl lg:text-5xl font-[var(--font-chakra)] uppercase tracking-tight leading-none mb-1" style={{ fontVariantNumeric: "tabular-nums" }}>
                     {stat.value}
                   </p>
                   <p className="text-white/50 text-[10px] sm:text-xs uppercase tracking-wider">
@@ -512,9 +512,9 @@ export default function CampsPage() {
           <div className="space-y-3">
             {FAQ_ITEMS.map((item, i) => (
               <AnimateIn key={item.q} delay={i * 50}>
-                <details className="group bg-white border border-light-gray rounded-2xl overflow-hidden">
-                  <summary className="flex items-center justify-between cursor-pointer px-6 py-5 list-none">
-                    <span className="text-navy font-semibold text-sm sm:text-base pr-4 font-[var(--font-chakra)] uppercase tracking-tight">
+                <details className="group bg-white border border-light-gray rounded-2xl overflow-hidden hover:border-red/20 transition-colors">
+                  <summary className="flex items-center justify-between cursor-pointer px-6 py-5 list-none select-none">
+                    <span className="text-navy font-semibold text-sm sm:text-base pr-4 font-[var(--font-chakra)] uppercase tracking-tight group-open:text-red transition-colors">
                       {item.q}
                     </span>
                     <ChevronDown
@@ -522,7 +522,7 @@ export default function CampsPage() {
                       aria-hidden="true"
                     />
                   </summary>
-                  <div className="px-6 pb-5">
+                  <div className="px-6 pb-5 animate-[fadeIn_0.2s_ease-out]">
                     <p className="text-text-muted text-sm leading-relaxed">
                       {item.a}
                     </p>

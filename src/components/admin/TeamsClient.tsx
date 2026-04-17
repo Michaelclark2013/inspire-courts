@@ -190,6 +190,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
       <div className="hidden md:block bg-bg-secondary border border-border rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
+            <caption className="sr-only">Teams roster</caption>
             <thead>
               <tr className="border-b border-border">
                 <th className="px-3 py-3 w-8">

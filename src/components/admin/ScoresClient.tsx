@@ -106,6 +106,7 @@ export default function ScoresClient({ games }: { games: Game[] }) {
           <div className="hidden md:block bg-bg-secondary border border-border rounded-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
+                <caption className="sr-only">Game scores</caption>
                 <thead>
                   <tr className="border-b border-border">
                     <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Home</th>

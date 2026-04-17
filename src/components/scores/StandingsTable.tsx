@@ -92,7 +92,9 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
         <div className="px-4 py-3 border-b border-white/10 flex flex-wrap items-center gap-2 sm:gap-2">
           <span className="text-white/40 text-xs font-semibold uppercase tracking-wider">Division:</span>
           <button
+            type="button"
             onClick={() => setDivisionFilter("")}
+            aria-pressed={divisionFilter === ""}
             className={`text-xs px-3 py-1.5 min-h-[36px] rounded-full font-semibold transition-colors ${
               divisionFilter === "" ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
             }`}
@@ -101,8 +103,10 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
           </button>
           {divisions.map((d) => (
             <button
+              type="button"
               key={d}
               onClick={() => setDivisionFilter(d)}
+              aria-pressed={divisionFilter === d}
               className={`text-xs px-3 py-1.5 min-h-[36px] rounded-full font-semibold transition-colors ${
                 divisionFilter === d ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
               }`}
@@ -113,6 +117,7 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
         </div>
       )}
       <table className="w-full text-sm">
+        <caption className="sr-only">Team standings</caption>
         <thead>
           <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
             <th className="text-left px-4 py-3 font-semibold">#</th>

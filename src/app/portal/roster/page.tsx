@@ -305,6 +305,7 @@ export default function RosterPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
+                <caption className="sr-only">Team roster players</caption>
                 <thead>
                   <tr className="border-b border-light-gray text-text-muted text-xs uppercase tracking-wider">
                     <th className="text-left px-6 py-3 font-semibold">

@@ -153,6 +153,7 @@ export default function DashboardDBStats() {
           Updated {secondsAgo}s ago
         </span>
         <button
+          type="button"
           onClick={() => fetchData()}
           className="text-text-secondary hover:text-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 rounded p-1 min-h-[44px] min-w-[44px] flex items-center justify-center lg:min-h-0 lg:min-w-0 lg:p-0"
           title="Refresh now"
@@ -378,6 +379,7 @@ export default function DashboardDBStats() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
+                <caption className="sr-only">Today&apos;s game schedule</caption>
                 <thead>
                   <tr className="border-b border-border text-text-secondary text-[10px] uppercase tracking-wider">
                     <th className="text-left px-4 py-2 font-semibold">Time</th>

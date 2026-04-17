@@ -39,8 +39,8 @@ export async function sendPushNotification(
       JSON.stringify(payload)
     );
     return true;
-  } catch (error: any) {
-    if (error.statusCode === 410) {
+  } catch (error: unknown) {
+    if (error instanceof Error && "statusCode" in error && (error as { statusCode: number }).statusCode === 410) {
       // Subscription expired — caller should delete it
       return false;
     }

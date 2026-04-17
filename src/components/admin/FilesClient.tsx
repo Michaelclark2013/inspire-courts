@@ -30,7 +30,7 @@ interface Props {
 
 function FileIcon({ mimeType }: { mimeType: string }) {
   if (mimeType === "application/vnd.google-apps.folder")
-    return <Folder className="w-4 h-4 text-yellow-400" />;
+    return <Folder className="w-4 h-4 text-yellow-600" />;
   if (mimeType === "application/vnd.google-apps.spreadsheet")
     return <FileSpreadsheet className="w-4 h-4 text-success" />;
   if (mimeType === "application/vnd.google-apps.document")

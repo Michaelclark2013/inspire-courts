@@ -3,7 +3,7 @@
 export function isNativeApp(): boolean {
   // Check if Capacitor is available and running natively
   try {
-    const cap = (window as any).Capacitor;
+    const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
     return cap?.isNativePlatform?.() ?? false;
   } catch {
     return false;

@@ -6,12 +6,14 @@ import { Search } from "lucide-react";
 interface Column {
   key: string;
   label: string;
-  render?: (value: any, row: any) => React.ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  render?: (value: any, row: Record<string, any>) => React.ReactNode;
 }
 
 interface DataTableProps {
   columns: Column[];
-  data: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: Record<string, any>[];
   searchKey?: string;
   searchPlaceholder?: string;
 }
@@ -42,6 +44,7 @@ export default function DataTable({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={searchPlaceholder}
+            aria-label={searchPlaceholder}
             className="w-full bg-bg border border-border rounded-lg pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50"
           />
         </div>

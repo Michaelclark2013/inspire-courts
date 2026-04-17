@@ -130,7 +130,7 @@ export default function ForgotPasswordClient() {
               <div className="mt-5 text-center">
                 <Link
                   href="/login"
-                  className="inline-flex items-center gap-2 text-white/40 text-xs hover:text-white/60 transition-colors"
+                  className="inline-flex items-center gap-2 text-white/50 text-xs hover:text-white/70 transition-colors"
                 >
                   <ArrowLeft className="w-3 h-3" />
                   Back to Sign In
@@ -140,7 +140,7 @@ export default function ForgotPasswordClient() {
           )}
         </div>
 
-        <p className="text-center text-white/20 text-xs mt-8 uppercase tracking-widest">
+        <p className="text-center text-white/40 text-xs mt-8 uppercase tracking-widest">
           Inspire Courts AZ &bull; Gilbert, Arizona
         </p>
       </div>

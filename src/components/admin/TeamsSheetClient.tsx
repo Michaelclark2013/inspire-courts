@@ -318,7 +318,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                         {team.amount || "—"}
                       </td>
                       <td className="px-4 py-3">
-                        <button className="text-text-secondary hover:text-navy transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+                        <button aria-label={expanded === i ? "Collapse details" : "Expand details"} className="text-text-secondary hover:text-navy transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
                           {expanded === i ? (
                             <ChevronUp className="w-4 h-4" />
                           ) : (

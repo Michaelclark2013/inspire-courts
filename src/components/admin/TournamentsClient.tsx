@@ -265,7 +265,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
                       <td className="px-4 py-3 font-mono text-xs text-text-secondary">{t.fee}</td>
                       <td className="px-4 py-3 font-bold text-accent">{t.revenue}</td>
                       <td className="px-4 py-3">
-                        <button className="text-text-secondary hover:text-navy transition-colors">
+                        <button aria-label={expanded === i ? "Collapse details" : "Expand details"} className="text-text-secondary hover:text-navy transition-colors">
                           {expanded === i ? (
                             <ChevronUp className="w-4 h-4" />
                           ) : (

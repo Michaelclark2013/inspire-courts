@@ -234,7 +234,7 @@ export default function UsersPage() {
           <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Name
+                Name <span className="text-red">*</span>
               </label>
               <input
                 type="text"
@@ -247,7 +247,7 @@ export default function UsersPage() {
             </div>
             <div>
               <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Email
+                Email <span className="text-red">*</span>
               </label>
               <input
                 type="email"
@@ -260,7 +260,7 @@ export default function UsersPage() {
             </div>
             <div>
               <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Password
+                Password <span className="text-red">*</span>
               </label>
               <input
                 type="password"
@@ -468,6 +468,7 @@ export default function UsersPage() {
                         <button
                           onClick={() => handleCopyEmail(u.id, u.email)}
                           title="Copy email"
+                          aria-label="Copy email address"
                           className="opacity-0 group-hover:opacity-100 transition-opacity text-navy/30 hover:text-accent flex-shrink-0"
                         >
                           {copiedEmail === u.id ? (

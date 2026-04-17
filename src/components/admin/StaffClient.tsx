@@ -49,7 +49,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
     setRefSort((s) => s.key === key ? { key, dir: s.dir === "desc" ? "asc" : "desc" } : { key, dir: "desc" });
   }
   function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-    if (!active) return <ChevronDown className="w-3 h-3 opacity-20 inline ml-1" />;
+    if (!active) return <ChevronDown className="w-3 h-3 opacity-40 inline ml-1" />;
     return dir === "asc"
       ? <ChevronUp className="w-3 h-3 text-accent inline ml-1" />
       : <ChevronDown className="w-3 h-3 text-accent inline ml-1" />;

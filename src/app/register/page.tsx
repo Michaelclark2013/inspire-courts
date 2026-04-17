@@ -284,13 +284,13 @@ export default function RegisterPage() {
                 if (selectedRole) setStep("details");
               }}
               disabled={!selectedRole}
-              className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover disabled:opacity-30 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-all mt-6 shadow-lg shadow-red/20"
+              className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-all mt-6 shadow-lg shadow-red/20"
             >
               Continue
             </button>
 
             <div className="mt-5 text-center">
-              <span className="text-white/30 text-xs">Already have an account? </span>
+              <span className="text-white/50 text-xs">Already have an account? </span>
               <Link href="/login" className="text-red text-xs hover:text-red-hover transition-colors">
                 Sign In
               </Link>
@@ -452,7 +452,7 @@ export default function RegisterPage() {
             </button>
 
             <div className="mt-5 text-center">
-              <span className="text-white/30 text-xs">Already have an account? </span>
+              <span className="text-white/50 text-xs">Already have an account? </span>
               <Link href="/login" className="text-red text-xs hover:text-red-hover transition-colors">
                 Sign In
               </Link>

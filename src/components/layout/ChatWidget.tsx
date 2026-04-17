@@ -581,7 +581,8 @@ export default function ChatWidget() {
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
-                className="bg-red hover:bg-red-hover disabled:opacity-30 text-white px-3.5 py-3 rounded-xl transition-all"
+                aria-label="Send message"
+                className="bg-red hover:bg-red-hover disabled:opacity-50 text-white px-3.5 py-3 rounded-xl transition-all"
               >
                 <Send className="w-4 h-4" />
               </button>

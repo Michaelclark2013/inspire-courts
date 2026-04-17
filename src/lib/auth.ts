@@ -7,6 +7,7 @@ import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 import { logger } from "@/lib/logger";
+import { timestampAZ } from "@/lib/utils";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -121,7 +122,7 @@ export const authOptions: NextAuthOptions = {
               token.userId = String(newUser.id);
 
               // Save new OAuth registration to Drive + Sheets (non-blocking)
-              const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+              const timestamp = timestampAZ();
               Promise.allSettled([
                 saveRegistrationToDrive(user.name || "User", user.email!, "parent"),
                 appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [

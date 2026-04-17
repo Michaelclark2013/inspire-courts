@@ -11,6 +11,7 @@ import {
   SOCIAL_LINKS,
 } from "@/lib/constants";
 import { sanitizeField as sanitizeLeadField } from "@/lib/sanitize";
+import { timestampAZ } from "@/lib/utils";
 
 // ── In-memory caches ──
 let cachedEvents: string | null = null;
@@ -613,7 +614,7 @@ ${pagePrompt}`;
             );
 
             // Save to prospect pipeline sheet
-            const chatTimestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+            const chatTimestamp = timestampAZ();
             appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [
               sanitizeSheetRow([
                 chatTimestamp,

@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { logger } from "@/lib/logger";
+import { timestampAZ } from "@/lib/utils";
 
 // ── Google Service Account JWT Auth ──────────────────────────────────────────
 
@@ -690,7 +691,7 @@ export async function saveRegistrationToDrive(
       `Email: ${email}`,
       `Phone: ${phone || "Not provided"}`,
       `Role: ${roleFolderName}`,
-      `Registered: ${now.toLocaleString("en-US", { timeZone: "America/Phoenix" })}`,
+      `Registered: ${timestampAZ(now)}`,
     ].join("\n");
 
     await createDriveDoc(roleFolderId, title, content);

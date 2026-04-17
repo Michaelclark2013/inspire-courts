@@ -13,6 +13,7 @@ import {
   findOrCreateDriveFolder,
   createDriveDoc,
 } from "@/lib/google-sheets";
+import { timestampAZ } from "@/lib/utils";
 
 // GET /api/portal/waiver — returns whether the current user has a waiver on file.
 // Used by the portal dashboard to drive the "Submit Waiver" registration step.
@@ -92,9 +93,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Event name must be 200 characters or less" }, { status: 400 });
   }
 
-  const timestamp = new Date().toLocaleString("en-US", {
-    timeZone: "America/Phoenix",
-  });
+  const timestamp = timestampAZ();
 
   if (isGoogleConfigured()) {
     // Append waiver data to the playerCheckIn sheet

@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { logger } from "@/lib/logger";
+import { timestampAZ } from "@/lib/utils";
 
 export interface LeadData {
   name?: string;
@@ -79,7 +80,7 @@ export async function sendLeadEmail(lead: LeadData): Promise<void> {
             : ""
         }
         <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999;">
-          Sent by Inspire Courts Bot &bull; ${new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" })}
+          Sent by Inspire Courts Bot &bull; ${timestampAZ()}
         </div>
       </div>
     </div>

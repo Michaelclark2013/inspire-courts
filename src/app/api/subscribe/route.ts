@@ -3,6 +3,7 @@ import { subscribeSchema } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
+import { timestampAZ } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     const cleanEmail = result.data.email.trim().toLowerCase();
 
     // Save to prospect pipeline sheet (fire-and-forget)
-    const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+    const timestamp = timestampAZ();
     appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [
       sanitizeSheetRow([timestamp, "", cleanEmail, "", "General", "Newsletter Subscribe", "Warm"]),
     ]).catch((err) => logger.error("Failed to save subscriber to sheet", { error: String(err) }));

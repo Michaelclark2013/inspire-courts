@@ -10,6 +10,7 @@ import {
   SHEETS,
 } from "@/lib/google-sheets";
 import { logger } from "@/lib/logger";
+import { timestampAZ } from "@/lib/utils";
 
 // POST /api/admin/checkin — check in a player (dual-write: DB + Sheets)
 export async function POST(request: NextRequest) {
@@ -42,9 +43,7 @@ export async function POST(request: NextRequest) {
 
   // Fire-and-forget: write to Google Sheets
   if (isGoogleConfigured()) {
-    const timestamp = new Date().toLocaleString("en-US", {
-      timeZone: "America/Phoenix",
-    });
+    const timestamp = timestampAZ();
     appendSheetRow(SHEETS.playerCheckIn, "A:F", [
       sanitizeSheetRow([timestamp, playerName, teamName || "", division || "", "CHECKIN", session.user.name || ""]),
     ]).catch((err) => logger.warn("Failed to sync check-in to Google Sheets", { error: String(err) }));

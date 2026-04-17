@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import { timestampAZ } from "@/lib/utils";
 
 /** Strip HTML special characters to prevent XSS in stored data. */
 function sanitize(value: string): string {
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Save contact info to Google Drive and Sheets (non-blocking)
-    const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+    const timestamp = timestampAZ();
     Promise.allSettled([
       saveRegistrationToDrive(sanitizedName, sanitizedEmail, role, sanitizedPhone ?? ""),
       appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [

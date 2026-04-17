@@ -7,6 +7,7 @@ import { INQUIRY_INTEREST_MAP } from "@/lib/constants";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 import { sanitizeField as sanitize } from "@/lib/sanitize";
+import { timestampAZ } from "@/lib/utils";
 
 export async function POST(request: Request) {
   // Rate limit: 5 requests per minute per IP
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
     );
 
     // Save to prospect pipeline sheet (fire-and-forget)
-    const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Phoenix" });
+    const timestamp = timestampAZ();
     appendSheetRow(SHEETS.prospectPipeline, "Sheet1!A:G", [
       sanitizeSheetRow([timestamp, name, email, phone, INQUIRY_INTEREST_MAP[inquiryType ?? ""] ?? "General", "Contact Form", "Warm"]),
     ]).catch((err) => logger.error("Failed to save contact to sheet", { error: String(err) }));

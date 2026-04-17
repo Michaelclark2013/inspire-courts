@@ -9,6 +9,7 @@ import { ToastProvider } from "@/components/ui/Toast";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import { isAdminRole } from "@/lib/permissions";
 import OfflineBanner from "@/components/pwa/OfflineBanner";
+import CommandPalette from "@/components/admin/CommandPalette";
 
 export const metadata = {
   title: "Admin Dashboard | Inspire Courts AZ",
@@ -51,6 +52,7 @@ export default async function AdminLayout({
           </main>
           <AdminFAB />
           <KeyboardShortcutsHint />
+          <CommandPalette />
         </div>
       </ToastProvider>
     </SessionProvider>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { HelpCircle, X } from "lucide-react";
 
 const SHORTCUTS = [
+  { keys: ["⌘", "K"], desc: "Command palette" },
   { keys: ["R"], desc: "Refresh data" },
   { keys: ["N"], desc: "New item" },
   { keys: ["Esc"], desc: "Close modal / panel" },

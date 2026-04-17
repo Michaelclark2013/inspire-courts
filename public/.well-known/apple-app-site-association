@@ -1,0 +1,30 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAM_ID.com.inspirecourts.app",
+        "paths": [
+          "/tournaments/*",
+          "/scores",
+          "/schedule",
+          "/portal",
+          "/portal/*"
+        ]
+      },
+      {
+        "appID": "TEAM_ID.com.inspirecourts.admin",
+        "paths": [
+          "/admin",
+          "/admin/*"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "TEAM_ID.com.inspirecourts.app",
+      "TEAM_ID.com.inspirecourts.admin"
+    ]
+  }
+}

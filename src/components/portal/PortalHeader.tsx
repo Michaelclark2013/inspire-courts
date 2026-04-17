@@ -23,9 +23,24 @@ function RefreshIndicatorImpl({ lastUpdated, onRefresh, isFetching = false }: Re
     return () => clearInterval(id);
   }, [lastUpdated]);
 
+  // Auto-refresh when data is stale (>5 min)
+  useEffect(() => {
+    if (secondsAgo >= 300 && !isFetching) {
+      onRefresh();
+    }
+  }, [secondsAgo >= 300]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!lastUpdated) return null;
 
-  const label = secondsAgo < 5 ? "Just now" : `${secondsAgo}s ago`;
+  const label =
+    secondsAgo < 5
+      ? "Just now"
+      : secondsAgo < 60
+        ? `${secondsAgo}s ago`
+        : secondsAgo < 3600
+          ? `${Math.floor(secondsAgo / 60)}m ago`
+          : `${Math.floor(secondsAgo / 3600)}h ago`;
+  const isStale = secondsAgo > 120;
   const aria = `Last updated ${label}. Click to refresh.`;
   return (
     <button
@@ -35,13 +50,14 @@ function RefreshIndicatorImpl({ lastUpdated, onRefresh, isFetching = false }: Re
       aria-label={aria}
       title={aria}
       className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1.5 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none disabled:opacity-60 disabled:cursor-not-allowed ${
-        secondsAgo > 60
+        isStale
           ? "text-amber-600 bg-amber-50 hover:bg-amber-100"
           : "text-text-muted bg-off-white hover:bg-navy/[0.04]"
       }`}
     >
       <RefreshCw className={`w-3 h-3 ${isFetching ? "animate-spin" : ""}`} />
       {label}
+      {isStale && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />}
     </button>
   );
 }

@@ -11,6 +11,7 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MetaPixel from "@/components/analytics/MetaPixel";
 import SessionProvider from "@/components/layout/SessionProvider";
 import ScrollProgress from "@/components/ui/ScrollProgress";
+import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/lib/constants";
 
 const workSans = Work_Sans({
@@ -108,6 +109,7 @@ export default function RootLayout({
           <GoogleAnalytics />
           <MetaPixel />
         </SessionProvider>
+        <ServiceWorkerRegistrar />
       </body>
     </html>
   );

@@ -17,6 +17,7 @@ import {
   CalendarPlus,
 } from "lucide-react";
 import { nativeShare } from "@/lib/capacitor";
+import { downloadICS } from "@/lib/calendar";
 import BracketView from "@/components/tournament/BracketView";
 import PoolStandings from "@/components/tournament/PoolStandings";
 import type { TournamentDetailPublic } from "@/types/tournament-public";
@@ -260,8 +261,22 @@ export default function PublicTournamentPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              <CalendarPlus className="w-3.5 h-3.5" /> Add to Calendar
+              <CalendarPlus className="w-3.5 h-3.5" /> Google Cal
             </a>
+            <button
+              type="button"
+              onClick={() => downloadICS({
+                title: data.name,
+                startDate: data.startDate,
+                endDate: data.endDate || data.startDate,
+                location: data.location || "Inspire Courts AZ, Gilbert, AZ",
+                description: `Tournament at Inspire Courts. View details: https://inspirecourtsaz.com/tournaments/${data.id}`,
+                url: `https://inspirecourtsaz.com/tournaments/${data.id}`,
+              })}
+              className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+            >
+              <CalendarPlus className="w-3.5 h-3.5" /> Download .ics
+            </button>
           </div>
         </header>
 

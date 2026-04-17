@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useConfirm } from "@/hooks/useConfirm";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import {
@@ -40,6 +42,7 @@ export default function ContentEditorPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const { confirm: confirmDialog, modalProps } = useConfirm();
   const [activePage, setActivePage] = useState("home");
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(["0"]));
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
@@ -148,9 +151,10 @@ export default function ContentEditorPage() {
     setSaving(false);
   }, [content]);
 
-  function discard() {
+  async function discard() {
     if (!savedContentRef.current) return;
-    if (!confirm("Discard all unsaved changes?")) return;
+    const ok = await confirmDialog({ title: "Discard Changes", message: "Discard all unsaved changes?", confirmLabel: "Discard", variant: "warning" });
+    if (!ok) return;
     setContent(savedContentRef.current);
     setDirty(false);
     setDraftBanner(false);
@@ -755,6 +759,7 @@ export default function ContentEditorPage() {
           </button>
         </div>
       )}
+      <ConfirmModal {...modalProps} />
     </div>
   );
 }

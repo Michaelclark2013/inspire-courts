@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { triggerHaptic } from "@/lib/capacitor";
+import { useFormPersist } from "@/hooks/useFormPersist";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -47,6 +48,22 @@ export default function RegisterPage() {
   const [division, setDivision] = useState("");
   const [playerCount, setPlayerCount] = useState("");
   const [waiversAcknowledged, setWaiversAcknowledged] = useState(false);
+
+  // Persist form data to localStorage so users don't lose progress
+  const restoreForm = useCallback((saved: Record<string, unknown>) => {
+    if (saved.teamName) setTeamName(saved.teamName as string);
+    if (saved.coachName) setCoachName(saved.coachName as string);
+    if (saved.coachEmail) setCoachEmail(saved.coachEmail as string);
+    if (saved.coachPhone) setCoachPhone(saved.coachPhone as string);
+    if (saved.division) setDivision(saved.division as string);
+    if (saved.playerCount) setPlayerCount(saved.playerCount as string);
+  }, []);
+
+  const { clearSaved } = useFormPersist(
+    `tournament-register-${id}`,
+    { teamName, coachName, coachEmail, coachPhone, division, playerCount },
+    restoreForm,
+  );
 
   // Field-level validation (touched tracks which fields the user has interacted with)
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -122,6 +139,7 @@ export default function RegisterPage() {
       }
 
       triggerHaptic("success");
+      clearSaved(); // Clear persisted form data on success
 
       // If checkout URL, redirect to Square
       if (data.checkoutUrl) {

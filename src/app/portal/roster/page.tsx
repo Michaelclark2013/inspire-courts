@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useConfirm } from "@/hooks/useConfirm";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 import { useSession } from "next-auth/react";
 import {
   Users,
@@ -50,6 +52,7 @@ export default function RosterPage() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ name: "", jerseyNumber: "" });
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const { confirm, modalProps } = useConfirm();
   const [sortField, setSortField] = useState<SortField>("name");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [teamLogoUrl, setTeamLogoUrl] = useState<string | null>(null);
@@ -119,7 +122,8 @@ export default function RosterPage() {
   }
 
   async function handleRemove(id: number, name: string) {
-    if (!confirm(`Remove ${name} from roster?`)) return;
+    const ok = await confirm({ title: "Remove Player", message: `Remove ${name} from roster?`, confirmLabel: "Remove", variant: "danger" });
+    if (!ok) return;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/portal/roster?id=${id}`, { method: "DELETE" });
@@ -357,6 +361,7 @@ export default function RosterPage() {
           )}
         </div>
       )}
+      <ConfirmModal {...modalProps} />
     </div>
   );
 }

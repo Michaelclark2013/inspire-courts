@@ -1,11 +1,16 @@
 {
-  "name": "Inspire Courts AZ",
-  "short_name": "Inspire Courts",
-  "description": "Arizona's premier indoor basketball & volleyball facility. 7 courts, game film, tournaments. Gilbert, AZ.",
-  "start_url": "/",
+  "name": "Inspire Courts",
+  "short_name": "Inspire",
+  "description": "Basketball & volleyball tournaments, live scores, team registration, and court booking in Phoenix, AZ",
+  "start_url": "/tournaments",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0B1D3A",
+  "orientation": "portrait",
   "theme_color": "#0B1D3A",
+  "background_color": "#0B1D3A",
+  "id": "inspire-courts-public",
+  "categories": ["sports", "fitness"],
+  "lang": "en",
   "icons": [
     {
       "src": "/icon.png",
@@ -26,6 +31,10 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["sports", "fitness"],
-  "lang": "en"
+  "shortcuts": [
+    { "name": "Tournaments", "url": "/tournaments" },
+    { "name": "Live Scores", "url": "/scores" },
+    { "name": "Book a Court", "url": "/book" },
+    { "name": "My Portal", "url": "/portal" }
+  ]
 }

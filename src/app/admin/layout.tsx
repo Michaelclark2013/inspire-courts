@@ -30,6 +30,11 @@ export default async function AdminLayout({
   return (
     <SessionProvider>
       <ToastProvider>
+        <head>
+          <link rel="manifest" href="/admin-manifest.json" />
+          <meta name="apple-mobile-web-app-title" content="Inspire Admin" />
+          <meta name="theme-color" content="#CC0000" />
+        </head>
         <ScrollToTop />
         <a
           href="#admin-main"

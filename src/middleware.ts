@@ -17,6 +17,15 @@ export async function middleware(request: NextRequest) {
       ? NextResponse.json({ error: "Unauthorized" }, { status: 401 })
       : NextResponse.redirect(new URL("/login", request.url));
 
+  // Offline pages — always public
+  if (pathname === "/offline" || pathname === "/admin/offline") {
+    const response = NextResponse.next();
+    response.headers.set("X-Frame-Options", "SAMEORIGIN");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    return response;
+  }
+
   // Admin routes: require admin-level role
   if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
     if (!token) return unauthorizedResponse();

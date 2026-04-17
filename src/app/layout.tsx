@@ -31,6 +31,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#0B1D3A" },
     { media: "(prefers-color-scheme: dark)", color: "#061325" },
@@ -79,6 +80,10 @@ export default function RootLayout({
     <html lang="en" className={`${workSans.variable} ${chakra.variable} h-full antialiased`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Inspire Courts" />
+        <link rel="apple-touch-icon" href="/images/inspire-athletics-logo.png" />
         <link rel="preconnect" href="https://maps.google.com" />
         <link rel="preconnect" href="https://www.youtube.com" />
         <link rel="preconnect" href="https://i.ytimg.com" />

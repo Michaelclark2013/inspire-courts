@@ -165,7 +165,7 @@ export default function AnnouncementsPage() {
         <div className="bg-white border border-border rounded-xl p-4 md:p-6 mb-4 md:mb-8">
           <form onSubmit={handleCreate} className="space-y-4">
             {saveError && (
-              <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center justify-between">
+              <div role="alert" aria-live="assertive" className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center justify-between">
                 <span>{saveError}</span>
                 <button type="button" onClick={() => setSaveError("")} className="text-red hover:text-navy ml-4">
                   <X className="w-4 h-4" />

@@ -558,6 +558,7 @@ export default function TournamentManagePage() {
               <button
                 type="submit"
                 disabled={saving}
+                aria-busy={saving}
                 className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
               >
                 {saving ? (

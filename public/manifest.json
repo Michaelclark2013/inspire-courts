@@ -1,7 +1,7 @@
 {
   "name": "Inspire Courts",
   "short_name": "Inspire",
-  "description": "Basketball & volleyball tournaments, live scores, team registration, and court booking in Phoenix, AZ",
+  "description": "Basketball & volleyball tournaments, live scores, team registration, and court booking at Inspire Courts in Gilbert, AZ",
   "start_url": "/tournaments",
   "scope": "/",
   "display": "standalone",
@@ -32,9 +32,9 @@
     }
   ],
   "shortcuts": [
-    { "name": "Tournaments", "url": "/tournaments" },
-    { "name": "Live Scores", "url": "/scores" },
-    { "name": "Book a Court", "url": "/book" },
-    { "name": "My Portal", "url": "/portal" }
+    { "name": "Tournaments", "short_name": "Tourneys", "url": "/tournaments", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] },
+    { "name": "Live Scores", "short_name": "Scores", "url": "/scores", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] },
+    { "name": "Book a Court", "short_name": "Book", "url": "/book", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] },
+    { "name": "My Portal", "short_name": "Portal", "url": "/portal", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] }
   ]
 }

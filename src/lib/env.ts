@@ -38,6 +38,9 @@ const OPTIONAL_VARS = [
   "NEXT_PUBLIC_GA_MEASUREMENT_ID",
   "NEXT_PUBLIC_META_PIXEL_ID",
   "NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION",
+  // Push notifications (VAPID)
+  "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
+  "VAPID_PRIVATE_KEY",
 ] as const;
 
 function validateEnv() {

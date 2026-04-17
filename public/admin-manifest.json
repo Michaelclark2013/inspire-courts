@@ -29,5 +29,11 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    { "name": "Dashboard", "short_name": "Home", "url": "/admin", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] },
+    { "name": "Score Entry", "short_name": "Scores", "url": "/admin/scores/enter", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] },
+    { "name": "Check-In", "short_name": "Check-In", "url": "/admin/checkin", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] },
+    { "name": "Tournaments", "short_name": "Tourneys", "url": "/admin/tournaments/manage", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] }
   ]
 }

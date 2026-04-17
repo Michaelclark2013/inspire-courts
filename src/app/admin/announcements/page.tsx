@@ -11,6 +11,7 @@ import {
   Clock,
 } from "lucide-react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import { SELECT_CLASS } from "@/lib/form-styles";
 
 type Announcement = {
   id: number;
@@ -165,7 +166,7 @@ export default function AnnouncementsPage() {
             )}
             <div>
               <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Title *
+                Title<span className="text-red ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -178,7 +179,7 @@ export default function AnnouncementsPage() {
             </div>
             <div>
               <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                Message *
+                Message<span className="text-red ml-0.5">*</span>
               </label>
               <textarea
                 value={form.body}
@@ -211,7 +212,7 @@ export default function AnnouncementsPage() {
                 <select
                   value={form.audience}
                   onChange={(e) => setForm({ ...form, audience: e.target.value })}
-                  className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red cursor-pointer"
+                  className={SELECT_CLASS}
                 >
                   <option value="all">Everyone</option>
                   <option value="coaches">Coaches Only</option>
@@ -264,7 +265,7 @@ export default function AnnouncementsPage() {
           {list.map((a) => (
             <div
               key={a.id}
-              className="bg-white border border-border rounded-xl p-5 hover:border-red/30 hover:shadow-sm transition-all"
+              className="bg-white border border-border rounded-xl p-5 hover:border-red/30 hover:shadow-md transition-all"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">

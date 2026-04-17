@@ -198,6 +198,19 @@ html {
   animation: backdropIn 0.2s ease-out both;
 }
 
+@keyframes slideUpDrawer {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUpDrawer 0.3s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
 /* ── Toast notifications ── */
 @keyframes toastIn {
   from { opacity: 0; transform: translateY(-12px) scale(0.95); }

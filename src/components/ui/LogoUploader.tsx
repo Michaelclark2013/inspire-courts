@@ -88,7 +88,7 @@ export default function LogoUploader({
     >
       {currentLogoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={currentLogoUrl} alt={teamName} className="w-16 h-16 object-contain rounded-full mb-1" />
+        <img src={currentLogoUrl} alt={teamName} className="w-16 h-16 object-contain rounded-full mb-1" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
       ) : (
         <div className="w-16 h-16 bg-light-gray rounded-full flex items-center justify-center mb-1">
           <ImageIcon className="w-7 h-7 text-text-muted" />
@@ -186,7 +186,7 @@ export default function LogoUploader({
                   {currentLogoUrl && (
                     <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={currentLogoUrl} alt="current" className="w-8 h-8 object-contain rounded-full" />
+                      <img src={currentLogoUrl} alt="current" className="w-8 h-8 object-contain rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                       <p className="text-text-secondary text-xs">Current logo — upload a new one to replace</p>
                     </div>
                   )}
@@ -203,7 +203,7 @@ export default function LogoUploader({
                 <button
                   onClick={handleUpload}
                   disabled={uploading}
-                  className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wider transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wider transition-colors"
                 >
                   {uploading ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> Uploading…</>

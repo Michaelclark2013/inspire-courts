@@ -148,7 +148,7 @@ export default async function AdminDashboard() {
   const kpis = [
     {
       title: "Total Teams",
-      value: data.totalTeams.toString(),
+      value: data.totalTeams.toLocaleString(),
       icon: Users,
       trend: "Registered this season",
       trendUp: true,
@@ -162,12 +162,12 @@ export default async function AdminDashboard() {
     },
     {
       title: "Players Checked In",
-      value: data.totalPlayers.toString(),
+      value: data.totalPlayers.toLocaleString(),
       icon: UserCheck,
     },
     {
       title: "Games Recorded",
-      value: data.totalGames.toString(),
+      value: data.totalGames.toLocaleString(),
       icon: ClipboardList,
     },
   ];

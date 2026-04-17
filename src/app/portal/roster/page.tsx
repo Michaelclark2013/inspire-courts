@@ -17,6 +17,7 @@ import {
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
 import TeamLogo from "@/components/ui/TeamLogo";
 import LogoUploader from "@/components/ui/LogoUploader";
+import Link from "next/link";
 import { usePortalView } from "@/components/portal/PortalViewContext";
 import ExportBar from "@/components/ui/ExportBar";
 import { exportCSV } from "@/lib/export";
@@ -168,6 +169,9 @@ export default function RosterPage() {
 
   return (
     <div className="p-6 lg:p-8">
+      <Link href="/portal" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4 transition-colors">
+        <span aria-hidden="true">&larr;</span> Back to Dashboard
+      </Link>
       <div className="mb-8">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex items-center gap-4">

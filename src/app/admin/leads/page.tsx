@@ -12,6 +12,7 @@ import {
   Tag,
   RefreshCw,
 } from "lucide-react";
+import { SELECT_CLASS } from "@/lib/form-styles";
 
 type Lead = {
   timestamp: string;
@@ -156,7 +157,7 @@ export default function LeadsPage() {
           value={sourceFilter}
           aria-label="Filter by lead source"
           onChange={(e) => setSourceFilter(e.target.value)}
-          className="bg-white border border-border rounded-lg px-3 py-2.5 text-navy text-xs focus:outline-none focus:border-red cursor-pointer"
+          className={SELECT_CLASS}
         >
           <option value="">All Sources</option>
           {sources.map((s) => (

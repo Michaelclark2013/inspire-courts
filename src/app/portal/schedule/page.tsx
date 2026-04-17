@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import Link from "next/link";
 import { Calendar, Loader2, AlertTriangle, RefreshCw, Radio } from "lucide-react";
 import ExportBar from "@/components/ui/ExportBar";
 import { exportCSV } from "@/lib/export";
@@ -94,6 +95,9 @@ export default function SchedulePage() {
 
   return (
     <div className="p-6 lg:p-8">
+      <Link href="/portal" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4 transition-colors">
+        <span aria-hidden="true">&larr;</span> Back to Dashboard
+      </Link>
       <div className="mb-8 flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2">

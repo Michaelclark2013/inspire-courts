@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 import { UserCircle, Save, Loader2, CheckCircle2, AlertTriangle, RefreshCw, Trash2 } from "lucide-react";
 
 function formatPhone(value: string): string {
@@ -153,6 +154,9 @@ export default function ProfilePage() {
 
   return (
     <div className="p-6 lg:p-8">
+      <Link href="/portal" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4 transition-colors">
+        <span aria-hidden="true">&larr;</span> Back to Dashboard
+      </Link>
       <div className="mb-8">
         <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           Profile

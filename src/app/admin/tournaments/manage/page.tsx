@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import ProgressRing from "@/components/ui/ProgressRing";
+import { SELECT_CLASS } from "@/lib/form-styles";
 
 type Tournament = {
   id: number;
@@ -234,7 +235,7 @@ export default function TournamentManagePage() {
 
       {/* Success Banner */}
       {successMsg && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 mb-6 flex items-center gap-3">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 mb-6 flex items-center gap-3 animate-fade-in">
           <Check className="w-5 h-5 text-emerald-600 flex-shrink-0" />
           <p className="text-emerald-700 text-sm font-semibold">
             &ldquo;{successMsg}&rdquo; created successfully!
@@ -286,7 +287,7 @@ export default function TournamentManagePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2">
                   <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                    Tournament Name *
+                    Tournament Name<span className="text-red ml-0.5">*</span>
                   </label>
                   <input
                     type="text"
@@ -305,7 +306,7 @@ export default function TournamentManagePage() {
                   <select
                     value={form.format}
                     onChange={(e) => setForm({ ...form, format: e.target.value })}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red cursor-pointer"
+                    className={SELECT_CLASS}
                   >
                     <option value="single_elim">Single Elimination</option>
                     <option value="double_elim">Double Elimination</option>
@@ -323,7 +324,7 @@ export default function TournamentManagePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
-                    Start Date *
+                    Start Date<span className="text-red ml-0.5">*</span>
                   </label>
                   <input
                     type="date"

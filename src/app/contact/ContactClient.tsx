@@ -145,7 +145,7 @@ function ContactPageInner() {
             <div className="lg:col-span-3">
               <AnimateIn>
                 {submitted ? (
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center" role="status" aria-live="polite">
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center animate-fade-in" role="status" aria-live="polite">
                     <Check className="w-12 h-12 text-green-600 mx-auto mb-4" />
                     <h3 className="text-navy font-bold text-xl uppercase tracking-tight mb-2 font-[var(--font-chakra)]">
                       Message Sent

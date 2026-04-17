@@ -97,7 +97,7 @@ export default function AdminDashboardClient() {
           type="button"
           onClick={fetchData}
           disabled={refreshing}
-          className="bg-red hover:bg-red-hover disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
+          className="bg-red hover:bg-red-hover disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
         >
           {refreshing ? "Retrying..." : "Retry"}
         </button>

@@ -25,7 +25,7 @@ function QuickAddFormImpl({
     "w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus:border-red transition-all placeholder:text-text-muted/50";
 
   return (
-    <div className="bg-white border border-border shadow-sm rounded-xl p-6 mb-8">
+    <div className="bg-white border border-border shadow-sm rounded-xl p-6 mb-8 hover:shadow-md transition-shadow">
       <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
         <Plus className="w-4 h-4 text-red" aria-hidden /> Create Game
       </h2>
@@ -50,7 +50,7 @@ function QuickAddFormImpl({
       <form onSubmit={onSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
           <div>
-            <label className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Home Team</label>
+            <label className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Home Team<span className="text-red ml-0.5">*</span></label>
             <input
               type="text"
               value={form.homeTeam}
@@ -61,7 +61,7 @@ function QuickAddFormImpl({
             />
           </div>
           <div>
-            <label className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Away Team</label>
+            <label className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Away Team<span className="text-red ml-0.5">*</span></label>
             <input
               type="text"
               value={form.awayTeam}

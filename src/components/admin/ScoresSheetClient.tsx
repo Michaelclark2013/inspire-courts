@@ -134,8 +134,11 @@ export default function ScoresSheetClient({ games, standings }: Props) {
 
           {/* Games container */}
           <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-border">
+            <div className="px-4 py-3 border-b border-border flex items-center justify-between">
               <p className="text-text-secondary text-xs">{filtered.length} games</p>
+              {filtered.length > 10 && (
+                <p className="text-text-muted text-[10px] uppercase tracking-wider animate-pulse">Scroll to see more</p>
+              )}
             </div>
 
             {/* Mobile card view */}

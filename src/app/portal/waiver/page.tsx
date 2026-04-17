@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { FileCheck, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 
 function formatPhone(value: string): string {
@@ -70,7 +71,7 @@ export default function WaiverPage() {
   if (submitted) {
     return (
       <div className="p-6 lg:p-8">
-        <div className="max-w-lg mx-auto text-center py-20">
+        <div className="max-w-lg mx-auto text-center py-20 animate-fade-in">
           <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto mb-6" />
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading mb-3">
             Waiver Submitted
@@ -104,6 +105,9 @@ export default function WaiverPage() {
 
   return (
     <div className="p-6 lg:p-8">
+      <Link href="/portal" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4 transition-colors">
+        <span aria-hidden="true">&larr;</span> Back to Dashboard
+      </Link>
       <div className="mb-8">
         <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           Player Waiver Form

@@ -165,7 +165,7 @@ export default function ApprovalsPage() {
                 <button
                   onClick={() => handleAction(user.id, "approve")}
                   disabled={actionLoading === user.id}
-                  className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wide px-5 py-2.5 rounded-xl shadow-sm shadow-emerald-600/20 transition-all hover:shadow-md hover:shadow-emerald-600/20"
+                  className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wide px-5 py-2.5 rounded-xl shadow-sm shadow-emerald-600/20 transition-all hover:shadow-md hover:shadow-emerald-600/20"
                 >
                   {actionLoading === user.id ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -177,7 +177,7 @@ export default function ApprovalsPage() {
                 <button
                   onClick={() => handleAction(user.id, "reject")}
                   disabled={actionLoading === user.id}
-                  className="inline-flex items-center gap-1.5 bg-red/10 hover:bg-red/20 disabled:opacity-50 text-red text-xs font-bold uppercase tracking-wide px-5 py-2.5 rounded-xl transition-colors"
+                  className="inline-flex items-center gap-1.5 bg-red/10 hover:bg-red/20 disabled:opacity-50 disabled:cursor-not-allowed text-red text-xs font-bold uppercase tracking-wide px-5 py-2.5 rounded-xl transition-colors"
                 >
                   <XCircle className="w-3.5 h-3.5" />
                   Deny

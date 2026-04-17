@@ -348,6 +348,7 @@ export default function TrainingPage() {
                         height={300}
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
                         className="w-full h-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                       />
                     ) : (
                       <div className="text-center">

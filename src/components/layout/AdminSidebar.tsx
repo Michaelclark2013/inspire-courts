@@ -453,12 +453,12 @@ export default function AdminSidebar() {
         <>
           {/* Backdrop */}
           <div
-            className="lg:hidden fixed inset-0 z-[65] bg-black/60"
+            className="lg:hidden fixed inset-0 z-[65] bg-black/60 animate-backdrop-in"
             onClick={() => setShowMore(false)}
           />
           {/* Drawer */}
           <div
-            className="lg:hidden fixed bottom-0 left-0 right-0 z-[66] bg-white border-t border-light-gray rounded-t-2xl max-h-[82vh] overflow-y-auto"
+            className="lg:hidden fixed bottom-0 left-0 right-0 z-[66] bg-white border-t border-light-gray rounded-t-2xl max-h-[82vh] overflow-y-auto transition-transform duration-300 ease-out animate-slide-up"
             style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
           >
             {/* Drag handle */}

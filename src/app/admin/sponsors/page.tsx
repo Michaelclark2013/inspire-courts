@@ -53,8 +53,8 @@ export default async function SponsorsPage() {
   const totalValue = sponsors.reduce((sum: number, s: any) => sum + (Number(s.amount) || 0), 0);
 
   const kpis = [
-    { title: "Total Sponsors", value: sponsors.length.toString(), icon: Handshake },
-    { title: "Active", value: activeCount.toString(), icon: CheckCircle },
+    { title: "Total Sponsors", value: sponsors.length.toLocaleString(), icon: Handshake },
+    { title: "Active", value: activeCount.toLocaleString(), icon: CheckCircle },
     { title: "Total Value", value: `$${totalValue.toLocaleString()}`, icon: DollarSign },
   ];
 

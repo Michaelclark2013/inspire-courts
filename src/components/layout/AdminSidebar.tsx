@@ -160,11 +160,18 @@ export default function AdminSidebar() {
         </div>
 
         {/* User info */}
-        <div className="px-5 py-3 border-b border-light-gray flex-shrink-0">
-          <p className="text-navy text-sm font-medium truncate">
-            {session?.user?.name || "Admin"}
-          </p>
-          <p className="text-text-muted text-xs truncate">{session?.user?.email}</p>
+        <div className="px-5 py-3 border-b border-light-gray flex-shrink-0 flex items-center gap-3">
+          <div className="w-9 h-9 bg-navy rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-white text-xs font-bold">
+              {(session?.user?.name || "A").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+            </span>
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-navy text-sm font-medium truncate">
+              {session?.user?.name || "Admin"}
+            </p>
+            <p className="text-text-muted text-xs truncate">{session?.user?.email}</p>
+          </div>
         </div>
 
         {/* Nav */}
@@ -380,14 +387,21 @@ export default function AdminSidebar() {
             </div>
 
             {/* User info */}
-            <div className="px-5 py-3 border-b border-light-gray flex-shrink-0">
-              <p className="text-navy text-sm font-semibold">
-                {session?.user?.name || "Admin"}
-              </p>
-              <p className="text-text-muted text-xs">{session?.user?.email}</p>
-              <span className="text-text-muted text-[10px] uppercase tracking-wider">
-                {ROLE_LABELS[role] || "Dashboard"}
-              </span>
+            <div className="px-5 py-3 border-b border-light-gray flex-shrink-0 flex items-center gap-3">
+              <div className="w-9 h-9 bg-navy rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-xs font-bold">
+                  {(session?.user?.name || "A").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                </span>
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-navy text-sm font-semibold truncate">
+                  {session?.user?.name || "Admin"}
+                </p>
+                <p className="text-text-muted text-xs truncate">{session?.user?.email}</p>
+                <span className="text-text-muted text-[10px] uppercase tracking-wider">
+                  {ROLE_LABELS[role] || "Dashboard"}
+                </span>
+              </div>
             </div>
 
             <div className="p-4 space-y-5">

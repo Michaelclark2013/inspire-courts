@@ -10,6 +10,7 @@ import EditToolbar from "@/components/layout/EditToolbar";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MetaPixel from "@/components/analytics/MetaPixel";
 import SessionProvider from "@/components/layout/SessionProvider";
+import ScrollProgress from "@/components/ui/ScrollProgress";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/lib/constants";
 
 const workSans = Work_Sans({
@@ -32,7 +33,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#0B1D3A" },
-    { media: "(prefers-color-scheme: dark)", color: "#0B1D3A" },
+    { media: "(prefers-color-scheme: dark)", color: "#061325" },
   ],
 };
 
@@ -91,6 +92,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <SessionProvider>
+          <ScrollProgress />
           <Header />
           <main id="main-content" className="flex-1 page-transition">{children}</main>
           <Footer />

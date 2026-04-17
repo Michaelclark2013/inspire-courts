@@ -16,6 +16,7 @@ import {
   Check,
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 type User = {
   id: number;
@@ -70,6 +71,7 @@ export default function UsersPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editRole, setEditRole] = useState("");
   const [copiedEmail, setCopiedEmail] = useState<number | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
 
   function handleCopyEmail(id: number, email: string) {
     navigator.clipboard.writeText(email).catch(() => {});
@@ -151,8 +153,14 @@ export default function UsersPage() {
     fetchUsers();
   }
 
-  async function handleDelete(id: number, name: string) {
-    if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
+  function handleDelete(id: number, name: string) {
+    setConfirmDelete({ id, name });
+  }
+
+  async function executeDelete() {
+    if (!confirmDelete) return;
+    const { id } = confirmDelete;
+    setConfirmDelete(null);
     const res = await fetch(`/api/admin/users?id=${id}`, { method: "DELETE" });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -164,6 +172,16 @@ export default function UsersPage() {
   const pendingUsers = userList.filter((u) => u.approved === false);
 
   return (
+    <>
+    <ConfirmModal
+      open={!!confirmDelete}
+      title="Delete User"
+      message={confirmDelete ? `Delete user "${confirmDelete.name}"? This cannot be undone.` : ""}
+      confirmLabel="Delete"
+      variant="danger"
+      onConfirm={executeDelete}
+      onCancel={() => setConfirmDelete(null)}
+    />
     <div className="p-3 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
@@ -528,5 +546,6 @@ export default function UsersPage() {
         )}
       </div>
     </div>
+    </>
   );
 }

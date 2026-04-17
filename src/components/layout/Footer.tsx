@@ -13,14 +13,16 @@ import { trackConversion } from "@/lib/analytics";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
   { href: "/tournaments", label: "Tournaments" },
   { href: "/scores", label: "Scores" },
   { href: "/schedule", label: "Schedule" },
   { href: "/facility", label: "Facility" },
   { href: "/gameday", label: "Game Day Info" },
+  { href: "/gallery", label: "Gallery" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
-  { href: "/book", label: "Book" },
+  { href: "/book", label: "Book a Court" },
 ];
 
 const PROGRAM_LINKS = [

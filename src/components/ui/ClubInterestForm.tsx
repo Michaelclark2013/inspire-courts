@@ -12,6 +12,7 @@ export default function ClubInterestForm() {
   const [role, setRole] = useState<Role>("player");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -37,6 +38,7 @@ export default function ClubInterestForm() {
       ].filter(Boolean).join("\n"),
     };
 
+    setFormError("");
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -44,8 +46,9 @@ export default function ClubInterestForm() {
         body: JSON.stringify(data),
       });
       if (res.ok) setSubmitted(true);
+      else setFormError(`Something went wrong. Please email ${FACILITY_EMAIL} directly.`);
     } catch {
-      alert(`Something went wrong. Please email ${FACILITY_EMAIL} directly.`);
+      setFormError(`Something went wrong. Please email ${FACILITY_EMAIL} directly.`);
     } finally {
       setLoading(false);
     }
@@ -67,6 +70,11 @@ export default function ClubInterestForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {formError && (
+        <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 text-red-700 text-sm" role="alert" aria-live="assertive">
+          {formError}
+        </div>
+      )}
       {/* Role Toggle */}
       <div className="flex gap-2 bg-off-white border border-light-gray rounded-xl p-1.5">
         <button

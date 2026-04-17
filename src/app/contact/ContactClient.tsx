@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Mail, Phone, Camera, ArrowRight, Check } from "lucide-react";
+import { MapPin, Mail, Phone, Camera, ArrowRight, Check, Loader2 } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
 import { trackConversion } from "@/lib/analytics";
@@ -41,6 +41,8 @@ function ContactPageInner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
+  const [messageLen, setMessageLen] = useState(0);
+  const MESSAGE_MAX = 5000;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -237,11 +239,17 @@ function ContactPageInner() {
                         name="message"
                         rows={5}
                         required
-                        maxLength={5000}
+                        maxLength={MESSAGE_MAX}
                         aria-required="true"
                         className={TEXTAREA_CLASS}
                         placeholder="Tell us what you need..."
+                        onChange={(e) => setMessageLen(e.target.value.length)}
                       />
+                      <div className="flex justify-end mt-1">
+                        <span className={`text-xs ${messageLen > MESSAGE_MAX * 0.9 ? "text-red" : "text-text-muted"}`}>
+                          {messageLen.toLocaleString()} / {MESSAGE_MAX.toLocaleString()}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Honeypot — hidden from real users, catches bots */}
@@ -254,10 +262,19 @@ function ContactPageInner() {
                       type="submit"
                       disabled={loading}
                       aria-busy={loading}
-                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:outline-none"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
-                      {loading ? "Sending..." : "Send Message"}{" "}
-                      <ArrowRight className="w-4 h-4" />
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          Send Message
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
                     </button>
                   </form>
                 )}

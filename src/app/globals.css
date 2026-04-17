@@ -263,23 +263,37 @@ html, body {
     background: white !important;
     color: black !important;
     font-size: 12pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   main {
     padding: 0 !important;
     margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   /* Clean table printing */
   table {
     border-collapse: collapse;
     width: 100%;
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
   }
 
   th, td {
     border: 1px solid #ccc;
     padding: 6px 10px;
     text-align: left;
+  }
+
+  th {
+    background: #f0f0f0 !important;
+    font-weight: bold;
   }
 
   /* Remove shadows and borders on cards for clean print */
@@ -290,5 +304,40 @@ html, body {
   a {
     text-decoration: none;
     color: inherit;
+  }
+
+  /* Hide interactive buttons in print */
+  button:not([type="submit"]),
+  [role="dialog"],
+  [role="alertdialog"] {
+    display: none !important;
+  }
+
+  /* Ensure admin content fills page width */
+  .lg\:ml-64,
+  [class*="ml-"] {
+    margin-left: 0 !important;
+  }
+
+  /* Force black text on all elements */
+  h1, h2, h3, h4, h5, h6, p, span, td, th, li, label {
+    color: black !important;
+  }
+
+  /* Show page breaks between major sections */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  /* Prevent orphaned headings */
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  /* Print-friendly badges */
+  [class*="rounded-full"][class*="bg-"] {
+    border: 1px solid #999 !important;
+    background: transparent !important;
+    color: black !important;
   }
 }

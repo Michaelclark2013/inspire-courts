@@ -10,6 +10,7 @@ import {
   Users,
   Clock,
 } from "lucide-react";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 type Announcement = {
   id: number;
@@ -38,6 +39,7 @@ export default function AnnouncementsPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; title: string } | null>(null);
   const [form, setForm] = useState({
     title: "",
     body: "",
@@ -87,8 +89,14 @@ export default function AnnouncementsPage() {
     setSaving(false);
   }
 
-  async function handleDelete(id: number, title: string) {
-    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  function handleDelete(id: number, title: string) {
+    setConfirmDelete({ id, title });
+  }
+
+  async function executeDelete() {
+    if (!confirmDelete) return;
+    const { id } = confirmDelete;
+    setConfirmDelete(null);
     try {
       const res = await fetch(`/api/admin/announcements?id=${id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -104,6 +112,16 @@ export default function AnnouncementsPage() {
   }
 
   return (
+    <>
+    <ConfirmModal
+      open={!!confirmDelete}
+      title="Delete Announcement"
+      message={confirmDelete ? `Delete "${confirmDelete.title}"? This cannot be undone.` : ""}
+      confirmLabel="Delete"
+      variant="danger"
+      onConfirm={executeDelete}
+      onCancel={() => setConfirmDelete(null)}
+    />
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
         <div>
@@ -294,5 +312,6 @@ export default function AnnouncementsPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

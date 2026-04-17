@@ -44,6 +44,8 @@ export async function GET() {
       role: user.role,
       phone: user.phone,
       isOAuth: user.passwordHash === "google-oauth",
+    }, {
+      headers: { "Cache-Control": "private, max-age=30, stale-while-revalidate=60" },
     });
   } catch {
     return NextResponse.json({ error: "Failed to load profile" }, { status: 500 });

@@ -74,5 +74,7 @@ export async function GET(request: NextRequest) {
     })
     .reverse(); // Most recent first
 
-  return NextResponse.json({ shifts });
+  return NextResponse.json({ shifts }, {
+    headers: { "Cache-Control": "private, max-age=30, stale-while-revalidate=60" },
+  });
 }

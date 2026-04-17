@@ -28,7 +28,9 @@ export async function GET() {
       })
       .from(users);
 
-    return NextResponse.json(allUsers);
+    return NextResponse.json(allUsers, {
+      headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=30" },
+    });
   } catch (err) {
     logger.error("Failed to fetch users", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });

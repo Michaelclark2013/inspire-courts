@@ -47,7 +47,9 @@ export async function GET() {
       };
     });
 
-    return NextResponse.json(enriched);
+    return NextResponse.json(enriched, {
+      headers: { "Cache-Control": "private, max-age=30, stale-while-revalidate=60" },
+    });
   } catch {
     return NextResponse.json({ error: "Failed to load registrations" }, { status: 500 });
   }

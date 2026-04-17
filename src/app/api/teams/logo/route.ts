@@ -40,10 +40,11 @@ async function writeLogos(logos: Record<string, string>): Promise<void> {
 export async function GET(request: NextRequest) {
   const logos = await readLogos();
   const teamName = request.nextUrl.searchParams.get("teamName");
+  const cacheHeaders = { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" };
   if (teamName) {
-    return NextResponse.json({ url: logos[teamName] || null });
+    return NextResponse.json({ url: logos[teamName] || null }, { headers: cacheHeaders });
   }
-  return NextResponse.json(logos);
+  return NextResponse.json(logos, { headers: cacheHeaders });
 }
 
 // POST /api/teams/logo — upload a logo

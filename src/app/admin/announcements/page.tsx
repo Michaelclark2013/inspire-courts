@@ -135,7 +135,7 @@ export default function AnnouncementsPage() {
       )}
 
       {showForm && (
-        <div className="bg-card border border-white/10 rounded-xl p-4 md:p-6 mb-4 md:mb-8">
+        <div className="bg-white border border-border rounded-xl p-4 md:p-6 mb-4 md:mb-8">
           <form onSubmit={handleCreate} className="space-y-4">
             {saveError && (
               <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center justify-between">
@@ -154,7 +154,7 @@ export default function AnnouncementsPage() {
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 required
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
                 placeholder="Announcement title"
               />
             </div>
@@ -167,7 +167,7 @@ export default function AnnouncementsPage() {
                 onChange={(e) => setForm({ ...form, body: e.target.value })}
                 required
                 rows={4}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25 resize-none"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25 resize-none"
                 placeholder="Write your announcement..."
               />
             </div>
@@ -178,7 +178,7 @@ export default function AnnouncementsPage() {
 
             {/* Preview */}
             {form.title && (
-              <div className="bg-navy/50 border border-white/5 rounded-lg p-4 mb-4">
+              <div className="bg-off-white border border-border rounded-lg p-4 mb-4">
                 <p className="text-navy/30 text-[10px] font-bold uppercase tracking-wider mb-2">Preview</p>
                 <p className="text-navy font-bold text-sm">{form.title}</p>
                 {form.body && <p className="text-navy/60 text-sm mt-1 whitespace-pre-wrap">{form.body}</p>}
@@ -193,7 +193,7 @@ export default function AnnouncementsPage() {
                 <select
                   value={form.audience}
                   onChange={(e) => setForm({ ...form, audience: e.target.value })}
-                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red cursor-pointer"
+                  className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red cursor-pointer"
                 >
                   <option value="all">Everyone</option>
                   <option value="coaches">Coaches Only</option>
@@ -210,7 +210,7 @@ export default function AnnouncementsPage() {
                   min={new Date().toISOString().split("T")[0]}
                   title="Announcement will be hidden after this date"
                   onChange={(e) => setForm({ ...form, expiresAt: e.target.value })}
-                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                  className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
                 />
               </div>
             </div>
@@ -246,7 +246,7 @@ export default function AnnouncementsPage() {
           {list.map((a) => (
             <div
               key={a.id}
-              className="bg-card border border-white/10 rounded-xl p-5"
+              className="bg-white border border-border rounded-xl p-5"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">

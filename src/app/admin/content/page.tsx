@@ -442,7 +442,7 @@ export default function ContentEditorPage() {
                 className={`relative px-3 md:px-4 py-2 md:py-2.5 rounded-full text-xs font-bold uppercase tracking-wide transition-colors whitespace-nowrap ${
                   activePage === id
                     ? "bg-red text-white"
-                    : "bg-white/10 text-navy/60 hover:text-navy hover:bg-white/20"
+                    : "bg-off-white text-navy/60 hover:text-navy hover:bg-light-gray"
                 }`}
               >
                 {content.pages[id].label}
@@ -474,16 +474,16 @@ export default function ContentEditorPage() {
           return (
             <div
               key={sIdx}
-              className={`bg-white/5 border rounded-xl overflow-hidden transition-colors ${
+              className={`bg-white border rounded-xl overflow-hidden transition-colors ${
                 isSectionDirty
                   ? "border-amber-500/50 ring-1 ring-amber-500/20"
-                  : "border-white/10"
+                  : "border-border"
               }`}
             >
               {/* Section Header */}
               <button
                 onClick={() => toggleSection(sKey)}
-                className="w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 hover:bg-white/5 transition-colors"
+                className="w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 hover:bg-off-white transition-colors"
               >
                 <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
                   {isExpanded ? (
@@ -514,7 +514,7 @@ export default function ContentEditorPage() {
               {isExpanded && (
                 <div className="px-4 md:px-6 pb-4 md:pb-6 space-y-4 md:space-y-5">
                   {/* Section name editor */}
-                  <div className="flex items-center gap-2 md:gap-3 pb-3 md:pb-4 border-b border-white/10">
+                  <div className="flex items-center gap-2 md:gap-3 pb-3 md:pb-4 border-b border-border">
                     <label className="text-navy/40 text-xs font-bold uppercase tracking-wider whitespace-nowrap">
                       Name:
                     </label>
@@ -522,7 +522,7 @@ export default function ContentEditorPage() {
                       type="text"
                       value={section.name}
                       onChange={(e) => updateSectionName(activePage, sIdx, e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors flex-1"
+                      className="bg-off-white border border-border rounded-lg px-3 py-1.5 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors flex-1"
                     />
                     <button
                       onClick={() => removeSection(activePage, sIdx)}
@@ -550,7 +550,7 @@ export default function ContentEditorPage() {
                           onChange={(e) =>
                             updateFieldLabel(activePage, sIdx, key, e.target.value)
                           }
-                          className="bg-transparent text-navy/70 text-xs font-bold uppercase tracking-wider focus:outline-none focus:text-navy border-b border-transparent focus:border-white/20 pb-0.5 flex-1 min-w-0"
+                          className="bg-transparent text-navy/70 text-xs font-bold uppercase tracking-wider focus:outline-none focus:text-navy border-b border-transparent focus:border-navy/30 pb-0.5 flex-1 min-w-0"
                         />
                         <button
                           onClick={() => removeField(activePage, sIdx, key)}
@@ -564,7 +564,7 @@ export default function ContentEditorPage() {
                           value={field.value}
                           onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
                           rows={3}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
+                          className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
                         />
                       ) : field.type === "image" ? (
                         <div className="space-y-2">
@@ -572,11 +572,11 @@ export default function ContentEditorPage() {
                             type="text"
                             value={field.value}
                             onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
+                            className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
                             placeholder="https://example.com/image.jpg"
                           />
                           {field.value && (
-                            <div className="relative w-full max-w-[300px] aspect-video rounded-lg overflow-hidden border border-white/10 bg-white/5">
+                            <div className="relative w-full max-w-[300px] aspect-video rounded-lg overflow-hidden border border-border bg-off-white">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={field.value}
@@ -591,7 +591,7 @@ export default function ContentEditorPage() {
                           type="text"
                           value={field.value}
                           onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
+                          className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
                         />
                       )}
                     </div>
@@ -601,19 +601,19 @@ export default function ContentEditorPage() {
                   <div className="flex flex-wrap gap-2 pt-2">
                     <button
                       onClick={() => addField(activePage, sIdx, "text")}
-                      className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-off-white hover:bg-light-gray px-3 py-2 rounded-lg transition-colors"
                     >
                       <Type className="w-3 h-3" /> Text
                     </button>
                     <button
                       onClick={() => addField(activePage, sIdx, "textarea")}
-                      className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-off-white hover:bg-light-gray px-3 py-2 rounded-lg transition-colors"
                     >
                       <AlignLeft className="w-3 h-3" /> Paragraph
                     </button>
                     <button
                       onClick={() => addField(activePage, sIdx, "image")}
-                      className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-off-white hover:bg-light-gray px-3 py-2 rounded-lg transition-colors"
                     >
                       <Image className="w-3 h-3" /> Image
                     </button>
@@ -621,7 +621,7 @@ export default function ContentEditorPage() {
 
                   {/* List Items */}
                   {section.list && (
-                    <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-white/10">
+                    <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-border">
                       <div className="flex items-center gap-2 mb-3 md:mb-4">
                         <List className="w-4 h-4 text-red" />
                         <span className="text-navy font-bold text-xs uppercase tracking-wider">
@@ -632,7 +632,7 @@ export default function ContentEditorPage() {
                         {section.list.items.map((item, iIdx) => (
                           <div
                             key={iIdx}
-                            className="bg-white/5 border border-white/10 rounded-lg p-3 md:p-4"
+                            className="bg-off-white border border-border rounded-lg p-3 md:p-4"
                           >
                             <div className="flex items-center justify-between mb-2 md:mb-3">
                               <span className="text-navy/40 text-xs font-bold uppercase">
@@ -664,7 +664,7 @@ export default function ContentEditorPage() {
                                         )
                                       }
                                       rows={2}
-                                      className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
+                                      className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
                                     />
                                   ) : (
                                     <input
@@ -679,7 +679,7 @@ export default function ContentEditorPage() {
                                           e.target.value
                                         )
                                       }
-                                      className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
+                                      className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
                                     />
                                   )}
                                 </div>
@@ -702,7 +702,7 @@ export default function ContentEditorPage() {
                   {!section.list && (
                     <button
                       onClick={() => addListToSection(activePage, sIdx)}
-                      className="flex items-center gap-1.5 text-navy/30 hover:text-navy text-xs font-bold uppercase tracking-wide bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 text-navy/30 hover:text-navy text-xs font-bold uppercase tracking-wide bg-off-white hover:bg-light-gray px-3 py-2 rounded-lg transition-colors"
                     >
                       <List className="w-3 h-3" /> Add List
                     </button>
@@ -717,7 +717,7 @@ export default function ContentEditorPage() {
       {/* Add Section */}
       <button
         onClick={() => addSection(activePage)}
-        className="flex items-center gap-2 text-navy/40 hover:text-navy text-sm font-bold uppercase tracking-wide mt-4 md:mt-6 bg-white/5 hover:bg-white/10 px-5 py-3 rounded-xl transition-colors w-full justify-center border border-dashed border-white/10 hover:border-white/20"
+        className="flex items-center gap-2 text-navy/40 hover:text-navy text-sm font-bold uppercase tracking-wide mt-4 md:mt-6 bg-off-white hover:bg-light-gray px-5 py-3 rounded-xl transition-colors w-full justify-center border border-dashed border-border hover:border-navy/30"
       >
         <Plus className="w-4 h-4" /> Add Section to {currentPage.label}
       </button>

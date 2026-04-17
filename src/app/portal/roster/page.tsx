@@ -228,7 +228,7 @@ export default function RosterPage() {
 
       {/* Add player form */}
       {showAdd && (
-        <div className="bg-card border border-light-gray rounded-xl p-6 mb-6">
+        <div className="bg-white border border-light-gray rounded-xl p-6 mb-6">
           <form onSubmit={handleAdd} className="flex gap-4 items-end">
             <div className="flex-1">
               <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -273,13 +273,13 @@ export default function RosterPage() {
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading roster...
         </div>
       ) : !team ? (
-        <div className="bg-card border border-light-gray rounded-xl p-8 text-center">
+        <div className="bg-white border border-light-gray rounded-xl p-8 text-center">
           <AlertCircle className="w-8 h-8 text-light-gray mx-auto mb-3" />
           <p className="text-navy font-semibold mb-1">No team assigned</p>
           <p className="text-text-muted text-sm">Contact the admin to be assigned to a team.</p>
         </div>
       ) : (
-        <div className="bg-card border border-light-gray rounded-xl overflow-hidden">
+        <div className="bg-white border border-light-gray rounded-xl overflow-hidden">
           <div className="px-6 py-4 border-b border-light-gray flex items-center gap-2">
             <Users className="w-4 h-4 text-red" />
             <h2 className="text-navy font-bold text-sm uppercase tracking-wider">

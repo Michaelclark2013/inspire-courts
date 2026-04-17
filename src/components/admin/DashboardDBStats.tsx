@@ -223,7 +223,7 @@ export default function DashboardDBStats() {
               { num: "2", label: "Add an announcement for coaches", href: "/admin/announcements", icon: Megaphone },
               { num: "3", label: "View your leads pipeline", href: "/admin/leads", icon: TrendingUp },
             ].map((step) => (
-              <Link key={step.num} href={step.href} className="flex items-center gap-3 px-4 py-3 bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 rounded-lg transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
+              <Link key={step.num} href={step.href} className="flex items-center gap-3 px-4 py-3 bg-white hover:bg-off-white border border-border rounded-lg transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
                 <span className="w-7 h-7 rounded-full bg-red/20 text-red flex items-center justify-center text-xs font-bold">{step.num}</span>
                 <span className="text-navy text-sm font-medium group-hover:text-navy/80">{step.label}</span>
                 <ArrowRight className="w-3.5 h-3.5 text-text-secondary ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -393,7 +393,7 @@ export default function DashboardDBStats() {
                     return (
                     <tr
                       key={g.id}
-                      className={`border-b border-white/5 hover:bg-white/[0.02] transition-colors ${isSoon ? "bg-amber-500/5" : ""}`}
+                      className={`border-b border-border hover:bg-off-white transition-colors ${isSoon ? "bg-amber-50" : ""}`}
                     >
                       <td className={`px-4 py-2 text-xs whitespace-nowrap ${isSoon ? "text-amber-400 font-semibold" : "text-navy/60"}`}>
                         {isSoon

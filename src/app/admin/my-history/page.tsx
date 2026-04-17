@@ -59,25 +59,25 @@ export default function MyHistoryPage() {
 
       {/* Summary cards */}
       <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mb-4 md:mb-8">
-        <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
+        <div className="bg-white border border-border rounded-xl p-3 md:p-5">
           <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
             <History className="w-3 h-3" /> Shifts
           </div>
           <p className="text-navy text-xl md:text-2xl font-bold">{shifts.length}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
+        <div className="bg-white border border-border rounded-xl p-3 md:p-5">
           <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
             <Clock className="w-3 h-3" /> Hours
           </div>
           <p className="text-navy text-xl md:text-2xl font-bold">{totalHours.toFixed(1)}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
+        <div className="bg-white border border-border rounded-xl p-3 md:p-5">
           <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
             <DollarSign className="w-3 h-3" /> Earned
           </div>
           <p className="text-navy text-xl md:text-2xl font-bold">${totalPay.toFixed(2)}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-3 md:p-5">
+        <div className="bg-white border border-border rounded-xl p-3 md:p-5">
           <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
             <DollarSign className="w-3 h-3" /> Avg
           </div>
@@ -88,8 +88,8 @@ export default function MyHistoryPage() {
       </div>
 
       {/* Shift table */}
-      <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3 flex-wrap">
+      <div className="bg-white border border-border rounded-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-border flex items-center gap-3 flex-wrap">
           <History className="w-4 h-4 text-red flex-shrink-0" />
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider flex-1">Shift History</h2>
           <div className="relative">
@@ -99,7 +99,7 @@ export default function MyHistoryPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search events or notes..."
-              className="bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-navy text-xs focus:outline-none focus:border-red placeholder:text-navy/25 w-48"
+              className="bg-off-white border border-border rounded-lg pl-8 pr-3 py-1.5 text-navy text-xs focus:outline-none focus:border-red placeholder:text-navy/25 w-48"
             />
           </div>
         </div>
@@ -117,7 +117,7 @@ export default function MyHistoryPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-navy/50 text-xs uppercase tracking-wider">
+                <tr className="border-b border-border text-navy/50 text-xs uppercase tracking-wider">
                   <th className="text-left px-6 py-3 font-semibold">Date</th>
                   <th className="text-left px-6 py-3 font-semibold">Event</th>
                   <th className="text-center px-6 py-3 font-semibold">Hours</th>
@@ -134,7 +134,7 @@ export default function MyHistoryPage() {
                   </tr>
                 ) : (
                   filteredShifts.map((s, i) => (
-                    <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <tr key={i} className="border-b border-border hover:bg-off-white transition-colors">
                       <td className="px-6 py-3 text-navy">{s.date}</td>
                       <td className="px-6 py-3 text-text-secondary">{s.event || "—"}</td>
                       <td className="px-6 py-3 text-center text-navy tabular-nums">{s.hoursWorked || "—"}</td>

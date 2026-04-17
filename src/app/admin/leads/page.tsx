@@ -97,7 +97,7 @@ export default function LeadsPage() {
         </div>
         <button
           onClick={fetchLeads}
-          className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-white/10 rounded-lg hover:border-white/20 transition-colors"
+          className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-border rounded-lg hover:border-navy/30 transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
@@ -105,7 +105,7 @@ export default function LeadsPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-card border border-white/10 rounded-xl p-4">
+        <div className="bg-white border border-border rounded-xl p-4">
           <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
             Total Leads
           </p>
@@ -113,7 +113,7 @@ export default function LeadsPage() {
             {leads.length}
           </p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
+        <div className="bg-white border border-border rounded-xl p-4">
           <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
             Hot
           </p>
@@ -121,7 +121,7 @@ export default function LeadsPage() {
             {leads.filter((l) => l.status === "Hot").length}
           </p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
+        <div className="bg-white border border-border rounded-xl p-4">
           <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
             Warm
           </p>
@@ -129,7 +129,7 @@ export default function LeadsPage() {
             {leads.filter((l) => l.status === "Warm").length}
           </p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
+        <div className="bg-white border border-border rounded-xl p-4">
           <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
             Sources
           </p>
@@ -149,14 +149,14 @@ export default function LeadsPage() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, email, or phone..."
             aria-label="Search leads"
-            className="w-full bg-card border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+            className="w-full bg-white border border-border rounded-lg pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
           />
         </div>
         <select
           value={sourceFilter}
           aria-label="Filter by lead source"
           onChange={(e) => setSourceFilter(e.target.value)}
-          className="bg-card border border-white/10 rounded-lg px-3 py-2.5 text-navy text-xs focus:outline-none focus:border-red cursor-pointer"
+          className="bg-white border border-border rounded-lg px-3 py-2.5 text-navy text-xs focus:outline-none focus:border-red cursor-pointer"
         >
           <option value="">All Sources</option>
           {sources.map((s) => (
@@ -185,12 +185,12 @@ export default function LeadsPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
+        <div className="bg-white border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <caption className="sr-only">Prospect pipeline leads</caption>
               <thead>
-                <tr className="border-b border-white/10">
+                <tr className="border-b border-border">
                   <th className="text-left text-navy/40 text-[10px] font-bold uppercase tracking-wider px-5 py-3">
                     Name
                   </th>
@@ -223,7 +223,7 @@ export default function LeadsPage() {
                   </tr>
                 ) : (
                   filtered.map((lead, i) => (
-                    <tr key={i} className="hover:bg-white/[0.02] cursor-pointer" onClick={() => setExpandedLead(expandedLead === i ? null : i)}>
+                    <tr key={i} className="hover:bg-off-white cursor-pointer" onClick={() => setExpandedLead(expandedLead === i ? null : i)}>
                       <td className="px-5 py-3 text-navy font-semibold">
                         {lead.name || "—"}
                       </td>
@@ -275,7 +275,7 @@ export default function LeadsPage() {
                     const lead = filtered[i];
                     if (expandedLead !== i) return [row];
                     return [row, (
-                      <tr key={`${i}-detail`} className="bg-white/[0.02]">
+                      <tr key={`${i}-detail`} className="bg-off-white">
                         <td colSpan={6} className="px-5 py-4">
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                             <div>

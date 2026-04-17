@@ -84,17 +84,17 @@ export default function LogoUploader({
   const trigger = variant === "card" ? (
     <button
       onClick={() => setOpen(true)}
-      className="w-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-white/10 hover:border-white/30 rounded-2xl py-8 transition-colors group"
+      className="w-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border hover:border-navy/30 rounded-2xl py-8 transition-colors group"
     >
       {currentLogoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={currentLogoUrl} alt={teamName} className="w-16 h-16 object-contain rounded-full mb-1" />
       ) : (
-        <div className="w-16 h-16 bg-white/[0.04] rounded-full flex items-center justify-center mb-1">
-          <ImageIcon className="w-7 h-7 text-white/20" />
+        <div className="w-16 h-16 bg-light-gray rounded-full flex items-center justify-center mb-1">
+          <ImageIcon className="w-7 h-7 text-text-muted" />
         </div>
       )}
-      <span className="text-text-secondary text-xs font-semibold group-hover:text-white transition-colors">
+      <span className="text-text-secondary text-xs font-semibold group-hover:text-navy transition-colors">
         {currentLogoUrl ? "Change logo" : "Upload team logo"}
       </span>
     </button>
@@ -102,9 +102,9 @@ export default function LogoUploader({
     <button
       onClick={() => setOpen(true)}
       title="Upload team logo"
-      className="w-7 h-7 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.12] transition-colors flex-shrink-0"
+      className="w-7 h-7 flex items-center justify-center rounded-full bg-off-white hover:bg-light-gray transition-colors flex-shrink-0"
     >
-      <Camera className="w-3.5 h-3.5 text-text-secondary hover:text-white" />
+      <Camera className="w-3.5 h-3.5 text-text-secondary" />
     </button>
   );
 

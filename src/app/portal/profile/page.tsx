@@ -163,7 +163,7 @@ export default function ProfilePage() {
       </div>
 
       {isEnvAdmin ? (
-        <div className="bg-card border border-light-gray rounded-xl p-8 text-center">
+        <div className="bg-white border border-light-gray rounded-xl p-8 text-center">
           <UserCircle className="w-8 h-8 text-light-gray mx-auto mb-3" />
           <p className="text-navy font-semibold mb-1">Admin account</p>
           <p className="text-text-muted text-sm">
@@ -176,7 +176,7 @@ export default function ProfilePage() {
         </div>
       ) : (
         <>
-        <div className="bg-card border border-light-gray rounded-xl p-6 max-w-lg mb-8">
+        <div className="bg-white border border-light-gray rounded-xl p-6 max-w-lg mb-8">
           <div className="flex items-center gap-2 mb-6">
             <UserCircle className="w-4 h-4 text-red" />
             <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
@@ -290,7 +290,7 @@ export default function ProfilePage() {
         {/* Delete Account */}
         {!isEnvAdmin && (
           <div className="max-w-lg">
-            <div className="bg-card border border-red/20 rounded-xl p-6">
+            <div className="bg-white border border-red/20 rounded-xl p-6">
               <div className="flex items-center gap-2 mb-3">
                 <Trash2 className="w-4 h-4 text-red" />
                 <h2 className="text-red font-bold text-sm uppercase tracking-wider">

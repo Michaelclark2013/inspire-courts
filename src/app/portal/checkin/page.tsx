@@ -311,13 +311,13 @@ export default function CoachCheckInPage() {
 
       {/* Quick stats */}
       <div className="grid gap-4 md:grid-cols-2 mb-8">
-        <div className="bg-card border border-light-gray rounded-xl p-5">
+        <div className="bg-white border border-light-gray rounded-xl p-5">
           <div className="flex items-center gap-2 text-text-muted text-xs uppercase tracking-wider mb-2">
             <Users className="w-3.5 h-3.5" /> Roster
           </div>
           <p className="text-navy text-2xl font-bold">{roster.length} <span className="text-sm text-text-muted font-normal">players</span></p>
         </div>
-        <div className="bg-card border border-emerald-500/20 rounded-xl p-5">
+        <div className="bg-white border border-emerald-500/20 rounded-xl p-5">
           <div className="flex items-center gap-2 text-emerald-600 text-xs uppercase tracking-wider mb-2">
             <CheckCircle2 className="w-3.5 h-3.5" /> Checked In
           </div>
@@ -326,7 +326,7 @@ export default function CoachCheckInPage() {
       </div>
 
       {/* Coach Check-In (2 bands max) */}
-      <div className="bg-card border border-amber-500/20 rounded-xl p-5 mb-6">
+      <div className="bg-white border border-amber-500/20 rounded-xl p-5 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-amber-600" />
@@ -426,7 +426,7 @@ export default function CoachCheckInPage() {
       </div>
 
       {/* Manual check-in */}
-      <div className="bg-card border border-light-gray rounded-xl p-5 mb-6">
+      <div className="bg-white border border-light-gray rounded-xl p-5 mb-6">
         <form onSubmit={handleManualCheckIn} className="flex gap-3 items-end">
           <div className="flex-1">
             <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -456,13 +456,13 @@ export default function CoachCheckInPage() {
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading roster...
         </div>
       ) : roster.length === 0 ? (
-        <div className="bg-card border border-light-gray rounded-xl p-8 text-center">
+        <div className="bg-white border border-light-gray rounded-xl p-8 text-center">
           <Users className="w-8 h-8 text-light-gray mx-auto mb-3" />
           <p className="text-navy font-semibold mb-1">No roster found</p>
           <p className="text-text-muted text-sm">Add players to your roster first, or use manual check-in above.</p>
         </div>
       ) : (
-        <div className="bg-card border border-light-gray rounded-xl overflow-hidden">
+        <div className="bg-white border border-light-gray rounded-xl overflow-hidden">
           <div className="px-6 py-4 border-b border-light-gray flex items-center justify-between gap-3">
             <h2 className="text-navy font-bold text-sm uppercase tracking-wider flex-shrink-0">Tap to Check In</h2>
             {/* Search filter */}
@@ -522,7 +522,7 @@ export default function CoachCheckInPage() {
 
       {/* Checked-In Summary */}
       {checkedIn.length > 0 && (
-        <div className="bg-card border border-emerald-500/20 rounded-xl overflow-hidden mt-6">
+        <div className="bg-white border border-emerald-500/20 rounded-xl overflow-hidden mt-6">
           <button
             onClick={() => setShowSummary(!showSummary)}
             className="w-full px-6 py-4 flex items-center justify-between"

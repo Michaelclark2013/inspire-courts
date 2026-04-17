@@ -121,12 +121,12 @@ export default function DashboardAlerts() {
     return (
       <div className="space-y-4 mb-8 animate-pulse">
         <div className="space-y-2">
-          <div className="h-12 bg-white/5 border border-white/10 rounded-xl" />
-          <div className="h-12 bg-white/5 border border-white/10 rounded-xl" />
+          <div className="h-12 bg-white border border-border rounded-xl" />
+          <div className="h-12 bg-white border border-border rounded-xl" />
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-12 bg-white/5 border border-white/10 rounded-xl" />
+            <div key={i} className="h-12 bg-white border border-border rounded-xl" />
           ))}
         </div>
       </div>
@@ -276,14 +276,14 @@ function QuickAction({
     <Link
       href={href}
       aria-label={label}
-      className="flex items-center gap-2.5 bg-card border border-white/10 hover:border-white/20 rounded-xl px-4 py-3 transition-all group hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
+      className="flex items-center gap-2.5 bg-white border border-border hover:border-navy/30 rounded-xl px-4 py-3 transition-all group hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
     >
       <Icon className={`w-4 h-4 ${color} group-hover:scale-110 transition-transform`} />
       <span className="text-navy text-xs font-semibold uppercase tracking-wider">
         {label}
       </span>
       {shortcutHint && (
-        <kbd className="hidden lg:inline-block ml-auto text-[9px] text-navy/20 bg-white/5 px-1.5 py-0.5 rounded font-mono">
+        <kbd className="hidden lg:inline-block ml-auto text-[9px] text-navy/20 bg-off-white px-1.5 py-0.5 rounded font-mono">
           {shortcutHint}
         </kbd>
       )}

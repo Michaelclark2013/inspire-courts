@@ -114,7 +114,7 @@ export default function WaiverPage() {
       </div>
 
       <div className="max-w-xl">
-        <div className="bg-card border border-light-gray rounded-xl p-6">
+        <div className="bg-white border border-light-gray rounded-xl p-6">
           <div className="flex items-center gap-2 mb-6">
             <FileCheck className="w-4 h-4 text-red" />
             <h2 className="text-navy font-bold text-sm uppercase tracking-wider">

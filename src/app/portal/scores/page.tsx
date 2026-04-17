@@ -137,7 +137,7 @@ export default function PortalScoresPage() {
       ) : (
         <div className="space-y-8">
           {/* Standings */}
-          <div className="bg-card border border-light-gray rounded-xl overflow-hidden">
+          <div className="bg-white border border-light-gray rounded-xl overflow-hidden">
             <div className="px-6 py-4 border-b border-light-gray">
               <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
                 League Standings
@@ -148,7 +148,7 @@ export default function PortalScoresPage() {
 
           {/* Recent results */}
           {finalGames.length > 0 ? (
-            <div className="bg-card border border-light-gray rounded-xl overflow-hidden">
+            <div className="bg-white border border-light-gray rounded-xl overflow-hidden">
               <div className="px-6 py-4 border-b border-light-gray flex items-center gap-2">
                 <Trophy className="w-4 h-4 text-red" />
                 <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
@@ -181,7 +181,7 @@ export default function PortalScoresPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-card border border-light-gray rounded-xl p-8 text-center">
+            <div className="bg-white border border-light-gray rounded-xl p-8 text-center">
               <Trophy className="w-8 h-8 text-light-gray mx-auto mb-3" />
               <p className="text-navy font-semibold mb-1">No Results Yet</p>
               <p className="text-text-muted text-sm">

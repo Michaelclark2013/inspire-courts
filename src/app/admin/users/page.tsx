@@ -203,7 +203,7 @@ export default function UsersPage() {
 
       {/* Create form */}
       {showForm && (
-        <div className="bg-card border border-white/10 rounded-xl p-6 mb-8">
+        <div className="bg-white border border-border rounded-xl p-6 mb-8">
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
             <UserPlus className="w-4 h-4 text-red" />
             Create New User
@@ -223,7 +223,7 @@ export default function UsersPage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
                 placeholder="Coach name"
               />
             </div>
@@ -236,7 +236,7 @@ export default function UsersPage() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
                 placeholder="coach@email.com"
               />
             </div>
@@ -249,7 +249,7 @@ export default function UsersPage() {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
                 placeholder="Initial password"
               />
             </div>
@@ -260,7 +260,7 @@ export default function UsersPage() {
               <select
                 value={form.role}
                 onChange={(e) => setForm({ ...form, role: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all"
               >
                 <option value="coach">Coach</option>
                 <option value="parent">Parent</option>
@@ -283,7 +283,7 @@ export default function UsersPage() {
                 max={new Date().getFullYear()}
                 value={form.memberSince}
                 onChange={(e) => setForm({ ...form, memberSince: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
                 placeholder={String(new Date().getFullYear())}
               />
             </div>
@@ -295,7 +295,7 @@ export default function UsersPage() {
                 type="tel"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-navy/25"
                 placeholder="(555) 123-4567"
               />
             </div>
@@ -327,14 +327,14 @@ export default function UsersPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name or email..."
             aria-label="Search users"
-            className="w-full bg-card border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
+            className="w-full bg-white border border-border rounded-lg pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-navy/25"
           />
         </div>
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
           aria-label="Filter by role"
-          className="bg-card border border-white/10 rounded-lg px-3 py-2.5 text-navy text-xs focus:outline-none focus:border-red cursor-pointer"
+          className="bg-white border border-border rounded-lg px-3 py-2.5 text-navy text-xs focus:outline-none focus:border-red cursor-pointer"
         >
           <option value="">All Roles</option>
           {Object.entries(ROLE_LABELS).map(([key, label]) => (
@@ -356,7 +356,7 @@ export default function UsersPage() {
             {pendingUsers.map((u) => (
               <div
                 key={u.id}
-                className="flex items-center justify-between gap-3 bg-navy/50 rounded-lg px-4 py-3"
+                className="flex items-center justify-between gap-3 bg-amber-50 rounded-lg px-4 py-3"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="text-navy font-medium text-sm truncate">{u.name}</span>
@@ -386,8 +386,8 @@ export default function UsersPage() {
       )}
 
       {/* Users table */}
-      <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/10 flex items-center gap-2">
+      <div className="bg-white border border-border rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-border flex items-center gap-2">
           <Users className="w-4 h-4 text-red" />
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
             All Users
@@ -412,7 +412,7 @@ export default function UsersPage() {
             <table className="w-full text-sm">
               <caption className="sr-only">User accounts</caption>
               <thead>
-                <tr className="border-b border-white/10 text-navy/50 text-xs uppercase tracking-wider">
+                <tr className="border-b border-border text-navy/50 text-xs uppercase tracking-wider">
                   <th className="text-left px-6 py-3 font-semibold">Name</th>
                   <th className="text-left px-6 py-3 font-semibold hidden sm:table-cell">Email</th>
                   <th className="text-left px-6 py-3 font-semibold">Role</th>
@@ -435,7 +435,7 @@ export default function UsersPage() {
                   .map((u) => (
                   <tr
                     key={u.id}
-                    className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                    className="border-b border-border hover:bg-off-white transition-colors"
                   >
                     <td className="px-6 py-4">
                       <span className="text-navy font-medium">{u.name}</span>
@@ -468,7 +468,7 @@ export default function UsersPage() {
                           }}
                           onBlur={() => setEditingId(null)}
                           autoFocus
-                          className="bg-navy border border-white/10 rounded-lg px-2 py-1 text-navy text-xs focus:outline-none focus:border-red cursor-pointer"
+                          className="bg-off-white border border-border rounded-lg px-2 py-1 text-navy text-xs focus:outline-none focus:border-red cursor-pointer"
                         >
                           <option value="coach">Coach</option>
                           <option value="parent">Parent</option>

@@ -60,10 +60,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-off-white flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-off-white flex flex-col items-center justify-center px-4 relative overflow-hidden">
       <title>Sign In | Inspire Courts AZ</title>
       <meta name="description" content="Sign in to your Inspire Courts AZ account. Coaches, parents, staff, and referees." />
       <link rel="canonical" href="https://inspirecourtsaz.com/login" />
+
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_top_right,_rgba(204,0,0,0.05),transparent_70%)] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[radial-gradient(ellipse_at_bottom_left,_rgba(0,27,60,0.04),transparent_70%)] pointer-events-none" />
 
       <div className="relative w-full max-w-sm z-10">
         {/* Logo & Header */}

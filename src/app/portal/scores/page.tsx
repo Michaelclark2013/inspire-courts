@@ -160,20 +160,20 @@ export default function PortalScoresPage() {
                 {finalGames.slice(0, 10).map((game) => {
                   const homeWon = game.homeScore > game.awayScore;
                   return (
-                    <div key={game.id} className="px-6 py-3 flex items-center justify-between">
-                      <div className="flex items-center gap-3 text-sm">
-                        <span className={homeWon ? "text-navy font-semibold" : "text-text-muted"}>
+                    <div key={game.id} className="px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3 hover:bg-off-white/50 transition-colors">
+                      <div className="flex items-center gap-2 sm:gap-3 text-sm min-w-0">
+                        <span className={`truncate ${homeWon ? "text-navy font-semibold" : "text-text-muted"}`}>
                           {game.homeTeam}
                         </span>
-                        <span className="text-navy font-bold tabular-nums">{game.homeScore}</span>
-                        <span className="text-light-gray">—</span>
-                        <span className="text-navy font-bold tabular-nums">{game.awayScore}</span>
-                        <span className={!homeWon ? "text-navy font-semibold" : "text-text-muted"}>
+                        <span className={`font-bold tabular-nums flex-shrink-0 ${homeWon ? "text-emerald-600" : "text-navy"}`}>{game.homeScore}</span>
+                        <span className="text-light-gray flex-shrink-0">-</span>
+                        <span className={`font-bold tabular-nums flex-shrink-0 ${!homeWon ? "text-emerald-600" : "text-navy"}`}>{game.awayScore}</span>
+                        <span className={`truncate ${!homeWon ? "text-navy font-semibold" : "text-text-muted"}`}>
                           {game.awayTeam}
                         </span>
                       </div>
                       {game.division && (
-                        <span className="text-text-muted text-xs">{game.division}</span>
+                        <span className="text-text-muted text-xs flex-shrink-0 hidden sm:inline">{game.division}</span>
                       )}
                     </div>
                   );

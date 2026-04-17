@@ -114,6 +114,23 @@ export default function WaiverPage() {
       </div>
 
       <div className="max-w-xl">
+        {/* Progress steps */}
+        <div className="flex items-center gap-2 mb-6">
+          {["Player Info", "Emergency", "Agreement"].map((step, i) => {
+            const filled = i === 0
+              ? !!(form.playerName && form.parentName)
+              : i === 1
+              ? !!(form.emergencyContact && form.emergencyPhone)
+              : form.agreed;
+            return (
+              <div key={step} className="flex-1">
+                <div className={`h-1.5 rounded-full transition-all duration-300 ${filled ? "bg-red" : "bg-navy/[0.06]"}`} />
+                <p className={`text-[10px] uppercase tracking-wider mt-1.5 font-semibold ${filled ? "text-red" : "text-text-muted"}`}>{step}</p>
+              </div>
+            );
+          })}
+        </div>
+
         <div className="bg-white border border-light-gray rounded-xl p-6">
           <div className="flex items-center gap-2 mb-6">
             <FileCheck className="w-4 h-4 text-red" />

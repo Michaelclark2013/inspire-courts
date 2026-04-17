@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Menu, X, ArrowRight, Calendar, ChevronDown, LogIn, LayoutDashboard, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -167,6 +168,7 @@ const ADMIN_ROLES = ["admin", "staff", "ref", "front_desk"];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const { data: session, status } = useSession();
   const isLoggedIn = status === "authenticated";
   const dashboardHref = isLoggedIn
@@ -213,15 +215,22 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-1">
-            {PRIMARY_NAV.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-3.5 py-2 min-h-[44px] inline-flex items-center text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-sm"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {PRIMARY_NAV.map((link) => {
+              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "px-3.5 py-2 min-h-[44px] inline-flex items-center text-sm font-semibold uppercase tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-sm",
+                    isActive ? "text-white border-b-2 border-red" : "text-white/80 hover:text-white"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <DropdownMenu label="Programs" items={PROGRAMS_DROPDOWN} />
             <DropdownMenu label="More" items={MORE_DROPDOWN} />
             <DropdownMenu label="Portal" items={PORTAL_DROPDOWN} />
@@ -288,16 +297,25 @@ export default function Header() {
       >
         <nav aria-label="Mobile navigation" className="px-4 py-4 space-y-1">
           {/* Primary links */}
-          {PRIMARY_NAV.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="flex items-center px-4 py-3 min-h-[44px] text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-navy-light rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-navy-dark"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {PRIMARY_NAV.map((link) => {
+            const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "flex items-center px-4 py-3 min-h-[44px] text-sm font-semibold uppercase tracking-wide rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-navy-dark",
+                  isActive
+                    ? "text-white bg-navy-light border-l-2 border-red"
+                    : "text-white/80 hover:text-white hover:bg-navy-light"
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
 
           {/* Programs accordion */}
           <MobileAccordion

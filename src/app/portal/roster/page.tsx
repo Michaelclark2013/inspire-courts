@@ -229,7 +229,7 @@ export default function RosterPage() {
       {/* Add player form */}
       {showAdd && (
         <div className="bg-white border border-light-gray rounded-xl p-6 mb-6">
-          <form onSubmit={handleAdd} className="flex gap-4 items-end">
+          <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-4 sm:items-end">
             <div className="flex-1">
               <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Player Name
@@ -243,7 +243,7 @@ export default function RosterPage() {
                 placeholder="First Last"
               />
             </div>
-            <div className="w-32">
+            <div className="w-full sm:w-32">
               <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Jersey #
               </label>
@@ -258,10 +258,10 @@ export default function RosterPage() {
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors w-full sm:w-auto"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-              Add
+              Add Player
             </button>
           </form>
         </div>

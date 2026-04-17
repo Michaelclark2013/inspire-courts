@@ -232,6 +232,10 @@ export default function ProfilePage() {
                 placeholder="(555) 123-4567"
               />
             </div>
+            {/* Password change section */}
+            <div className="border-t border-light-gray pt-5 mt-1">
+              <p className="text-navy font-bold text-xs uppercase tracking-wider mb-4">Change Password</p>
+            </div>
             <div>
               <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Current Password {newPassword && <span className="text-red">*</span>}

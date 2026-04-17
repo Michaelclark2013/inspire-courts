@@ -47,9 +47,14 @@ export default function GalleryPage() {
               <br />
               <span className="text-red">Gallery</span>
             </h1>
-            <p className="text-white/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            <p className="text-white/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-8">
               See Inspire Courts in action — tournaments, training, and everything in between.
             </p>
+            <div className="animate-bounce mt-4">
+              <svg className="w-6 h-6 text-white/50 mx-auto" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </div>
           </AnimateIn>
         </div>
       </section>

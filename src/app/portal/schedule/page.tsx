@@ -214,7 +214,15 @@ export default function SchedulePage() {
                             {game.status === "scheduled" && <span className="text-light-gray">vs</span>}
                             <span className="text-navy font-semibold truncate">{game.awayTeam}</span>
                           </div>
-                          <div className="flex items-center gap-3 text-xs text-text-muted flex-shrink-0">
+                          <div className="flex items-center gap-2 text-xs text-text-muted flex-shrink-0">
+                            {game.status === "final" && (
+                              <span className="bg-navy/5 text-navy/60 font-bold text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">Final</span>
+                            )}
+                            {game.status === "live" && (
+                              <span className="bg-emerald-50 text-emerald-600 font-bold text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                                <Radio className="w-2.5 h-2.5 animate-pulse" /> Live
+                              </span>
+                            )}
                             {relTime && (
                               <span className={`font-semibold ${relTime.isSoon ? "text-amber-600" : "text-text-muted"}`}>
                                 {relTime.label}

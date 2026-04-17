@@ -39,15 +39,17 @@ export default function GalleryPageClient() {
   return (
     <>
       {/* Filter Tabs */}
-      <div className="flex gap-2 justify-center mb-10 flex-wrap">
+      <div className="flex gap-2 justify-center mb-10 flex-wrap" role="tablist" aria-label="Gallery filters">
         {TABS.map((tab) => (
           <button
             key={tab}
+            role="tab"
+            aria-selected={activeTab === tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-5 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide transition-colors ${
+            className={`px-5 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide transition-all font-[var(--font-chakra)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 ${
               activeTab === tab
-                ? "bg-red text-white"
-                : "bg-off-white border border-light-gray text-text-muted hover:text-navy"
+                ? "bg-red text-white shadow-md shadow-red/20"
+                : "bg-off-white border border-light-gray text-text-muted hover:text-navy hover:border-navy/20"
             }`}
           >
             {tab}

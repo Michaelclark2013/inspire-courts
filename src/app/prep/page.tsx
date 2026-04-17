@@ -13,6 +13,28 @@ import {
   Dumbbell,
   Star,
 } from "lucide-react";
+
+const prepSchema = {
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  name: "Inspire Prep",
+  description:
+    "Inspire Prep combines elite basketball development with academic excellence. Train, compete, and prepare for the next level in Gilbert, Arizona.",
+  url: "https://inspirecourtsaz.com/prep",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
+    addressLocality: "Gilbert",
+    addressRegion: "AZ",
+    postalCode: "85233",
+    addressCountry: "US",
+  },
+  parentOrganization: {
+    "@type": "SportsOrganization",
+    name: "Inspire Courts AZ",
+    url: "https://inspirecourtsaz.com",
+  },
+};
 import AnimateIn from "@/components/ui/AnimateIn";
 import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -79,12 +101,16 @@ const PROGRAM_INCLUDES = [
 export default function PrepPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(prepSchema) }}
+      />
       {/* Hero */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center overflow-hidden">
         <Image src="/images/courts-bg.jpg" alt="Inspire Prep basketball academy" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-14 sm:py-28 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-6 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
               Prep School
@@ -101,14 +127,14 @@ export default function PrepPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact?type=Inspire+Prep"
-                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
               >
                 Apply Now{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/contact"
-                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
+                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
               >
                 Learn More{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

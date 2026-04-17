@@ -35,7 +35,9 @@ export async function GET() {
       .from(players)
       .where(eq(players.teamId, team.id));
 
-    return NextResponse.json({ team, players: roster });
+    return NextResponse.json({ team, players: roster }, {
+      headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=60" },
+    });
   } catch {
     return NextResponse.json({ error: "Failed to load roster" }, { status: 500 });
   }

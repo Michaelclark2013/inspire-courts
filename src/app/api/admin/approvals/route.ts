@@ -34,7 +34,9 @@ export async function GET() {
       .from(users)
       .where(eq(users.approved, false));
 
-    return NextResponse.json({ users: pending });
+    return NextResponse.json({ users: pending }, {
+      headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=30" },
+    });
   } catch (error) {
     logger.error("Failed to fetch pending approvals", { error: String(error) });
     return NextResponse.json({ error: "Failed to fetch approvals" }, { status: 500 });

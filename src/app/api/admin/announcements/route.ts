@@ -20,7 +20,9 @@ export async function GET() {
       .from(announcements)
       .orderBy(desc(announcements.createdAt));
 
-    return NextResponse.json(all);
+    return NextResponse.json(all, {
+      headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=60" },
+    });
   } catch (err) {
     logger.error("Failed to fetch announcements", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch announcements" }, { status: 500 });

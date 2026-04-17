@@ -123,6 +123,8 @@ export async function GET() {
       tournamentStatus,
       activeAnnouncements: Number(announcementCount[0]?.count) || 0,
       liveGames: Number(liveGameCount[0]?.count) || 0,
+    }, {
+      headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=30" },
     });
   } catch (error) {
     logger.error("Dashboard API error", { error: String(error) });

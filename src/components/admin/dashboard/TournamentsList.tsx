@@ -72,17 +72,17 @@ function TournamentsList({ tournaments }: { tournaments: AdminTournamentStatus[]
                   className="block px-5 py-3 hover:bg-off-white transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-inset"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-navy text-sm font-semibold truncate mr-2">
+                    <span className="text-navy text-sm font-semibold truncate mr-2" title={t.name}>
                       {t.name}
                     </span>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {t.registrationOpen ? (
                         <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded font-bold">
-                          Open
+                          <span aria-hidden="true">{"\u2713 "}</span>Open
                         </span>
                       ) : (
                         <span className="text-[10px] bg-light-gray text-text-secondary px-2 py-0.5 rounded font-bold">
-                          Closed
+                          <span aria-hidden="true">{"\u2715 "}</span>Closed
                         </span>
                       )}
                       <span className="text-[10px] bg-red/10 text-red px-2 py-0.5 rounded font-bold uppercase">
@@ -97,7 +97,7 @@ function TournamentsList({ tournaments }: { tournaments: AdminTournamentStatus[]
                         day: "numeric",
                       })}
                     </span>
-                    <span>{t.divisions.join(", ")}</span>
+                    <span className="truncate max-w-[150px]" title={t.divisions.join(", ")}>{t.divisions.join(", ")}</span>
                     {t.entryFee != null && t.entryFee > 0 && (
                       <span>${(t.entryFee / 100).toFixed(0)}/team</span>
                     )}

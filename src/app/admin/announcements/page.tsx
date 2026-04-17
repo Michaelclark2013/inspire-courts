@@ -294,7 +294,7 @@ export default function AnnouncementsPage() {
                         Expires{" "}
                         {new Date(a.expiresAt + "T00:00:00").toLocaleDateString(
                           "en-US",
-                          { month: "short", day: "numeric" }
+                          { month: "short", day: "numeric", year: "numeric" }
                         )}
                       </span>
                     )}

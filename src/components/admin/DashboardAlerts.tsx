@@ -151,8 +151,8 @@ export default function DashboardAlerts() {
   ].filter(Boolean) as { id: string; icon: typeof AlertTriangle; color: string; text: string; href: string }[];
 
   const colorMap: Record<string, string> = {
-    amber: "bg-amber-500/10 border-amber-500/20 text-amber-400",
-    blue: "bg-blue-500/10 border-blue-500/20 text-blue-400",
+    amber: "bg-amber-50 border-amber-200 text-amber-700",
+    blue: "bg-blue-50 border-blue-200 text-blue-700",
     red: "bg-red/10 border-red/20 text-red",
   };
 
@@ -197,12 +197,12 @@ export default function DashboardAlerts() {
               <Link
                 key={i}
                 href={alert.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors hover:bg-white/[0.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 ${colorMap[alert.color]}`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 ${colorMap[alert.color]}`}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
                 <span className="text-sm flex-1">{alert.text}</span>
                 {alert.id === "pendingRegistrations" ? (
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold flex items-center justify-center tabular-nums">
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center tabular-nums">
                     {data.pendingRegistrations}
                   </span>
                 ) : (

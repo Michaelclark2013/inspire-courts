@@ -88,11 +88,11 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
   return (
     <div className="overflow-x-auto">
       {divisions.length > 0 && (
-        <div className="px-4 py-3 border-b border-white/10 flex flex-wrap items-center gap-2">
+        <div className="px-4 py-3 border-b border-white/10 flex flex-wrap items-center gap-2 sm:gap-2">
           <span className="text-white/40 text-xs font-semibold uppercase tracking-wider">Division:</span>
           <button
             onClick={() => setDivisionFilter("")}
-            className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
+            className={`text-xs px-3 py-1.5 min-h-[36px] rounded-full font-semibold transition-colors ${
               divisionFilter === "" ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
             }`}
           >
@@ -102,7 +102,7 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
             <button
               key={d}
               onClick={() => setDivisionFilter(d)}
-              className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
+              className={`text-xs px-3 py-1.5 min-h-[36px] rounded-full font-semibold transition-colors ${
                 divisionFilter === d ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
               }`}
             >
@@ -134,7 +134,7 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
               className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
             >
               <td className="px-4 py-3 text-white/40 font-mono text-xs">{i + 1}</td>
-              <td className="px-4 py-3 text-white font-semibold">{row.team}</td>
+              <td className="px-4 py-3 text-white font-semibold max-w-[200px] truncate" title={row.team}>{row.team}</td>
               <td className="px-3 py-3 text-center text-emerald-400 font-bold tabular-nums">
                 {row.wins}
               </td>

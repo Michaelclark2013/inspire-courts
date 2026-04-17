@@ -49,6 +49,26 @@ export function relativeDate(dateStr: string): string | null {
   return null;
 }
 
+/** Short format: "Apr 16" — for tables and compact UI */
+export function formatDateShort(dateStr: string): string {
+  const date = new Date(dateStr + (dateStr.includes("T") ? "" : "T00:00:00"));
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+/** Format with time: "Apr 16, 3:30 PM" */
+export function formatDateTime(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 export function slugify(str: string): string {
   return str
     .toLowerCase()

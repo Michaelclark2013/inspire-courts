@@ -274,7 +274,7 @@ export default function DashboardDBStats() {
                   <Link
                     key={t.id}
                     href={`/admin/tournaments/${t.id}/registrations`}
-                    className="block px-5 py-3 hover:bg-white/[0.02] transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
+                    className="block px-5 py-3 hover:bg-off-white transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-navy text-sm font-semibold truncate mr-2">
@@ -282,11 +282,11 @@ export default function DashboardDBStats() {
                       </span>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {t.registrationOpen ? (
-                          <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">
+                          <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded font-bold">
                             Open
                           </span>
                         ) : (
-                          <span className="text-[10px] bg-white/10 text-navy/40 px-2 py-0.5 rounded font-bold">
+                          <span className="text-[10px] bg-light-gray text-text-secondary px-2 py-0.5 rounded font-bold">
                             Closed
                           </span>
                         )}

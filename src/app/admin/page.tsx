@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Activity } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import CollapsibleSection from "@/components/admin/CollapsibleSection";
 import KPICard from "@/components/dashboard/KPICard";
 import DashboardRefreshButton from "@/components/admin/DashboardRefreshButton";
@@ -180,9 +182,12 @@ export default async function AdminDashboard() {
     { label: "Square/Venmo", value: Math.round(data.totalSquare) },
   ].filter((d) => d.value > 0);
 
+  const session = await getServerSession(authOptions);
+  const firstName = session?.user?.name?.split(" ")[0] || "";
   const hour = new Date().getHours();
-  const greeting =
+  const timeGreeting =
     hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const greeting = firstName ? `${timeGreeting}, ${firstName}` : timeGreeting;
 
   return (
     <main
@@ -202,6 +207,9 @@ export default async function AdminDashboard() {
             >
               Dashboard
             </h1>
+            <p className="text-text-secondary text-[10px] lg:text-xs mt-0.5 hidden sm:block">
+              {data.totalTeams} teams &middot; {data.totalGames} games &middot; {data.totalPlayers} players checked in
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <DashboardRefreshButton />

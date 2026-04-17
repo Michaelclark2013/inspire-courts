@@ -59,17 +59,17 @@ function TournamentCardInner({
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-3 mb-2">
               <Trophy className="w-5 h-5 text-red flex-shrink-0" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-navy font-heading truncate">
+              <h3 className="text-xl font-bold text-navy font-heading truncate" title={t.name}>
                 {t.name}
               </h3>
               {t.status === "active" && (
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400">
-                  Live
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700">
+                  <span aria-hidden="true">{"\u25CF "}</span>Live
                 </span>
               )}
               {canRegister && (
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-red/20 text-red">
-                  Registration Open
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-red/10 text-red">
+                  <span aria-hidden="true">{"\u2713 "}</span>Registration Open
                 </span>
               )}
             </div>

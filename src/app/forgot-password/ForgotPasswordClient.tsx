@@ -13,6 +13,7 @@ export default function ForgotPasswordClient() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) return;
     setError("");
     setLoading(true);
 

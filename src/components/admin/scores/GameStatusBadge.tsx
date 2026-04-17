@@ -7,13 +7,19 @@ const STATUS_STYLES: Record<GameStatus, string> = {
   final: "bg-red-100 text-red-700",
 };
 
+const STATUS_ICONS: Record<GameStatus, string> = {
+  scheduled: "\u23F3 ",
+  live: "\u25CF ",
+  final: "\u2713 ",
+};
+
 function GameStatusBadgeImpl({ status }: { status: GameStatus }) {
   return (
     <span
       role="status"
       className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${STATUS_STYLES[status]}`}
     >
-      {status}
+      <span aria-hidden="true">{STATUS_ICONS[status]}</span>{status}
     </span>
   );
 }

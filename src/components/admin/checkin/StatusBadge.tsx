@@ -2,6 +2,14 @@
 
 import { memo } from "react";
 
+const ICON_PREFIX: Record<string, string> = {
+  paid: "\u2713 ",
+  unpaid: "\u23F3 ",
+  checkedIn: "\u2713 ",
+  notCheckedIn: "\u2715 ",
+  pending: "\u23F3 ",
+};
+
 function StatusBadgeBase({
   variant,
   children,
@@ -20,7 +28,7 @@ function StatusBadgeBase({
     <span
       className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${styles[variant]}`}
     >
-      {children}
+      <span aria-hidden="true">{ICON_PREFIX[variant]}</span>{children}
     </span>
   );
 }

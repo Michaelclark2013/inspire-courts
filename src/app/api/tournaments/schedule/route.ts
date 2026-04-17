@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchTournamentSchedule, tournamentToEventData } from "@/lib/google-sheets";
+import { logger } from "@/lib/logger";
 
 // GET /api/tournaments/schedule — public tournament schedule from Google Sheets
 export async function GET() {
@@ -25,7 +26,7 @@ export async function GET() {
       }
     );
   } catch (err) {
-    console.error("[api/tournaments/schedule] Error:", err);
+    logger.error("Tournament schedule fetch failed", { error: String(err) });
     return NextResponse.json(
       {
         configured: true,

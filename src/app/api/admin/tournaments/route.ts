@@ -5,6 +5,7 @@ import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { tournaments, tournamentTeams, tournamentGames } from "@/lib/db/schema";
 import { desc, eq, sql, inArray } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 // GET /api/admin/tournaments — list all tournaments
 export async function GET() {
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(tournament, { status: 201 });
   } catch (err) {
-    console.error("Failed to create tournament:", err);
+    logger.error("Failed to create tournament", { error: String(err) });
     return NextResponse.json({ error: "Failed to create tournament" }, { status: 500 });
   }
 }

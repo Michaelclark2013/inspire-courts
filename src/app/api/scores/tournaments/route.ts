@@ -2,9 +2,20 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { tournaments, tournamentTeams, tournamentGames, games, gameScores } from "@/lib/db/schema";
 import { desc, inArray } from "drizzle-orm";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 // GET /api/scores/tournaments — public list of active/published tournaments
-export async function GET() {
+export async function GET(request: Request) {
+  // Rate limit: 30 requests per minute per IP
+  const ip = getClientIp(request);
+  if (isRateLimited(`score-tournaments:${ip}`, 30, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": "15" } }
+    );
+  }
+
   try {
     const activeTournaments = await db
       .select()
@@ -65,7 +76,7 @@ export async function GET() {
       headers: { "Cache-Control": "public, max-age=30" },
     });
   } catch (err) {
-    console.error("[api/scores/tournaments] Failed to fetch tournaments:", err);
+    logger.error("Failed to fetch score tournaments", { error: String(err) });
     return NextResponse.json([], { status: 500 });
   }
 }

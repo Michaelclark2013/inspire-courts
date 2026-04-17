@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 // ── Google Service Account JWT Auth ──────────────────────────────────────────
 
@@ -72,7 +73,7 @@ async function getAccessToken(): Promise<string | null> {
     clearTimeout(timeout);
 
     if (!res.ok) {
-      console.error("Google auth failed:", await res.text());
+      logger.error("Google auth failed", { status: res.status });
       return null;
     }
 
@@ -83,7 +84,7 @@ async function getAccessToken(): Promise<string | null> {
     };
     return data.access_token;
   } catch (err) {
-    console.error("Google auth error:", err);
+    logger.error("Google auth error", { error: String(err) });
     return null;
   }
 }
@@ -110,14 +111,14 @@ export async function fetchSheetData(
     clearTimeout(timeout);
 
     if (!res.ok) {
-      console.error(`Sheet fetch failed (${spreadsheetId}): ${res.status}`);
+      logger.error("Sheet fetch failed", { spreadsheetId, status: res.status });
       return [];
     }
 
     const data = await res.json();
     return (data.values as string[][]) || [];
   } catch (err) {
-    console.error("Sheet fetch error:", err);
+    logger.error("Sheet fetch error", { error: String(err) });
     return [];
   }
 }
@@ -250,12 +251,12 @@ export async function updateSheetRow(
     clearTimeout(timeout);
 
     if (!res.ok) {
-      console.error(`Sheet update failed (${spreadsheetId}): ${res.status}`);
+      logger.error("Sheet update failed", { spreadsheetId, status: res.status });
       return false;
     }
     return true;
   } catch (err) {
-    console.error("Sheet update error:", err);
+    logger.error("Sheet update error", { error: String(err) });
     return false;
   }
 }
@@ -285,12 +286,12 @@ export async function appendSheetRow(
     clearTimeout(timeout);
 
     if (!res.ok) {
-      console.error(`Sheet append failed (${spreadsheetId}): ${res.status}`);
+      logger.error("Sheet append failed", { spreadsheetId, status: res.status });
       return false;
     }
     return true;
   } catch (err) {
-    console.error("Sheet append error:", err);
+    logger.error("Sheet append error", { error: String(err) });
     return false;
   }
 }
@@ -348,14 +349,14 @@ export async function findOrCreateDriveFolder(
     });
 
     if (!createRes.ok) {
-      console.error(`Drive folder create failed: ${createRes.status}`);
+      logger.error("Drive folder create failed", { status: createRes.status });
       return null;
     }
 
     const created = await createRes.json();
     return created.id;
   } catch (err) {
-    console.error("Drive folder error:", err);
+    logger.error("Drive folder error", { error: String(err) });
     return null;
   }
 }
@@ -385,7 +386,7 @@ export async function createDriveDoc(
     });
 
     if (!createRes.ok) {
-      console.error(`Drive doc create failed: ${createRes.status}`);
+      logger.error("Drive doc create failed", { status: createRes.status });
       return null;
     }
 
@@ -414,12 +415,12 @@ export async function createDriveDoc(
     );
 
     if (!updateRes.ok) {
-      console.error(`Doc content update failed: ${updateRes.status}`);
+      logger.error("Doc content update failed", { status: updateRes.status });
     }
 
     return doc.id;
   } catch (err) {
-    console.error("Drive doc create error:", err);
+    logger.error("Drive doc create error", { error: String(err) });
     return null;
   }
 }
@@ -446,14 +447,14 @@ export async function listDriveFolder(folderId: string): Promise<DriveFile[]> {
     );
 
     if (!res.ok) {
-      console.error(`Drive fetch failed: ${res.status}`);
+      logger.error("Drive fetch failed", { status: res.status });
       return [];
     }
 
     const data = await res.json();
     return (data.files as DriveFile[]) || [];
   } catch (err) {
-    console.error("Drive fetch error:", err);
+    logger.error("Drive fetch error", { error: String(err) });
     return [];
   }
 }
@@ -565,7 +566,7 @@ export async function fetchTournamentSchedule(): Promise<{
     clearTimeout(timeout);
 
     if (!res.ok) {
-      console.error(`[tournament-schedule] Sheet fetch failed: ${res.status}`);
+      logger.error("Tournament schedule sheet fetch failed", { status: res.status });
       return { headers: [], rows: [], tournaments: [] };
     }
 
@@ -593,7 +594,7 @@ export async function fetchTournamentSchedule(): Promise<{
 
     return { headers, rows, tournaments };
   } catch (err) {
-    console.error("[tournament-schedule] Fetch error:", err);
+    logger.error("Tournament schedule fetch error", { error: String(err) });
     return { headers: [], rows: [], tournaments: [] };
   }
 }
@@ -695,6 +696,6 @@ export async function saveRegistrationToDrive(
     await createDriveDoc(roleFolderId, title, content);
   } catch (err) {
     // Never block registration on Drive failure
-    console.error("Drive registration save error:", err);
+    logger.error("Drive registration save error", { error: String(err) });
   }
 }

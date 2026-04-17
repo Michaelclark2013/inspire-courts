@@ -8,13 +8,28 @@ import {
   gameScores,
 } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 type Params = { params: Promise<{ id: string }> };
 
 // GET /api/tournaments/[id] — public tournament detail
 export async function GET(_request: NextRequest, { params }: Params) {
+  // Rate limit: 30 requests per minute per IP
+  const ip = getClientIp(_request);
+  if (isRateLimited(`tourney-detail:${ip}`, 30, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": "15" } }
+    );
+  }
+
   const { id } = await params;
   const tournamentId = Number(id);
+
+  if (isNaN(tournamentId) || tournamentId <= 0 || !Number.isInteger(tournamentId)) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   try {
     const [tournament] = await db
@@ -103,7 +118,8 @@ export async function GET(_request: NextRequest, { params }: Params) {
       },
       { headers: { "Cache-Control": "public, max-age=15" } }
     );
-  } catch {
+  } catch (err) {
+    logger.error("Tournament detail fetch failed", { error: String(err), tournamentId });
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

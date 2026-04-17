@@ -368,7 +368,7 @@ export default function ContentEditorPage() {
       {/* Draft restored banner */}
       {draftBanner && (
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-4 flex items-center justify-between gap-3">
-          <span className="text-amber-400 font-semibold text-sm flex items-center gap-2">
+          <span className="text-amber-600 font-semibold text-sm flex items-center gap-2">
             <Clock className="w-4 h-4" />
             Draft restored from auto-save
           </span>
@@ -381,7 +381,7 @@ export default function ContentEditorPage() {
             </button>
             <button
               onClick={save}
-              className="text-amber-400 hover:text-amber-300 text-xs font-bold uppercase tracking-wide transition-colors"
+              className="text-amber-600 hover:text-amber-500 text-xs font-bold uppercase tracking-wide transition-colors"
             >
               Save Now
             </button>
@@ -401,8 +401,8 @@ export default function ContentEditorPage() {
         </div>
         <div className="flex items-center gap-2 md:gap-3">
           {dirty && (
-            <span className="hidden sm:flex items-center gap-1.5 text-amber-400 text-xs font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="hidden sm:flex items-center gap-1.5 text-amber-600 text-xs font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
               Unsaved
             </span>
           )}
@@ -451,7 +451,7 @@ export default function ContentEditorPage() {
               >
                 {content.pages[id].label}
                 {pageHasDirty && (
-                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-400 border border-black" />
+                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-500 border border-black" />
                 )}
               </button>
             );
@@ -503,7 +503,7 @@ export default function ContentEditorPage() {
                     {section.list ? ` +${section.list.items.length}` : ""}
                   </span>
                   {isSectionDirty && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse flex-shrink-0" />
                   )}
                 </div>
                 {lastEdited && !isSectionDirty && (
@@ -542,7 +542,7 @@ export default function ContentEditorPage() {
                     <div key={key}>
                       <div className="flex items-center gap-2 mb-2">
                         {field.type === "image" ? (
-                          <Image className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                          <Image className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
                         ) : field.type === "textarea" ? (
                           <AlignLeft className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
                         ) : (

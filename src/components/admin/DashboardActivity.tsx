@@ -42,10 +42,10 @@ export default function DashboardActivity() {
           Recent Activity
         </h3>
         {live.length > 0 && (
-          <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-bold uppercase tracking-wider ml-1">
+          <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold uppercase tracking-wider ml-1">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+              <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
             </span>
             {live.length} live
           </span>
@@ -61,7 +61,7 @@ export default function DashboardActivity() {
         {items.map((g) => (
           <div key={g.id} className="px-5 py-2.5 flex items-center gap-3">
             {g.status === "live" ? (
-              <Radio className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" aria-label="Live" />
+              <Radio className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" aria-label="Live" />
             ) : g.status === "final" ? (
               <CheckCircle2 className="w-3.5 h-3.5 text-navy/40 flex-shrink-0" aria-label="Final" />
             ) : (

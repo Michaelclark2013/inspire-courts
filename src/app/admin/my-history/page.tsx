@@ -139,7 +139,7 @@ export default function MyHistoryPage() {
                       <td className="px-6 py-3 text-navy">{s.date}</td>
                       <td className="px-6 py-3 text-text-secondary">{s.event || "—"}</td>
                       <td className="px-6 py-3 text-center text-navy tabular-nums">{s.hoursWorked || "—"}</td>
-                      <td className="px-6 py-3 text-right text-emerald-400 tabular-nums">{s.amount || "—"}</td>
+                      <td className="px-6 py-3 text-right text-emerald-600 tabular-nums">{s.amount || "—"}</td>
                       <td className="px-6 py-3 text-text-secondary text-xs">{s.notes || "—"}</td>
                     </tr>
                   ))

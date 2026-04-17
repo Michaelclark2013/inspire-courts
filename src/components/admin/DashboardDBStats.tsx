@@ -143,7 +143,7 @@ export default function DashboardDBStats() {
 
   const revenue = data.registrations.paidRevenueCents / 100;
   const isNew = data.registrations.total === 0 && data.liveGames === 0 && data.tournamentStatus.length === 0;
-  const stalenessColor = secondsAgo >= 120 ? "text-red" : secondsAgo >= 60 ? "text-amber-400" : "text-text-secondary";
+  const stalenessColor = secondsAgo >= 120 ? "text-red" : secondsAgo >= 60 ? "text-amber-600" : "text-text-secondary";
 
   return (
     <div className="space-y-6 mb-8">
@@ -349,7 +349,7 @@ export default function DashboardDBStats() {
         <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
           <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-cyan-400" />
+              <Clock className="w-4 h-4 text-cyan-600" />
               <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
                 Upcoming Games
               </h3>
@@ -357,7 +357,7 @@ export default function DashboardDBStats() {
             {data.activeAnnouncements > 0 && (
               <Link
                 href="/admin/announcements"
-                className="flex items-center gap-1.5 text-amber-400 text-xs font-semibold hover:text-amber-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
+                className="flex items-center gap-1.5 text-amber-600 text-xs font-semibold hover:text-amber-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
               >
                 <Megaphone className="w-3 h-3" />
                 {data.activeAnnouncements} announcement{data.activeAnnouncements !== 1 ? "s" : ""}
@@ -367,7 +367,7 @@ export default function DashboardDBStats() {
           {data.upcomingGames.length === 0 ? (
             <div className="px-5 py-8 text-center">
               <div className="w-12 h-12 bg-cyan-500/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <Clock className="w-6 h-6 text-cyan-400/60" />
+                <Clock className="w-6 h-6 text-cyan-600/60" />
               </div>
               <p className="text-navy font-semibold text-sm mb-1">No Games Scheduled</p>
               <p className="text-text-secondary text-xs mb-4">Games will appear here once you create a tournament and set up the bracket</p>
@@ -395,7 +395,7 @@ export default function DashboardDBStats() {
                       key={g.id}
                       className={`border-b border-border hover:bg-off-white transition-colors ${isSoon ? "bg-amber-50" : ""}`}
                     >
-                      <td className={`px-4 py-2 text-xs whitespace-nowrap ${isSoon ? "text-amber-400 font-semibold" : "text-navy/60"}`}>
+                      <td className={`px-4 py-2 text-xs whitespace-nowrap ${isSoon ? "text-amber-600 font-semibold" : "text-navy/60"}`}>
                         {isSoon
                           ? `In ${minutesUntil} min`
                           : g.scheduledTime

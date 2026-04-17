@@ -46,7 +46,7 @@ export default function DashboardLeads() {
     <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
       <div className="px-5 py-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Flame className="w-4 h-4 text-amber-400" />
+          <Flame className="w-4 h-4 text-amber-600" />
           <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
             Leads Pipeline
           </h3>
@@ -65,11 +65,11 @@ export default function DashboardLeads() {
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Hot</span>
           </Link>
           <Link href="/admin/leads?status=warm" className="text-center group">
-            <span className="block text-2xl font-bold text-amber-400 tabular-nums group-hover:scale-110 transition-transform inline-block">{counts.warm}</span>
+            <span className="block text-2xl font-bold text-amber-600 tabular-nums group-hover:scale-110 transition-transform inline-block">{counts.warm}</span>
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Warm</span>
           </Link>
           <Link href="/admin/leads?status=cold" className="text-center group">
-            <span className="block text-2xl font-bold text-blue-400 tabular-nums group-hover:scale-110 transition-transform inline-block">{counts.cold}</span>
+            <span className="block text-2xl font-bold text-blue-600 tabular-nums group-hover:scale-110 transition-transform inline-block">{counts.cold}</span>
             <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Cold</span>
           </Link>
           <div className="ml-auto text-right">

@@ -246,7 +246,7 @@ export default function CheckInForm({
           {saving ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : success ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-300" />
           ) : (
             <UserCheck className="w-4 h-4" />
           )}

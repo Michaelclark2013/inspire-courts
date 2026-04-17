@@ -34,9 +34,9 @@ function FileIcon({ mimeType }: { mimeType: string }) {
   if (mimeType === "application/vnd.google-apps.spreadsheet")
     return <FileSpreadsheet className="w-4 h-4 text-success" />;
   if (mimeType === "application/vnd.google-apps.document")
-    return <FileText className="w-4 h-4 text-blue-400" />;
+    return <FileText className="w-4 h-4 text-blue-600" />;
   if (mimeType.startsWith("image/"))
-    return <Image className="w-4 h-4 text-purple-400" />;
+    return <Image className="w-4 h-4 text-purple-600" />;
   return <File className="w-4 h-4 text-text-secondary" />;
 }
 

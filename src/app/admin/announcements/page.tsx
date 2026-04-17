@@ -200,7 +200,7 @@ export default function AnnouncementsPage() {
             </div>
             <div className="flex items-center justify-between text-xs text-navy/30 -mt-2 mb-2">
               <span>{form.body.length} characters</span>
-              {form.body.length > 280 && <span className="text-amber-400">Long message — consider shortening</span>}
+              {form.body.length > 280 && <span className="text-amber-600">Long message — consider shortening</span>}
             </div>
 
             {/* Preview */}

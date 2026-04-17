@@ -126,7 +126,7 @@ export default function LeadsPage() {
           <p className="text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1">
             Warm
           </p>
-          <p className="text-amber-400 text-2xl font-bold font-heading">
+          <p className="text-amber-600 text-2xl font-bold font-heading">
             {leads.filter((l) => l.status === "Warm").length}
           </p>
         </div>

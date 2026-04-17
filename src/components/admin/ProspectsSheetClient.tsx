@@ -44,9 +44,9 @@ interface Props {
 const STATUS_COLORS: Record<string, string> = {
   committed: "bg-success/10 text-success border-success/20",
   registered: "bg-success/10 text-success border-success/20",
-  interested: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  texted: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  contacted: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+  interested: "bg-blue-50 text-blue-600 border-blue-200",
+  texted: "bg-amber-50 text-amber-600 border-amber-200",
+  contacted: "bg-amber-50 text-amber-600 border-amber-200",
   "no response": "bg-bg text-text-secondary border-border",
   "no go": "bg-danger/10 text-danger border-danger/20",
   unknown: "bg-bg text-text-secondary border-border",

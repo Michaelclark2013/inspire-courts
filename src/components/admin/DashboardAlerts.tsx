@@ -230,28 +230,28 @@ export default function DashboardAlerts() {
             href="/admin/scores/enter"
             icon={ClipboardList}
             label="Enter Scores"
-            color="text-emerald-400"
+            color="text-emerald-600"
             shortcutHint="S"
           />
           <QuickAction
             href="/admin/checkin"
             icon={UserCheck}
             label="Check-In"
-            color="text-cyan-400"
+            color="text-cyan-600"
             shortcutHint="C"
           />
           <QuickAction
             href="/admin/announcements"
             icon={Megaphone}
             label="Announcement"
-            color="text-amber-400"
+            color="text-amber-600"
             shortcutHint="A"
           />
           <QuickAction
             href="/admin/teams"
             icon={Users}
             label="Teams"
-            color="text-blue-400"
+            color="text-blue-600"
           />
         </div>
       </div>

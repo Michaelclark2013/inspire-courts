@@ -98,7 +98,7 @@ function ContactPageInner() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg">
               Contact
             </h1>
-            <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
+            <p className="text-white/80 text-lg max-w-2xl mx-auto leading-relaxed">
               Questions about events, rentals, or anything else? We&apos;ll get
               back to you fast.
             </p>

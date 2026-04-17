@@ -17,7 +17,7 @@ interface KPICardProps {
 export default function KPICard({ title, value, icon: Icon, trend, trendUp, sparklineData, valueColor }: KPICardProps) {
   return (
     <div
-      className="bg-white border border-light-gray shadow-sm rounded-sm p-3 lg:p-5 transition-colors hover:border-text-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red"
+      className="bg-white border border-light-gray shadow-sm rounded-xl p-3 lg:p-5 transition-all duration-200 hover:border-text-secondary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red"
       role="article"
       aria-label={`${title}: ${value}`}
       tabIndex={0}

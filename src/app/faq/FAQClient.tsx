@@ -124,13 +124,15 @@ function AccordionItem({ q, a, id }: { q: string; a: string; id: string }) {
         role="region"
         aria-labelledby={buttonId}
         className={cn(
-          "overflow-hidden transition-all duration-300",
-          open ? "max-h-[1000px]" : "max-h-0"
+          "grid transition-all duration-300 ease-in-out",
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
         )}
       >
-        <p className="px-6 pb-5 pt-2 text-text-muted text-sm leading-relaxed border-t border-light-gray bg-off-white">
-          {a}
-        </p>
+        <div className="overflow-hidden">
+          <p className="px-6 pb-5 pt-2 text-text-muted text-sm leading-relaxed border-t border-light-gray bg-off-white">
+            {a}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -151,7 +153,7 @@ export default function FAQClient() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg">
               FAQ
             </h1>
-            <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
+            <p className="text-white/80 text-lg max-w-2xl mx-auto leading-relaxed">
               Answers to the most common questions about tournaments, rentals,
               training, and game day at Inspire Courts.
             </p>
@@ -190,7 +192,7 @@ export default function FAQClient() {
             <h3 className="text-white font-bold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
               Still Have Questions?
             </h3>
-            <p className="text-white/70 mb-6 max-w-md mx-auto">
+            <p className="text-white/80 mb-6 max-w-md mx-auto">
               We&apos;re happy to help. Reach out directly and we&apos;ll get
               back to you fast.
             </p>

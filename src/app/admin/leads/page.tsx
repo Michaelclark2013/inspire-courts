@@ -36,7 +36,7 @@ const STATUS_STYLES: Record<string, string> = {
   Hot: "bg-red/20 text-red",
   Warm: "bg-amber-500/20 text-amber-400",
   Active: "bg-emerald-500/20 text-emerald-400",
-  Cold: "bg-white/10 text-navy/40",
+  Cold: "bg-slate-100 text-slate-500",
 };
 
 export default function LeadsPage() {
@@ -105,32 +105,32 @@ export default function LeadsPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white border border-border rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
+        <div className="bg-white border border-border rounded-xl p-4 transition-all duration-200 hover:shadow-md hover:border-navy/20">
+          <p className="text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1">
             Total Leads
           </p>
           <p className="text-navy text-2xl font-bold font-heading">
             {leads.length}
           </p>
         </div>
-        <div className="bg-white border border-border rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
+        <div className="bg-white border border-border rounded-xl p-4 transition-all duration-200 hover:shadow-md hover:border-navy/20">
+          <p className="text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1">
             Hot
           </p>
           <p className="text-red text-2xl font-bold font-heading">
             {leads.filter((l) => l.status === "Hot").length}
           </p>
         </div>
-        <div className="bg-white border border-border rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
+        <div className="bg-white border border-border rounded-xl p-4 transition-all duration-200 hover:shadow-md hover:border-navy/20">
+          <p className="text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1">
             Warm
           </p>
           <p className="text-amber-400 text-2xl font-bold font-heading">
             {leads.filter((l) => l.status === "Warm").length}
           </p>
         </div>
-        <div className="bg-white border border-border rounded-xl p-4">
-          <p className="text-navy/40 text-xs font-semibold uppercase tracking-wider mb-1">
+        <div className="bg-white border border-border rounded-xl p-4 transition-all duration-200 hover:shadow-md hover:border-navy/20">
+          <p className="text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1">
             Sources
           </p>
           <p className="text-navy text-2xl font-bold font-heading">
@@ -191,22 +191,22 @@ export default function LeadsPage() {
               <caption className="sr-only">Prospect pipeline leads</caption>
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left text-navy/40 text-[10px] font-bold uppercase tracking-wider px-5 py-3">
+                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-5 py-3">
                     Name
                   </th>
-                  <th className="text-left text-navy/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
+                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
                     Contact
                   </th>
-                  <th className="text-left text-navy/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
+                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
                     Interest
                   </th>
-                  <th className="text-left text-navy/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
+                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
                     Source
                   </th>
-                  <th className="text-left text-navy/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden lg:table-cell">
+                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden lg:table-cell">
                     Status
                   </th>
-                  <th className="text-left text-navy/40 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
+                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
                     Date
                   </th>
                 </tr>
@@ -250,14 +250,14 @@ export default function LeadsPage() {
                       </td>
                       <td className="px-3 py-3">
                         <span
-                          className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${SOURCE_STYLES[lead.source] || "bg-white/10 text-navy/40"}`}
+                          className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${SOURCE_STYLES[lead.source] || "bg-slate-100 text-slate-500"}`}
                         >
                           {lead.source || "Unknown"}
                         </span>
                       </td>
                       <td className="px-3 py-3 hidden lg:table-cell">
                         <span
-                          className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${STATUS_STYLES[lead.status] || "bg-white/10 text-navy/40"}`}
+                          className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${STATUS_STYLES[lead.status] || "bg-slate-100 text-slate-500"}`}
                         >
                           {lead.status || "New"}
                         </span>
@@ -279,27 +279,27 @@ export default function LeadsPage() {
                         <td colSpan={6} className="px-5 py-4">
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                             <div>
-                              <p className="text-navy/40 uppercase tracking-wider mb-1">Email</p>
+                              <p className="text-navy/60 uppercase tracking-wider mb-1">Email</p>
                               <p className="text-navy">{lead.email || "—"}</p>
                             </div>
                             <div>
-                              <p className="text-navy/40 uppercase tracking-wider mb-1">Phone</p>
+                              <p className="text-navy/60 uppercase tracking-wider mb-1">Phone</p>
                               <p className="text-navy">{lead.phone || "—"}</p>
                             </div>
                             <div>
-                              <p className="text-navy/40 uppercase tracking-wider mb-1">Date</p>
+                              <p className="text-navy/60 uppercase tracking-wider mb-1">Date</p>
                               <p className="text-navy">{lead.timestamp ? new Date(lead.timestamp).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "—"}</p>
                             </div>
                             <div>
-                              <p className="text-navy/40 uppercase tracking-wider mb-1">Interest</p>
+                              <p className="text-navy/60 uppercase tracking-wider mb-1">Interest</p>
                               <p className="text-navy">{lead.interest || "—"}</p>
                             </div>
                             <div>
-                              <p className="text-navy/40 uppercase tracking-wider mb-1">Source</p>
+                              <p className="text-navy/60 uppercase tracking-wider mb-1">Source</p>
                               <p className="text-navy">{lead.source || "Unknown"}</p>
                             </div>
                             <div>
-                              <p className="text-navy/40 uppercase tracking-wider mb-1">Status</p>
+                              <p className="text-navy/60 uppercase tracking-wider mb-1">Status</p>
                               <p className="text-navy">{lead.status || "New"}</p>
                             </div>
                           </div>

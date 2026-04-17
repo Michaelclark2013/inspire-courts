@@ -40,29 +40,36 @@ type NavItem = {
   page: AdminPage;
 };
 
-const OPERATIONS: NavItem[] = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard, page: "overview" },
+const OVERVIEW_ITEM: NavItem = { href: "/admin", label: "Overview", icon: LayoutDashboard, page: "overview" };
+
+const EVENT_SETUP: NavItem[] = [
   { href: "/admin/tournaments/manage", label: "Tournaments", icon: Trophy, page: "tournaments" },
-  { href: "/admin/scores/enter", label: "Score Entry", icon: PenLine, page: "score_entry" },
   { href: "/admin/teams", label: "Teams", icon: Users, page: "teams" },
-  { href: "/admin/scores", label: "Game Scores", icon: ClipboardList, page: "scores" },
   { href: "/admin/players", label: "Players", icon: UserCheck, page: "players" },
-  { href: "/admin/checkin", label: "Check-In", icon: UserCheck, page: "checkin" },
-  { href: "/admin/staff", label: "Staff & Refs", icon: UserCheck, page: "staff_refs" },
-  { href: "/admin/approvals", label: "Approvals", icon: Shield, page: "approvals" },
-  { href: "/admin/revenue", label: "Revenue", icon: DollarSign, page: "revenue" },
-  { href: "/admin/prospects", label: "Prospects", icon: TrendingUp, page: "prospects" },
 ];
 
-const RESOURCES: NavItem[] = [
-  { href: "/admin/files", label: "Files & Drive", icon: FolderOpen, page: "files" },
-  { href: "/admin/analytics", label: "Analytics", icon: BarChart3, page: "analytics" },
+const GAME_DAY: NavItem[] = [
+  { href: "/admin/scores/enter", label: "Score Entry", icon: PenLine, page: "score_entry" },
+  { href: "/admin/scores", label: "Game Scores", icon: ClipboardList, page: "scores" },
+  { href: "/admin/checkin", label: "Check-In", icon: UserCheck, page: "checkin" },
+  { href: "/admin/staff", label: "Staff & Refs", icon: UserCheck, page: "staff_refs" },
+];
+
+const FINANCE: NavItem[] = [
+  { href: "/admin/revenue", label: "Revenue", icon: DollarSign, page: "revenue" },
+  { href: "/admin/prospects", label: "Prospects", icon: TrendingUp, page: "prospects" },
   { href: "/admin/leads", label: "Prospect Pipeline", icon: TrendingUp, page: "leads" },
-  { href: "/admin/announcements", label: "Announcements", icon: Megaphone, page: "announcements" },
   { href: "/admin/sponsors", label: "Sponsorships", icon: Handshake, page: "sponsors" },
+];
+
+const ADMIN_SECTION: NavItem[] = [
+  { href: "/admin/approvals", label: "Approvals", icon: Shield, page: "approvals" },
+  { href: "/admin/users", label: "User Accounts", icon: Shield, page: "users" },
+  { href: "/admin/announcements", label: "Announcements", icon: Megaphone, page: "announcements" },
   { href: "/admin/schools", label: "Schools", icon: GraduationCap, page: "schools" },
   { href: "/admin/content", label: "Content Editor", icon: FileEdit, page: "content" },
-  { href: "/admin/users", label: "User Accounts", icon: Shield, page: "users" },
+  { href: "/admin/files", label: "Files & Drive", icon: FolderOpen, page: "files" },
+  { href: "/admin/analytics", label: "Analytics", icon: BarChart3, page: "analytics" },
 ];
 
 const PERSONAL: NavItem[] = [
@@ -73,9 +80,9 @@ const PERSONAL: NavItem[] = [
 // Primary tabs shown in the mobile bottom bar (5 max)
 const BOTTOM_TABS: NavItem[] = [
   { href: "/admin", label: "Home", icon: LayoutDashboard, page: "overview" },
-  { href: "/admin/teams", label: "Teams", icon: Users, page: "teams" },
+  { href: "/admin/tournaments/manage", label: "Events", icon: Trophy, page: "tournaments" },
   { href: "/admin/scores", label: "Scores", icon: ClipboardList, page: "scores" },
-  { href: "/admin/staff", label: "Staff", icon: UserCheck, page: "staff_refs" },
+  { href: "/admin/teams", label: "Teams", icon: Users, page: "teams" },
   { href: "/admin/revenue", label: "Revenue", icon: DollarSign, page: "revenue" },
 ];
 
@@ -85,8 +92,10 @@ export default function AdminSidebar() {
   const { data: session } = useSession();
   const role = (session?.user?.role || "admin") as UserRole;
 
-  const visibleOps = OPERATIONS.filter((item) => canAccess(role, item.page));
-  const visibleRes = RESOURCES.filter((item) => canAccess(role, item.page));
+  const visibleEventSetup = EVENT_SETUP.filter((item) => canAccess(role, item.page));
+  const visibleGameDay = GAME_DAY.filter((item) => canAccess(role, item.page));
+  const visibleFinance = FINANCE.filter((item) => canAccess(role, item.page));
+  const visibleAdmin = ADMIN_SECTION.filter((item) => canAccess(role, item.page));
   const visiblePersonal = PERSONAL.filter((item) => canAccess(role, item.page));
   const visibleBottomTabs = BOTTOM_TABS.filter((item) => canAccess(role, item.page));
 
@@ -113,7 +122,7 @@ export default function AdminSidebar() {
       <Link
         href={item.href}
         className={cn(
-          "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors relative",
+          "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative",
           active
             ? "bg-red/10 text-red before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-red before:rounded-full"
             : "text-text-muted hover:text-navy hover:bg-off-white"
@@ -160,6 +169,62 @@ export default function AdminSidebar() {
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5" aria-label="Admin pages">
+          <div>
+            <SidebarLink item={OVERVIEW_ITEM} />
+          </div>
+
+          {visibleEventSetup.length > 0 && (
+            <div>
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                Events & Scheduling
+              </p>
+              <div className="space-y-0.5">
+                {visibleEventSetup.map((item) => (
+                  <SidebarLink key={item.href} item={item} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {visibleGameDay.length > 0 && (
+            <div>
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                Game Day
+              </p>
+              <div className="space-y-0.5">
+                {visibleGameDay.map((item) => (
+                  <SidebarLink key={item.href} item={item} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {visibleFinance.length > 0 && (
+            <div>
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                Finance
+              </p>
+              <div className="space-y-0.5">
+                {visibleFinance.map((item) => (
+                  <SidebarLink key={item.href} item={item} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {visibleAdmin.length > 0 && (
+            <div>
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                Admin
+              </p>
+              <div className="space-y-0.5">
+                {visibleAdmin.map((item) => (
+                  <SidebarLink key={item.href} item={item} />
+                ))}
+              </div>
+            </div>
+          )}
+
           {visiblePersonal.length > 0 && (
             <div>
               <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
@@ -167,32 +232,6 @@ export default function AdminSidebar() {
               </p>
               <div className="space-y-0.5">
                 {visiblePersonal.map((item) => (
-                  <SidebarLink key={item.href} item={item} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {visibleOps.length > 0 && (
-            <div>
-              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
-                Operations
-              </p>
-              <div className="space-y-0.5">
-                {visibleOps.map((item) => (
-                  <SidebarLink key={item.href} item={item} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {visibleRes.length > 0 && (
-            <div>
-              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
-                Resources
-              </p>
-              <div className="space-y-0.5">
-                {visibleRes.map((item) => (
                   <SidebarLink key={item.href} item={item} />
                 ))}
               </div>
@@ -208,7 +247,7 @@ export default function AdminSidebar() {
                 <Link
                   href="/portal"
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors",
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                     pathname.startsWith("/portal")
                       ? "bg-red/10 text-red"
                       : "text-text-muted hover:text-navy hover:bg-off-white"
@@ -226,21 +265,21 @@ export default function AdminSidebar() {
         <div className="px-3 py-4 border-t border-light-gray space-y-1 flex-shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-muted hover:text-navy hover:bg-off-white transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all duration-200"
           >
             <ExternalLink className="w-4 h-4" />
             View Public Site
           </Link>
           <Link
             href="/scores"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-muted hover:text-navy hover:bg-off-white transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all duration-200"
           >
             <Trophy className="w-4 h-4" />
             Live Scores
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-text-muted hover:text-danger hover:bg-red/5 transition-colors w-full text-left"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-danger hover:bg-red/5 transition-all duration-200 w-full text-left"
           >
             <LogOut className="w-4 h-4" />
             Sign Out
@@ -286,7 +325,7 @@ export default function AdminSidebar() {
         })}
         {/* More tab — shows dot when current page lives in the drawer */}
         {(() => {
-          const drawerItems = [...visibleOps, ...visibleRes, ...visiblePersonal].filter(
+          const drawerItems = [...visibleEventSetup, ...visibleGameDay, ...visibleFinance, ...visibleAdmin, ...visiblePersonal].filter(
             (item) => !visibleBottomTabs.some((t) => t.href === item.href)
           );
           const drawerActive = !showMore && drawerItems.some((item) => isActive(item.href));
@@ -352,6 +391,82 @@ export default function AdminSidebar() {
             </div>
 
             <div className="p-4 space-y-5">
+              {/* Events & Scheduling */}
+              {visibleEventSetup.length > 0 && (
+                <div>
+                  <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
+                    Events & Scheduling
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {visibleEventSetup.map((item) => (
+                      <MoreLink
+                        key={item.href}
+                        item={item}
+                        active={isActive(item.href)}
+                        onClose={() => setShowMore(false)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Game Day */}
+              {visibleGameDay.length > 0 && (
+                <div>
+                  <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
+                    Game Day
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {visibleGameDay.map((item) => (
+                      <MoreLink
+                        key={item.href}
+                        item={item}
+                        active={isActive(item.href)}
+                        onClose={() => setShowMore(false)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Finance */}
+              {visibleFinance.length > 0 && (
+                <div>
+                  <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
+                    Finance
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {visibleFinance.map((item) => (
+                      <MoreLink
+                        key={item.href}
+                        item={item}
+                        active={isActive(item.href)}
+                        onClose={() => setShowMore(false)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Admin */}
+              {visibleAdmin.length > 0 && (
+                <div>
+                  <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
+                    Admin
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {visibleAdmin.map((item) => (
+                      <MoreLink
+                        key={item.href}
+                        item={item}
+                        active={isActive(item.href)}
+                        onClose={() => setShowMore(false)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Personal */}
               {visiblePersonal.length > 0 && (
                 <div>
@@ -360,44 +475,6 @@ export default function AdminSidebar() {
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     {visiblePersonal.map((item) => (
-                      <MoreLink
-                        key={item.href}
-                        item={item}
-                        active={isActive(item.href)}
-                        onClose={() => setShowMore(false)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Operations */}
-              {visibleOps.length > 0 && (
-                <div>
-                  <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
-                    Operations
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {visibleOps.map((item) => (
-                      <MoreLink
-                        key={item.href}
-                        item={item}
-                        active={isActive(item.href)}
-                        onClose={() => setShowMore(false)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Resources */}
-              {visibleRes.length > 0 && (
-                <div>
-                  <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-1 mb-2">
-                    Resources
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {visibleRes.map((item) => (
                       <MoreLink
                         key={item.href}
                         item={item}

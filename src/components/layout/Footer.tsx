@@ -161,11 +161,11 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-2">
-          <p className="text-white/30 text-[11px]">
+          <p className="text-white/50 text-xs">
             &copy; {new Date().getFullYear()} Inspire Courts AZ. All rights
             reserved.
           </p>
-          <p className="text-white/30 text-[11px]">
+          <p className="text-white/50 text-xs">
             Powered by{" "}
             <span className="uppercase tracking-wide">Off Szn Hoops</span>
           </p>

@@ -110,7 +110,7 @@ export default async function AdminDashboard() {
           </p>
         </header>
 
-        <section className="bg-white border border-light-gray shadow-sm rounded-sm p-8 text-center">
+        <section className="bg-white border border-light-gray shadow-sm rounded-xl p-8 text-center">
           <div className="w-12 h-12 bg-red/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <Activity className="w-6 h-6 text-red" aria-hidden="true" />
           </div>
@@ -122,7 +122,7 @@ export default async function AdminDashboard() {
             your Google Sheets — game scores, revenue, team registrations, and
             more.
           </p>
-          <div className="bg-off-white border border-light-gray rounded-sm p-4 text-left max-w-sm mx-auto font-mono text-xs text-text-secondary space-y-1">
+          <div className="bg-off-white border border-light-gray rounded-xl p-4 text-left max-w-sm mx-auto font-mono text-xs text-text-secondary space-y-1">
             <p className="text-red"># Add to .env.local</p>
             <p>GOOGLE_SERVICE_ACCOUNT_EMAIL=...</p>
             <p>GOOGLE_PRIVATE_KEY=&quot;-----BEGIN PRIVATE KEY...&quot;</p>

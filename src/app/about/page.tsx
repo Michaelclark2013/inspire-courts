@@ -93,7 +93,7 @@ export default function AboutPage() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white mb-6 font-[var(--font-chakra)] drop-shadow-lg">
               {page ? getField(page, "Hero", "headline") : <>Arizona&apos;s Home for<br /><span className="text-red">Serious Ballers</span></>}
             </h1>
-            <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+            <p className="text-white/80 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
               {page ? getField(page, "Hero", "description") : "Founded to give Arizona's youth athletes a professional-level experience. Basketball. Volleyball. No more dusty rec centers. No more outdoor courts in 115-degree heat."}
             </p>
           </AnimateIn>
@@ -175,7 +175,7 @@ export default function AboutPage() {
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <AnimateIn>
-              <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                 <div className="w-12 h-12 bg-navy rounded-full flex items-center justify-center mb-6">
                   <Target className="w-6 h-6 text-white" aria-hidden="true" />
                 </div>
@@ -191,7 +191,7 @@ export default function AboutPage() {
               </div>
             </AnimateIn>
             <AnimateIn delay={150}>
-              <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                 <div className="w-12 h-12 bg-red rounded-full flex items-center justify-center mb-6">
                   <Flame className="w-6 h-6 text-white" aria-hidden="true" />
                 </div>
@@ -205,7 +205,7 @@ export default function AboutPage() {
               </div>
             </AnimateIn>
             <AnimateIn delay={300}>
-              <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white border border-light-gray rounded-xl p-8 lg:p-10 h-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                 <div className="w-12 h-12 bg-navy rounded-full flex items-center justify-center mb-6">
                   <Camera className="w-6 h-6 text-white" aria-hidden="true" />
                 </div>
@@ -306,7 +306,7 @@ export default function AboutPage() {
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white font-[var(--font-chakra)]">
                 On the Map
               </h2>
-              <p className="text-white/60 text-lg mt-4 max-w-2xl mx-auto">
+              <p className="text-white/70 text-lg mt-4 max-w-2xl mx-auto">
                 From NBA players to rising prep stars — Inspire Courts is where Arizona basketball happens.
               </p>
             </div>
@@ -344,7 +344,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/events"
-            className="inline-flex items-center gap-2 bg-white text-navy px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide hover:bg-gray-100 transition-colors"
+            className="inline-flex items-center gap-2 bg-white text-navy px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide hover:bg-gray-100 transition-all duration-200 hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
           >
             See Upcoming Events <ArrowRight className="w-4 h-4" />
           </Link>

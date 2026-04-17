@@ -228,7 +228,7 @@ export default function UsersPage() {
             Create New User
           </h2>
           {error && (
-            <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4">
+            <div role="alert" aria-live="assertive" className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4">
               {error}
             </div>
           )}

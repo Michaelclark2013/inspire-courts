@@ -106,7 +106,7 @@ function ResetPasswordForm() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3">
+              <div role="alert" aria-live="assertive" className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3">
                 {error}
               </div>
             )}

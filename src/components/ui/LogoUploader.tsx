@@ -194,7 +194,7 @@ export default function LogoUploader({
 
               {/* Error */}
               {error && (
-                <p className="text-red text-xs mb-3 bg-red/10 border border-red/20 rounded-lg px-3 py-2">{error}</p>
+                <p role="alert" aria-live="assertive" className="text-red text-xs mb-3 bg-red/10 border border-red/20 rounded-lg px-3 py-2">{error}</p>
               )}
 
               {/* Actions */}

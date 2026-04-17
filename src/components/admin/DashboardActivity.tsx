@@ -81,10 +81,10 @@ export default function DashboardActivity() {
             <span
               className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded flex-shrink-0 ${
                 g.status === "live"
-                  ? "bg-emerald-500/20 text-emerald-400"
+                  ? "bg-emerald-50 text-emerald-600"
                   : g.status === "final"
-                  ? "bg-white/5 text-navy/30"
-                  : "bg-white/5 text-navy/30"
+                  ? "bg-off-white text-navy/40"
+                  : "bg-off-white text-navy/40"
               }`}
             >
               {g.status}

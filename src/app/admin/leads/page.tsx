@@ -25,18 +25,18 @@ type Lead = {
 };
 
 const SOURCE_STYLES: Record<string, string> = {
-  "Contact Form": "bg-blue-500/20 text-blue-400",
-  "Booking Form": "bg-emerald-500/20 text-emerald-400",
-  "Newsletter Subscribe": "bg-purple-500/20 text-purple-400",
-  "Chat Widget": "bg-cyan-500/20 text-cyan-400",
-  "Website Registration": "bg-red/20 text-red",
-  "Google OAuth": "bg-amber-500/20 text-amber-400",
+  "Contact Form": "bg-blue-50 text-blue-600",
+  "Booking Form": "bg-emerald-50 text-emerald-600",
+  "Newsletter Subscribe": "bg-purple-50 text-purple-600",
+  "Chat Widget": "bg-cyan-50 text-cyan-600",
+  "Website Registration": "bg-red/10 text-red",
+  "Google OAuth": "bg-amber-50 text-amber-600",
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  Hot: "bg-red/20 text-red",
-  Warm: "bg-amber-500/20 text-amber-400",
-  Active: "bg-emerald-500/20 text-emerald-400",
+  Hot: "bg-red/10 text-red",
+  Warm: "bg-amber-50 text-amber-600",
+  Active: "bg-emerald-50 text-emerald-600",
   Cold: "bg-slate-100 text-slate-500",
 };
 

@@ -30,12 +30,12 @@ type User = {
 };
 
 const ROLE_COLORS: Record<string, string> = {
-  admin: "bg-red/20 text-red",
-  staff: "bg-blue-500/20 text-blue-400",
-  ref: "bg-amber-500/20 text-amber-400",
-  front_desk: "bg-purple-500/20 text-purple-400",
-  coach: "bg-emerald-500/20 text-emerald-400",
-  parent: "bg-cyan-500/20 text-cyan-400",
+  admin: "bg-red/10 text-red",
+  staff: "bg-blue-50 text-blue-600",
+  ref: "bg-amber-50 text-amber-600",
+  front_desk: "bg-purple-50 text-purple-600",
+  coach: "bg-emerald-50 text-emerald-600",
+  parent: "bg-cyan-50 text-cyan-600",
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -514,13 +514,13 @@ export default function UsersPage() {
                       {u.approved === false ? (
                         <button
                           onClick={() => handleApproval(u.id, true)}
-                          className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors cursor-pointer"
+                          className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-50 text-amber-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer"
                           title="Click to approve"
                         >
                           Pending
                         </button>
                       ) : (
-                        <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400/60">
+                        <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600/60">
                           Active
                         </span>
                       )}

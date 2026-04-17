@@ -14,9 +14,9 @@ interface PendingUser {
 }
 
 const ROLE_COLORS: Record<string, string> = {
-  staff: "bg-blue-500/20 text-blue-400",
-  ref: "bg-amber-500/20 text-amber-400",
-  front_desk: "bg-purple-500/20 text-purple-400",
+  staff: "bg-blue-50 text-blue-600",
+  ref: "bg-amber-50 text-amber-600",
+  front_desk: "bg-purple-50 text-purple-600",
 };
 
 const ROLE_LABELS: Record<string, string> = {

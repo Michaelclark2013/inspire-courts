@@ -18,12 +18,12 @@ export const ROLE_LABELS: Record<UserRole, string> = {
 };
 
 export const ROLE_COLORS: Record<UserRole, string> = {
-  admin: "bg-red/20 text-red",
-  staff: "bg-blue-500/20 text-blue-400",
-  ref: "bg-amber-500/20 text-amber-400",
-  front_desk: "bg-purple-500/20 text-purple-400",
-  coach: "bg-emerald-500/20 text-emerald-400",
-  parent: "bg-cyan-500/20 text-cyan-400",
+  admin: "bg-red/10 text-red",
+  staff: "bg-blue-50 text-blue-600",
+  ref: "bg-amber-50 text-amber-600",
+  front_desk: "bg-purple-50 text-purple-600",
+  coach: "bg-emerald-50 text-emerald-600",
+  parent: "bg-cyan-50 text-cyan-600",
 };
 
 // Which roles go to /admin dashboard on login

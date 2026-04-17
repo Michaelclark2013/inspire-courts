@@ -116,6 +116,7 @@ export default function MyHistoryPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
+              <caption className="sr-only">Work history shifts</caption>
               <thead>
                 <tr className="border-b border-border text-navy/50 text-xs uppercase tracking-wider">
                   <th className="text-left px-6 py-3 font-semibold">Date</th>

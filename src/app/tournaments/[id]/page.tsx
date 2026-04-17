@@ -20,6 +20,7 @@ import { nativeShare } from "@/lib/capacitor";
 import { downloadICS } from "@/lib/calendar";
 import { DeadlineCountdown } from "@/components/ui/DeadlineCountdown";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 import BracketView from "@/components/tournament/BracketView";
 import PoolStandings from "@/components/tournament/PoolStandings";
 import type { TournamentDetailPublic } from "@/types/tournament-public";
@@ -33,6 +34,10 @@ export default function PublicTournamentPage() {
   const [copied, setCopied] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const { addItem: trackView } = useRecentlyViewed();
+  const { quality } = useNetworkQuality();
+
+  // Adaptive poll interval: 15s on fast, 60s on slow, disabled when offline
+  const pollInterval = quality === "fast" ? 15000 : quality === "slow" ? 60000 : 0;
 
   const fetchData = useCallback(async () => {
     // Abort any in-flight request (Area 6)
@@ -61,17 +66,19 @@ export default function PublicTournamentPage() {
     setLoading(false);
   }, [id]);
 
-  // Poll every 30s for live score updates, pause when tab hidden (Area 6: cleanup)
+  // Adaptive polling for live score updates, pauses when tab hidden or offline
   useEffect(() => {
     fetchData();
-    let interval = setInterval(fetchData, 30000);
+    if (!pollInterval) return; // offline — skip polling
+
+    let interval = setInterval(fetchData, pollInterval);
 
     function handleVisibility() {
       if (document.hidden) {
         clearInterval(interval);
       } else {
         fetchData();
-        interval = setInterval(fetchData, 30000);
+        interval = setInterval(fetchData, pollInterval);
       }
     }
     document.addEventListener("visibilitychange", handleVisibility);
@@ -81,7 +88,7 @@ export default function PublicTournamentPage() {
       abortRef.current?.abort();
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [fetchData]);
+  }, [fetchData, pollInterval]);
 
   if (loading) {
     return (

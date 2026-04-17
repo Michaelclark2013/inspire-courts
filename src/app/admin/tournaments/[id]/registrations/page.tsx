@@ -238,6 +238,7 @@ export default function RegistrationsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
+              <caption className="sr-only">Tournament registrations</caption>
               <thead>
                 <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wider">
                   <th className="text-left px-5 py-3 font-semibold">Team</th>

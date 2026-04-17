@@ -144,7 +144,7 @@ export default function ApprovalsPage() {
                   <span
                     className={cn(
                       "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full",
-                      ROLE_COLORS[user.role] || "bg-white/10 text-navy/60"
+                      ROLE_COLORS[user.role] || "bg-off-white text-navy/60"
                     )}
                   >
                     {ROLE_LABELS[user.role] || user.role}

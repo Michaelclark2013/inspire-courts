@@ -89,7 +89,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <div
                 key={t.id}
                 className={cn(
-                  "pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl border shadow-lg",
+                  "pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-2xl border shadow-lg",
                   STYLES[t.type],
                   t.exiting ? "toast-exit" : "toast-enter"
                 )}

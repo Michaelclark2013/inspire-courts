@@ -199,14 +199,14 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                     className="accent-accent cursor-pointer"
                   />
                 </th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Team</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Coach</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Phone</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Age</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Gender</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Status</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Outreach</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Source</th>
+                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Team</th>
+                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Coach</th>
+                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Phone</th>
+                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Age</th>
+                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Gender</th>
+                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Status</th>
+                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Outreach</th>
+                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Source</th>
               </tr>
             </thead>
             <tbody>

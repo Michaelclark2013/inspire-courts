@@ -112,11 +112,13 @@ export default function ApprovalsPage() {
 
       {/* Empty state */}
       {!loading && pending.length === 0 && (
-        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center">
-          <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
-          <p className="text-navy font-semibold mb-1">All caught up</p>
-          <p className="text-text-secondary text-sm">
-            No pending approvals right now.
+        <div className="bg-white border border-light-gray rounded-2xl p-10 text-center shadow-sm">
+          <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 className="w-7 h-7 text-emerald-500" />
+          </div>
+          <p className="text-navy font-bold text-base mb-1">All caught up</p>
+          <p className="text-text-secondary text-sm max-w-xs mx-auto">
+            No pending approvals right now. New staff and referee registrations will appear here.
           </p>
         </div>
       )}
@@ -131,7 +133,7 @@ export default function ApprovalsPage() {
           {pending.map((user) => (
             <div
               key={user.id}
-              className="bg-bg-secondary border border-border rounded-sm p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4"
+              className="bg-white border border-light-gray rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 shadow-sm hover:shadow-md transition-shadow"
             >
               {/* User info */}
               <div className="flex-1 min-w-0">
@@ -163,7 +165,7 @@ export default function ApprovalsPage() {
                 <button
                   onClick={() => handleAction(user.id, "approve")}
                   disabled={actionLoading === user.id}
-                  className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wide px-4 py-2.5 rounded-sm transition-colors"
+                  className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wide px-5 py-2.5 rounded-xl shadow-sm shadow-emerald-600/20 transition-all hover:shadow-md hover:shadow-emerald-600/20"
                 >
                   {actionLoading === user.id ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -175,10 +177,10 @@ export default function ApprovalsPage() {
                 <button
                   onClick={() => handleAction(user.id, "reject")}
                   disabled={actionLoading === user.id}
-                  className="inline-flex items-center gap-1.5 bg-danger/20 hover:bg-danger/30 disabled:opacity-50 text-danger text-xs font-bold uppercase tracking-wide px-4 py-2.5 rounded-sm transition-colors"
+                  className="inline-flex items-center gap-1.5 bg-red/10 hover:bg-red/20 disabled:opacity-50 text-red text-xs font-bold uppercase tracking-wide px-5 py-2.5 rounded-xl transition-colors"
                 >
                   <XCircle className="w-3.5 h-3.5" />
-                  Reject
+                  Deny
                 </button>
               </div>
             </div>

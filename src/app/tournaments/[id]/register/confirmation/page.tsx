@@ -151,14 +151,24 @@ export default function ConfirmationPage() {
               </Link>
             </div>
 
-            {/* Share / Copy link */}
-            <button
-              type="button"
-              onClick={handleShare}
-              className="inline-flex items-center gap-2 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide transition-colors"
-            >
-              {copied ? <><Copy className="w-3.5 h-3.5" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" /> Share Tournament</>}
-            </button>
+            {/* Share / Copy link + Calendar */}
+            <div className="flex items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={handleShare}
+                className="inline-flex items-center gap-2 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide transition-colors"
+              >
+                {copied ? <><Copy className="w-3.5 h-3.5" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" /> Share</>}
+              </button>
+              <a
+                href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Tournament at Inspire Courts")}&location=${encodeURIComponent("Inspire Courts AZ, 1090 N Fiesta Blvd, Gilbert, AZ")}&details=${encodeURIComponent("Tournament registration confirmed. View details at " + tournamentUrl)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide transition-colors"
+              >
+                <CalendarPlus className="w-3.5 h-3.5" /> Add to Calendar
+              </a>
+            </div>
           </>
         ) : timedOut ? (
           <>

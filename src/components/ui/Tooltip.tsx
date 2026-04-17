@@ -41,7 +41,7 @@ export default function Tooltip({ content, children, position = "top" }: Tooltip
       {visible && (
         <span
           role="tooltip"
-          className={`absolute z-50 whitespace-nowrap rounded bg-navy px-2.5 py-1.5 text-[11px] font-medium text-white shadow-lg pointer-events-none ${positionClasses[position]}`}
+          className={`absolute z-50 whitespace-nowrap rounded-xl bg-navy px-3 py-1.5 text-[11px] font-medium text-white shadow-lg pointer-events-none ${positionClasses[position]}`}
         >
           {content}
         </span>

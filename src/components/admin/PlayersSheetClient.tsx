@@ -154,7 +154,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
             <thead>
               <tr className="border-b border-border bg-off-white">
                 {["Player", "Parent/Guardian", "Team", "Division", "Date", "Contact"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
+                  <th key={h} className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider whitespace-nowrap">
                     {h}
                   </th>
                 ))}

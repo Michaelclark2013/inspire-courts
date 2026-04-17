@@ -14,6 +14,7 @@ import {
   Share2,
   Copy,
   Link2,
+  CalendarPlus,
 } from "lucide-react";
 import BracketView from "@/components/tournament/BracketView";
 import PoolStandings from "@/components/tournament/PoolStandings";
@@ -248,6 +249,14 @@ export default function PublicTournamentPage() {
               aria-label="Share on X (Twitter)"
             >
               <Link2 className="w-3.5 h-3.5" /> Post on X
+            </a>
+            <a
+              href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(data.name)}&dates=${data.startDate.replace(/-/g, "")}/${data.endDate ? data.endDate.replace(/-/g, "") : data.startDate.replace(/-/g, "")}&location=${encodeURIComponent(data.location || "Inspire Courts AZ, Gilbert, AZ")}&details=${encodeURIComponent("Tournament at Inspire Courts. View details: https://inspirecourtsaz.com/tournaments/" + data.id)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+            >
+              <CalendarPlus className="w-3.5 h-3.5" /> Add to Calendar
             </a>
           </div>
         </header>

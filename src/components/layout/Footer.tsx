@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, Trophy } from "lucide-react";
 import {
   FACILITY_EMAIL,
   FACILITY_PHONE,
@@ -56,6 +56,25 @@ export default function Footer() {
   return (
     <footer className="bg-navy text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* CTA banner */}
+        <div className="mb-10 pb-10 border-b border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <p className="text-white font-bold text-lg font-[var(--font-chakra)] uppercase tracking-tight">
+              Ready to compete?
+            </p>
+            <p className="text-white/50 text-sm mt-0.5">
+              Register your team for an upcoming tournament today.
+            </p>
+          </div>
+          <Link
+            href="/tournaments"
+            className="flex-shrink-0 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors inline-flex items-center gap-2"
+          >
+            <Trophy className="w-4 h-4" />
+            Browse Tournaments
+          </Link>
+        </div>
+
         {/* 4-column grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
 

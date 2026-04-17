@@ -11,7 +11,6 @@ import {
   FileCheck,
   CreditCard,
   CheckCircle2,
-  Circle,
 } from "lucide-react";
 
 type TournamentInfo = {
@@ -210,42 +209,47 @@ export default function RegisterPage() {
         </div>
 
         {/* Step indicators */}
-        <div className="flex items-center gap-2 mb-8">
-          {steps.map((s, i) => {
-            const StepIcon = s.icon;
-            const active = step === i + 1;
-            const done = step > i + 1;
-            return (
-              <div key={i} className="flex items-center gap-2 flex-1">
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    done
-                      ? "bg-emerald-500/20 text-emerald-600"
-                      : active
-                      ? "bg-red/20 text-red"
-                      : "bg-light-gray text-text-muted"
-                  }`}
-                >
-                  {done ? (
-                    <CheckCircle2 className="w-4 h-4" />
-                  ) : (
-                    <StepIcon className="w-4 h-4" />
+        <nav aria-label="Registration progress" className="mb-8">
+          <p className="text-text-muted text-xs font-semibold uppercase tracking-widest mb-3">
+            Step {step} of {totalSteps}
+          </p>
+          <div className="flex items-center gap-2">
+            {steps.map((s, i) => {
+              const StepIcon = s.icon;
+              const active = step === i + 1;
+              const done = step > i + 1;
+              return (
+                <div key={i} className="flex items-center gap-2 flex-1">
+                  <div
+                    className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                      done
+                        ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/30"
+                        : active
+                        ? "bg-red text-white shadow-sm shadow-red/30 ring-4 ring-red/10"
+                        : "bg-light-gray text-text-muted"
+                    }`}
+                  >
+                    {done ? (
+                      <CheckCircle2 className="w-4 h-4" />
+                    ) : (
+                      <StepIcon className="w-4 h-4" />
+                    )}
+                  </div>
+                  <span
+                    className={`text-xs font-semibold uppercase tracking-wider hidden sm:inline ${
+                      active ? "text-navy" : done ? "text-emerald-600" : "text-text-muted"
+                    }`}
+                  >
+                    {s.label}
+                  </span>
+                  {i < steps.length - 1 && (
+                    <div className={`flex-1 h-0.5 mx-2 rounded-full transition-colors duration-200 ${done ? "bg-emerald-500" : "bg-light-gray"}`} />
                   )}
                 </div>
-                <span
-                  className={`text-xs font-semibold uppercase tracking-wider ${
-                    active ? "text-navy" : "text-text-muted"
-                  }`}
-                >
-                  {s.label}
-                </span>
-                {i < steps.length - 1 && (
-                  <div className="flex-1 h-px bg-light-gray mx-2" />
-                )}
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </nav>
 
         {error && (
           <div role="alert" aria-live="assertive" className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-6 input-shake">

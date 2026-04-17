@@ -487,7 +487,11 @@ function GameCard({
   return (
     <div
       className={`bg-navy-light/60 backdrop-blur border rounded-xl transition-all cursor-pointer ${
-        isLive ? "border-emerald-500/30 shadow-lg shadow-emerald-500/5" : "border-white/10 hover:border-white/20"
+        isLive
+          ? "border-emerald-500/30 shadow-lg shadow-emerald-500/5 border-l-4 border-l-emerald-400"
+          : isFinal
+          ? "border-white/5 opacity-80 hover:opacity-100"
+          : "border-white/10 hover:border-white/20"
       }`}
       onClick={onToggle}
     >

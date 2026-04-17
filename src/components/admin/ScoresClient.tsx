@@ -108,13 +108,13 @@ export default function ScoresClient({ games }: { games: Game[] }) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Home</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Away</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Score</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Division</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Court</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Date</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3">Time</th>
+                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Home</th>
+                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Away</th>
+                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Score</th>
+                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Division</th>
+                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Court</th>
+                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Date</th>
+                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Time</th>
                   </tr>
                 </thead>
                 <tbody>

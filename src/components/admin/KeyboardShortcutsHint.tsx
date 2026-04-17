@@ -42,7 +42,7 @@ export default function KeyboardShortcutsHint() {
       {open && (
         <>
           <div className="fixed inset-0 z-[60] bg-black/40" onClick={() => setOpen(false)} />
-          <div className="fixed z-[61] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl border border-border w-[340px] p-6">
+          <div className="fixed z-[61] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border border-border w-[340px] p-6">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider">Keyboard Shortcuts</h3>
               <button onClick={() => setOpen(false)} className="text-text-secondary hover:text-navy transition-colors" aria-label="Close">

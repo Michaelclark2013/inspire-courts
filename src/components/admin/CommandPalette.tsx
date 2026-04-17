@@ -107,14 +107,22 @@ export default function CommandPalette() {
     [router],
   );
 
-  // Keyboard navigation
+  // Keyboard navigation with haptic feedback
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelected((s) => Math.min(s + 1, filtered.length - 1));
+      setSelected((s) => {
+        const next = Math.min(s + 1, filtered.length - 1);
+        if (next !== s) triggerHaptic("light");
+        return next;
+      });
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelected((s) => Math.max(s - 1, 0));
+      setSelected((s) => {
+        const next = Math.max(s - 1, 0);
+        if (next !== s) triggerHaptic("light");
+        return next;
+      });
     } else if (e.key === "Enter" && filtered[selected]) {
       navigate(filtered[selected].href);
     }

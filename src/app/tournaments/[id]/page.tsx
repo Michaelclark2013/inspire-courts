@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { nativeShare } from "@/lib/capacitor";
 import { downloadICS } from "@/lib/calendar";
+import { DeadlineCountdown } from "@/components/ui/DeadlineCountdown";
 import BracketView from "@/components/tournament/BracketView";
 import PoolStandings from "@/components/tournament/PoolStandings";
 import type { TournamentDetailPublic } from "@/types/tournament-public";
@@ -302,18 +303,21 @@ export default function PublicTournamentPage() {
                   </span>
                 )}
                 {data.registrationDeadline && (
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
-                    Deadline:{" "}
-                    <time dateTime={data.registrationDeadline}>
-                      {new Date(
-                        data.registrationDeadline + "T00:00:00"
-                      ).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </time>
-                  </span>
+                  <>
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+                      Deadline:{" "}
+                      <time dateTime={data.registrationDeadline}>
+                        {new Date(
+                          data.registrationDeadline + "T00:00:00"
+                        ).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </time>
+                    </span>
+                    <DeadlineCountdown deadline={data.registrationDeadline} />
+                  </>
                 )}
               </div>
             </div>

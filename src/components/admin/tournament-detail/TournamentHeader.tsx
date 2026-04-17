@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { memo } from "react";
+import { memo, useState, useCallback } from "react";
 import {
   ChevronLeft,
   Loader2,
@@ -9,7 +9,11 @@ import {
   CheckCircle2,
   Zap,
   Users,
+  Copy,
+  Check,
+  ExternalLink,
 } from "lucide-react";
+import { triggerHaptic } from "@/lib/capacitor";
 import Tooltip from "@/components/ui/Tooltip";
 import StatusTimeline from "./StatusTimeline";
 import {
@@ -36,6 +40,15 @@ function TournamentHeader({
 }: Props) {
   const id = data.id;
   const updatedLabel = data.updatedAt ? relativeTime(data.updatedAt) : "";
+  const [copied, setCopied] = useState(false);
+
+  const copyPublicLink = useCallback(() => {
+    const url = `${window.location.origin}/tournaments/${id}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    triggerHaptic("light");
+    setTimeout(() => setCopied(false), 2000);
+  }, [id]);
 
   return (
     <>
@@ -83,6 +96,24 @@ function TournamentHeader({
               className="min-h-[44px] flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-border rounded-lg hover:border-navy/30 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
               <Users className="w-4 h-4" /> Registrations
+            </Link>
+          </Tooltip>
+          <Tooltip content={copied ? "Copied!" : "Copy public tournament link"}>
+            <button
+              onClick={copyPublicLink}
+              className="min-h-[44px] flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-border rounded-lg hover:border-navy/30 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+            >
+              {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+              {copied ? "Copied" : "Share"}
+            </button>
+          </Tooltip>
+          <Tooltip content="View public tournament page">
+            <Link
+              href={`/tournaments/${id}`}
+              target="_blank"
+              className="min-h-[44px] flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-border rounded-lg hover:border-navy/30 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+            >
+              <ExternalLink className="w-4 h-4" /> View
             </Link>
           </Tooltip>
           {data.status === "draft" && data.teams.length >= 2 && (

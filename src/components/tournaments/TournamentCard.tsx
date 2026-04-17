@@ -12,6 +12,7 @@ import type { TournamentPublic } from "@/types/tournament-public";
 import { FORMAT_LABELS } from "@/types/tournament-public";
 import { relativeDate } from "@/lib/utils";
 import ExpandableText from "@/components/ui/ExpandableText";
+import { DeadlineCountdown } from "@/components/ui/DeadlineCountdown";
 
 function TournamentCardInner({
   tournament: t,
@@ -133,18 +134,27 @@ function TournamentCardInner({
               </div>
             )}
 
-            {t.registrationDeadline && (
-              <p className="text-text-muted text-xs">
-                Deadline:{" "}
-                <time dateTime={t.registrationDeadline}>
-                  {new Date(
-                    t.registrationDeadline + "T00:00:00"
-                  ).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </time>
+            {t.registrationCount > 0 && (
+              <p className="text-emerald-600 text-xs font-semibold">
+                {t.registrationCount} team{t.registrationCount !== 1 ? "s" : ""} registered
               </p>
+            )}
+
+            {t.registrationDeadline && (
+              <div className="space-y-1">
+                <p className="text-text-muted text-xs">
+                  Deadline:{" "}
+                  <time dateTime={t.registrationDeadline}>
+                    {new Date(
+                      t.registrationDeadline + "T00:00:00"
+                    ).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </time>
+                </p>
+                {canRegister && <DeadlineCountdown deadline={t.registrationDeadline} />}
+              </div>
             )}
 
             <div className="flex gap-2">

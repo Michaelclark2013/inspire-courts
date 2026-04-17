@@ -91,7 +91,7 @@ export default function PlayerPortalPage() {
         </Link>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6">
+      <div className="max-w-lg mx-auto px-4 py-6">
 
         {/* ── Step 1: Role Selection ───────────────────────────────── */}
         {step === "select" && (
@@ -409,7 +409,7 @@ export default function PlayerPortalPage() {
             </button>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

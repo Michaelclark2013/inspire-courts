@@ -514,7 +514,7 @@ export default function Home() {
                     <div>
                       <a
                         href={`tel:${FACILITY_PHONE.replace(/\D/g, "")}`}
-                        className={`font-bold text-navy hover:text-red transition-colors rounded ${FOCUS_RING}`}
+                        className={`font-bold text-navy hover:text-red hover:underline transition-colors rounded ${FOCUS_RING}`}
                       >
                         {FACILITY_PHONE}
                       </a>

@@ -31,18 +31,18 @@ import {
 export const metadata: Metadata = {
   title: "Basketball Camps | Inspire Courts AZ",
   description:
-    "Youth basketball camps in Gilbert, AZ at Inspire Courts. Skill development, fundamentals, and competitive play for boys & girls classes 2030-2034. Register for the Rising Stars All West Camp today.",
+    "Youth basketball camps in Gilbert, AZ at Inspire Courts. Skill development, fundamentals & competitive play for boys and girls. Register today.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/camps",
+    canonical: `${SITE_URL}/camps`,
   },
   openGraph: {
     title: "Basketball Camps | Inspire Courts AZ",
     description:
       "Youth basketball camps in Gilbert, AZ. Skill development, competitive games, and expert coaching at Arizona's premier indoor facility.",
-    url: "https://inspirecourtsaz.com/camps",
+    url: `${SITE_URL}/camps`,
     images: [
       {
-        url: "https://inspirecourtsaz.com/images/hero-bg.jpg",
+        url: `${SITE_URL}/images/hero-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Basketball Camps at Inspire Courts AZ",
@@ -589,7 +589,7 @@ export default function CampsPage() {
                       </p>
                       <a
                         href={`mailto:${FACILITY_EMAIL}`}
-                        className="text-white font-semibold text-sm hover:text-red transition-colors"
+                        className="text-white font-semibold text-sm hover:text-red hover:underline transition-colors"
                       >
                         {FACILITY_EMAIL}
                       </a>
@@ -605,7 +605,7 @@ export default function CampsPage() {
                       </p>
                       <a
                         href={`tel:${FACILITY_PHONE.replace(/\D/g, "")}`}
-                        className="text-white font-semibold text-sm hover:text-red transition-colors"
+                        className="text-white font-semibold text-sm hover:text-red hover:underline transition-colors"
                       >
                         {FACILITY_PHONE}
                       </a>

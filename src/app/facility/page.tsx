@@ -33,7 +33,7 @@ import { FACILITY_ADDRESS, FACILITY_PHONE, FACILITY_EMAIL, SOCIAL_LINKS } from "
 export const metadata: Metadata = {
   title: "Indoor Court Rental Gilbert AZ | Inspire Courts",
   description:
-    "Professional indoor court rental for basketball, volleyball, futsal, and jiu-jitsu in Gilbert, AZ. 7 courts, climate-controlled. Book for leagues, practices, and events. $80/court/hour.",
+    "Professional indoor court rental for basketball, volleyball, futsal & jiu-jitsu in Gilbert, AZ. 7 climate-controlled courts for leagues, practices & events.",
   alternates: {
     canonical: "https://inspirecourtsaz.com/facility",
   },

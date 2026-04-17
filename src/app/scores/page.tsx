@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 export default function ScoresPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       {/* Hero */}
       <section className="relative py-20 sm:py-28 lg:py-36 overflow-hidden">
         <Image
@@ -85,6 +85,6 @@ export default function ScoresPage() {
       <QuickContactBar subject="Scores" label="Need help?" />
 
       <BackToTop />
-    </main>
+    </div>
   );
 }

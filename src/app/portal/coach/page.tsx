@@ -109,7 +109,7 @@ export default function CoachPortalPage() {
         </Link>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6">
+      <div className="max-w-lg mx-auto px-4 py-6">
 
         {/* ── Lookup Form ─────────────────────────────────────────── */}
         {step === "lookup" && (
@@ -473,7 +473,7 @@ export default function CoachPortalPage() {
             </button>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

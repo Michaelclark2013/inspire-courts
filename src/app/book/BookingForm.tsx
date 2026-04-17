@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Loader2 } from "lucide-react";
 import { FACILITY_EMAIL } from "@/lib/constants";
 import { INPUT_CLASS_LG, LABEL_CLASS, SELECT_CLASS, TEXTAREA_CLASS } from "@/lib/form-styles";
 import { trackConversion } from "@/lib/analytics";
@@ -287,8 +287,17 @@ export default function BookingForm() {
             aria-busy={loading}
             className="w-full inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors shadow-lg focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
           >
-            {loading ? "Submitting…" : "Submit Booking Request"}
-            {!loading && <ArrowRight className="w-4 h-4" />}
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Submitting…
+              </>
+            ) : (
+              <>
+                Submit Booking Request
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
           </button>
       {/* Footer note */}
       <p className="text-center text-sm text-text-muted mt-8">

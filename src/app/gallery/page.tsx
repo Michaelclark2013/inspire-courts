@@ -62,6 +62,7 @@ export default function GalleryPage() {
       {/* Gallery Content */}
       <section aria-label="Photo gallery" className="py-12 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="sr-only">Photos</h2>
           <GalleryPageClient />
         </div>
       </section>
@@ -69,9 +70,9 @@ export default function GalleryPage() {
       {/* Related Pages */}
       <section className="py-16 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-6 text-center font-[var(--font-chakra)]">
+          <h2 className="text-red font-bold text-xs uppercase tracking-[0.2em] mb-6 text-center font-[var(--font-chakra)]">
             You Might Also Like
-          </p>
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link
               href="/media"

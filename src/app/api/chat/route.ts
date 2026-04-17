@@ -10,17 +10,7 @@ import {
   FACILITY_ADDRESS,
   SOCIAL_LINKS,
 } from "@/lib/constants";
-
-/** Sanitize user input to prevent XSS in emails and Notion */
-function sanitizeLeadField(value: string | undefined): string {
-  if (!value) return "";
-  return value
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;")
-    .slice(0, 500); // cap field length
-}
+import { sanitizeField as sanitizeLeadField } from "@/lib/sanitize";
 
 // ── In-memory caches ──
 let cachedEvents: string | null = null;

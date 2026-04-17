@@ -208,9 +208,9 @@ export function HorizontalBarList({
               <span className="text-[10px] text-text-secondary/60">{item.sublabel}</span>
             )}
           </div>
-          <div className="flex-1 h-5 bg-bg rounded-sm overflow-hidden">
+          <div className="flex-1 h-5 bg-bg rounded-lg overflow-hidden">
             <div
-              className="h-full rounded-sm transition-all duration-500"
+              className="h-full rounded-lg transition-all duration-500"
               style={{
                 width: `${Math.max((item.value / maxVal) * 100, 2)}%`,
                 backgroundColor: item.color || BRAND.red,

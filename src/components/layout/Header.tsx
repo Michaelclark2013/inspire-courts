@@ -69,7 +69,7 @@ function DropdownMenu({
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "px-3.5 py-2 min-h-[44px] inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-sm",
+          "px-3.5 py-2 min-h-[44px] inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-lg",
           open ? "text-white" : "text-white/80 hover:text-white"
         )}
         aria-expanded={open}
@@ -223,7 +223,7 @@ export default function Header() {
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "px-3.5 py-2 min-h-[44px] inline-flex items-center text-sm font-semibold uppercase tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-sm",
+                    "px-3.5 py-2 min-h-[44px] inline-flex items-center text-sm font-semibold uppercase tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy rounded-lg",
                     isActive ? "text-white border-b-2 border-red" : "text-white/80 hover:text-white"
                   )}
                 >

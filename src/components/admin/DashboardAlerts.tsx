@@ -283,7 +283,7 @@ function QuickAction({
         {label}
       </span>
       {shortcutHint && (
-        <kbd className="hidden lg:inline-block ml-auto text-[9px] text-navy/20 bg-off-white px-1.5 py-0.5 rounded font-mono">
+        <kbd className="hidden lg:inline-block ml-auto text-[9px] text-navy/40 bg-off-white px-1.5 py-0.5 rounded font-mono">
           {shortcutHint}
         </kbd>
       )}

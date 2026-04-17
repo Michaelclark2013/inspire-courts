@@ -20,7 +20,7 @@ export default function Badge({ variant = "neutral", children, className }: Badg
   return (
     <span
       className={cn(
-        "inline-block px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider border",
+        "inline-block px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider border",
         VARIANT_CLASSES[variant] || VARIANT_CLASSES.neutral,
         className
       )}

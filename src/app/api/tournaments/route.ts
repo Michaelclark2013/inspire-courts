@@ -7,6 +7,7 @@ import {
 } from "@/lib/db/schema";
 import { inArray, sql } from "drizzle-orm";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 // GET /api/tournaments — public tournament listing
 export async function GET(request: Request) {
@@ -77,7 +78,7 @@ export async function GET(request: Request) {
       headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=120" },
     });
   } catch (err) {
-    console.error("[api/tournaments] Failed to fetch tournaments:", err);
+    logger.error("[api/tournaments] Failed to fetch tournaments", { error: String(err) });
     return NextResponse.json([], { status: 500 });
   }
 }

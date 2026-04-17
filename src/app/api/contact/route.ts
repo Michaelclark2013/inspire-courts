@@ -6,16 +6,7 @@ import { logger } from "@/lib/logger";
 import { INQUIRY_INTEREST_MAP } from "@/lib/constants";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
-
-/** Escape HTML special characters to prevent XSS in downstream systems. */
-function sanitize(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
+import { sanitizeField as sanitize } from "@/lib/sanitize";
 
 export async function POST(request: Request) {
   // Rate limit: 5 requests per minute per IP
@@ -43,7 +34,7 @@ export async function POST(request: Request) {
     const email = sanitize(result.data.email);
     const phone = sanitize(result.data.phone ?? "");
     const inquiryType = sanitize(result.data.inquiryType ?? "");
-    const message = sanitize(result.data.message);
+    const message = sanitize(result.data.message, 2000);
 
     // Save to Notion (fire-and-forget)
     createContactSubmission({ name, email, phone, inquiryType, message }).catch(

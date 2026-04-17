@@ -5,6 +5,7 @@ import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { db } from "@/lib/db";
 import { resetTokens, users } from "@/lib/db/schema";
 import { eq, lt } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
@@ -20,6 +21,11 @@ export async function POST(request: Request) {
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(String(email))) {
+      return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
     const successResponse = NextResponse.json({
@@ -57,7 +63,7 @@ export async function POST(request: Request) {
         expiresAt,
       });
     } catch (err) {
-      console.error("Failed to store reset token:", err);
+      logger.error("Failed to store reset token", { error: String(err) });
       return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
     }
 
@@ -111,7 +117,7 @@ export async function POST(request: Request) {
 
     return successResponse;
   } catch (error) {
-    console.error("Forgot password error:", error);
+    logger.error("Forgot password error", { error: String(error) });
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
       { status: 500 }

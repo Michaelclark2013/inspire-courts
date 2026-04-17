@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -35,7 +36,7 @@ export async function GET() {
 
     return NextResponse.json({ users: pending });
   } catch (error) {
-    console.error("Failed to fetch pending approvals:", error);
+    logger.error("Failed to fetch pending approvals", { error: String(error) });
     return NextResponse.json({ error: "Failed to fetch approvals" }, { status: 500 });
   }
 }
@@ -86,7 +87,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: true, message: `${user.name} rejected and removed` });
     }
   } catch (error) {
-    console.error("Approval action failed:", error);
+    logger.error("Approval action failed", { error: String(error) });
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }

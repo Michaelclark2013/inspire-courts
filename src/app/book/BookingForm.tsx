@@ -31,7 +31,7 @@ const COURT_OPTIONS = [
 function ChevronDown() {
   return (
     <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center">
-      <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
       </svg>
     </div>

@@ -32,7 +32,7 @@ export default function PoolStandings({ bracket }: Props) {
 
   if (finalGames.length === 0) {
     return (
-      <div className="text-center py-16 text-white/40">
+      <div className="text-center py-16 text-text-muted">
         <BarChart3 className="w-8 h-8 mx-auto mb-3 opacity-40" />
         <p className="text-sm">
           No completed games yet. Standings will appear as games finish.
@@ -104,70 +104,70 @@ export default function PoolStandings({ bracket }: Props) {
         return (
           <div
             key={poolName}
-            className="bg-card border border-white/10 rounded-xl overflow-hidden"
+            className="bg-white border border-border shadow-sm rounded-xl overflow-hidden"
           >
-            <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2">
+            <div className="px-5 py-3 border-b border-border flex items-center gap-2">
               <Trophy className="w-4 h-4 text-red" />
-              <h3 className="text-white font-bold text-sm uppercase tracking-wider">
+              <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
                 {poolName === "Overall" ? "Standings" : `Pool ${poolName}`}
               </h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-5 py-2.5 w-8">
+                  <tr className="border-b border-border">
+                    <th className="text-left text-text-muted text-[10px] font-bold uppercase tracking-wider px-5 py-2.5 w-8">
                       #
                     </th>
-                    <th className="text-left text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-2.5">
+                    <th className="text-left text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5">
                       Team
                     </th>
-                    <th className="text-center text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       W
                     </th>
-                    <th className="text-center text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       L
                     </th>
-                    <th className="text-center text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-14">
+                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-14">
                       Win%
                     </th>
-                    <th className="text-center text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       PF
                     </th>
-                    <th className="text-center text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       PA
                     </th>
-                    <th className="text-center text-white/40 text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       +/-
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-border">
                   {standings.map((row, i) => (
-                    <tr key={row.team} className="hover:bg-white/[0.02]">
-                      <td className="px-5 py-2.5 text-white/30 font-bold tabular-nums">
+                    <tr key={row.team} className="hover:bg-off-white">
+                      <td className="px-5 py-2.5 text-text-muted font-bold tabular-nums">
                         {i + 1}
                       </td>
-                      <td className="px-3 py-2.5 text-white font-semibold">
+                      <td className="px-3 py-2.5 text-navy font-semibold">
                         {row.team}
                       </td>
-                      <td className="text-center px-3 py-2.5 text-emerald-400 font-bold tabular-nums">
+                      <td className="text-center px-3 py-2.5 text-emerald-600 font-bold tabular-nums">
                         {row.wins}
                       </td>
                       <td className="text-center px-3 py-2.5 text-red font-bold tabular-nums">
                         {row.losses}
                       </td>
-                      <td className="text-center px-3 py-2.5 text-white font-bold tabular-nums">
+                      <td className="text-center px-3 py-2.5 text-navy font-bold tabular-nums">
                         {row.pct}%
                       </td>
-                      <td className="text-center px-3 py-2.5 text-white/60 tabular-nums">
+                      <td className="text-center px-3 py-2.5 text-navy/60 tabular-nums">
                         {row.pointsFor}
                       </td>
-                      <td className="text-center px-3 py-2.5 text-white/60 tabular-nums">
+                      <td className="text-center px-3 py-2.5 text-navy/60 tabular-nums">
                         {row.pointsAgainst}
                       </td>
                       <td
-                        className={`text-center px-3 py-2.5 font-bold tabular-nums ${row.diff > 0 ? "text-emerald-400" : row.diff < 0 ? "text-red" : "text-white/30"}`}
+                        className={`text-center px-3 py-2.5 font-bold tabular-nums ${row.diff > 0 ? "text-emerald-600" : row.diff < 0 ? "text-red" : "text-text-muted"}`}
                       >
                         {row.diff > 0 ? "+" : ""}
                         {row.diff}

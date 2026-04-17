@@ -1,5 +1,52 @@
 import type { Metadata } from "next";
 import { FACILITY_EMAIL } from "@/lib/constants";
+
+const gameDayFaqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Where is Inspire Courts located?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "1090 N Fiesta Blvd, Ste 101 & 102, Gilbert, AZ 85233. Free parking in the lot directly in front of the building.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much is spectator admission at Inspire Courts?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Admission is paid at the door — cash and card accepted. Kids under 5 are free.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "When do tournament schedules come out?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Schedules drop 48 hours before tip-off and are emailed to head coaches. You can also check the Schedule page on the website.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is there food available at Inspire Courts?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, a snack bar is open all day. No outside food or beverages are permitted. No coolers or ice chests.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do teams check in at Inspire Courts?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Head coaches check in at the front table with a valid ID. Rosters must be submitted before your first game.",
+      },
+    },
+  ],
+};
 import Link from "next/link";
 import Image from "next/image";
 import { getPageContent, getField } from "@/lib/content";
@@ -108,6 +155,10 @@ export default function GameDayPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(gameDayFaqSchema) }}
+      />
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <Image src="/images/courts-bg.jpg" alt="Inspire Courts indoor basketball facility on game day" fill priority sizes="100vw" className="object-cover object-center" />

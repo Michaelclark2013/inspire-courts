@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
+import { logger } from "@/lib/logger";
 import {
   fetchSheetWithHeaders,
   getCol,
@@ -39,7 +40,8 @@ export async function GET() {
     return NextResponse.json(leads, {
       headers: { "Cache-Control": "private, max-age=30, stale-while-revalidate=60" },
     });
-  } catch {
+  } catch (error) {
+    logger.error("Failed to fetch leads from Google Sheets", { error: String(error) });
     return NextResponse.json(
       { error: "Failed to fetch leads" },
       { status: 500 }

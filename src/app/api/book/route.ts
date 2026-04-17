@@ -5,17 +5,7 @@ import { bookSchema } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
-
-/** Escape HTML special characters to prevent XSS in downstream systems. */
-function sanitize(value: string | undefined): string {
-  if (!value) return "";
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
+import { sanitizeField as sanitize } from "@/lib/sanitize";
 
 export async function POST(request: Request) {
   // Rate limit: 5 requests per minute per IP

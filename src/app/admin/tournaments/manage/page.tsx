@@ -705,7 +705,7 @@ function TournamentCard({ tournament: t }: { tournament: Tournament }) {
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
           <ProgressRing percent={progressPct} size={36} strokeWidth={3} />
-          <ChevronRight className="w-5 h-5 text-navy/20 group-hover:text-navy/40 transition-colors" />
+          <ChevronRight className="w-5 h-5 text-navy/40 group-hover:text-navy/60 transition-colors" />
         </div>
       </div>
 

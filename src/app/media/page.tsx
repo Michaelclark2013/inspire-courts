@@ -19,19 +19,20 @@ import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
 import BackToTop from "@/components/ui/BackToTop";
 import QuickContactBar from "@/components/ui/QuickContactBar";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Basketball Media Services | Highlights, Film & Content | Inspire Courts AZ",
   description:
     "Professional basketball media services — game film, highlight reels, mixtapes, player profiles, and social media content. Powered by @AZFinestMixtape.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/media",
+    canonical: `${SITE_URL}/media`,
   },
   openGraph: {
     title: "Basketball Media Services | @AZFinestMixtape",
     description: "Professional game film, highlight reels, mixtapes, and social media content for youth basketball players.",
-    url: "https://inspirecourtsaz.com/media",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "AZFinestMixtape basketball media services" }],
+    url: `${SITE_URL}/media`,
+    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "AZFinestMixtape basketball media services" }],
   },
 };
 

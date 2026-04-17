@@ -63,9 +63,9 @@ export default function DashboardActivity() {
             {g.status === "live" ? (
               <Radio className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" aria-label="Live" />
             ) : g.status === "final" ? (
-              <CheckCircle2 className="w-3.5 h-3.5 text-navy/20 flex-shrink-0" aria-label="Final" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-navy/40 flex-shrink-0" aria-label="Final" />
             ) : (
-              <Clock className="w-3.5 h-3.5 text-navy/20 flex-shrink-0" aria-label="Scheduled" />
+              <Clock className="w-3.5 h-3.5 text-navy/40 flex-shrink-0" aria-label="Scheduled" />
             )}
             <span className="text-navy text-xs font-medium flex-1 truncate">
               {g.homeTeam} <span className="text-navy/30">vs</span> {g.awayTeam}

@@ -13,6 +13,37 @@ import {
   Zap,
   MapPin,
 } from "lucide-react";
+
+const teamsSchema = {
+  "@context": "https://schema.org",
+  "@type": "SportsTeam",
+  name: "Team Inspire",
+  description:
+    "Team Inspire competes on the MADE Hoops Circuit. 16U and 17U boys club basketball based at Inspire Courts in Gilbert, AZ.",
+  url: "https://inspirecourtsaz.com/teams",
+  sport: "Basketball",
+  memberOf: {
+    "@type": "SportsOrganization",
+    name: "MADE Hoops",
+  },
+  location: {
+    "@type": "Place",
+    name: "Inspire Courts AZ",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
+      addressLocality: "Gilbert",
+      addressRegion: "AZ",
+      postalCode: "85233",
+      addressCountry: "US",
+    },
+  },
+  parentOrganization: {
+    "@type": "SportsOrganization",
+    name: "Inspire Courts AZ",
+    url: "https://inspirecourtsaz.com",
+  },
+};
 import AnimateIn from "@/components/ui/AnimateIn";
 import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -78,6 +109,10 @@ const WHY_INSPIRE = [
 export default function TeamsPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(teamsSchema) }}
+      />
       {/* Hero */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         <Image src="/images/courts-bg.jpg" alt="Team Inspire youth basketball program" fill priority sizes="100vw" className="object-cover object-center" />

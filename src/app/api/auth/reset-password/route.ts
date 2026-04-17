@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { resetTokens, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: Request) {
   // Rate limit: 5 attempts per 15 minutes per IP
@@ -114,7 +115,7 @@ export async function POST(request: Request) {
       message: "Password updated successfully. You can now sign in.",
     });
   } catch (error) {
-    console.error("Reset password error:", error);
+    logger.error("Reset password error", { error: String(error) });
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
       { status: 500 }

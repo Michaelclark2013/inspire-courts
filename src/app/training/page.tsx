@@ -351,7 +351,7 @@ export default function TrainingPage() {
                       />
                     ) : (
                       <div className="text-center">
-                        <Users className="w-12 h-12 text-navy/20 mx-auto mb-2" />
+                        <Users className="w-12 h-12 text-navy/40 mx-auto mb-2" />
                         <span className="text-navy/30 text-xs uppercase tracking-wider font-semibold">Photo Coming Soon</span>
                       </div>
                     )}

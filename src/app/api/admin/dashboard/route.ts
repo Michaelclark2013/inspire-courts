@@ -10,6 +10,7 @@ import {
   announcements,
 } from "@/lib/db/schema";
 import { eq, sql, inArray, or, isNull, gte } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -124,7 +125,7 @@ export async function GET() {
       liveGames: Number(liveGameCount[0]?.count) || 0,
     });
   } catch (error) {
-    console.error("Dashboard API error:", error);
+    logger.error("Dashboard API error", { error: String(error) });
     return NextResponse.json(
       { error: "Failed to load dashboard data" },
       { status: 500 }

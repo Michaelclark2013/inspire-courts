@@ -302,7 +302,7 @@ export default function AnnouncementsPage() {
                 </div>
                 <button
                   onClick={() => handleDelete(a.id, a.title)}
-                  className="text-navy/20 hover:text-red transition-colors flex-shrink-0"
+                  className="text-navy/40 hover:text-red transition-colors flex-shrink-0"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>

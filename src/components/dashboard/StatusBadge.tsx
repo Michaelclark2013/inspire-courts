@@ -23,7 +23,7 @@ export default function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={cn(
-        "inline-block px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider border",
+        "inline-block px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider border",
         colors
       )}
     >

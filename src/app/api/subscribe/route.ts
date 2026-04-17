@@ -6,7 +6,7 @@ import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
-  if (isRateLimited(ip, 5, 60 * 1000)) {
+  if (isRateLimited(`subscribe:${ip}`, 5, 60 * 1000)) {
     return NextResponse.json(
       { success: false, error: "Too many requests. Please try again later." },
       { status: 429 }

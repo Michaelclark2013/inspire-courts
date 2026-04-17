@@ -10,6 +10,55 @@ import {
   Calendar,
   MapPin,
 } from "lucide-react";
+
+const openGymSchema = {
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  name: "Inspire Courts AZ — Open Gym Basketball",
+  description:
+    "Drop-in open gym basketball at Inspire Courts in Gilbert, AZ. Regulation hardwood courts, climate-controlled facility. Weekdays 10am–3:30pm.",
+  url: "https://inspirecourtsaz.com/open-gym",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
+    addressLocality: "Gilbert",
+    addressRegion: "AZ",
+    postalCode: "85233",
+    addressCountry: "US",
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "10:00",
+      closes: "15:30",
+    },
+  ],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Open Gym Pricing",
+    itemListElement: [
+      {
+        "@type": "Offer",
+        name: "Single Session",
+        price: "10",
+        priceCurrency: "USD",
+      },
+      {
+        "@type": "Offer",
+        name: "5-Pack",
+        price: "40",
+        priceCurrency: "USD",
+      },
+      {
+        "@type": "Offer",
+        name: "Monthly Pass",
+        price: "75",
+        priceCurrency: "USD",
+      },
+    ],
+  },
+};
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 import BackToTop from "@/components/ui/BackToTop";
@@ -62,6 +111,10 @@ const RULES = [
 export default function OpenGymPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(openGymSchema) }}
+      />
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <Image

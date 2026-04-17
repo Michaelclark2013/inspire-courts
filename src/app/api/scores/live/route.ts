@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { games, gameScores } from "@/lib/db/schema";
 import { desc, inArray } from "drizzle-orm";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 // GET /api/scores/live — public endpoint for live scores and recent finals
 export async function GET(request: Request) {
@@ -97,7 +98,7 @@ export async function GET(request: Request) {
       headers: { "Cache-Control": "public, max-age=10, stale-while-revalidate=20" },
     });
   } catch (err) {
-    console.error("[api/scores/live] Failed to fetch live scores:", err);
+    logger.error("Failed to fetch live scores", { error: String(err) });
     return NextResponse.json([], { status: 500 });
   }
 }

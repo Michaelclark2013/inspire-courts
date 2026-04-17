@@ -157,6 +157,7 @@ export const tournamentTeams = sqliteTable("tournament_teams", {
   seed: integer("seed"),
   poolGroup: text("pool_group"), // "A", "B", "C", etc.
   eliminated: integer("eliminated", { mode: "boolean" }).default(false),
+  players: text("players"), // JSON array: [{name, jersey}]
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),

@@ -554,7 +554,7 @@ export default function ContentEditorPage() {
                         />
                         <button
                           onClick={() => removeField(activePage, sIdx, key)}
-                          className="text-navy/20 hover:text-red-400 transition-colors flex-shrink-0"
+                          className="text-navy/40 hover:text-red-400 transition-colors flex-shrink-0"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -640,7 +640,7 @@ export default function ContentEditorPage() {
                               </span>
                               <button
                                 onClick={() => removeListItem(activePage, sIdx, iIdx)}
-                                className="text-navy/20 hover:text-red-400 transition-colors"
+                                className="text-navy/40 hover:text-red-400 transition-colors"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>

@@ -5,6 +5,7 @@ import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /** Strip HTML special characters to prevent XSS in stored data. */
 function sanitize(value: string): string {
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Registration error:", error);
+    logger.error("Registration error", { error: String(error) });
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
       { status: 500 }

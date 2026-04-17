@@ -152,42 +152,43 @@ export default function WaiverPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Event */}
             <div>
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="waiver-event" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Event / Tournament Name
               </label>
-              <input type="text" value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="e.g. Spring Classic 2026" />
+              <input id="waiver-event" type="text" value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="e.g. Spring Classic 2026" />
             </div>
 
             {/* Player info */}
             <div>
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="waiver-player" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Player Full Name <span className="text-red">*</span>
               </label>
-              <input type="text" value={form.playerName} onChange={(e) => setForm({ ...form, playerName: e.target.value })} required autoComplete="name" className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="Player's full name" />
+              <input id="waiver-player" type="text" value={form.playerName} onChange={(e) => setForm({ ...form, playerName: e.target.value })} required autoComplete="name" className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="Player's full name" />
             </div>
 
             {/* Parent/Guardian */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="waiver-parentName" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Parent/Guardian Name <span className="text-red">*</span>
                 </label>
-                <input type="text" value={form.parentName} onChange={(e) => setForm({ ...form, parentName: e.target.value })} required autoComplete="name" className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="Parent's full name" />
+                <input id="waiver-parentName" type="text" value={form.parentName} onChange={(e) => setForm({ ...form, parentName: e.target.value })} required autoComplete="name" className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="Parent's full name" />
               </div>
               <div>
-                <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="waiver-parentEmail" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Parent Email <span className="text-red">*</span>
                 </label>
-                <input type="email" value={form.parentEmail} onChange={(e) => setForm({ ...form, parentEmail: e.target.value })} required autoComplete="email" className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="parent@email.com" />
+                <input id="waiver-parentEmail" type="email" value={form.parentEmail} onChange={(e) => setForm({ ...form, parentEmail: e.target.value })} required autoComplete="email" className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="parent@email.com" />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="waiver-parentPhone" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Parent Phone <span className="text-red">*</span>
                 </label>
                 <input
+                  id="waiver-parentPhone"
                   type="tel"
                   value={form.parentPhone}
                   onChange={(e) => setForm({ ...form, parentPhone: formatPhone(e.target.value) })}
@@ -198,26 +199,27 @@ export default function WaiverPage() {
                 />
               </div>
               <div>
-                <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="waiver-allergies" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Known Allergies
                 </label>
-                <input type="text" value={form.allergies} onChange={(e) => setForm({ ...form, allergies: e.target.value })} className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="None, or list allergies" />
+                <input id="waiver-allergies" type="text" value={form.allergies} onChange={(e) => setForm({ ...form, allergies: e.target.value })} className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="None, or list allergies" />
               </div>
             </div>
 
             {/* Emergency contact */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="waiver-emergName" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Emergency Contact Name <span className="text-red">*</span>
                 </label>
-                <input type="text" value={form.emergencyContact} onChange={(e) => setForm({ ...form, emergencyContact: e.target.value })} required className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="Emergency contact" />
+                <input id="waiver-emergName" type="text" value={form.emergencyContact} onChange={(e) => setForm({ ...form, emergencyContact: e.target.value })} required className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50" placeholder="Emergency contact" />
               </div>
               <div>
-                <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                <label htmlFor="waiver-emergPhone" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                   Emergency Contact Phone <span className="text-red">*</span>
                 </label>
                 <input
+                  id="waiver-emergPhone"
                   type="tel"
                   value={form.emergencyPhone}
                   onChange={(e) => setForm({ ...form, emergencyPhone: formatPhone(e.target.value) })}

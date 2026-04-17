@@ -240,6 +240,7 @@ export default function CheckInForm({
         <button
           type="submit"
           disabled={saving || !playerName.trim()}
+          aria-busy={saving}
           aria-label={`Check in ${playerName || "player"}`}
           className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 min-h-[44px] rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors w-full justify-center focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2"
         >

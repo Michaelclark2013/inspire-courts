@@ -99,6 +99,7 @@ function AddTeamForm({ format, divisions, onAdd }: Props) {
         <button
           type="submit"
           disabled={saving}
+          aria-busy={saving}
           className="min-h-[44px] flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
         >
           {saving ? (

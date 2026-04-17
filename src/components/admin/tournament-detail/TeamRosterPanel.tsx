@@ -102,6 +102,7 @@ function TeamRosterPanel({ team, draft, onAddPlayer, onRemovePlayer }: Props) {
           <button
             onClick={addPlayer}
             disabled={saving || !playerName.trim()}
+            aria-busy={saving}
             className="min-h-[40px] flex items-center gap-1.5 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors whitespace-nowrap focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
             {saving ? (

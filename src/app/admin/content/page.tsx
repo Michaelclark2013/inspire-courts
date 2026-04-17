@@ -747,6 +747,7 @@ export default function ContentEditorPage() {
           <button
             onClick={save}
             disabled={saving}
+            aria-busy={saving}
             className="flex items-center gap-1.5 bg-red hover:bg-red-hover disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wide px-4 py-2 rounded-full transition-colors"
           >
             {saving ? (

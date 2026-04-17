@@ -202,10 +202,11 @@ export default function ProfilePage() {
 
           <form onSubmit={handleSave} className="space-y-5">
             <div>
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="profile-email" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Email
               </label>
               <input
+                id="profile-email"
                 type="email"
                 value={session?.user?.email || ""}
                 disabled
@@ -213,10 +214,11 @@ export default function ProfilePage() {
               />
             </div>
             <div>
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="profile-name" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Name
               </label>
               <input
+                id="profile-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -226,10 +228,11 @@ export default function ProfilePage() {
               />
             </div>
             <div>
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="profile-phone" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Phone
               </label>
               <input
+                id="profile-phone"
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(formatPhone(e.target.value))}
@@ -243,10 +246,11 @@ export default function ProfilePage() {
               <p className="text-navy font-bold text-xs uppercase tracking-wider mb-4">Change Password</p>
             </div>
             <div>
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="profile-currentpw" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Current Password {newPassword && <span className="text-red">*</span>}
               </label>
               <input
+                id="profile-currentpw"
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -257,10 +261,11 @@ export default function ProfilePage() {
               />
             </div>
             <div>
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="profile-newpw" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 New Password (leave blank to keep current)
               </label>
               <input
+                id="profile-newpw"
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}

@@ -239,10 +239,11 @@ export default function RosterPage() {
         <div className="bg-white border border-light-gray rounded-xl p-6 mb-6">
           <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-4 sm:items-end">
             <div className="flex-1">
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="roster-name" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Player Name
               </label>
               <input
+                id="roster-name"
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -252,10 +253,11 @@ export default function RosterPage() {
               />
             </div>
             <div className="w-full sm:w-32">
-              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+              <label htmlFor="roster-jersey" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Jersey #
               </label>
               <input
+                id="roster-jersey"
                 type="text"
                 value={form.jerseyNumber}
                 onChange={(e) => setForm({ ...form, jerseyNumber: e.target.value })}

@@ -204,21 +204,26 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
             {/* View toggle */}
             <div className="flex items-center bg-white/5 rounded-lg overflow-hidden">
               <button
+                type="button"
                 onClick={() => setViewMode("timeline")}
                 className={`p-1.5 transition-colors ${viewMode === "timeline" ? "bg-white/10 text-white" : "text-white/30 hover:text-white/60"}`}
                 aria-label="Timeline view"
+                aria-pressed={viewMode === "timeline"}
               >
                 <List className="w-3.5 h-3.5" />
               </button>
               <button
+                type="button"
                 onClick={() => setViewMode("courts")}
                 className={`p-1.5 transition-colors ${viewMode === "courts" ? "bg-white/10 text-white" : "text-white/30 hover:text-white/60"}`}
                 aria-label="Courts view"
+                aria-pressed={viewMode === "courts"}
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
               </button>
             </div>
             <button
+              type="button"
               onClick={() => fetchScores(true)}
               disabled={refreshing}
               className="flex items-center gap-1.5 text-white/40 hover:text-white text-xs font-semibold transition-colors disabled:opacity-50"
@@ -241,7 +246,9 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
         {divisions.length > 1 && (
           <div className="flex flex-wrap items-center gap-2">
             <button
+              type="button"
               onClick={() => setDivFilter("")}
+              aria-pressed={divFilter === ""}
               className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
                 divFilter === "" ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
               }`}
@@ -250,8 +257,10 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
             </button>
             {divisions.sort().map((d) => (
               <button
+                type="button"
                 key={d}
                 onClick={() => setDivFilter(d)}
+                aria-pressed={divFilter === d}
                 className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
                   divFilter === d ? "bg-red text-white" : "bg-white/5 text-white/40 hover:text-white"
                 }`}
@@ -523,6 +532,7 @@ function GameCard({
             </span>
             {canEdit && !editing && (
               <button
+                type="button"
                 onClick={openEdit}
                 className="flex items-center gap-1 text-red/70 hover:text-red px-1.5 py-0.5 rounded transition-colors"
                 title="Edit score"

@@ -327,6 +327,7 @@ export default function BracketView({
                                 </div>
                                 <div className="flex gap-2">
                                   <button
+                                    type="button"
                                     onClick={() =>
                                       handleScoreSave(game.gameId)
                                     }
@@ -341,6 +342,7 @@ export default function BracketView({
                                     Save
                                   </button>
                                   <button
+                                    type="button"
                                     onClick={() => { setUpdatingGame(null); setSaveError(null); }}
                                     className="text-text-muted hover:text-navy px-3 py-1.5 rounded text-[10px] transition-colors"
                                   >
@@ -353,6 +355,7 @@ export default function BracketView({
                               </div>
                             ) : (
                               <button
+                                type="button"
                                 onClick={() => startScoreUpdate(game)}
                                 className="w-full text-center text-[10px] text-text-muted hover:text-navy font-semibold uppercase tracking-wider py-1 transition-colors"
                               >

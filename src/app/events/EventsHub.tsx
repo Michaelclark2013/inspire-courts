@@ -305,8 +305,10 @@ export default function EventsHub({
                   />
                   {searchQuery && (
                     <button
+                      type="button"
                       onClick={() => setSearchQuery("")}
                       className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-navy"
+                      aria-label="Clear search"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -476,6 +478,7 @@ export default function EventsHub({
                     Try adjusting your filters or search terms.
                   </p>
                   <button
+                    type="button"
                     onClick={() => {
                       setSearchQuery("");
                       setDivisionFilter("all");
@@ -568,6 +571,7 @@ export default function EventsHub({
                         </div>
                       </div>
                       <button
+                        type="button"
                         onClick={() => setActiveTab("schedule")}
                         className="text-red text-xs font-bold uppercase tracking-wide hover:text-red-hover transition-colors whitespace-nowrap"
                       >
@@ -766,9 +770,11 @@ export default function EventsHub({
                       }`}
                     >
                       <button
+                        type="button"
                         onClick={() =>
                           setExpandedSection(isOpen ? null : section.id)
                         }
+                        aria-expanded={isOpen}
                         className="w-full flex items-center gap-4 px-5 py-4 text-left"
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${

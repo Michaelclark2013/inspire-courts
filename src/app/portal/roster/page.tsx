@@ -271,7 +271,7 @@ export default function RosterPage() {
               aria-busy={saving}
               className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors w-full sm:w-auto"
             >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
               Add Player
             </button>
           </form>
@@ -350,9 +350,9 @@ export default function RosterPage() {
                             className="text-light-gray hover:text-red disabled:opacity-40 transition-colors"
                           >
                             {deletingId === p.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                             ) : (
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4" aria-hidden="true" />
                             )}
                           </button>
                         </td>

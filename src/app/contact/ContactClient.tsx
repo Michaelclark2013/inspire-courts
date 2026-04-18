@@ -268,13 +268,13 @@ function ContactPageInner() {
                     >
                       {loading ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                           Sending...
                         </>
                       ) : (
                         <>
                           Send Message
-                          <ArrowRight className="w-4 h-4" />
+                          <ArrowRight className="w-4 h-4" aria-hidden="true" />
                         </>
                       )}
                     </button>

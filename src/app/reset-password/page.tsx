@@ -161,7 +161,7 @@ function ResetPasswordForm() {
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                   Updating...
                 </>
               ) : (

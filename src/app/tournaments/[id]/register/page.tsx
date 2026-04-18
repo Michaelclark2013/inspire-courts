@@ -534,11 +534,11 @@ export default function RegisterPage() {
                 className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
                 {submitting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                 ) : needsPayment ? (
-                  <CreditCard className="w-4 h-4" />
+                  <CreditCard className="w-4 h-4" aria-hidden="true" />
                 ) : (
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
                 )}
                 {needsPayment
                   ? `Pay $${(fee / 100).toFixed(0)}`

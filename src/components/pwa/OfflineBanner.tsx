@@ -39,7 +39,7 @@ export default function OfflineBanner() {
         aria-live="polite"
         className="bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 flex items-center justify-center gap-2"
       >
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
         Syncing offline changes...
       </div>
     );

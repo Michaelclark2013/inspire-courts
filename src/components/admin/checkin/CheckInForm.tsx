@@ -245,11 +245,11 @@ export default function CheckInForm({
           className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 min-h-[44px] rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors w-full justify-center focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2"
         >
           {saving ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
           ) : success ? (
             <CheckCircle2 className="w-4 h-4 text-emerald-300" />
           ) : (
-            <UserCheck className="w-4 h-4" />
+            <UserCheck className="w-4 h-4" aria-hidden="true" />
           )}
           {success ? "Checked In!" : "Check In"}
         </button>

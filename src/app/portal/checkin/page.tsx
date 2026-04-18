@@ -389,9 +389,9 @@ export default function CoachCheckInPage() {
               className="flex items-center gap-2 bg-amber-50 hover:bg-amber-500/30 disabled:opacity-40 text-amber-600 px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
             >
               {coachCheckingIn ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
               ) : (
-                <Shield className="w-4 h-4" />
+                <Shield className="w-4 h-4" aria-hidden="true" />
               )}
               Issue Band
             </button>

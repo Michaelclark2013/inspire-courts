@@ -251,7 +251,7 @@ export default function AnnouncementsPage() {
               aria-busy={saving}
               className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
             >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Megaphone className="w-4 h-4" />}
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Megaphone className="w-4 h-4" aria-hidden="true" />}
               Publish
             </button>
           </form>

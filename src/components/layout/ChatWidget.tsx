@@ -455,6 +455,8 @@ export default function ChatWidget() {
             "lg:bottom-6 lg:right-6",
             "animate-[slideUp_0.3s_ease-out_forwards]"
           )}
+          role="dialog"
+          aria-label="Chat with Inspire Courts"
         >
           {/* ── Header ── */}
           <div className="flex items-center gap-3 px-4 py-3.5 bg-gradient-to-r from-navy to-navy-light">

@@ -294,6 +294,9 @@ export default function Header() {
           "lg:hidden bg-navy-dark border-t border-border-dark transition-all duration-300 overflow-hidden relative z-50",
           open ? "max-h-[85vh] opacity-100 overflow-y-auto animate-slide-down" : "max-h-0 opacity-0"
         )}
+        role={open ? "dialog" : undefined}
+        aria-modal={open ? true : undefined}
+        aria-label="Mobile navigation menu"
       >
         <nav aria-label="Mobile navigation" className="px-4 py-4 space-y-1">
           {/* Primary links */}

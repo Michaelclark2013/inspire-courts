@@ -483,6 +483,9 @@ export default function AdminSidebar() {
           <div
             className="lg:hidden fixed bottom-0 left-0 right-0 z-[66] bg-white border-t border-light-gray rounded-t-2xl max-h-[82vh] overflow-y-auto transition-transform duration-300 ease-out animate-slide-up"
             style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3 pb-1 flex-shrink-0">

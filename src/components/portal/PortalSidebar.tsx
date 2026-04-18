@@ -131,6 +131,9 @@ export default function PortalSidebar() {
           "lg:translate-x-0 lg:static lg:z-auto",
           open ? "translate-x-0" : "-translate-x-full"
         )}
+        role={open ? "dialog" : undefined}
+        aria-modal={open ? true : undefined}
+        aria-label="Portal navigation"
       >
         {/* Red accent stripe */}
         <div className="h-1 bg-red" />

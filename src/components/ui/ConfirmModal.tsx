@@ -102,6 +102,7 @@ export default function ConfirmModal({
           >
             <AlertTriangle
               className={`w-5 h-5 ${isDanger ? "text-red" : "text-amber-600"}`}
+              aria-hidden="true"
             />
           </div>
           <div className="flex-1 min-w-0">

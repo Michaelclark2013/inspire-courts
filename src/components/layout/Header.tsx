@@ -168,6 +168,7 @@ const ADMIN_ROLES = ["admin", "staff", "ref", "front_desk"];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const mobileNavRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const isLoggedIn = status === "authenticated";
@@ -193,6 +194,18 @@ export default function Header() {
     };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
+  }, [open]);
+
+  // Move focus to first interactive element when mobile nav opens
+  useEffect(() => {
+    if (!open) return;
+    const id = window.setTimeout(() => {
+      const firstFocusable = mobileNavRef.current?.querySelector<HTMLElement>(
+        'a, button, [tabindex]:not([tabindex="-1"])'
+      );
+      firstFocusable?.focus();
+    }, 100);
+    return () => window.clearTimeout(id);
   }, [open]);
 
   return (
@@ -290,6 +303,7 @@ export default function Header() {
       {/* Mobile Nav */}
       <div
         id="mobile-nav"
+        ref={mobileNavRef}
         className={cn(
           "lg:hidden bg-navy-dark border-t border-border-dark transition-all duration-300 overflow-hidden relative z-50",
           open ? "max-h-[85vh] opacity-100 overflow-y-auto animate-slide-down" : "max-h-0 opacity-0"

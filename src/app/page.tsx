@@ -221,7 +221,7 @@ export default function Home() {
             </p>
           </AnimateIn>
 
-          <AnimateIn delay={300}>
+          <AnimateIn delay={100}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="https://inspirecourts.leagueapps.com/tournaments"
@@ -234,10 +234,10 @@ export default function Home() {
               </a>
               <Link
                 href="/book"
-                className={`group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/40 text-white/90 hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)] ${FOCUS_RING_ON_DARK}`}
+                className={`group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/40 text-white/90 hover:bg-white hover:text-navy px-8 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-base sm:text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)] ${FOCUS_RING_ON_DARK}`}
               >
                 {page ? getField(page, "Hero", "ctaSecondary") : "Book a Court"}{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
             </div>
           </AnimateIn>

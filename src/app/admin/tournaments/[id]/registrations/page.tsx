@@ -234,7 +234,7 @@ export default function RegistrationsPage() {
               className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
-              Add
+              {saving ? "Adding…" : "Add Team"}
             </button>
           </form>
         </div>

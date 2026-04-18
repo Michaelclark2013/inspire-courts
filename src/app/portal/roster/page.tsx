@@ -310,6 +310,14 @@ export default function RosterPage() {
           {roster.length === 0 ? (
             <div className="text-center py-12 text-text-muted">
               <p className="text-sm">No players on the roster yet.</p>
+              {isCoach && team && (
+                <button
+                  onClick={() => { setShowAdd(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                  className="mt-3 inline-flex items-center gap-1.5 text-red hover:text-red-hover text-sm font-semibold underline underline-offset-2"
+                >
+                  Add your first player
+                </button>
+              )}
             </div>
           ) : (
             <div className="overflow-x-auto">

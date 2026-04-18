@@ -280,10 +280,15 @@ export default function UsersPage() {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
+                minLength={8}
                 autoComplete="new-password"
+                aria-describedby="user-password-hint"
                 className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-gray-400"
                 placeholder="Initial password"
               />
+              <p id="user-password-hint" className="text-navy/50 text-xs mt-1">
+                Min 8 characters. The user can change it after first sign-in.
+              </p>
             </div>
             <div>
               <label htmlFor="user-role" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">

@@ -290,11 +290,11 @@ export default function BookingForm() {
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                Submitting…
+                Sending Request…
               </>
             ) : (
               <>
-                Submit Booking Request
+                Request Booking
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </>
             )}

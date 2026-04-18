@@ -269,10 +269,14 @@ export default function ProfilePage() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 autoComplete="new-password"
+                aria-describedby="profile-newpw-hint"
                 className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                 placeholder="New password"
                 minLength={8}
               />
+              <p id="profile-newpw-hint" className="text-text-muted text-xs mt-1">
+                Must be at least 8 characters.
+              </p>
               {/* Password strength indicator */}
               {newPassword && (
                 <div className="mt-2">

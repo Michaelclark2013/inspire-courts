@@ -40,7 +40,7 @@ export default function PushNotificationPrompt() {
   return (
     <div className="mb-4 bg-white border border-light-gray shadow-sm rounded-2xl p-4 flex items-start gap-3">
       <div className="w-9 h-9 rounded-full bg-red/10 flex items-center justify-center flex-shrink-0">
-        <Bell className="w-4.5 h-4.5 text-red" />
+        <Bell className="w-4.5 h-4.5 text-red" aria-hidden="true" />
       </div>
 
       <div className="flex-1 min-w-0">

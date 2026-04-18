@@ -201,7 +201,7 @@ export default function BracketView({
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             {homeWins && (
-                              <Trophy className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                              <Trophy className="w-3 h-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
                             )}
                             <span
                               className={`text-sm font-semibold truncate ${
@@ -228,7 +228,7 @@ export default function BracketView({
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             {awayWins && (
-                              <Trophy className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                              <Trophy className="w-3 h-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
                             )}
                             <span
                               className={`text-sm font-semibold truncate ${
@@ -337,7 +337,7 @@ export default function BracketView({
                                     {saving ? (
                                       <Loader2 className="w-3 h-3 animate-spin" />
                                     ) : (
-                                      <CheckCircle2 className="w-3 h-3" />
+                                      <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
                                     )}
                                     Save
                                   </button>

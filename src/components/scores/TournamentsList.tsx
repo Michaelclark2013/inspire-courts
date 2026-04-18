@@ -37,7 +37,7 @@ export default function TournamentsList({ selectedEvent, onSelectEvent }: Props)
   return (
     <div className="mb-4">
       <h2 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-        <Trophy className="w-4 h-4 text-red" />
+        <Trophy className="w-4 h-4 text-red" aria-hidden="true" />
         Active Tournaments
       </h2>
 
@@ -92,7 +92,7 @@ export default function TournamentsList({ selectedEvent, onSelectEvent }: Props)
                   </div>
                   <div className="flex items-center gap-3 text-text-secondary text-xs">
                     <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
+                      <Calendar className="w-3 h-3" aria-hidden="true" />
                       {new Date(t.startDate + "T00:00:00").toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",

@@ -174,7 +174,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
           href="/tournaments"
           className="inline-flex items-center gap-2 text-red hover:text-red-hover text-sm font-semibold transition-colors"
         >
-          <Calendar className="w-4 h-4" />
+          <Calendar className="w-4 h-4" aria-hidden="true" />
           View Upcoming Tournaments
         </Link>
       </div>
@@ -294,7 +294,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
                   }`}
                 >
                   <div className="flex items-center gap-1.5 mb-3">
-                    <MapPin className="w-3 h-3 text-white/40" />
+                    <MapPin className="w-3 h-3 text-white/40" aria-hidden="true" />
                     <h3 className="text-white font-bold text-xs uppercase tracking-wider">
                       {court}
                     </h3>
@@ -366,7 +366,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
           {scheduledGames.length > 0 && (
             <section>
               <div className="flex items-center gap-2 mb-4">
-                <Clock className="w-4 h-4 text-white/40" />
+                <Clock className="w-4 h-4 text-white/40" aria-hidden="true" />
                 <h2 className="text-white font-bold text-sm uppercase tracking-wider">
                   Upcoming
                 </h2>
@@ -392,7 +392,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
           {finalGames.length > 0 && (
             <section>
               <div className="flex items-center gap-2 mb-4">
-                <Trophy className="w-4 h-4 text-red" />
+                <Trophy className="w-4 h-4 text-red" aria-hidden="true" />
                 <h2 className="text-white font-bold text-sm uppercase tracking-wider">
                   Final
                 </h2>
@@ -716,7 +716,7 @@ function GameCard({
           <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-white/40">
             {game.scheduledTime && (
               <span>
-                <Clock className="w-3 h-3 inline mr-1 -mt-0.5" />
+                <Clock className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />
                 {new Date(game.scheduledTime).toLocaleString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -727,13 +727,13 @@ function GameCard({
             )}
             {game.court && (
               <span>
-                <MapPin className="w-3 h-3 inline mr-1 -mt-0.5" />
+                <MapPin className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />
                 {game.court}
               </span>
             )}
             {game.eventName && (
               <span>
-                <Trophy className="w-3 h-3 inline mr-1 -mt-0.5" />
+                <Trophy className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />
                 {game.eventName}
               </span>
             )}

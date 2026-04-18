@@ -238,7 +238,7 @@ export default function DashboardDBStats() {
         <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
           <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-red" />
+              <Trophy className="w-4 h-4 text-red" aria-hidden="true" />
               <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
                 Active Tournaments
               </h3>
@@ -253,12 +253,12 @@ export default function DashboardDBStats() {
           {data.tournamentStatus.length === 0 ? (
             <div className="px-5 py-8 text-center">
               <div className="w-12 h-12 bg-red/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <Trophy className="w-6 h-6 text-red/60" />
+                <Trophy className="w-6 h-6 text-red/60" aria-hidden="true" />
               </div>
               <p className="text-navy font-semibold text-sm mb-1">No Active Tournaments</p>
               <p className="text-text-secondary text-xs mb-4">Create your first tournament — it takes less than 60 seconds with templates</p>
               <Link href="/admin/tournaments/manage" className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
-                <Trophy className="w-3.5 h-3.5" /> Create Tournament
+                <Trophy className="w-3.5 h-3.5" aria-hidden="true" /> Create Tournament
               </Link>
             </div>
           ) : (
@@ -350,7 +350,7 @@ export default function DashboardDBStats() {
         <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
           <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-cyan-600" />
+              <Clock className="w-4 h-4 text-cyan-600" aria-hidden="true" />
               <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
                 Upcoming Games
               </h3>

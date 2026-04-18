@@ -68,7 +68,7 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
             className="bg-white border border-border shadow-sm rounded-xl overflow-hidden"
           >
             <div className="px-5 py-3 border-b border-border flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-red" />
+              <MapPin className="w-4 h-4 text-red" aria-hidden="true" />
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
                 {court}
               </h3>

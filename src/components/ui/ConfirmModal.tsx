@@ -88,10 +88,10 @@ export default function ConfirmModal({
         <button
           type="button"
           onClick={onCancel}
-          className="absolute top-4 right-4 text-text-muted hover:text-navy transition-colors"
+          className="absolute top-2 right-2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-text-muted hover:text-navy hover:bg-off-white transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           aria-label="Close"
         >
-          <X className="w-4 h-4" aria-hidden="true" />
+          <X className="w-5 h-5" aria-hidden="true" />
         </button>
 
         <div className="flex items-start gap-4">
@@ -122,7 +122,7 @@ export default function ConfirmModal({
           <button
             type="button"
             onClick={onCancel}
-            className="px-5 py-2.5 rounded-lg text-sm font-semibold text-text-muted hover:text-navy hover:bg-off-white transition-colors"
+            className="px-5 py-3 min-h-[44px] rounded-lg text-sm font-semibold text-text-muted hover:text-navy hover:bg-off-white transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
             {cancelLabel}
           </button>
@@ -130,7 +130,7 @@ export default function ConfirmModal({
             type="button"
             ref={confirmRef}
             onClick={onConfirm}
-            className={`px-5 py-2.5 rounded-lg text-sm font-bold uppercase tracking-wider text-white transition-colors ${
+            className={`px-5 py-3 min-h-[44px] rounded-lg text-sm font-bold uppercase tracking-wider text-white transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 focus-visible:outline-none ${
               isDanger
                 ? "bg-red hover:bg-red-hover"
                 : "bg-amber-500 hover:bg-amber-600"

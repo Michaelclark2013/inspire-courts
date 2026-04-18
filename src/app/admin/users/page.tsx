@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import { formatDate, formatPhone } from "@/lib/utils";
 
 type User = {
   id: number;
@@ -560,10 +561,10 @@ export default function UsersPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-text-secondary hidden md:table-cell">
-                      {u.phone || "—"}
+                      {u.phone ? formatPhone(u.phone) : "—"}
                     </td>
                     <td className="px-6 py-4 text-text-secondary hidden md:table-cell">
-                      {new Date(u.createdAt).toLocaleDateString()}
+                      {formatDate(u.createdAt)}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button

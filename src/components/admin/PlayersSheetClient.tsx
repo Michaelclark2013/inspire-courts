@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Search, ExternalLink, Download } from "lucide-react";
+import { formatPhone } from "@/lib/utils";
 
 function downloadPlayersCSV(rows: Player[], filename: string) {
   const headers = ["Player", "Parent/Guardian", "Team", "Division", "Phone", "Email", "Date"];
@@ -178,7 +179,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
                   <tr key={i} className="hover:bg-white/40 transition-colors">
                     <td className="px-4 py-3 font-semibold text-navy"><SearchHighlight text={p.name} query={search} /></td>
                     <td className="px-4 py-3 text-text-secondary"><SearchHighlight text={p.parent} query={search} /></td>
-                    <td className="px-4 py-3 text-text-secondary text-xs max-w-[140px] truncate"><SearchHighlight text={p.team} query={search} /></td>
+                    <td className="px-4 py-3 text-text-secondary text-xs max-w-[140px] truncate" title={p.team}><SearchHighlight text={p.team} query={search} /></td>
                     <td className="px-4 py-3">
                       <Badge variant="accent">{p.division}</Badge>
                     </td>
@@ -187,7 +188,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
                       <div className="flex items-center gap-2">
                         {p.phone !== "—" && (
                           <a href={`tel:${p.phone}`} className="text-text-secondary hover:text-red transition-colors text-xs">
-                            {p.phone}
+                            {formatPhone(p.phone)}
                           </a>
                         )}
                         {p.email !== "—" && (

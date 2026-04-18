@@ -2,7 +2,7 @@
 
 import { Fragment, useState, useMemo } from "react";
 import { Search, ChevronDown, ChevronUp, Trophy, Users, DollarSign, TrendingUp } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { AdminDonutChart, AdminBarChart, CHART_COLORS } from "@/components/dashboard/Charts";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 
@@ -128,7 +128,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Revenue</span>
             <DollarSign className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
-          <p className="text-2xl font-bold text-navy">${totalRevenue.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-navy">{formatCurrency(totalRevenue)}</p>
         </div>
         <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">

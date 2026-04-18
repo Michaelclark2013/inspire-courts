@@ -65,7 +65,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Tabs */}
-      <div className="flex gap-1 bg-bg-secondary border border-border rounded-sm p-1 w-fit" role="tablist" aria-label="Scores view">
+      <div className="flex gap-1 bg-off-white border border-border rounded-sm p-1 w-fit" role="tablist" aria-label="Scores view">
         {(["games", "standings"] as const).map((t) => (
           <button
             key={t}
@@ -75,7 +75,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
             aria-controls={`${t}-panel`}
             className={`px-4 py-1.5 rounded text-sm font-medium capitalize transition-colors ${
               tab === t
-                ? "bg-accent text-white"
+                ? "bg-red text-white"
                 : "text-text-secondary hover:text-navy"
             }`}
           >
@@ -97,7 +97,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search teams..."
                   aria-label="Search teams"
-                  className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
+                  className="w-full bg-off-white border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                 />
               </div>
               {/* Desktop division select */}
@@ -105,7 +105,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                 value={divFilter}
                 onChange={(e) => setDivFilter(e.target.value)}
                 aria-label="Filter by division"
-                className="hidden md:block bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
+                className="hidden md:block bg-off-white border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
               >
                 {divisions.map((d) => (
                   <option key={d} value={d}>
@@ -122,8 +122,8 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                   onClick={() => setDivFilter(d)}
                   className={`snap-start flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
                     divFilter === d
-                      ? "bg-accent text-white"
-                      : "bg-bg-secondary border border-border text-text-secondary"
+                      ? "bg-red text-white"
+                      : "bg-off-white border border-border text-text-secondary"
                   }`}
                 >
                   {d === "All" ? "All Divisions" : d}
@@ -133,7 +133,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
           </div>
 
           {/* Games container */}
-          <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+          <div className="bg-off-white border border-border rounded-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-border flex items-center justify-between">
               <p className="text-text-secondary text-xs">{filtered.length} games</p>
               {filtered.length > 10 && (
@@ -175,7 +175,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                       </div>
                       <div className="flex items-center gap-2 flex-wrap">
                         {game.division && game.division !== "—" && (
-                          <span className="text-[10px] bg-bg px-2 py-0.5 rounded text-text-secondary">{game.division}</span>
+                          <span className="text-[10px] bg-white px-2 py-0.5 rounded text-text-secondary">{game.division}</span>
                         )}
                         {game.court && game.court !== "—" && (
                           <span className="text-[10px] text-text-secondary">Court {game.court}</span>
@@ -221,7 +221,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                         game.away !== "—" &&
                         game.winner.toLowerCase().includes(game.away.toLowerCase().split(" ")[0]);
                       return (
-                        <tr key={i} className="hover:bg-bg/40 transition-colors">
+                        <tr key={i} className="hover:bg-white/40 transition-colors">
                           <td className="px-4 py-3 text-text-secondary text-xs">{game.date}</td>
                           <td className={`px-4 py-3 font-medium ${homeWon ? "text-navy" : "text-text-secondary"}`}>
                             {game.home}
@@ -238,7 +238,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                           </td>
                           <td className="px-4 py-3 text-text-secondary text-xs max-w-[120px] truncate">{game.winner}</td>
                           <td className="px-4 py-3">
-                            <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">{game.division}</span>
+                            <span className="text-xs bg-white px-2 py-0.5 rounded text-text-secondary">{game.division}</span>
                           </td>
                           <td className="px-4 py-3 text-text-secondary text-xs">{game.court}</td>
                         </tr>
@@ -255,7 +255,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
       {tab === "standings" && (
         <div id="standings-panel" role="tabpanel" aria-labelledby="standings-tab" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Win leaderboard */}
-          <div className="bg-bg-secondary border border-border rounded-sm p-5">
+          <div className="bg-off-white border border-border rounded-sm p-5">
             <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
               Win Leaderboard
             </h3>
@@ -272,7 +272,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
           </div>
 
           {/* Full standings table */}
-          <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+          <div className="bg-off-white border border-border rounded-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-border">
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider">
                 Win / Loss Records
@@ -295,7 +295,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {standings.slice(0, 20).map((s, i) => (
-                    <tr key={i} className="hover:bg-bg/40 transition-colors">
+                    <tr key={i} className="hover:bg-white/40 transition-colors">
                       <td className="px-4 py-2.5 text-text-secondary text-xs">
                         {i + 1}
                       </td>

@@ -108,9 +108,9 @@ export default async function FilesPage() {
       </div>
 
       {/* Quick Links — always visible */}
-      <div className="bg-bg-secondary border border-border rounded-sm mb-6">
+      <div className="bg-off-white border border-border rounded-xl mb-6">
         <div className="px-5 py-4 border-b border-border flex items-center gap-2">
-          <FileSpreadsheet className="w-4 h-4 text-accent" aria-hidden="true" />
+          <FileSpreadsheet className="w-4 h-4 text-red" aria-hidden="true" />
           <h2 className="text-navy font-bold text-sm uppercase tracking-tight">
             Key Spreadsheets
           </h2>
@@ -122,18 +122,18 @@ export default async function FilesPage() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-3 bg-bg border border-border rounded-sm hover:border-accent/50 hover:bg-accent/5 transition-colors group"
+              className="flex items-center gap-3 p-3 bg-white border border-border rounded-xl hover:border-red/50 hover:bg-red/5 transition-colors group"
             >
               <div className="w-8 h-8 bg-success/10 rounded flex items-center justify-center flex-shrink-0">
                 <FileSpreadsheet className="w-4 h-4 text-success" aria-hidden="true" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-navy text-xs font-medium truncate group-hover:text-accent transition-colors">
+                <p className="text-navy text-xs font-medium truncate group-hover:text-red transition-colors">
                   {link.name}
                 </p>
                 <p className="text-text-secondary text-[10px]">{link.type}</p>
               </div>
-              <ExternalLink className="w-3 h-3 text-text-secondary flex-shrink-0 group-hover:text-accent transition-colors" aria-hidden="true" />
+              <ExternalLink className="w-3 h-3 text-text-secondary flex-shrink-0 group-hover:text-red transition-colors" aria-hidden="true" />
             </a>
           ))}
         </div>
@@ -141,7 +141,7 @@ export default async function FilesPage() {
 
       {/* Drive browser */}
       {!isGoogleConfigured() ? (
-        <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
+        <div className="bg-off-white border border-border rounded-xl p-5 text-center">
           <FolderOpen className="w-10 h-10 text-text-secondary mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">
             Google Drive Not Connected

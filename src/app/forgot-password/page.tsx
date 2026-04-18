@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/constants";
 import ForgotPasswordClient from "./ForgotPasswordClient";
 
 export const metadata: Metadata = {
   title: "Forgot Password | Inspire Courts AZ",
   description: "Reset your Inspire Courts AZ account password. Enter your email and we'll send you a reset link.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/forgot-password",
+    canonical: `${SITE_URL}/forgot-password`,
   },
   robots: {
     index: false,

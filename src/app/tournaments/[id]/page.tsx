@@ -26,6 +26,7 @@ const BracketView = dynamic(() => import("@/components/tournament/BracketView"))
 const PoolStandings = dynamic(() => import("@/components/tournament/PoolStandings"));
 import type { TournamentDetailPublic } from "@/types/tournament-public";
 import { FORMAT_LABELS } from "@/types/tournament-public";
+import { SITE_URL } from "@/lib/constants";
 
 export default function PublicTournamentPage() {
   const { id } = useParams<{ id: string }>();
@@ -177,9 +178,9 @@ export default function PublicTournamentPage() {
             organizer: {
               "@type": "Organization",
               name: "OFF SZN HOOPS",
-              url: "https://inspirecourtsaz.com",
+              url: SITE_URL,
             },
-            url: `https://inspirecourtsaz.com/tournaments/${data.id}`,
+            url: `${SITE_URL}/tournaments/${data.id}`,
             ...(data.entryFee != null && data.entryFee > 0
               ? {
                   offers: {
@@ -261,7 +262,7 @@ export default function PublicTournamentPage() {
               {copied ? <><Copy className="w-3.5 h-3.5" aria-hidden="true" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" aria-hidden="true" /> Share</>}
             </button>
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(data.name + " at Inspire Courts")}&url=${encodeURIComponent(`https://inspirecourtsaz.com/tournaments/${data.id}`)}`}
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(data.name + " at Inspire Courts")}&url=${encodeURIComponent(`${SITE_URL}/tournaments/${data.id}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
@@ -270,7 +271,7 @@ export default function PublicTournamentPage() {
               <Link2 className="w-3.5 h-3.5" aria-hidden="true" /> Post on X
             </a>
             <a
-              href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(data.name)}&dates=${data.startDate.replace(/-/g, "")}/${data.endDate ? data.endDate.replace(/-/g, "") : data.startDate.replace(/-/g, "")}&location=${encodeURIComponent(data.location || "Inspire Courts AZ, Gilbert, AZ")}&details=${encodeURIComponent("Tournament at Inspire Courts. View details: https://inspirecourtsaz.com/tournaments/" + data.id)}`}
+              href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(data.name)}&dates=${data.startDate.replace(/-/g, "")}/${data.endDate ? data.endDate.replace(/-/g, "") : data.startDate.replace(/-/g, "")}&location=${encodeURIComponent(data.location || "Inspire Courts AZ, Gilbert, AZ")}&details=${encodeURIComponent(`Tournament at Inspire Courts. View details: ${SITE_URL}/tournaments/${data.id}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
@@ -284,8 +285,8 @@ export default function PublicTournamentPage() {
                 startDate: data.startDate,
                 endDate: data.endDate || data.startDate,
                 location: data.location || "Inspire Courts AZ, Gilbert, AZ",
-                description: `Tournament at Inspire Courts. View details: https://inspirecourtsaz.com/tournaments/${data.id}`,
-                url: `https://inspirecourtsaz.com/tournaments/${data.id}`,
+                description: `Tournament at Inspire Courts. View details: ${SITE_URL}/tournaments/${data.id}`,
+                url: `${SITE_URL}/tournaments/${data.id}`,
               })}
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >

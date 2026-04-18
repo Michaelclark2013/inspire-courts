@@ -6,6 +6,7 @@ import { Trophy, Loader2, AlertTriangle, RefreshCw, Radio } from "lucide-react";
 import StandingsTable from "@/components/scores/StandingsTable";
 import ExportBar from "@/components/ui/ExportBar";
 import { exportCSV } from "@/lib/export";
+import Link from "next/link";
 
 type Game = {
   id: number;
@@ -54,6 +55,9 @@ export default function PortalScoresPage() {
   if (error && !loading && games.length === 0) {
     return (
       <div className="p-6 lg:p-8">
+        <Link href="/portal" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4 transition-colors">
+          <span aria-hidden="true">&larr;</span> Back to Dashboard
+        </Link>
         <div className="mb-8">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">Scores & Standings</h1>
         </div>
@@ -74,6 +78,9 @@ export default function PortalScoresPage() {
 
   return (
     <div className="p-6 lg:p-8">
+      <Link href="/portal" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4 transition-colors">
+        <span aria-hidden="true">&larr;</span> Back to Dashboard
+      </Link>
       <div className="mb-8 flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2">

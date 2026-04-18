@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pushSubscriptions } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
@@ -64,9 +64,15 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
+    // Only allow deleting subscriptions owned by the current user
     await db
       .delete(pushSubscriptions)
-      .where(eq(pushSubscriptions.endpoint, endpoint));
+      .where(
+        and(
+          eq(pushSubscriptions.endpoint, endpoint),
+          eq(pushSubscriptions.userId, String(session.user.id ?? ""))
+        )
+      );
 
     return NextResponse.json({ ok: true });
   } catch (err) {

@@ -5,8 +5,8 @@ const VARIANT_CLASSES: Record<string, string> = {
   warning: "bg-warning/10 text-warning border-warning/20",
   error: "bg-danger/10 text-danger border-danger/20",
   info: "bg-blue-50 text-blue-600 border-blue-200",
-  neutral: "bg-bg text-text-secondary border-border",
-  accent: "bg-accent/10 text-accent border-accent/20",
+  neutral: "bg-white text-text-secondary border-border",
+  accent: "bg-red/10 text-red border-red/20",
   purple: "bg-purple-50 text-purple-600 border-purple-200",
 };
 

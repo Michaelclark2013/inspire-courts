@@ -22,7 +22,7 @@ const STATUS_COLORS: Record<string, string> = {
   Reviewed: "bg-amber-50 text-amber-600 border-amber-200",
   Responded: "bg-emerald-50 text-emerald-600 border-emerald-200",
   Contacted: "bg-emerald-50 text-emerald-600 border-emerald-200",
-  Converted: "bg-accent/10 text-accent border-accent/20",
+  Converted: "bg-red/10 text-red border-red/20",
 };
 
 const STATUS_TITLES: Record<string, string> = {
@@ -69,22 +69,22 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
     <>
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total Leads</span>
           <p className="text-2xl font-bold text-navy mt-2">{leads.length}</p>
         </div>
-        <div className="bg-bg-secondary border border-red/20 rounded-sm p-4">
+        <div className="bg-off-white border border-red/20 rounded-sm p-4">
           <span className="text-red text-xs font-bold uppercase tracking-wider">New</span>
           <p className="text-2xl font-bold text-red mt-2">{newCount}</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center gap-1.5">
             <MessageSquare className="w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Chat</span>
           </div>
           <p className="text-2xl font-bold text-navy mt-2">{chatCount}</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center gap-1.5">
             <Mail className="w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Contact Form</span>
@@ -97,12 +97,12 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" aria-hidden="true" />
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search leads..." className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50" />
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search leads..." className="w-full bg-white border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors placeholder:text-text-secondary/50" />
         </div>
-        <select aria-label="Filter by status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-white border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red">
           {statuses.map((s) => <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>)}
         </select>
-        <select aria-label="Filter by source" value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by source" value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)} className="bg-white border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red">
           {sources.map((s) => <option key={s} value={s}>{s === "All" ? "All Sources" : s}</option>)}
         </select>
       </div>
@@ -110,32 +110,32 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
       {/* Leads List */}
       <div className="space-y-2">
         {filtered.map((lead, i) => (
-          <div key={i} className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+          <div key={i} className="bg-off-white border border-border rounded-sm overflow-hidden">
             <button
               onClick={() => setExpanded(expanded === i ? null : i)}
-              className="w-full px-5 py-4 flex items-center gap-4 hover:bg-bg/50 transition-colors text-left"
+              className="w-full px-5 py-4 flex items-center gap-4 hover:bg-white/50 transition-colors text-left"
             >
-              <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                {lead.source === "Contact Form" ? <Mail className="w-3.5 h-3.5 text-accent" aria-hidden="true" /> : <MessageSquare className="w-3.5 h-3.5 text-accent" aria-hidden="true" />}
+              <div className="w-8 h-8 bg-red/10 rounded-full flex items-center justify-center flex-shrink-0">
+                {lead.source === "Contact Form" ? <Mail className="w-3.5 h-3.5 text-red" aria-hidden="true" /> : <MessageSquare className="w-3.5 h-3.5 text-red" aria-hidden="true" />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-navy font-medium truncate">{lead.name}</p>
                 <p className="text-text-secondary text-xs truncate">{lead.email} {lead.phone && lead.phone !== "—" ? `• ${lead.phone}` : ""}</p>
               </div>
-              <span title={STATUS_TITLES[lead.status]} className={cn("text-xs px-2 py-0.5 rounded-sm border font-bold uppercase tracking-wider flex-shrink-0 cursor-help", STATUS_COLORS[lead.status] || "bg-bg text-text-secondary border-border")}>
+              <span title={STATUS_TITLES[lead.status]} className={cn("text-xs px-2 py-0.5 rounded-sm border font-bold uppercase tracking-wider flex-shrink-0 cursor-help", STATUS_COLORS[lead.status] || "bg-white text-text-secondary border-border")}>
                 {lead.status}
               </span>
-              <span title={URGENCY_TITLES[lead.urgency]} className={cn("text-xs px-2 py-0.5 rounded-sm border font-bold uppercase tracking-wider flex-shrink-0 cursor-help", URGENCY_COLORS[lead.urgency] || "bg-bg text-text-secondary border-border")}>
+              <span title={URGENCY_TITLES[lead.urgency]} className={cn("text-xs px-2 py-0.5 rounded-sm border font-bold uppercase tracking-wider flex-shrink-0 cursor-help", URGENCY_COLORS[lead.urgency] || "bg-white text-text-secondary border-border")}>
                 {lead.urgency}
               </span>
-              <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-sm flex-shrink-0 hidden sm:block">
+              <span className="text-xs bg-red/10 text-red px-2 py-0.5 rounded-sm flex-shrink-0 hidden sm:block">
                 {lead.interest}
               </span>
               <span className="text-text-secondary text-xs flex-shrink-0 hidden md:block">{lead.date}</span>
               {expanded === i ? <ChevronUp className="w-4 h-4 text-text-secondary flex-shrink-0" aria-hidden="true" /> : <ChevronDown className="w-4 h-4 text-text-secondary flex-shrink-0" aria-hidden="true" />}
             </button>
             {expanded === i && (
-              <div className="px-5 py-4 border-t border-border bg-bg/30 space-y-3">
+              <div className="px-5 py-4 border-t border-border bg-white/30 space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                   <div>
                     <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Email</p>
@@ -160,7 +160,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                   <div>
                     <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Chat Transcript</p>
                     <div className="relative">
-                      <pre className="text-navy/80 text-xs bg-bg rounded-sm p-3 whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto border border-border">{lead.transcript}</pre>
+                      <pre className="text-navy/80 text-xs bg-white rounded-sm p-3 whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto border border-border">{lead.transcript}</pre>
                     </div>
                   </div>
                 )}
@@ -169,7 +169,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
           </div>
         ))}
         {filtered.length === 0 && (
-          <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary">
+          <div className="bg-off-white border border-border rounded-sm p-8 text-center text-text-secondary">
             <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" aria-hidden="true" />
             No leads found
           </div>

@@ -22,7 +22,7 @@ export default async function StaffPage() {
             Staff Check-Out & Ref Check-Out from Google Sheets
           </p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
+        <div className="bg-off-white border border-border rounded-xl p-5 text-center">
           <UserCheck className="w-10 h-10 text-text-secondary mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
           <p className="text-text-secondary text-sm">

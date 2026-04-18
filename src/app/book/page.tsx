@@ -5,19 +5,20 @@ import { ArrowRight, MapPin, Clock, Shield, Phone } from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
 import BookingForm from "./BookingForm";
+import { FACILITY_PHONE, SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Book the Facility | Inspire Courts AZ",
   description:
     "Book Inspire Courts in Gilbert, AZ for leagues, practices, tournaments, and private events. 7 regulation indoor courts.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/book",
+    canonical: `${SITE_URL}/book`,
   },
   openGraph: {
     title: "Book the Facility | Inspire Courts AZ",
     description: "Rent Inspire Courts in Gilbert, AZ for leagues, practices, tournaments, and private events. 7 regulation indoor courts available.",
-    url: "https://inspirecourtsaz.com/book",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ indoor facility for rent" }],
+    url: `${SITE_URL}/book`,
+    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ indoor facility for rent" }],
   },
 };
 
@@ -25,7 +26,7 @@ const FEATURES = [
   { icon: MapPin, label: "7 Courts", desc: "Regulation hardwood" },
   { icon: Shield, label: "Climate Controlled", desc: "Year-round comfort" },
   { icon: Clock, label: "Flexible Hours", desc: "Book by appointment" },
-  { icon: Phone, label: "(480) 221-7218", desc: "Call to book" },
+  { icon: Phone, label: FACILITY_PHONE, desc: "Call to book" },
 ];
 
 const RELATED_PAGES = [
@@ -119,7 +120,7 @@ export default function BookPage() {
               <p className="text-text-muted mt-4 text-base max-w-xl mx-auto leading-relaxed">
                 Fill out the form below and we&apos;ll follow up to confirm your reservation. For urgent inquiries, call{" "}
                 <a href="tel:+14802217218" className="text-red font-semibold hover:underline">
-                  (480) 221-7218
+                  {FACILITY_PHONE}
                 </a>
                 .
               </p>

@@ -102,7 +102,7 @@ export default function ApprovalsPage() {
 
       {/* Status message */}
       {message && (
-        <div className="mb-4 bg-accent/10 border border-accent/20 rounded-sm px-4 py-3 text-accent text-sm">
+        <div className="mb-4 bg-red/10 border border-red/20 rounded-xl px-4 py-3 text-red text-sm">
           {message}
         </div>
       )}
@@ -116,7 +116,7 @@ export default function ApprovalsPage() {
 
       {/* Error state */}
       {!loading && fetchError && (
-        <div className="bg-white border border-light-gray rounded-2xl p-10 text-center shadow-sm">
+        <div className="bg-white border border-light-gray rounded-xl p-10 text-center shadow-sm">
           <div className="w-14 h-14 rounded-full bg-red/10 flex items-center justify-center mx-auto mb-4">
             <AlertTriangle className="w-7 h-7 text-red" aria-hidden="true" />
           </div>
@@ -135,7 +135,7 @@ export default function ApprovalsPage() {
 
       {/* Empty state */}
       {!loading && !fetchError && pending.length === 0 && (
-        <div className="bg-white border border-light-gray rounded-2xl p-10 text-center shadow-sm">
+        <div className="bg-white border border-light-gray rounded-xl p-10 text-center shadow-sm">
           <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="w-7 h-7 text-emerald-500" aria-hidden="true" />
           </div>
@@ -156,7 +156,7 @@ export default function ApprovalsPage() {
           {pending.map((user) => (
             <div
               key={user.id}
-              className="bg-white border border-light-gray rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white border border-light-gray rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 shadow-sm hover:shadow-md transition-shadow"
             >
               {/* User info */}
               <div className="flex-1 min-w-0">

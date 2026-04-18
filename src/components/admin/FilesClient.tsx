@@ -58,13 +58,13 @@ function FileGrid({ files }: { files: EnrichedFile[] }) {
           href={file.webViewLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-3 px-4 py-3 hover:bg-bg/50 transition-colors group"
+          className="flex items-center gap-3 px-4 py-3 hover:bg-white/50 transition-colors group"
         >
-          <div className="w-8 h-8 bg-bg rounded flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 bg-white rounded flex items-center justify-center flex-shrink-0">
             <FileIcon mimeType={file.mimeType} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-navy text-sm font-medium truncate group-hover:text-accent transition-colors">
+            <p className="text-navy text-sm font-medium truncate group-hover:text-red transition-colors">
               {file.name}
             </p>
             <div className="flex items-center gap-3 mt-0.5">
@@ -79,7 +79,7 @@ function FileGrid({ files }: { files: EnrichedFile[] }) {
               <Clock className="w-3 h-3" aria-hidden="true" />
               {file.modifiedFormatted}
             </div>
-            <ExternalLink className="w-3.5 h-3.5 text-text-secondary group-hover:text-accent transition-colors" aria-hidden="true" />
+            <ExternalLink className="w-3.5 h-3.5 text-text-secondary group-hover:text-red transition-colors" aria-hidden="true" />
           </div>
         </a>
       ))}
@@ -96,12 +96,12 @@ export default function FilesClient({ rootFiles, responsesFiles }: Props) {
   return (
     <div className="space-y-4">
       {/* Tabs */}
-      <div className="flex gap-1 bg-bg-secondary border border-border rounded-sm p-1 w-fit">
+      <div className="flex gap-1 bg-off-white border border-border rounded-sm p-1 w-fit">
         <button
           onClick={() => setActiveTab("root")}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${
             activeTab === "root"
-              ? "bg-accent text-white"
+              ? "bg-red text-white"
               : "text-text-secondary hover:text-navy"
           }`}
         >
@@ -112,7 +112,7 @@ export default function FilesClient({ rootFiles, responsesFiles }: Props) {
           onClick={() => setActiveTab("responses")}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${
             activeTab === "responses"
-              ? "bg-accent text-white"
+              ? "bg-red text-white"
               : "text-text-secondary hover:text-navy"
           }`}
         >
@@ -122,7 +122,7 @@ export default function FilesClient({ rootFiles, responsesFiles }: Props) {
       </div>
 
       {/* File list */}
-      <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+      <div className="bg-off-white border border-border rounded-sm overflow-hidden">
         <div className="px-4 py-3 border-b border-border">
           <p className="text-text-secondary text-xs">
             {activeTab === "root"
@@ -155,7 +155,7 @@ export default function FilesClient({ rootFiles, responsesFiles }: Props) {
           ].map((s) => (
             <div
               key={s.label}
-              className="bg-bg-secondary border border-border rounded-sm p-3 text-center"
+              className="bg-off-white border border-border rounded-sm p-3 text-center"
             >
               <p className="text-navy font-bold text-xl">{s.value}</p>
               <p className="text-text-secondary text-xs uppercase tracking-wider mt-0.5">

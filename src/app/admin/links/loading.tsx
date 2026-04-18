@@ -14,7 +14,7 @@ export default function LinksLoading() {
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className="bg-bg-secondary border border-border rounded-sm p-5"
+                  className="bg-off-white border border-border rounded-xl p-5"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="h-4 w-32 bg-light-gray rounded" />

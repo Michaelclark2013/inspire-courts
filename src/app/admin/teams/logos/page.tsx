@@ -64,14 +64,14 @@ export default function LogoManagementPage() {
         </div>
         <button
           onClick={fetchLogos}
-          className="flex items-center gap-2 text-text-secondary hover:text-navy transition-colors text-xs border border-border rounded-sm px-3 py-2"
+          className="flex items-center gap-2 text-text-secondary hover:text-navy transition-colors text-xs border border-border rounded-xl px-3 py-2"
         >
           <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
         </button>
       </div>
 
       {/* Upload for custom team name */}
-      <div className="bg-bg-secondary border border-border rounded-sm p-4 mb-6">
+      <div className="bg-off-white border border-border rounded-xl p-4 mb-6">
         <p className="text-text-secondary text-xs font-bold uppercase tracking-wider mb-3">Upload logo for a team</p>
         <div className="flex gap-3 items-end">
           <div className="flex-1">
@@ -82,7 +82,7 @@ export default function LogoManagementPage() {
               value={customTeam}
               onChange={(e) => setCustomTeam(e.target.value)}
               placeholder="Enter exact team name..."
-              className="w-full bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent placeholder:text-text-secondary/50"
+              className="w-full bg-white border border-border rounded-xl px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-secondary/50"
             />
           </div>
           {customTeam.trim() && (
@@ -105,7 +105,7 @@ export default function LogoManagementPage() {
           <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading logos…
         </div>
       ) : entries.length === 0 ? (
-        <div className="bg-bg-secondary border border-border rounded-sm p-10 text-center">
+        <div className="bg-off-white border border-border rounded-xl p-10 text-center">
           <ImageIcon className="w-10 h-10 text-text-secondary/30 mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">No logos uploaded yet</p>
           <p className="text-text-secondary text-sm mb-4">
@@ -113,7 +113,7 @@ export default function LogoManagementPage() {
           </p>
           <Link
             href="/admin/teams"
-            className="inline-flex items-center gap-2 text-accent text-sm font-semibold hover:text-accent-hover transition-colors"
+            className="inline-flex items-center gap-2 text-red text-sm font-semibold hover:text-red-hover transition-colors"
           >
             <Upload className="w-4 h-4" aria-hidden="true" /> Go to Teams
           </Link>
@@ -123,7 +123,7 @@ export default function LogoManagementPage() {
           {entries.map(([teamName, url]) => (
             <div
               key={teamName}
-              className="bg-bg-secondary border border-border rounded-sm p-4 flex flex-col items-center gap-3 group"
+              className="bg-off-white border border-border rounded-xl p-4 flex flex-col items-center gap-3 group"
             >
               <TeamLogo teamName={teamName} logoUrl={url} size={64} />
               <p className="text-navy text-xs font-semibold text-center leading-tight line-clamp-2">

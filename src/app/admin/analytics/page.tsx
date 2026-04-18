@@ -19,7 +19,7 @@ export default async function AnalyticsPage() {
             href={`https://analytics.google.com/analytics/web/#/p${gaId}/reports`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-bg-secondary border border-border hover:border-accent text-navy px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wide transition-colors"
+            className="flex items-center gap-2 bg-off-white border border-border hover:border-red text-navy px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wide transition-colors"
           >
             Open Google Analytics <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
           </a>
@@ -27,14 +27,14 @@ export default async function AnalyticsPage() {
       </div>
 
       {!gaId ? (
-        <div className="bg-bg-secondary border border-border rounded-xl p-5 text-center">
-          <BarChart3 className="w-10 h-10 text-accent mx-auto mb-4" aria-hidden="true" />
+        <div className="bg-off-white border border-border rounded-xl p-5 text-center">
+          <BarChart3 className="w-10 h-10 text-red mx-auto mb-4" aria-hidden="true" />
           <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2">
             Connect Google Analytics
           </h3>
           <p className="text-text-secondary text-sm max-w-lg mx-auto mb-4">
-            Add your <code className="text-accent">NEXT_PUBLIC_GA_ID</code> environment
-            variable (e.g., <code className="text-accent">G-XXXXXXXXXX</code>) to enable
+            Add your <code className="text-red">NEXT_PUBLIC_GA_ID</code> environment
+            variable (e.g., <code className="text-red">G-XXXXXXXXXX</code>) to enable
             full analytics tracking across the site.
           </p>
           <p className="text-text-secondary text-xs">
@@ -77,11 +77,11 @@ export default async function AnalyticsPage() {
                 href={`https://analytics.google.com/analytics/web/#/p${gaId}/${item.path}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white border border-border hover:border-accent/50 hover:shadow-md rounded-xl p-4 transition-all group"
+                className="bg-white border border-border hover:border-red/50 hover:shadow-md rounded-xl p-4 transition-all group"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <item.icon className="w-4 h-4 text-text-secondary group-hover:text-accent transition-colors" />
-                  <ArrowUpRight className="w-3 h-3 text-text-secondary/40 group-hover:text-accent transition-colors" aria-hidden="true" />
+                  <item.icon className="w-4 h-4 text-text-secondary group-hover:text-red transition-colors" />
+                  <ArrowUpRight className="w-3 h-3 text-text-secondary/40 group-hover:text-red transition-colors" aria-hidden="true" />
                 </div>
                 <p className="text-navy font-bold text-sm">{item.label}</p>
                 <p className="text-text-secondary text-xs mt-0.5">{item.desc}</p>
@@ -91,7 +91,7 @@ export default async function AnalyticsPage() {
 
           <div className="space-y-6">
             {/* Events Being Tracked */}
-            <div className="bg-bg-secondary border border-border rounded-xl p-6">
+            <div className="bg-off-white border border-border rounded-xl p-6">
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
                 Events Being Tracked
               </h3>
@@ -110,10 +110,10 @@ export default async function AnalyticsPage() {
                 ].map((item) => (
                   <div
                     key={item.event}
-                    className="flex items-center justify-between bg-white border border-border rounded-xl px-4 py-3 hover:border-accent/30 transition-colors"
+                    className="flex items-center justify-between bg-white border border-border rounded-xl px-4 py-3 hover:border-red/30 transition-colors"
                   >
                     <div>
-                      <code className="text-accent text-sm font-bold">{item.event}</code>
+                      <code className="text-red text-sm font-bold">{item.event}</code>
                       <p className="text-text-secondary text-xs mt-0.5">{item.desc}</p>
                     </div>
                     <span className="text-success text-xs font-bold uppercase">Active</span>
@@ -123,27 +123,27 @@ export default async function AnalyticsPage() {
             </div>
 
             {/* Conversion Funnels */}
-            <div className="bg-bg-secondary border border-border rounded-xl p-6">
+            <div className="bg-off-white border border-border rounded-xl p-6">
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
                 Key Conversion Funnels
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-bg border border-border rounded-xl p-4">
+                <div className="bg-white border border-border rounded-xl p-4">
                   <h4 className="text-navy font-bold text-sm mb-2">Tournament Registration</h4>
                   <div className="space-y-1 text-text-secondary text-xs">
-                    <p>1. Homepage visit → <span className="text-accent">page_view</span></p>
-                    <p>2. Events page → <span className="text-accent">page_view /events</span></p>
-                    <p>3. Register click → <span className="text-accent">register_click</span></p>
-                    <p>4. Contact submit → <span className="text-accent">contact_submit</span></p>
+                    <p>1. Homepage visit → <span className="text-red">page_view</span></p>
+                    <p>2. Events page → <span className="text-red">page_view /events</span></p>
+                    <p>3. Register click → <span className="text-red">register_click</span></p>
+                    <p>4. Contact submit → <span className="text-red">contact_submit</span></p>
                   </div>
                 </div>
-                <div className="bg-bg border border-border rounded-xl p-4">
+                <div className="bg-white border border-border rounded-xl p-4">
                   <h4 className="text-navy font-bold text-sm mb-2">Facility Rental</h4>
                   <div className="space-y-1 text-text-secondary text-xs">
-                    <p>1. Homepage visit → <span className="text-accent">page_view</span></p>
-                    <p>2. Facility page → <span className="text-accent">page_view /facility</span></p>
-                    <p>3. Request quote → <span className="text-accent">facility_rental_click</span></p>
-                    <p>4. Contact submit → <span className="text-accent">contact_submit</span></p>
+                    <p>1. Homepage visit → <span className="text-red">page_view</span></p>
+                    <p>2. Facility page → <span className="text-red">page_view /facility</span></p>
+                    <p>3. Request quote → <span className="text-red">facility_rental_click</span></p>
+                    <p>4. Contact submit → <span className="text-red">contact_submit</span></p>
                   </div>
                 </div>
               </div>

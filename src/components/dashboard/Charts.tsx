@@ -208,7 +208,7 @@ export function HorizontalBarList({
               <span className="text-[10px] text-text-secondary/60">{item.sublabel}</span>
             )}
           </div>
-          <div className="flex-1 h-5 bg-bg rounded-lg overflow-hidden">
+          <div className="flex-1 h-5 bg-white rounded-lg overflow-hidden">
             <div
               className="h-full rounded-lg transition-all duration-500"
               style={{
@@ -285,7 +285,7 @@ export function StatRow({ label, value, sublabel, pct, color = BRAND.red }: Stat
         {sublabel && <p className="text-xs text-text-secondary">{sublabel}</p>}
       </div>
       {pct !== undefined && (
-        <div className="w-24 h-1.5 bg-bg rounded-full overflow-hidden flex-shrink-0">
+        <div className="w-24 h-1.5 bg-white rounded-full overflow-hidden flex-shrink-0">
           <div
             className="h-full rounded-full"
             style={{ width: `${pct}%`, backgroundColor: color }}

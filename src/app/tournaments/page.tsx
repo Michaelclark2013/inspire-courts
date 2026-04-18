@@ -17,7 +17,7 @@ import TournamentHero from "@/components/tournaments/TournamentHero";
 import TournamentCard from "@/components/tournaments/TournamentCard";
 import TournamentListSkeleton from "@/components/tournaments/TournamentListSkeleton";
 import TournamentListError from "@/components/tournaments/TournamentListError";
-import { FACILITY_ADDRESS } from "@/lib/constants";
+import { FACILITY_ADDRESS, SITE_URL } from "@/lib/constants";
 import { db } from "@/lib/db";
 import {
   tournaments,
@@ -34,16 +34,16 @@ export const metadata: Metadata = {
   description:
     "Register for youth basketball tournaments at Inspire Courts AZ in Gilbert, Arizona. 10U\u201317U boys & girls divisions, 3+ game guarantee, professional game film available.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/tournaments",
+    canonical: `${SITE_URL}/tournaments`,
   },
   openGraph: {
     title: "Basketball Tournaments | Inspire Courts AZ",
     description:
       "Youth basketball tournaments for 10U\u201317U boys & girls in Gilbert, AZ. Every team gets 3+ games, live scoring, and game film available.",
-    url: "https://inspirecourtsaz.com/tournaments",
+    url: `${SITE_URL}/tournaments`,
     images: [
       {
-        url: "https://inspirecourtsaz.com/images/hero-bg.jpg",
+        url: `${SITE_URL}/images/hero-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ basketball tournaments",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     title: "Basketball Tournaments | Inspire Courts AZ",
     description:
       "Youth basketball tournaments 10U\u201317U in Gilbert, AZ. Register now at Inspire Courts AZ.",
-    images: ["https://inspirecourtsaz.com/images/hero-bg.jpg"],
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
   },
 };
 
@@ -171,7 +171,7 @@ function buildEventSchema(activeTournaments: TournamentPublic[]) {
         organizer: {
           "@type": "Organization",
           name: "OFF SZN HOOPS",
-          url: "https://inspirecourtsaz.com",
+          url: SITE_URL,
         },
         ...(t.entryFee != null && t.entryFee > 0
           ? {
@@ -186,7 +186,7 @@ function buildEventSchema(activeTournaments: TournamentPublic[]) {
               },
             }
           : {}),
-        url: `https://inspirecourtsaz.com/tournaments/${t.id}`,
+        url: `${SITE_URL}/tournaments/${t.id}`,
       },
     })),
   };

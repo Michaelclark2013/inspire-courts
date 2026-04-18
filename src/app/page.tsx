@@ -12,7 +12,7 @@ import {
   Users,
   GraduationCap,
 } from "lucide-react";
-import { FACILITY_EMAIL, FACILITY_PHONE } from "@/lib/constants";
+import { FACILITY_EMAIL, FACILITY_PHONE, SITE_URL } from "@/lib/constants";
 import { getPageContent, getField } from "@/lib/content";
 import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -41,17 +41,17 @@ export const metadata: Metadata = {
     "basketball prep school",
   ],
   alternates: {
-    canonical: "https://inspirecourtsaz.com",
+    canonical: SITE_URL,
   },
   openGraph: {
     title: "Inspire Courts AZ | Indoor Basketball & Volleyball Facility",
     description:
       "Arizona's premier indoor basketball & volleyball facility. 7 courts, game film, tournaments. Gilbert, AZ.",
-    url: "https://inspirecourtsaz.com",
+    url: SITE_URL,
     type: "website",
     images: [
       {
-        url: "https://inspirecourtsaz.com/images/hero-bg.jpg",
+        url: `${SITE_URL}/images/hero-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ indoor basketball facility in Gilbert, Arizona",
@@ -63,18 +63,18 @@ export const metadata: Metadata = {
     title: "Inspire Courts AZ | Indoor Basketball & Volleyball Facility",
     description:
       "Arizona's premier indoor basketball & volleyball facility in Gilbert, AZ.",
-    images: ["https://inspirecourtsaz.com/images/hero-bg.jpg"],
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
   },
 };
 
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
-  "@id": "https://inspirecourtsaz.com",
+  "@id": SITE_URL,
   name: "Inspire Courts AZ",
   description:
     "Arizona's premier indoor basketball & volleyball facility. 7 regulation courts, game film available at tournaments. Home of OFF SZN HOOPS youth basketball tournaments.",
-  url: "https://inspirecourtsaz.com",
+  url: SITE_URL,
   email: FACILITY_EMAIL,
   telephone: FACILITY_PHONE,
   address: {
@@ -107,8 +107,8 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Inspire Courts AZ",
-  url: "https://inspirecourtsaz.com",
-  logo: "https://inspirecourtsaz.com/images/inspire-athletics-logo.png",
+  url: SITE_URL,
+  logo: `${SITE_URL}/images/inspire-athletics-logo.png`,
   email: FACILITY_EMAIL,
   telephone: FACILITY_PHONE,
   sameAs: [

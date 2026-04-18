@@ -123,7 +123,7 @@ export default function DashboardDBStats() {
       <div className="space-y-6 mb-8 animate-pulse">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-bg-secondary border border-border rounded-sm p-5">
+            <div key={i} className="bg-off-white border border-border rounded-sm p-5">
               <div className="flex items-start justify-between mb-3">
                 <div className="h-3 w-20 bg-light-gray rounded" />
                 <div className="h-4 w-4 bg-light-gray rounded" />
@@ -134,8 +134,8 @@ export default function DashboardDBStats() {
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="bg-bg-secondary border border-border rounded-sm h-64" />
-          <div className="bg-bg-secondary border border-border rounded-sm h-64" />
+          <div className="bg-off-white border border-border rounded-sm h-64" />
+          <div className="bg-off-white border border-border rounded-sm h-64" />
         </div>
       </div>
     );
@@ -215,7 +215,7 @@ export default function DashboardDBStats() {
 
       {/* Tournament Status + Upcoming Schedule row */}
       {isNew ? (
-        <div className="bg-bg-secondary border border-border rounded-sm p-6">
+        <div className="bg-off-white border border-border rounded-sm p-6">
           <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Getting Started</h3>
           <p className="text-text-secondary text-xs mb-4">Set up your facility in 3 steps</p>
           <div className="space-y-3">
@@ -235,7 +235,7 @@ export default function DashboardDBStats() {
       ) : (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Active Tournaments */}
-        <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+        <div className="bg-off-white border border-border rounded-sm overflow-hidden">
           <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Trophy className="w-4 h-4 text-red" aria-hidden="true" />
@@ -347,7 +347,7 @@ export default function DashboardDBStats() {
         </div>
 
         {/* Upcoming Schedule */}
-        <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+        <div className="bg-off-white border border-border rounded-sm overflow-hidden">
           <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-cyan-600" aria-hidden="true" />

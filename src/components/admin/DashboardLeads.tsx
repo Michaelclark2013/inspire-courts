@@ -33,7 +33,7 @@ export default function DashboardLeads() {
 
   if (error) {
     return (
-      <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
+      <div className="bg-off-white border border-border rounded-sm p-5 text-center">
         <p className="text-text-secondary text-xs mb-2">Unable to load leads</p>
         <button onClick={() => { setError(false); fetchLeads(); }} className="text-red text-xs font-bold uppercase tracking-wider hover:text-red-hover transition-colors">Retry</button>
       </div>
@@ -43,7 +43,7 @@ export default function DashboardLeads() {
   if (!counts || counts.total === 0) return null;
 
   return (
-    <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+    <div className="bg-off-white border border-border rounded-sm overflow-hidden">
       <div className="px-5 py-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Flame className="w-4 h-4 text-amber-600" aria-hidden="true" />

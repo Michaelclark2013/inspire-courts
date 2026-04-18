@@ -17,7 +17,7 @@ const openGymSchema = {
   name: "Inspire Courts AZ — Open Gym Basketball",
   description:
     "Drop-in open gym basketball at Inspire Courts in Gilbert, AZ. Regulation hardwood courts, climate-controlled facility. Weekdays 10am–3:30pm.",
-  url: "https://inspirecourtsaz.com/open-gym",
+  url: `${SITE_URL}/open-gym`,
   address: {
     "@type": "PostalAddress",
     streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",

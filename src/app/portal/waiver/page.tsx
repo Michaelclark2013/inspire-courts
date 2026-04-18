@@ -79,25 +79,33 @@ export default function WaiverPage() {
           <p className="text-text-muted mb-8">
             The waiver for <span className="text-navy font-semibold">{form.playerName}</span> has been submitted successfully.
           </p>
-          <button
-            onClick={() => {
-              setSubmitted(false);
-              setForm((prev) => ({
-                playerName: "",
-                parentName: session?.user?.name || "",
-                parentEmail: session?.user?.email || "",
-                parentPhone: prev.parentPhone,
-                emergencyContact: prev.emergencyContact,
-                emergencyPhone: prev.emergencyPhone,
-                allergies: "",
-                eventName: prev.eventName,
-                agreed: false,
-              }));
-            }}
-            className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
-          >
-            Submit Another Waiver
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onClick={() => {
+                setSubmitted(false);
+                setForm((prev) => ({
+                  playerName: "",
+                  parentName: session?.user?.name || "",
+                  parentEmail: session?.user?.email || "",
+                  parentPhone: prev.parentPhone,
+                  emergencyContact: prev.emergencyContact,
+                  emergencyPhone: prev.emergencyPhone,
+                  allergies: "",
+                  eventName: prev.eventName,
+                  agreed: false,
+                }));
+              }}
+              className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+            >
+              Submit Another Waiver
+            </button>
+            <Link
+              href="/portal"
+              className="text-text-muted hover:text-navy px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors border border-border hover:border-navy/30"
+            >
+              Back to Dashboard
+            </Link>
+          </div>
         </div>
       </div>
     );

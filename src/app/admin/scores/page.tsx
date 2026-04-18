@@ -18,7 +18,7 @@ export default async function ScoresPage() {
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Game Scores</h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">Game Results from Google Sheets</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-5 text-center">
+        <div className="bg-off-white border border-border rounded-xl p-5 text-center">
           <ClipboardList className="w-10 h-10 text-text-secondary mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
           <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>

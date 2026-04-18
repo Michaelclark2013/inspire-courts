@@ -7,15 +7,15 @@ export default function AnalyticsLoading() {
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="bg-white border border-light-gray shadow-sm rounded-sm p-4">
+          <div key={i} className="bg-white border border-light-gray shadow-sm rounded-xl p-4">
             <div className="h-3 w-20 bg-light-gray rounded mb-3" />
             <div className="h-7 w-16 bg-light-gray rounded" />
           </div>
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white border border-light-gray shadow-sm rounded-sm p-6 h-72" />
-        <div className="bg-white border border-light-gray shadow-sm rounded-sm p-6 h-72" />
+        <div className="bg-white border border-light-gray shadow-sm rounded-xl p-6 h-72" />
+        <div className="bg-white border border-light-gray shadow-sm rounded-xl p-6 h-72" />
       </div>
     </div>
   );

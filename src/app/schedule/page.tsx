@@ -8,19 +8,20 @@ import QuickScoresEmbed from "@/components/ui/QuickScoresEmbed";
 import BackToTop from "@/components/ui/BackToTop";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 import { getPageContent, getField } from "@/lib/content";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Schedules & Brackets | Inspire Courts AZ",
   description:
     "View live tournament schedules, brackets, and results for Inspire Courts AZ events via QuickScores. Game schedules drop 48 hours before tip-off.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/schedule",
+    canonical: `${SITE_URL}/schedule`,
   },
   openGraph: {
     title: "Schedules & Brackets | Inspire Courts AZ",
     description: "Live tournament schedules, brackets, and results for Inspire Courts AZ events. Game schedules drop 48 hours before tip-off.",
-    url: "https://inspirecourtsaz.com/schedule",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ tournament schedules" }],
+    url: `${SITE_URL}/schedule`,
+    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ tournament schedules" }],
   },
 };
 

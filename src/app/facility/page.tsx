@@ -28,23 +28,23 @@ import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 import { getPageContent, getField, getList } from "@/lib/content";
-import { FACILITY_ADDRESS, FACILITY_PHONE, FACILITY_EMAIL, SOCIAL_LINKS } from "@/lib/constants";
+import { FACILITY_ADDRESS, FACILITY_PHONE, FACILITY_EMAIL, SOCIAL_LINKS, SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Indoor Court Rental Gilbert AZ | Inspire Courts",
   description:
     "Professional indoor court rental for basketball, volleyball, futsal & jiu-jitsu in Gilbert, AZ. 7 climate-controlled courts for leagues, practices & events.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/facility",
+    canonical: `${SITE_URL}/facility`,
   },
   openGraph: {
     title: "Indoor Court Rental Gilbert AZ | Inspire Courts",
     description:
       "Professional indoor court rental for basketball, volleyball, futsal, and jiu-jitsu in Gilbert, AZ. 7 courts, climate-controlled. Book for leagues, practices, and events.",
-    url: "https://inspirecourtsaz.com/facility",
+    url: `${SITE_URL}/facility`,
     images: [
       {
-        url: "https://inspirecourtsaz.com/images/hero-bg.jpg",
+        url: `${SITE_URL}/images/hero-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ – Indoor basketball & volleyball facility in Gilbert, AZ",
@@ -124,7 +124,7 @@ const JSON_LD = {
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
   name: "Inspire Courts AZ",
-  url: "https://inspirecourtsaz.com/facility",
+  url: `${SITE_URL}/facility`,
   telephone: FACILITY_PHONE,
   address: {
     "@type": "PostalAddress",

@@ -5,7 +5,7 @@ export default function ApprovalsLoading() {
         <div className="h-3 w-28 bg-light-gray rounded mb-2" />
         <div className="h-7 w-44 bg-light-gray rounded" />
       </div>
-      <div className="bg-white border border-light-gray shadow-sm rounded-sm p-6">
+      <div className="bg-white border border-light-gray shadow-sm rounded-xl p-6">
         <div className="h-4 w-36 bg-light-gray rounded mb-4" />
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="flex items-center gap-4 py-3 border-t border-light-gray">

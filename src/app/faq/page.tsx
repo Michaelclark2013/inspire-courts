@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/constants";
 import FAQClient from "./FAQClient";
 
 export const metadata: Metadata = {
@@ -6,16 +7,16 @@ export const metadata: Metadata = {
   description:
     "Answers to frequently asked questions about tournaments, facility rentals, training programs, game day policies, and more at Inspire Courts AZ in Gilbert, Arizona.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/faq",
+    canonical: `${SITE_URL}/faq`,
   },
   openGraph: {
     title: "FAQ | Inspire Courts AZ",
     description:
       "Common questions about tournaments, facility rentals, training, and game day at Inspire Courts AZ in Gilbert, Arizona.",
-    url: "https://inspirecourtsaz.com/faq",
+    url: `${SITE_URL}/faq`,
     images: [
       {
-        url: "https://inspirecourtsaz.com/images/hero-bg.jpg",
+        url: `${SITE_URL}/images/hero-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ FAQ",
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "FAQ | Inspire Courts AZ",
     description: "Common questions about tournaments, rentals, and training at Inspire Courts AZ.",
-    images: ["https://inspirecourtsaz.com/images/hero-bg.jpg"],
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
   },
 };
 

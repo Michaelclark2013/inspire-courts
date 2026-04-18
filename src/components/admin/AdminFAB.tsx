@@ -38,7 +38,7 @@ export default function AdminFAB() {
               style={{ animationDelay: `${i * 40}ms` }}
             >
               {action.label}
-              <action.icon className="w-4 h-4 text-accent flex-shrink-0" />
+              <action.icon className="w-4 h-4 text-red flex-shrink-0" />
             </Link>
           ))}
 
@@ -49,7 +49,7 @@ export default function AdminFAB() {
             aria-label={open ? "Close quick actions" : "Open quick actions"}
             aria-expanded={open}
             className={cn(
-              "w-14 h-14 rounded-full bg-accent shadow-xl flex items-center justify-center transition-transform duration-200",
+              "w-14 h-14 rounded-full bg-red shadow-xl flex items-center justify-center transition-transform duration-200",
               open ? "rotate-45" : ""
             )}
           >

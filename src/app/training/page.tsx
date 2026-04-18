@@ -18,8 +18,8 @@ const trainingSchema = {
   name: "Inspire Courts AZ — Private Basketball Training",
   description:
     "1-on-1 and small group basketball training in Gilbert, AZ. Skill development, shooting, ball handling, and sport-specific work for all ages.",
-  url: "https://inspirecourtsaz.com/training",
-  telephone: "+14805551234",
+  url: `${SITE_URL}/training`,
+  telephone: FACILITY_PHONE,
   address: {
     "@type": "PostalAddress",
     streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
@@ -64,19 +64,20 @@ import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 import { getPageContent, getField, getList } from "@/lib/content";
+import { FACILITY_PHONE, SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Private Basketball Training in Gilbert, AZ | Inspire Courts AZ",
   description:
     "1-on-1 and small group basketball training at Inspire Courts AZ. Skill development, shooting, ball handling, and sport-specific work for all ages.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/training",
+    canonical: `${SITE_URL}/training`,
   },
   openGraph: {
     title: "Private Basketball Training | Inspire Courts AZ",
     description: "1-on-1 and small group basketball training in Gilbert, AZ. Shooting, ball handling, basketball IQ, and position-specific development.",
-    url: "https://inspirecourtsaz.com/training",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ private basketball training" }],
+    url: `${SITE_URL}/training`,
+    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ private basketball training" }],
   },
 };
 

@@ -7,7 +7,7 @@ export default function AnnouncementsLoading() {
       </div>
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="bg-white border border-light-gray shadow-sm rounded-sm p-5">
+          <div key={i} className="bg-white border border-light-gray shadow-sm rounded-xl p-5">
             <div className="h-4 w-48 bg-light-gray rounded mb-3" />
             <div className="h-3 w-full bg-light-gray rounded mb-2" />
             <div className="h-3 w-3/4 bg-light-gray rounded" />

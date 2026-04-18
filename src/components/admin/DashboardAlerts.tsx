@@ -171,7 +171,7 @@ export default function DashboardAlerts() {
       {showShortcuts && (
         <>
           <div className="fixed inset-0 z-[70] bg-black/20" onClick={() => setShowShortcuts(false)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[71] bg-bg-secondary border border-border rounded-xl p-6 w-full max-w-sm shadow-2xl">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[71] bg-off-white border border-border rounded-xl p-6 w-full max-w-sm shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider">Keyboard Shortcuts</h3>
               <button onClick={() => setShowShortcuts(false)} className="text-text-secondary hover:text-navy transition-colors" aria-label="Close shortcuts">✕</button>
@@ -179,7 +179,7 @@ export default function DashboardAlerts() {
             <div className="space-y-2">
               {SHORTCUTS.map((s) => (
                 <div key={s.key} className="flex items-center gap-3">
-                  <kbd className="bg-bg border border-border rounded px-2 py-1 text-xs font-mono text-navy font-bold min-w-[2.5rem] text-center">{s.key}</kbd>
+                  <kbd className="bg-white border border-border rounded px-2 py-1 text-xs font-mono text-navy font-bold min-w-[2.5rem] text-center">{s.key}</kbd>
                   <span className="text-text-secondary text-sm">{s.desc}</span>
                 </div>
               ))}

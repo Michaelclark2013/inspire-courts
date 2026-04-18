@@ -50,7 +50,7 @@ export default function DashboardCharts({
             </div>
             <Link
               href="/admin/teams"
-              className="text-accent text-xs hover:underline"
+              className="text-red text-xs hover:underline"
             >
               View all →
             </Link>
@@ -81,7 +81,7 @@ export default function DashboardCharts({
             </div>
             <Link
               href="/admin/revenue"
-              className="text-accent text-xs hover:underline"
+              className="text-red text-xs hover:underline"
             >
               View all →
             </Link>
@@ -120,14 +120,14 @@ export default function DashboardCharts({
       <div className="bg-white border border-light-gray shadow-sm rounded-sm">
         <div className="px-5 py-4 border-b border-light-gray flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-accent" aria-hidden="true" />
+            <Trophy className="w-4 h-4 text-red" aria-hidden="true" />
             <h2 className="text-navy font-bold text-sm uppercase tracking-tight">
               Recent Game Scores
             </h2>
           </div>
           <Link
             href="/admin/scores"
-            className="text-accent text-xs hover:underline"
+            className="text-red text-xs hover:underline"
           >
             View all →
           </Link>
@@ -151,7 +151,7 @@ export default function DashboardCharts({
             <AlertCircle className="w-8 h-8 text-text-secondary/30 mx-auto mb-3" aria-hidden="true" />
             <p className="text-text-secondary text-sm mb-1">No game scores loaded yet</p>
             <p className="text-text-secondary/60 text-xs mb-4">Share the Game Scores sheet with your service account to see data here.</p>
-            <Link href="/admin/scores/enter" className="inline-flex items-center gap-1.5 text-accent text-xs font-semibold hover:underline">
+            <Link href="/admin/scores/enter" className="inline-flex items-center gap-1.5 text-red text-xs font-semibold hover:underline">
               Enter first score →
             </Link>
           </div>
@@ -231,7 +231,7 @@ export default function DashboardCharts({
                           )}
                         </td>
                         <td className="px-4 py-3 text-text-secondary hidden md:table-cell">
-                          <span className="text-xs bg-bg px-2 py-0.5 rounded">
+                          <span className="text-xs bg-white px-2 py-0.5 rounded">
                             {game.division}
                           </span>
                         </td>
@@ -274,7 +274,7 @@ function EmptyChart({ message, cta }: { message: string; cta?: { label: string; 
     <div className="h-[200px] flex flex-col items-center justify-center gap-2">
       <p className="text-text-secondary text-sm">{message}</p>
       {cta && (
-        <Link href={cta.href} className="text-accent text-xs font-semibold hover:underline">
+        <Link href={cta.href} className="text-red text-xs font-semibold hover:underline">
           {cta.label} →
         </Link>
       )}

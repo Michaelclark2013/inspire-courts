@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import ExportBar from "@/components/ui/ExportBar";
 import { exportCSV } from "@/lib/export";
+import Link from "next/link";
 
 type Player = {
   id: number;
@@ -212,6 +213,9 @@ export default function CoachCheckInPage() {
   if (error && !loading) {
     return (
       <div className="p-6 lg:p-8">
+        <Link href="/portal" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4 transition-colors">
+          <span aria-hidden="true">&larr;</span> Back to Dashboard
+        </Link>
         <div className="mb-8">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Team Check-In
@@ -236,6 +240,9 @@ export default function CoachCheckInPage() {
 
   return (
     <div className="p-6 lg:p-8">
+      <Link href="/portal" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4 transition-colors">
+        <span aria-hidden="true">&larr;</span> Back to Dashboard
+      </Link>
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">

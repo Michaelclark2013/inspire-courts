@@ -89,9 +89,9 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
   function SortIcon({ col }: { col: string }) {
     if (sortKey !== col) return <span className="text-text-secondary/40 ml-1">↕</span>;
     return sortDir === "asc" ? (
-      <ChevronUp className="inline w-3 h-3 ml-1 text-accent" aria-hidden="true" />
+      <ChevronUp className="inline w-3 h-3 ml-1 text-red" aria-hidden="true" />
     ) : (
-      <ChevronDown className="inline w-3 h-3 ml-1 text-accent" aria-hidden="true" />
+      <ChevronDown className="inline w-3 h-3 ml-1 text-red" aria-hidden="true" />
     );
   }
 
@@ -109,28 +109,28 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
     <>
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Events</span>
             <Trophy className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{tournaments.length}</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total Teams</span>
             <Users className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{totalTeams}</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Revenue</span>
             <DollarSign className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">${totalRevenue.toLocaleString()}</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Avg Teams/Event</span>
             <TrendingUp className="w-4 h-4 text-text-secondary" aria-hidden="true" />
@@ -141,7 +141,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="bg-bg-secondary border border-border rounded-sm p-5">
+        <div className="bg-off-white border border-border rounded-sm p-5">
           <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Status Breakdown</h3>
           <p className="text-text-secondary text-xs mb-4">Tournaments by status</p>
           {statusData.length > 0 ? (
@@ -150,7 +150,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
             <div className="h-[160px] flex items-center justify-center text-text-secondary text-sm">No data</div>
           )}
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-5">
+        <div className="bg-off-white border border-border rounded-sm p-5">
           <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Revenue by Tournament</h3>
           <p className="text-text-secondary text-xs mb-4">Top events by revenue</p>
           {revenueData.length > 0 ? (
@@ -174,7 +174,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tournaments, divisions, location..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
+            className="w-full bg-off-white border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
           />
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -185,8 +185,8 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
               className={cn(
                 "px-3 py-2 rounded-sm text-xs font-bold uppercase tracking-wider border transition-colors",
                 timeFilter === t
-                  ? "bg-accent/10 text-accent border-accent/30"
-                  : "bg-bg border-border text-text-secondary hover:text-navy"
+                  ? "bg-red/10 text-red border-red/30"
+                  : "bg-white border-border text-text-secondary hover:text-navy"
               )}
             >
               {t}
@@ -202,8 +202,8 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
             className={cn(
               "px-3 py-2 rounded-sm text-xs font-bold uppercase tracking-wider border transition-colors",
               statusFilter === s
-                ? "bg-accent/10 text-accent border-accent/30"
-                : "bg-bg border-border text-text-secondary hover:text-navy"
+                ? "bg-red/10 text-red border-red/30"
+                : "bg-white border-border text-text-secondary hover:text-navy"
             )}
           >
             {s}
@@ -212,7 +212,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
       </div>
 
       {/* Table */}
-      <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+      <div className="bg-off-white border border-border rounded-sm overflow-hidden">
         <div className="px-4 py-3 border-b border-border">
           <p className="text-text-secondary text-xs">
             Showing <span className="text-navy font-semibold">{filtered.length}</span> of {tournaments.length} tournaments
@@ -249,13 +249,13 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
                 filtered.map((t, i) => (
                   <Fragment key={i}>
                     <tr
-                      className="hover:bg-bg/40 transition-colors cursor-pointer"
+                      className="hover:bg-white/40 transition-colors cursor-pointer"
                       onClick={() => setExpanded(expanded === i ? null : i)}
                     >
                       <td className="px-4 py-3 font-semibold text-navy whitespace-nowrap">{t.name}</td>
                       <td className="px-4 py-3 text-text-secondary whitespace-nowrap">{t.date}</td>
                       <td className="px-4 py-3">
-                        <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded font-mono">
+                        <span className="text-xs bg-red/10 text-red px-2 py-0.5 rounded font-mono">
                           {t.divisions}
                         </span>
                       </td>
@@ -264,7 +264,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
                       </td>
                       <td className="px-4 py-3 font-mono text-navy">{t.teams}</td>
                       <td className="px-4 py-3 font-mono text-xs text-text-secondary">{t.fee}</td>
-                      <td className="px-4 py-3 font-bold text-accent">{t.revenue}</td>
+                      <td className="px-4 py-3 font-bold text-red">{t.revenue}</td>
                       <td className="px-4 py-3">
                         <button aria-label={expanded === i ? "Collapse details" : "Expand details"} className="text-text-secondary hover:text-navy transition-colors">
                           {expanded === i ? (
@@ -276,7 +276,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
                       </td>
                     </tr>
                     {expanded === i && (t.location || t.organizer || t.description) && (
-                      <tr className="bg-bg/60">
+                      <tr className="bg-white/60">
                         <td colSpan={8} className="px-4 py-4">
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                             {t.location && (

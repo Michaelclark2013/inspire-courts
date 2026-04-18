@@ -120,7 +120,7 @@ export default function LogoUploader({
             onClick={handleClose}
           />
           <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[81] w-full max-w-sm mx-auto px-4">
-            <div className="bg-bg-secondary border border-white/[0.1] rounded-2xl p-5 shadow-2xl">
+            <div className="bg-off-white border border-white/[0.1] rounded-2xl p-5 shadow-2xl">
 
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
@@ -158,8 +158,8 @@ export default function LogoUploader({
                     onClick={() => fileRef.current?.click()}
                     className="w-full flex items-center gap-3 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl px-4 py-3.5 transition-colors"
                   >
-                    <div className="w-9 h-9 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Upload className="w-4 h-4 text-accent" aria-hidden="true" />
+                    <div className="w-9 h-9 bg-red/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Upload className="w-4 h-4 text-red" aria-hidden="true" />
                     </div>
                     <div className="text-left">
                       <p className="text-white text-sm font-semibold">Choose from library</p>
@@ -203,7 +203,7 @@ export default function LogoUploader({
                 <button
                   onClick={handleUpload}
                   disabled={uploading}
-                  className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wider transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wider transition-colors"
                 >
                   {uploading ? (
                     <><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Uploading…</>

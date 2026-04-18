@@ -42,22 +42,22 @@ export default function ScoresClient({ games }: { games: Game[] }) {
     <>
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Games</span>
             <Trophy className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{games.length}</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Events</span>
           <p className="text-2xl font-bold text-navy mt-2">{events.length - 1}</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Divisions</span>
           <p className="text-2xl font-bold text-navy mt-2">{divisions.length - 1}</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Courts Used</span>
           <p className="text-2xl font-bold text-navy mt-2">{new Set(games.map((g) => g.court)).size}</p>
         </div>
@@ -67,12 +67,12 @@ export default function ScoresClient({ games }: { games: Game[] }) {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" aria-hidden="true" />
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search teams..." className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50" />
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search teams..." className="w-full bg-white border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors placeholder:text-text-secondary/50" />
         </div>
-        <select aria-label="Filter by event" value={eventFilter} onChange={(e) => setEventFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by event" value={eventFilter} onChange={(e) => setEventFilter(e.target.value)} className="bg-white border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red">
           {events.map((e) => <option key={e} value={e}>{e === "All" ? "All Events" : e}</option>)}
         </select>
-        <select aria-label="Filter by division" value={divisionFilter} onChange={(e) => setDivisionFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by division" value={divisionFilter} onChange={(e) => setDivisionFilter(e.target.value)} className="bg-white border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red">
           {divisions.map((d) => <option key={d} value={d}>{d === "All" ? "All Divisions" : d}</option>)}
         </select>
       </div>
@@ -81,20 +81,20 @@ export default function ScoresClient({ games }: { games: Game[] }) {
       {Object.entries(grouped).map(([event, eventGames]) => (
         <div key={event} className="mb-6">
           <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-accent" aria-hidden="true" /> {event}
+            <Trophy className="w-4 h-4 text-red" aria-hidden="true" /> {event}
             <span className="text-text-secondary font-normal">({eventGames.length} games)</span>
           </h3>
           {/* Mobile card view */}
           <div className="md:hidden space-y-3">
             {eventGames.map((g, i) => (
-              <div key={i} className="bg-bg-secondary border border-border rounded-sm p-4">
+              <div key={i} className="bg-off-white border border-border rounded-sm p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className={cn("font-semibold text-sm", g.winner === g.home ? "text-accent" : "text-navy")}>{g.home}</span>
+                  <span className={cn("font-semibold text-sm", g.winner === g.home ? "text-red" : "text-navy")}>{g.home}</span>
                   <span className="text-navy font-bold font-mono text-sm">{g.score}</span>
-                  <span className={cn("font-semibold text-sm", g.winner === g.away ? "text-accent" : "text-navy")}>{g.away}</span>
+                  <span className={cn("font-semibold text-sm", g.winner === g.away ? "text-red" : "text-navy")}>{g.away}</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-text-secondary">
-                  <span className="bg-accent/10 text-accent px-2 py-0.5 rounded-sm">{g.division}</span>
+                  <span className="bg-red/10 text-red px-2 py-0.5 rounded-sm">{g.division}</span>
                   <span>Court {g.court}</span>
                   <span className="ml-auto">{g.date} {g.time}</span>
                 </div>
@@ -103,7 +103,7 @@ export default function ScoresClient({ games }: { games: Game[] }) {
           </div>
 
           {/* Desktop table view */}
-          <div className="hidden md:block bg-bg-secondary border border-border rounded-sm overflow-hidden">
+          <div className="hidden md:block bg-off-white border border-border rounded-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <caption className="sr-only">Game scores</caption>
@@ -120,11 +120,11 @@ export default function ScoresClient({ games }: { games: Game[] }) {
                 </thead>
                 <tbody>
                   {eventGames.map((g, i) => (
-                    <tr key={i} className="border-b border-border/50 hover:bg-bg/50 transition-colors">
-                      <td className={cn("px-4 py-3", g.winner === g.home ? "text-accent font-bold" : "text-navy")}>{g.home}</td>
-                      <td className={cn("px-4 py-3", g.winner === g.away ? "text-accent font-bold" : "text-navy")}>{g.away}</td>
+                    <tr key={i} className="border-b border-border/50 hover:bg-white/50 transition-colors">
+                      <td className={cn("px-4 py-3", g.winner === g.home ? "text-red font-bold" : "text-navy")}>{g.home}</td>
+                      <td className={cn("px-4 py-3", g.winner === g.away ? "text-red font-bold" : "text-navy")}>{g.away}</td>
                       <td className="px-4 py-3 text-navy font-medium font-mono">{g.score}</td>
-                      <td className="px-4 py-3"><span className="bg-accent/10 text-accent text-xs px-2 py-0.5 rounded-sm">{g.division}</span></td>
+                      <td className="px-4 py-3"><span className="bg-red/10 text-red text-xs px-2 py-0.5 rounded-sm">{g.division}</span></td>
                       <td className="px-4 py-3 text-navy">{g.court}</td>
                       <td className="px-4 py-3 text-text-secondary">{g.date}</td>
                       <td className="px-4 py-3 text-text-secondary">{g.time}</td>
@@ -138,7 +138,7 @@ export default function ScoresClient({ games }: { games: Game[] }) {
       ))}
 
       {filtered.length === 0 && (
-        <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary">
+        <div className="bg-off-white border border-border rounded-sm p-8 text-center text-text-secondary">
           <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" aria-hidden="true" />
           No games found
         </div>

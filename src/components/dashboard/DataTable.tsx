@@ -48,7 +48,7 @@ export default function DataTable({
             onChange={(e) => setSearch(e.target.value)}
             placeholder={searchPlaceholder}
             aria-label={searchPlaceholder}
-            className="w-full bg-bg border border-border rounded-lg pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50"
+            className="w-full bg-white border border-border rounded-lg pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors placeholder:text-text-secondary/50"
           />
         </div>
       )}
@@ -86,7 +86,7 @@ export default function DataTable({
               filtered.map((row, i) => (
                 <tr
                   key={i}
-                  className={`border-b border-border/50 hover:bg-off-white transition-colors ${i % 2 === 1 ? "bg-bg-secondary/30" : ""}`}
+                  className={`border-b border-border/50 hover:bg-off-white transition-colors ${i % 2 === 1 ? "bg-off-white/30" : ""}`}
                 >
                   {columns.map((col) => (
                     <td key={col.key} className="px-4 py-3 text-navy">

@@ -6,16 +6,17 @@ import ScoresPageClient from "@/components/scores/ScoresPageClient";
 import BackToTop from "@/components/ui/BackToTop";
 import AnimateIn from "@/components/ui/AnimateIn";
 import QuickContactBar from "@/components/ui/QuickContactBar";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Live Scores & Standings | Inspire Courts AZ",
   description: "Follow live game scores and league standings at Inspire Courts AZ in Gilbert, Arizona.",
-  alternates: { canonical: "https://inspirecourtsaz.com/scores" },
+  alternates: { canonical: `${SITE_URL}/scores` },
   openGraph: {
     title: "Live Scores & Standings | Inspire Courts AZ",
     description: "Real-time game scores and league standings from Inspire Courts AZ tournaments in Gilbert, Arizona.",
-    url: "https://inspirecourtsaz.com/scores",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ Live Scores" }],
+    url: `${SITE_URL}/scores`,
+    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ Live Scores" }],
   },
 };
 

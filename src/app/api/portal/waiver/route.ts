@@ -93,7 +93,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Event name must be 200 characters or less" }, { status: 400 });
   }
 
+  // Use session identity for submittedBy — never trust client-supplied value
+  const safeSubmittedBy = session.user.name || session.user.email || "Unknown";
   const timestamp = timestampAZ();
+
+  // Always persist to database as the source of truth
+  try {
+    await db.insert(waivers).values({
+      playerName: playerName.trim(),
+      parentName: parentName.trim(),
+      email: parentEmail.trim().toLowerCase(),
+      phone: parentPhone || null,
+    });
+  } catch {
+    // DB insert failed — continue to Sheets as fallback
+  }
 
   if (isGoogleConfigured()) {
     // Append waiver data to the playerCheckIn sheet
@@ -110,7 +124,7 @@ export async function POST(request: NextRequest) {
         emergencyPhone || "",
         allergies || "None",
         eventName || "",
-        submittedBy || session.user.name || "",
+        safeSubmittedBy,
         "WAIVER",
       ]),
     ]);

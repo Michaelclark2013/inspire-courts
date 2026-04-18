@@ -12,6 +12,7 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
+  AlertCircle,
   Copy,
   Check,
 } from "lucide-react";
@@ -89,12 +90,19 @@ export default function UsersPage() {
     memberSince: "",
   });
 
+  const [fetchError, setFetchError] = useState(false);
+
   const fetchUsers = useCallback(async () => {
+    setFetchError(false);
     try {
       const res = await fetch("/api/admin/users");
-      if (res.ok) setUserList(await res.json());
+      if (res.ok) {
+        setUserList(await res.json());
+      } else {
+        setFetchError(true);
+      }
     } catch {
-      // DB not set up yet
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -431,6 +439,18 @@ export default function UsersPage() {
             <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" />
             Loading users...
           </div>
+        ) : fetchError ? (
+          <div className="text-center py-16">
+            <AlertCircle className="w-8 h-8 mx-auto mb-3 text-red/60" aria-hidden="true" />
+            <p className="text-text-muted text-sm mb-3">Failed to load users</p>
+            <button
+              type="button"
+              onClick={() => { setLoading(true); fetchUsers(); }}
+              className="text-red hover:text-red-hover text-xs font-semibold uppercase tracking-wider"
+            >
+              Retry
+            </button>
+          </div>
         ) : userList.length === 0 ? (
           <div className="text-center py-16 text-navy/40">
             <Shield className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
@@ -480,7 +500,7 @@ export default function UsersPage() {
                           onClick={() => handleCopyEmail(u.id, u.email)}
                           title="Copy email"
                           aria-label="Copy email address"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-navy/30 hover:text-accent flex-shrink-0"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-navy/30 hover:text-red flex-shrink-0"
                         >
                           {copiedEmail === u.id ? (
                             <Check className="w-3 h-3 text-success" aria-hidden="true" />

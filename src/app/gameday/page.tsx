@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FACILITY_EMAIL } from "@/lib/constants";
+import { FACILITY_EMAIL, SITE_URL } from "@/lib/constants";
 
 const gameDayFaqSchema = {
   "@context": "https://schema.org",
@@ -72,13 +72,13 @@ export const metadata: Metadata = {
   description:
     "Everything you need for game day at Inspire Courts AZ. Location, parking, admission, check-in, schedules, food, house rules, and more. Gilbert, AZ.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/gameday",
+    canonical: `${SITE_URL}/gameday`,
   },
   openGraph: {
     title: "Game Day Info | Inspire Courts AZ",
     description: "Location, parking, admission, check-in, schedules, food, and house rules for game day at Inspire Courts AZ.",
-    url: "https://inspirecourtsaz.com/gameday",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ game day" }],
+    url: `${SITE_URL}/gameday`,
+    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ game day" }],
   },
 };
 

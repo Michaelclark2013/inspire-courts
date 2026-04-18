@@ -20,7 +20,7 @@ const prepSchema = {
   name: "Inspire Prep",
   description:
     "Inspire Prep combines elite basketball development with academic excellence. Train, compete, and prepare for the next level in Gilbert, Arizona.",
-  url: "https://inspirecourtsaz.com/prep",
+  url: `${SITE_URL}/prep`,
   address: {
     "@type": "PostalAddress",
     streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
@@ -32,7 +32,7 @@ const prepSchema = {
   parentOrganization: {
     "@type": "SportsOrganization",
     name: "Inspire Courts AZ",
-    url: "https://inspirecourtsaz.com",
+    url: SITE_URL,
   },
 };
 import AnimateIn from "@/components/ui/AnimateIn";
@@ -40,19 +40,20 @@ import VideoShowcase from "@/components/ui/VideoShowcase";
 import SectionHeader from "@/components/ui/SectionHeader";
 import BackToTop from "@/components/ui/BackToTop";
 import QuickContactBar from "@/components/ui/QuickContactBar";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Inspire Prep | Basketball Prep School in Gilbert, AZ | Inspire Courts AZ",
   description:
     "Inspire Prep combines elite basketball development with academic excellence. Train, compete, and prepare for the next level in Gilbert, Arizona.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/prep",
+    canonical: `${SITE_URL}/prep`,
   },
   openGraph: {
     title: "Inspire Prep — Basketball Prep School in Gilbert, AZ",
     description: "Elite basketball development meets academic excellence. Train, compete, and prepare for the next level at Inspire Courts AZ.",
-    url: "https://inspirecourtsaz.com/prep",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Prep basketball academy" }],
+    url: `${SITE_URL}/prep`,
+    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Prep basketball academy" }],
   },
 };
 

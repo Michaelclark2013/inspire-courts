@@ -7,7 +7,7 @@ export default function TournamentsLoading() {
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="bg-white border border-light-gray shadow-sm rounded-sm p-5">
+          <div key={i} className="bg-white border border-light-gray shadow-sm rounded-xl p-5">
             <div className="h-4 w-40 skeleton-shimmer rounded mb-3" />
             <div className="h-3 w-28 skeleton-shimmer rounded mb-2" />
             <div className="h-3 w-20 skeleton-shimmer rounded mb-4" />

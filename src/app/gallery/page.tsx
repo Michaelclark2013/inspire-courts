@@ -6,19 +6,20 @@ import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
 import QuickContactBar from "@/components/ui/QuickContactBar";
 import GalleryPageClient from "./GalleryPageClient";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Photo Gallery | Inspire Courts AZ",
   description:
     "Browse tournament action, facility photos, and player highlights from Inspire Courts AZ and OFF SZN HOOPS events in Gilbert, Arizona.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/gallery",
+    canonical: `${SITE_URL}/gallery`,
   },
   openGraph: {
     title: "Photo Gallery | Inspire Courts AZ",
     description: "Tournament action, facility photos, and player highlights from Inspire Courts AZ and OFF SZN HOOPS events.",
-    url: "https://inspirecourtsaz.com/gallery",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ photo gallery" }],
+    url: `${SITE_URL}/gallery`,
+    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ photo gallery" }],
   },
 };
 

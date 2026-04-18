@@ -49,7 +49,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
+    logger.error("Portal check-in failed", { error: String(err), playerName });
     return NextResponse.json({ error: "Failed to check in player" }, { status: 500 });
   }
 }

@@ -37,9 +37,9 @@ export default function DashboardActivity() {
   if (loading || items.length === 0) return null;
 
   return (
-    <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden mb-6">
+    <div className="bg-off-white border border-border rounded-sm overflow-hidden mb-6">
       <div className="px-5 py-3 border-b border-border flex items-center gap-2">
-        <Activity className="w-4 h-4 text-accent" aria-hidden="true" />
+        <Activity className="w-4 h-4 text-red" aria-hidden="true" />
         <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
           Recent Activity
         </h3>
@@ -54,7 +54,7 @@ export default function DashboardActivity() {
         )}
         <Link
           href="/admin/scores"
-          className="text-accent text-xs hover:underline ml-auto"
+          className="text-red text-xs hover:underline ml-auto"
         >
           View all →
         </Link>

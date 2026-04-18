@@ -11,19 +11,20 @@ import BackToTop from "@/components/ui/BackToTop";
 import { isNotionConfigured } from "@/lib/notion";
 import { isGoogleConfigured } from "@/lib/google-sheets";
 import EventsList from "./EventsList";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Basketball Tournaments | Inspire Courts AZ — Gilbert, AZ",
   description:
     "Youth basketball tournaments in Gilbert, AZ at Inspire Courts AZ. 10U–17U boys & girls divisions. 3+ game guarantee, game film available. Register your team now.",
   alternates: {
-    canonical: "https://inspirecourtsaz.com/events",
+    canonical: `${SITE_URL}/events`,
   },
   openGraph: {
     title: "Youth Basketball Tournaments | Inspire Courts AZ",
     description: "10U–17U boys & girls divisions. 3+ game guarantee, game film available. Register your team at Arizona's premier indoor facility.",
-    url: "https://inspirecourtsaz.com/events",
-    images: [{ url: "https://inspirecourtsaz.com/images/hero-bg.jpg", width: 1200, height: 630, alt: "Inspire Courts AZ youth basketball tournaments" }],
+    url: `${SITE_URL}/events`,
+    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ youth basketball tournaments" }],
   },
 };
 

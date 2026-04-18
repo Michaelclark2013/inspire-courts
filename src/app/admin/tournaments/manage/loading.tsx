@@ -12,7 +12,7 @@ export default function TournamentsManageLoading() {
       {/* Tournament cards */}
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="bg-bg-secondary border border-border rounded-xl p-6">
+          <div key={i} className="bg-off-white border border-border rounded-xl p-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <div className="h-5 w-48 bg-light-gray rounded mb-2" />

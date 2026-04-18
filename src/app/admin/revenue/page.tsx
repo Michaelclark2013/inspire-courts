@@ -25,7 +25,7 @@ export default async function RevenuePage() {
             Mom Money &mdash; Revenue Tracking
           </p>
         </div>
-        <div className="bg-white border border-light-gray shadow-sm rounded-sm p-5 text-center">
+        <div className="bg-white border border-light-gray shadow-sm rounded-xl p-5 text-center">
           <DollarSign
             className="w-10 h-10 text-text-secondary mx-auto mb-3"
             aria-hidden="true"

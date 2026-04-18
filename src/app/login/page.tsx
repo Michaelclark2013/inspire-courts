@@ -9,6 +9,7 @@ import { triggerHaptic } from "@/lib/capacitor";
 import Image from "next/image";
 import { ArrowRight, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { SITE_URL } from "@/lib/constants";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -66,7 +67,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-off-white flex flex-col items-center justify-center px-4 relative overflow-hidden">
       <title>Sign In | Inspire Courts AZ</title>
       <meta name="description" content="Sign in to your Inspire Courts AZ account. Coaches, parents, staff, and referees." />
-      <link rel="canonical" href="https://inspirecourtsaz.com/login" />
+      <link rel="canonical" href={`${SITE_URL}/login`} />
 
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_top_right,_rgba(204,0,0,0.05),transparent_70%)] pointer-events-none" />

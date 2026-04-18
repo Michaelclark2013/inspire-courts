@@ -295,7 +295,7 @@ export default function EventsHub({
               <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
                 {/* Search */}
                 <div className="relative flex-1">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" aria-hidden="true" />
                   <input
                     type="text"
                     placeholder="Search tournaments..."
@@ -317,7 +317,7 @@ export default function EventsHub({
 
                 {/* Division Filter */}
                 <div className="relative">
-                  <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+                  <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" aria-hidden="true" />
                   <select
                     aria-label="Filter by division"
                     value={divisionFilter}
@@ -329,7 +329,7 @@ export default function EventsHub({
                       <option key={d} value={d}>{d}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+                  <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" aria-hidden="true" />
                 </div>
 
                 {/* Status Filter */}
@@ -345,7 +345,7 @@ export default function EventsHub({
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+                  <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" aria-hidden="true" />
                 </div>
 
                 {/* Count */}
@@ -383,7 +383,7 @@ export default function EventsHub({
                         <div className="space-y-3 mb-5">
                           <div className="flex items-center gap-3 text-sm">
                             <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <Calendar className="w-4 h-4 text-red" />
+                              <Calendar className="w-4 h-4 text-red" aria-hidden="true" />
                             </div>
                             <div>
                               <p className="text-navy font-medium">{event.date}</p>
@@ -398,7 +398,7 @@ export default function EventsHub({
                           {event.fee && (
                             <div className="flex items-center gap-3 text-sm">
                               <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <DollarSign className="w-4 h-4 text-red" />
+                                <DollarSign className="w-4 h-4 text-red" aria-hidden="true" />
                               </div>
                               <p className="text-navy font-medium">{event.fee} per team</p>
                             </div>
@@ -406,7 +406,7 @@ export default function EventsHub({
 
                           <div className="flex items-center gap-3 text-sm">
                             <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <MapPin className="w-4 h-4 text-red" />
+                              <MapPin className="w-4 h-4 text-red" aria-hidden="true" />
                             </div>
                             <p className="text-text-muted">Inspire Courts AZ, Gilbert</p>
                           </div>
@@ -474,7 +474,7 @@ export default function EventsHub({
               ) : upcoming.length > 0 ? (
                 /* Filters returned no matches */
                 <div className="max-w-md mx-auto text-center py-12">
-                  <Search className="w-10 h-10 text-text-muted mx-auto mb-4 opacity-40" />
+                  <Search className="w-10 h-10 text-text-muted mx-auto mb-4 opacity-40" aria-hidden="true" />
                   <h3 className="text-navy font-bold text-lg mb-2">No matching tournaments</h3>
                   <p className="text-text-muted text-sm mb-4">
                     Try adjusting your filters or search terms.
@@ -494,7 +494,7 @@ export default function EventsHub({
               ) : (
                 /* No events at all */
                 <div className="max-w-2xl mx-auto text-center bg-off-white border border-light-gray rounded-2xl p-10">
-                  <Trophy className="w-12 h-12 text-red mx-auto mb-4" />
+                  <Trophy className="w-12 h-12 text-red mx-auto mb-4" aria-hidden="true" />
                   <h3 className="text-navy font-bold text-xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
                     Tournaments Coming Soon
                   </h3>
@@ -560,7 +560,7 @@ export default function EventsHub({
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-8 h-8 bg-navy/5 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Trophy className="w-4 h-4 text-navy/40" />
+                          <Trophy className="w-4 h-4 text-navy/40" aria-hidden="true" />
                         </div>
                         <div>
                           <h3 className="text-navy font-bold text-sm uppercase tracking-tight font-[var(--font-chakra)]">
@@ -623,7 +623,7 @@ export default function EventsHub({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 bg-red/10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Clock className="w-5 h-5 text-red" />
+                    <Clock className="w-5 h-5 text-red" aria-hidden="true" />
                   </div>
                   <div>
                     <p className="text-navy font-bold text-sm">
@@ -640,7 +640,7 @@ export default function EventsHub({
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-navy hover:bg-navy/90 text-white px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wide transition-colors whitespace-nowrap"
                 >
-                  Open QuickScores <ExternalLink className="w-3.5 h-3.5" />
+                  Open QuickScores <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                 </a>
               </div>
             </div>
@@ -697,21 +697,21 @@ export default function EventsHub({
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-white border border-light-gray rounded-xl p-5 text-center">
-                  <AlertCircle className="w-6 h-6 text-red mx-auto mb-2" />
+                  <AlertCircle className="w-6 h-6 text-red mx-auto mb-2" aria-hidden="true" />
                   <p className="text-navy font-bold text-sm mb-1">Can&apos;t find your schedule?</p>
                   <p className="text-text-muted text-xs">
                     Check your coach&apos;s email or contact us.
                   </p>
                 </div>
                 <div className="bg-white border border-light-gray rounded-xl p-5 text-center">
-                  <Clock className="w-6 h-6 text-red mx-auto mb-2" />
+                  <Clock className="w-6 h-6 text-red mx-auto mb-2" aria-hidden="true" />
                   <p className="text-navy font-bold text-sm mb-1">Schedule not posted yet?</p>
                   <p className="text-text-muted text-xs">
                     Schedules are released 48 hours before the event.
                   </p>
                 </div>
                 <div className="bg-white border border-light-gray rounded-xl p-5 text-center">
-                  <CheckCircle2 className="w-6 h-6 text-red mx-auto mb-2" />
+                  <CheckCircle2 className="w-6 h-6 text-red mx-auto mb-2" aria-hidden="true" />
                   <p className="text-navy font-bold text-sm mb-1">Need results?</p>
                   <p className="text-text-muted text-xs">
                     Past brackets and scores are on QuickScores.
@@ -807,7 +807,7 @@ export default function EventsHub({
                               key={idx}
                               className="flex items-start gap-2.5 text-sm text-text-muted leading-relaxed"
                             >
-                              <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                              <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
                               {item}
                             </li>
                           ))}
@@ -842,7 +842,7 @@ export default function EventsHub({
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-red hover:text-red-hover text-sm font-bold uppercase tracking-wide mt-4 transition-colors"
                   >
-                    Get Directions <ExternalLink className="w-3.5 h-3.5" />
+                    Get Directions <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                   </a>
                 </div>
                 <div className="rounded-2xl overflow-hidden border border-light-gray shadow-sm">

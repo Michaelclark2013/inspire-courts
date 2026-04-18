@@ -116,7 +116,7 @@ export default function CoachPortalPage() {
           <div className="space-y-6">
             <div className="text-center pt-4 pb-2">
               <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-blue-600" />
+                <Users className="w-8 h-8 text-blue-600" aria-hidden="true" />
               </div>
               <h1 className="text-navy text-2xl font-bold font-heading uppercase tracking-tight mb-1">Coach Portal</h1>
               <p className="text-text-muted text-sm">Access your team roster, schedule &amp; game day tools.</p>
@@ -124,7 +124,7 @@ export default function CoachPortalPage() {
 
             <div className="bg-white border border-light-gray rounded-2xl p-5">
               <div className="flex items-center gap-2.5 mb-5">
-                <Search className="w-4 h-4 text-blue-600" />
+                <Search className="w-4 h-4 text-blue-600" aria-hidden="true" />
                 <p className="text-navy font-semibold text-sm">Enter your details to get started</p>
               </div>
               <form onSubmit={handleLookup} className="space-y-4">
@@ -155,7 +155,7 @@ export default function CoachPortalPage() {
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl text-sm uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
                 >
-                  View My Team <ArrowRight className="w-4 h-4" />
+                  View My Team <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </button>
               </form>
             </div>
@@ -165,17 +165,17 @@ export default function CoachPortalPage() {
               <div className="space-y-2">
                 <Link href="/portal" className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-off-white transition-colors group">
                   <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
-                    <ClipboardList className="w-4 h-4 text-red" />
+                    <ClipboardList className="w-4 h-4 text-red" aria-hidden="true" />
                   </div>
                   <span className="text-navy text-sm font-medium">Registered Coach Login</span>
-                  <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-text-muted ml-auto" />
+                  <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-text-muted ml-auto" aria-hidden="true" />
                 </Link>
                 <a href="mailto:info@inspirecourtsaz.com" className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-off-white transition-colors group">
                   <div className="w-8 h-8 bg-off-white rounded-lg flex items-center justify-center">
-                    <Mail className="w-4 h-4 text-text-muted" />
+                    <Mail className="w-4 h-4 text-text-muted" aria-hidden="true" />
                   </div>
                   <span className="text-navy text-sm font-medium">Contact Admin</span>
-                  <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-text-muted ml-auto" />
+                  <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-text-muted ml-auto" aria-hidden="true" />
                 </a>
               </div>
             </div>
@@ -217,7 +217,7 @@ export default function CoachPortalPage() {
 
             {/* Demo notice */}
             <div className="bg-amber-50 border border-amber-500/20 rounded-xl px-4 py-3 flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
               <p className="text-amber-600/80 text-xs leading-relaxed">
                 Showing sample data. Live coach lookups will be available once your team is registered.
               </p>
@@ -258,7 +258,7 @@ export default function CoachPortalPage() {
                 {/* Waiver summary */}
                 <div className="bg-white border border-light-gray rounded-xl px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" aria-hidden="true" />
                     <span className="text-navy text-sm font-semibold">
                       {DEMO_ROSTER.filter((p) => p.waiverSigned).length}/{DEMO_ROSTER.length} waivers signed
                     </span>
@@ -278,9 +278,9 @@ export default function CoachPortalPage() {
                       <p className="text-text-muted text-xs">{player.position} · Age {player.age}</p>
                     </div>
                     {player.waiverSigned ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" aria-hidden="true" />
                     ) : (
-                      <span title="Waiver missing"><AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" /></span>
+                      <span title="Waiver missing"><AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" aria-hidden="true" /></span>
                     )}
                   </div>
                 ))}
@@ -304,11 +304,11 @@ export default function CoachPortalPage() {
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-text-muted" />
+                        <Calendar className="w-3.5 h-3.5 text-text-muted" aria-hidden="true" />
                         <span className="text-text-muted text-xs">{g.date}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-text-muted" />
+                        <Clock className="w-3.5 h-3.5 text-text-muted" aria-hidden="true" />
                         <span className="text-text-muted text-xs">{g.time}</span>
                       </div>
                     </div>
@@ -351,7 +351,7 @@ export default function CoachPortalPage() {
 
                 {lineupSubmitted ? (
                   <div className="bg-emerald-50 border border-emerald-500/20 rounded-2xl p-6 text-center">
-                    <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto mb-3" />
+                    <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto mb-3" aria-hidden="true" />
                     <p className="text-navy font-bold mb-1">Lineup Submitted!</p>
                     <p className="text-text-muted text-sm mb-4">
                       {starters.length} starters · {lineup.length} active players
@@ -437,14 +437,14 @@ export default function CoachPortalPage() {
                   <p className="text-text-muted text-xs font-bold uppercase tracking-wider mb-3">Contact Admin</p>
                   <div className="space-y-2">
                     <a href="mailto:info@inspirecourtsaz.com" className="flex items-center gap-3 p-3 rounded-xl hover:bg-off-white transition-colors group">
-                      <Mail className="w-4 h-4 text-text-muted" />
+                      <Mail className="w-4 h-4 text-text-muted" aria-hidden="true" />
                       <span className="text-navy text-sm">info@inspirecourtsaz.com</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-light-gray group-hover:text-text-muted ml-auto" />
+                      <ExternalLink className="w-3.5 h-3.5 text-light-gray group-hover:text-text-muted ml-auto" aria-hidden="true" />
                     </a>
                     <a href="tel:+14806001000" className="flex items-center gap-3 p-3 rounded-xl hover:bg-off-white transition-colors group">
-                      <Phone className="w-4 h-4 text-text-muted" />
+                      <Phone className="w-4 h-4 text-text-muted" aria-hidden="true" />
                       <span className="text-navy text-sm">(480) 600-1000</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-light-gray group-hover:text-text-muted ml-auto" />
+                      <ExternalLink className="w-3.5 h-3.5 text-light-gray group-hover:text-text-muted ml-auto" aria-hidden="true" />
                     </a>
                   </div>
                 </div>
@@ -460,7 +460,7 @@ export default function CoachPortalPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-blue-600 text-xs font-semibold mt-3 hover:text-blue-300 transition-colors"
                   >
-                    Open in Maps <ExternalLink className="w-3 h-3" />
+                    Open in Maps <ExternalLink className="w-3 h-3" aria-hidden="true" />
                   </a>
                 </div>
               </div>

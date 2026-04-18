@@ -99,7 +99,7 @@ export default function PlayerPortalPage() {
             {/* Hero */}
             <div className="text-center pt-4 pb-2">
               <div className="w-16 h-16 bg-red/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Trophy className="w-8 h-8 text-red" />
+                <Trophy className="w-8 h-8 text-red" aria-hidden="true" />
               </div>
               <h1 className="text-navy text-2xl font-bold font-heading uppercase tracking-tight mb-1">Team Portal</h1>
               <p className="text-text-muted text-sm">Access your team info, schedule, and scores.</p>
@@ -113,13 +113,13 @@ export default function PlayerPortalPage() {
                 className="w-full bg-white border border-light-gray hover:border-red/40 rounded-2xl p-5 flex items-center gap-4 transition-all group text-left"
               >
                 <div className="w-12 h-12 bg-red/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red/20 transition-colors">
-                  <User className="w-6 h-6 text-red" />
+                  <User className="w-6 h-6 text-red" aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-navy font-bold text-base">I&apos;m a Player</p>
                   <p className="text-text-muted text-sm">View your schedule, scores &amp; standings</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-light-gray group-hover:text-red transition-colors flex-shrink-0" />
+                <ChevronRight className="w-5 h-5 text-light-gray group-hover:text-red transition-colors flex-shrink-0" aria-hidden="true" />
               </button>
 
               <Link
@@ -127,13 +127,13 @@ export default function PlayerPortalPage() {
                 className="w-full bg-white border border-light-gray hover:border-blue-300 rounded-2xl p-5 flex items-center gap-4 transition-all group"
               >
                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
-                  <Users className="w-6 h-6 text-blue-600" />
+                  <Users className="w-6 h-6 text-blue-600" aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-navy font-bold text-base">I&apos;m a Coach</p>
                   <p className="text-text-muted text-sm">Manage roster, check-in &amp; game day</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-light-gray group-hover:text-blue-600 transition-colors flex-shrink-0" />
+                <ChevronRight className="w-5 h-5 text-light-gray group-hover:text-blue-600 transition-colors flex-shrink-0" aria-hidden="true" />
               </Link>
             </div>
 
@@ -152,14 +152,14 @@ export default function PlayerPortalPage() {
           <div className="space-y-6">
             <div className="flex items-center gap-3 pt-2">
               <button onClick={() => setStep("select")} className="text-red hover:text-red-hover transition-colors text-sm font-semibold flex items-center gap-1">
-                <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Back
+                <ArrowRight className="w-3.5 h-3.5 rotate-180" aria-hidden="true" /> Back
               </button>
               <h2 className="text-navy font-bold text-lg">Find Your Info</h2>
             </div>
 
             <div className="bg-white border border-light-gray rounded-2xl p-5">
               <div className="flex items-center gap-2.5 mb-5">
-                <Search className="w-4 h-4 text-red" />
+                <Search className="w-4 h-4 text-red" aria-hidden="true" />
                 <p className="text-navy font-semibold text-sm">Enter your details below</p>
               </div>
               <form onSubmit={handleLookup} className="space-y-4">
@@ -222,14 +222,14 @@ export default function PlayerPortalPage() {
                 </div>
               </div>
               <div className="mt-3 pt-3 border-t border-light-gray flex items-center gap-2">
-                <Users className="w-3.5 h-3.5 text-text-muted" />
+                <Users className="w-3.5 h-3.5 text-text-muted" aria-hidden="true" />
                 <span className="text-text-muted text-xs">{DEMO_PLAYER.coach}</span>
               </div>
             </div>
 
             {/* Demo data notice */}
             <div className="bg-amber-50 border border-amber-500/20 rounded-xl px-4 py-3 flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
               <p className="text-amber-600/80 text-xs leading-relaxed">
                 Showing sample data. Live player lookups will be available once your team is registered in the system.
               </p>
@@ -276,15 +276,15 @@ export default function PlayerPortalPage() {
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-text-muted" />
+                        <Calendar className="w-3.5 h-3.5 text-text-muted" aria-hidden="true" />
                         <span className="text-text-muted text-xs">{g.date}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-text-muted" />
+                        <Clock className="w-3.5 h-3.5 text-text-muted" aria-hidden="true" />
                         <span className="text-text-muted text-xs">{g.time}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-text-muted" />
+                        <MapPin className="w-3.5 h-3.5 text-text-muted" aria-hidden="true" />
                         <span className="text-text-muted text-xs">{g.court}</span>
                       </div>
                     </div>
@@ -382,13 +382,13 @@ export default function PlayerPortalPage() {
                     className="bg-white border border-light-gray hover:border-red/30 rounded-2xl px-4 py-4 flex items-center gap-4 transition-all group"
                   >
                     <div className="w-10 h-10 bg-red/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red/20 transition-colors">
-                      <Video className="w-5 h-5 text-red" />
+                      <Video className="w-5 h-5 text-red" aria-hidden="true" />
                     </div>
                     <div className="flex-1">
                       <p className="text-navy font-semibold text-sm">{h.label}</p>
                       <p className="text-text-muted text-xs">{h.year} Season</p>
                     </div>
-                    <ExternalLink className="w-4 h-4 text-light-gray group-hover:text-red transition-colors" />
+                    <ExternalLink className="w-4 h-4 text-light-gray group-hover:text-red transition-colors" aria-hidden="true" />
                   </a>
                 ))}
                 <div className="bg-white border border-light-gray rounded-2xl px-4 py-4 text-center">
@@ -397,7 +397,7 @@ export default function PlayerPortalPage() {
                     href="/contact"
                     className="inline-flex items-center gap-1.5 text-red text-sm font-bold hover:text-red-hover transition-colors"
                   >
-                    Contact Inspire Courts <ArrowRight className="w-3.5 h-3.5" />
+                    Contact Inspire Courts <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                   </a>
                 </div>
               </div>

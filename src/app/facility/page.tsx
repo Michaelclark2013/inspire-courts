@@ -216,7 +216,7 @@ export default function FacilityPage() {
                     "Same-day availability",
                   ].map((item) => (
                     <div key={item} className="flex items-center gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" aria-hidden="true" />
                       <span className="text-navy text-sm font-medium">{item}</span>
                     </div>
                   ))}
@@ -591,14 +591,14 @@ export default function FacilityPage() {
                 </h2>
                 <div className="space-y-4 mb-8">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-red mt-0.5 flex-shrink-0" />
+                    <MapPin className="w-5 h-5 text-red mt-0.5 flex-shrink-0" aria-hidden="true" />
                     <div>
                       <p className="text-navy font-semibold text-sm">Address</p>
                       <p className="text-text-muted text-sm">{FACILITY_ADDRESS.full}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-red mt-0.5 flex-shrink-0" />
+                    <Clock className="w-5 h-5 text-red mt-0.5 flex-shrink-0" aria-hidden="true" />
                     <div>
                       <p className="text-navy font-semibold text-sm">Hours</p>
                       <p className="text-text-muted text-sm">Open by Appointment — Call or Book Online</p>
@@ -608,7 +608,7 @@ export default function FacilityPage() {
                     href={`tel:+1${FACILITY_PHONE.replace(/\D/g, "")}`}
                     className="flex items-start gap-3 group"
                   >
-                    <Phone className="w-5 h-5 text-red mt-0.5 flex-shrink-0" />
+                    <Phone className="w-5 h-5 text-red mt-0.5 flex-shrink-0" aria-hidden="true" />
                     <div>
                       <p className="text-navy font-semibold text-sm">Phone</p>
                       <p className="text-text-muted text-sm group-hover:text-red transition-colors">{FACILITY_PHONE}</p>
@@ -680,7 +680,7 @@ export default function FacilityPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Register for OFF SZN HOOPS events</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/training"
@@ -692,7 +692,7 @@ export default function FacilityPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Train with a pro coach at the facility</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/gallery"
@@ -704,7 +704,7 @@ export default function FacilityPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">See photos from events and the facility</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
           </div>
         </div>

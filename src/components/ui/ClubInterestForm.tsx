@@ -170,10 +170,11 @@ export default function ClubInterestForm() {
       {role === "player" && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <div>
-            <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+            <label htmlFor="club-age" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
               Age / Grad Year
             </label>
             <input
+              id="club-age"
               type="text"
               name="age"
               className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
@@ -181,10 +182,11 @@ export default function ClubInterestForm() {
             />
           </div>
           <div>
-            <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+            <label htmlFor="club-position" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
               Position
             </label>
             <input
+              id="club-position"
               type="text"
               name="position"
               className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
@@ -192,10 +194,11 @@ export default function ClubInterestForm() {
             />
           </div>
           <div>
-            <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+            <label htmlFor="club-currentTeam" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
               Current / Past Team
             </label>
             <input
+              id="club-currentTeam"
               type="text"
               name="currentTeam"
               className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
@@ -209,10 +212,11 @@ export default function ClubInterestForm() {
       {role === "coach" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+            <label htmlFor="club-experience" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
               Coaching Experience
             </label>
             <input
+              id="club-experience"
               type="text"
               name="experience"
               className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
@@ -220,10 +224,11 @@ export default function ClubInterestForm() {
             />
           </div>
           <div>
-            <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+            <label htmlFor="club-ageGroups" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
               Age Groups Coached
             </label>
             <input
+              id="club-ageGroups"
               type="text"
               name="ageGroups"
               className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 transition-colors placeholder:text-text-muted/50"
@@ -235,10 +240,11 @@ export default function ClubInterestForm() {
 
       {/* Notes */}
       <div>
-        <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
+        <label htmlFor="club-notes" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2 font-[var(--font-chakra)]">
           Anything else we should know?
         </label>
         <textarea
+          id="club-notes"
           name="notes"
           rows={3}
           maxLength={2000}

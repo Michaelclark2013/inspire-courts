@@ -567,7 +567,7 @@ export default function TournamentManagePage() {
             </div>
 
             {/* Submit — sticky bar on long forms */}
-            <div className="sticky bottom-0 z-20 -mx-6 px-6 py-4 bg-white/95 backdrop-blur-sm border-t border-border flex items-center gap-4">
+            <div className="sticky bottom-0 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 bg-white/95 backdrop-blur-sm border-t border-border flex items-center gap-4">
               <button
                 type="submit"
                 disabled={saving}
@@ -680,7 +680,7 @@ function TournamentCard({ tournament: t }: { tournament: Tournament }) {
               {t.status}
             </span>
           </div>
-          <div className="flex items-center gap-4 text-text-secondary text-xs">
+          <div className="flex items-center gap-4 text-text-secondary text-xs flex-wrap">
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3" aria-hidden="true" />
               {new Date(t.startDate + "T00:00:00").toLocaleDateString("en-US", {

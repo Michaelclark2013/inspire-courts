@@ -14,6 +14,7 @@ import {
   CreditCard,
   CheckCircle2,
 } from "lucide-react";
+import { formatPhone } from "@/lib/utils";
 
 type TournamentInfo = {
   id: number;
@@ -379,7 +380,7 @@ export default function RegisterPage() {
                     id="treg-coachPhone"
                     type="tel"
                     value={coachPhone}
-                    onChange={(e) => setCoachPhone(e.target.value)}
+                    onChange={(e) => setCoachPhone(formatPhone(e.target.value))}
                     onBlur={() => markTouched("coachPhone")}
                     autoComplete="tel"
                     className={fieldClass("coachPhone")}

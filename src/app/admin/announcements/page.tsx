@@ -9,6 +9,7 @@ import {
   X,
   Users,
   Clock,
+  CheckCircle2,
 } from "lucide-react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { SELECT_CLASS } from "@/lib/form-styles";
@@ -41,6 +42,7 @@ export default function AnnouncementsPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<{ id: number; title: string } | null>(null);
   const [form, setForm] = useState({
     title: "",
@@ -87,6 +89,8 @@ export default function AnnouncementsPage() {
       if (res.ok) {
         setForm({ title: "", body: "", audience: "all", expiresAt: "" });
         setShowForm(false);
+        setSuccessMsg("Announcement published successfully");
+        setTimeout(() => setSuccessMsg(""), 3000);
         fetchAll();
       } else {
         const data = await res.json().catch(() => ({}));
@@ -150,6 +154,13 @@ export default function AnnouncementsPage() {
           {showForm ? "Cancel" : "New"}
         </button>
       </div>
+
+      {/* Success banner */}
+      {successMsg && (
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-lg px-4 py-3 mb-6 flex items-center gap-2" role="status" aria-live="polite">
+          <CheckCircle2 className="w-4 h-4" aria-hidden="true" /> {successMsg}
+        </div>
+      )}
 
       {/* Error banner visible when form is closed */}
       {!showForm && saveError && (

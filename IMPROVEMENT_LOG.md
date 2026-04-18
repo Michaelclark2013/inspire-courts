@@ -208,3 +208,43 @@
 
 ### Build Status
 - ✅ PASS — `npm run build` clean (0 TypeScript errors)
+
+---
+
+## Run: 2026-04-18
+
+**Focus:** 3 full improvement cycles (15 batches) — UI/UX, security, accessibility, code quality, performance, new features
+
+### Cycle 1 (5 batches) — deployed to production
+1. **UI consistency**: Standardized border-radius to rounded-xl across 22+ admin files, eliminated dark-theme tokens from 14 files
+2. **Security**: Waiver API DB persistence, push subscription ownership check, tournament API input validation with allowlists, portal check-in error logging, roster API error logging
+3. **UX**: OAuth users see hidden password section, waiver success shows back link, admin users error state with retry, contrast fixes on register page
+4. **Code quality**: Hardcoded URLs replaced with SITE_URL (20+ files), dynamic imports for layout components, Suspense for useSearchParams
+5. **Error boundaries**: 14 new error.tsx files across public and tournament routes
+6. **Content editor**: Delete confirmations for sections/fields via useConfirm hook
+7. **Performance**: N+1 query eliminated in tournament detail API (batched with inArray)
+8. **Features**: CSV export added to leads and work history pages
+
+### Cycle 2 (4 batches) — deployed to production
+1. **DRY code**: Extracted formatPhone to lib/utils.ts (was duplicated in 4 files)
+2. **Form UX**: Phone auto-formatting on tournament registration, success toast on announcements
+3. **Mobile**: flex-wrap on tournament card metadata, fixed sticky bar mobile overflow
+4. **Security**: Rate limiting added to push subscription API
+5. **Touch targets**: Improved registration table select dropdowns (min-height 32px)
+6. **Features**: Share Scores button with native share API + clipboard fallback
+7. **Constants**: Consolidated duplicate SITE_NAME/FACILITY_NAME
+8. **Code quality**: Converted .then() chains to async/await in scores/enter and my-history
+
+### Cycle 3 (1 batch) — pending deploy
+1. **Accessibility**: CommandPalette listbox/option roles with aria-selected
+2. **Accessibility**: ChatWidget dynamic aria-label with unread count, input aria-label
+3. **Dependencies**: Removed unused react-hook-form package
+
+### Summary
+- ~200+ files touched across all cycles
+- 0 regressions — every change verified with full build
+- All changes committed and pushed
+- 2 production deploys completed
+
+### Build Status
+- ✅ PASS — `npm run build` clean (0 TypeScript errors)

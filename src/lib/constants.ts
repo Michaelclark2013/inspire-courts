@@ -1,6 +1,7 @@
 // ─── Facility Info ───────────────────────────────────────────────────────────
 
-export const FACILITY_NAME = "Inspire Courts AZ";
+export const SITE_NAME = "Inspire Courts AZ";
+export const FACILITY_NAME = SITE_NAME;
 
 export const FACILITY_ADDRESS = {
   street: "1090 N Fiesta Blvd",
@@ -38,7 +39,6 @@ export const BRAND_COLORS = {
 
 // ─── Site Metadata ───────────────────────────────────────────────────────────
 
-export const SITE_NAME = "Inspire Courts AZ";
 export const SITE_URL = "https://inspirecourtsaz.com";
 export const SITE_DESCRIPTION =
   "Arizona's premier indoor basketball & volleyball facility. 7 courts, game film available at tournaments. Home of OFF SZN HOOPS tournaments in Gilbert, AZ.";

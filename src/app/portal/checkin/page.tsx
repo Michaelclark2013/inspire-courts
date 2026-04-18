@@ -386,6 +386,7 @@ export default function CoachCheckInPage() {
             <button
               type="submit"
               disabled={!coachName.trim() || coachCheckingIn}
+              aria-busy={coachCheckingIn}
               className="flex items-center gap-2 bg-amber-50 hover:bg-amber-500/30 disabled:opacity-40 text-amber-600 px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
             >
               {coachCheckingIn ? (

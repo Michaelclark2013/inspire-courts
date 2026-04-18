@@ -581,6 +581,7 @@ export default function ChatWidget() {
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
+                aria-busy={loading}
                 aria-label="Send message"
                 className="bg-red hover:bg-red-hover disabled:opacity-50 disabled:cursor-not-allowed text-white px-3.5 py-3 rounded-xl transition-all"
               >

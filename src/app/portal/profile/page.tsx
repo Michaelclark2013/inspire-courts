@@ -387,6 +387,7 @@ export default function ProfilePage() {
                     <button
                       type="submit"
                       disabled={deleting || deleteTyped !== "DELETE" || (!isOAuthUser && !deletePassword)}
+                      aria-busy={deleting}
                       className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
                     >
                       {deleting ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Trash2 className="w-4 h-4" aria-hidden="true" />}

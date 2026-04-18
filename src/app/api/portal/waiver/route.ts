@@ -13,6 +13,7 @@ import {
   findOrCreateDriveFolder,
   createDriveDoc,
 } from "@/lib/google-sheets";
+import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
 
 // GET /api/portal/waiver — returns whether the current user has a waiver on file.
@@ -105,8 +106,8 @@ export async function POST(request: NextRequest) {
       email: parentEmail.trim().toLowerCase(),
       phone: parentPhone || null,
     });
-  } catch {
-    // DB insert failed — continue to Sheets as fallback
+  } catch (err) {
+    logger.warn("Waiver DB insert failed, falling back to Sheets", { error: String(err) });
   }
 
   if (isGoogleConfigured()) {
@@ -189,8 +190,8 @@ export async function POST(request: NextRequest) {
           await createDriveDoc(eventFolderId, docTitle, docContent);
         }
       }
-    } catch {
-      // Drive doc creation is non-critical — waiver is already saved to Sheets
+    } catch (err) {
+      logger.warn("Drive doc creation failed (non-critical)", { error: String(err) });
     }
   }
 

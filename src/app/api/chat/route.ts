@@ -535,7 +535,7 @@ export async function POST(request: Request) {
       const messages = [
         ...(history || []).slice(-20).map((h: { role: string; content: string }) => ({
           role: h.role,
-          content: h.content,
+          content: String(h.content).slice(0, 2000),
         })),
         { role: "user", content: message },
       ];

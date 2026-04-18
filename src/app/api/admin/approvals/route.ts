@@ -53,9 +53,9 @@ export async function PATCH(request: NextRequest) {
   try {
     const { userId, action } = await request.json();
 
-    if (!userId || !["approve", "reject"].includes(action)) {
+    if (!userId || typeof userId !== "number" || !["approve", "reject"].includes(action)) {
       return NextResponse.json(
-        { error: "userId and action (approve|reject) are required" },
+        { error: "userId (number) and action (approve|reject) are required" },
         { status: 400 }
       );
     }

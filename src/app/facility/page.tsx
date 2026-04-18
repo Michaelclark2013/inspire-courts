@@ -368,6 +368,7 @@ export default function FacilityPage() {
                     src="/images/history-bagley-banner.jpg"
                     alt="Marvin Bagley III banner hanging at Inspire Courts"
                     fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover"
                   />
                   <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-navy/80 to-transparent px-3 py-2">
@@ -382,6 +383,7 @@ export default function FacilityPage() {
                     src="/images/history-bagley-visit.jpg"
                     alt="Marvin Bagley III visiting Inspire Courts"
                     fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover"
                   />
                   <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-navy/80 to-transparent px-3 py-2">

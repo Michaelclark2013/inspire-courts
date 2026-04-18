@@ -563,7 +563,7 @@ export default function ContentEditorPage() {
                           onChange={(e) =>
                             updateFieldLabel(activePage, sIdx, key, e.target.value)
                           }
-                          className="bg-transparent text-navy/70 text-xs font-bold uppercase tracking-wider focus:outline-none focus:text-navy border-b border-transparent focus:border-navy/30 pb-0.5 flex-1 min-w-0"
+                          className="bg-transparent text-navy/70 text-xs font-bold uppercase tracking-wider focus:outline-none focus-visible:ring-2 focus-visible:ring-red/30 focus:text-navy border-b border-transparent focus:border-navy/30 pb-0.5 flex-1 min-w-0 rounded-sm"
                         />
                         <button
                           onClick={() => removeField(activePage, sIdx, key)}

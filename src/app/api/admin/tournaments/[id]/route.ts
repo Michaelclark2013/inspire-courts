@@ -134,7 +134,13 @@ export async function PUT(request: NextRequest, { params }: Params) {
     );
   }
 
-  const body = await request.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
   const updates: Record<string, unknown> = { updatedAt: new Date().toISOString() };
 
   const VALID_STATUSES = ["draft", "published", "active", "completed"];

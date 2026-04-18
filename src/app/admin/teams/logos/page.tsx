@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ImageIcon, Trash2, Loader2, Upload, RefreshCw, ArrowLeft } from "lucide-react";
+import { ImageIcon, Trash2, Loader2, Upload, RefreshCw, ArrowLeft, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import TeamLogo from "@/components/ui/TeamLogo";
 import LogoUploader from "@/components/ui/LogoUploader";
@@ -9,16 +9,19 @@ import LogoUploader from "@/components/ui/LogoUploader";
 export default function LogoManagementPage() {
   const [logos, setLogos] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [deletingKey, setDeletingKey] = useState<string | null>(null);
   const [customTeam, setCustomTeam] = useState("");
 
   const fetchLogos = useCallback(async () => {
     setLoading(true);
+    setFetchError(false);
     try {
       const res = await fetch("/api/teams/logo");
       if (res.ok) setLogos(await res.json());
+      else setFetchError(true);
     } catch {
-      // ignore
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -103,6 +106,15 @@ export default function LogoManagementPage() {
       {loading ? (
         <div className="flex items-center justify-center py-16 text-text-secondary">
           <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading logos…
+        </div>
+      ) : fetchError ? (
+        <div className="bg-white border border-border rounded-xl p-10 text-center">
+          <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-3" aria-hidden="true" />
+          <p className="text-navy font-semibold mb-1">Failed to load logos</p>
+          <p className="text-text-secondary text-sm mb-4">Something went wrong. Please try again.</p>
+          <button onClick={fetchLogos} className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
+            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Retry
+          </button>
         </div>
       ) : entries.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-10 text-center">

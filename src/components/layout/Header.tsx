@@ -243,9 +243,9 @@ export default function Header() {
               className="flex items-center gap-2 min-h-[44px] text-white/70 hover:text-white px-4 py-2.5 rounded-full font-semibold text-sm uppercase tracking-wide transition-all hover:bg-white/5"
             >
               {isLoggedIn ? (
-                <><LayoutDashboard className="w-4 h-4" /> Dashboard</>
+                <><LayoutDashboard className="w-4 h-4" aria-hidden="true" /> Dashboard</>
               ) : (
-                <><LogIn className="w-4 h-4" /> Login</>
+                <><LogIn className="w-4 h-4" aria-hidden="true" /> Login</>
               )}
             </Link>
             <Link
@@ -253,7 +253,7 @@ export default function Header() {
               onClick={() => trackConversion("book_cta_click")}
               className="flex items-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-5 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
-              <Calendar className="w-4 h-4" /> Book
+              <Calendar className="w-4 h-4" aria-hidden="true" /> Book
             </Link>
             <a
               href="https://inspirecourts.leagueapps.com/tournaments"
@@ -262,7 +262,7 @@ export default function Header() {
               onClick={() => trackConversion("register_click")}
               className="flex items-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
-              Register Now <ArrowRight className="w-4 h-4" />
+              Register Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>
 
@@ -345,7 +345,7 @@ export default function Header() {
               onClick={() => { setOpen(false); trackConversion("book_cta_click"); }}
               className="flex items-center justify-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
             >
-              <Calendar className="w-4 h-4" /> Book Facility
+              <Calendar className="w-4 h-4" aria-hidden="true" /> Book Facility
             </Link>
             <a
               href="https://inspirecourts.leagueapps.com/tournaments"
@@ -354,7 +354,7 @@ export default function Header() {
               onClick={() => { setOpen(false); trackConversion("register_click"); }}
               className="flex items-center justify-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
             >
-              Register Now <ArrowRight className="w-4 h-4" />
+              Register Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
             <Link
               href={dashboardHref}
@@ -362,9 +362,9 @@ export default function Header() {
               className="flex items-center justify-center gap-2 min-h-[44px] border border-white/20 hover:border-white/40 text-white/70 hover:text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
             >
               {isLoggedIn ? (
-                <><LayoutDashboard className="w-4 h-4" /> My Dashboard</>
+                <><LayoutDashboard className="w-4 h-4" aria-hidden="true" /> My Dashboard</>
               ) : (
-                <><LogIn className="w-4 h-4" /> Login / Register</>
+                <><LogIn className="w-4 h-4" aria-hidden="true" /> Login / Register</>
               )}
             </Link>
           </div>

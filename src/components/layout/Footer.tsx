@@ -70,7 +70,7 @@ export default function Footer() {
             href="/tournaments"
             className="flex-shrink-0 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors inline-flex items-center gap-2"
           >
-            <Trophy className="w-4 h-4" />
+            <Trophy className="w-4 h-4" aria-hidden="true" />
             Browse Tournaments
           </Link>
         </div>
@@ -105,7 +105,7 @@ export default function Footer() {
               <br />
               {FACILITY_ADDRESS.city}, {FACILITY_ADDRESS.state}{" "}
               {FACILITY_ADDRESS.zip}
-              <ExternalLink className="inline w-3 h-3 ml-1 opacity-50" />
+              <ExternalLink className="inline w-3 h-3 ml-1 opacity-50" aria-hidden="true" />
             </a>
             <a
               href={`tel:${FACILITY_PHONE.replace(/\D/g, "")}`}

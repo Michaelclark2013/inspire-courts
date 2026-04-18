@@ -26,13 +26,13 @@ export default function SubmitButton({
     >
       {loading ? (
         <>
-          <Loader2 className="w-4 h-4 animate-spin" />
+          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
           {loadingText}
         </>
       ) : (
         <>
           {children}
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-4 h-4" aria-hidden="true" />
         </>
       )}
     </button>

@@ -158,7 +158,7 @@ export default function LogoUploader({
                     className="w-full flex items-center gap-3 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl px-4 py-3.5 transition-colors"
                   >
                     <div className="w-9 h-9 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Upload className="w-4 h-4 text-accent" />
+                      <Upload className="w-4 h-4 text-accent" aria-hidden="true" />
                     </div>
                     <div className="text-left">
                       <p className="text-white text-sm font-semibold">Choose from library</p>
@@ -173,7 +173,7 @@ export default function LogoUploader({
                     className="w-full flex items-center gap-3 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl px-4 py-3.5 transition-colors"
                   >
                     <div className="w-9 h-9 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Camera className="w-4 h-4 text-blue-400" />
+                      <Camera className="w-4 h-4 text-blue-400" aria-hidden="true" />
                     </div>
                     <div className="text-left">
                       <p className="text-white text-sm font-semibold">Take a photo</p>
@@ -205,16 +205,16 @@ export default function LogoUploader({
                   className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wider transition-colors"
                 >
                   {uploading ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> Uploading…</>
+                    <><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Uploading…</>
                   ) : (
-                    <><Upload className="w-4 h-4" /> Upload Logo</>
+                    <><Upload className="w-4 h-4" aria-hidden="true" /> Upload Logo</>
                   )}
                 </button>
               )}
 
               {success && (
                 <div className="flex items-center justify-center gap-2 text-emerald-400 py-2">
-                  <Check className="w-5 h-5" />
+                  <Check className="w-5 h-5" aria-hidden="true" />
                   <span className="font-semibold text-sm">Logo updated!</span>
                 </div>
               )}

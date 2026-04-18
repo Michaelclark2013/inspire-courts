@@ -225,7 +225,7 @@ export default function FacilityPage() {
                   href="/book"
                   className="flex items-center justify-center gap-2 w-full bg-red hover:bg-red-hover text-white py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.02] shadow-lg font-[var(--font-chakra)]"
                 >
-                  Book Now <ArrowRight className="w-4 h-4" />
+                  Book Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
                 <p className="text-text-muted text-xs text-center mt-3">
                   We&apos;ll confirm your booking within 24 hours.
@@ -415,7 +415,7 @@ export default function FacilityPage() {
                     href="/training"
                     className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
                   >
-                    Train With Us <ArrowRight className="w-4 h-4" />
+                    Train With Us <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </Link>
                   <a
                     href="https://www.instagram.com/p/CMLrxpGJ5CVhNQuwDndtmqzEc_ZRX_HWD-FXYI0/"
@@ -461,7 +461,7 @@ export default function FacilityPage() {
                     href="/book"
                     className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
                   >
-                    Book Now <ArrowRight className="w-4 h-4" />
+                    Book Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </Link>
                   <a
                     href={`mailto:${FACILITY_EMAIL}`}
@@ -530,7 +530,7 @@ export default function FacilityPage() {
               href="/book"
               className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
             >
-              Book Your Court <ArrowRight className="w-4 h-4" />
+              Book Your Court <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
             <a
               href={SOCIAL_LINKS.youtube}
@@ -538,7 +538,7 @@ export default function FacilityPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 border border-white/30 hover:border-white/60 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
             >
-              More Videos <ArrowRight className="w-4 h-4" />
+              More Videos <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -619,7 +619,7 @@ export default function FacilityPage() {
                   href="/contact"
                   className="inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
                 >
-                  Contact Us <ArrowRight className="w-4 h-4" />
+                  Contact Us <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
               </div>
             </AnimateIn>
@@ -657,7 +657,7 @@ export default function FacilityPage() {
               href="/book"
               className="inline-flex items-center gap-2 bg-white hover:bg-off-white text-red px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors flex-shrink-0 font-[var(--font-chakra)]"
             >
-              Book a Court <ArrowRight className="w-4 h-4" />
+              Book a Court <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
           </div>
         </div>

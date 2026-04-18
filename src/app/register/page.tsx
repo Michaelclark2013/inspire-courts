@@ -250,7 +250,7 @@ export default function RegisterPage() {
               {showStaffRoles && (
                 <div className="space-y-2 mt-3">
                   <p className="text-amber-400/60 text-[10px] uppercase tracking-wider font-semibold flex items-center gap-1">
-                    <Shield className="w-3 h-3" /> Requires admin approval
+                    <Shield className="w-3 h-3" aria-hidden="true" /> Requires admin approval
                   </p>
                   {STAFF_ROLES.map((role) => {
                     const Icon = role.icon;
@@ -385,7 +385,7 @@ export default function RegisterPage() {
                     tabIndex={-1}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
                   </button>
                 </div>
                 {form.password.length > 0 && <PasswordStrength password={form.password} />}
@@ -422,12 +422,12 @@ export default function RegisterPage() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                     Creating Account...
                   </>
                 ) : (
                   <>
-                    <UserPlus className="w-4 h-4" />
+                    <UserPlus className="w-4 h-4" aria-hidden="true" />
                     Create Account
                   </>
                 )}

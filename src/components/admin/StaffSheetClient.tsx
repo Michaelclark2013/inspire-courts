@@ -46,7 +46,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
     <div className="space-y-4 md:space-y-6">
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        <div className="bg-bg-secondary border border-border rounded-sm p-5">
+        <div className="bg-off-white border border-border rounded-sm p-5">
           <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
             Hours Worked (Top Staff)
           </h3>
@@ -59,7 +59,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
             <p className="text-text-secondary text-sm text-center py-8">No staff data</p>
           )}
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-5">
+        <div className="bg-off-white border border-border rounded-sm p-5">
           <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">
             Games Officiated (Top Refs)
           </h3>
@@ -76,13 +76,13 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
 
       {/* Tabs + search */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 bg-bg-secondary border border-border rounded-sm p-1">
+        <div className="flex gap-1 bg-off-white border border-border rounded-sm p-1">
           {(["staff", "refs"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`px-4 py-1.5 rounded text-sm font-medium capitalize transition-colors ${
-                tab === t ? "bg-accent text-white" : "text-text-secondary hover:text-navy"
+                tab === t ? "bg-red text-white" : "text-text-secondary hover:text-navy"
               }`}
             >
               {t === "staff" ? `Staff (${staff.length})` : `Refs (${refs.length})`}
@@ -96,14 +96,14 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
+            className="w-full bg-off-white border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
           />
         </div>
       </div>
 
       {/* Staff table */}
       {tab === "staff" && (
-        <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+        <div className="bg-off-white border border-border rounded-sm overflow-hidden">
           {/* Mobile cards */}
           <div className="md:hidden divide-y divide-border">
             {filteredStaff.length === 0 ? (
@@ -116,17 +116,17 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                     {s.pay > 0 && <span className="text-success font-mono font-bold text-sm">${s.pay.toFixed(0)}</span>}
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">{s.role}</span>
+                    <span className="text-xs bg-white px-2 py-0.5 rounded text-text-secondary">{s.role}</span>
                     {s.hours > 0 && <span className="text-xs text-text-secondary font-mono">{s.hours}h</span>}
                     {s.rate > 0 && <span className="text-xs text-text-secondary font-mono">${s.rate}/hr</span>}
-                    <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">{s.payMethod}</span>
+                    <span className="text-xs bg-white px-2 py-0.5 rounded text-text-secondary">{s.payMethod}</span>
                     <span className="text-xs text-text-secondary ml-auto">{s.date}</span>
                   </div>
                 </div>
               ))
             )}
             {filteredStaff.length > 0 && (
-              <div className="px-4 py-3 bg-bg/30 flex items-center justify-between">
+              <div className="px-4 py-3 bg-white/30 flex items-center justify-between">
                 <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Totals</span>
                 <div className="flex items-center gap-4">
                   <span className="font-mono font-bold text-navy text-sm">{filteredStaff.reduce((s, r) => s + r.hours, 0).toFixed(1)}h</span>
@@ -155,7 +155,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                   </tr>
                 ) : (
                   filteredStaff.map((s, i) => (
-                    <tr key={i} className="hover:bg-bg/40 transition-colors">
+                    <tr key={i} className="hover:bg-white/40 transition-colors">
                       <td className="px-4 py-3 font-medium text-navy">{s.name}</td>
                       <td className="px-4 py-3 text-text-secondary">{s.role}</td>
                       <td className="px-4 py-3 text-text-secondary text-xs">{s.date}</td>
@@ -169,7 +169,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                         {s.pay > 0 ? `$${s.pay.toFixed(0)}` : "—"}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">
+                        <span className="text-xs bg-white px-2 py-0.5 rounded text-text-secondary">
                           {s.payMethod}
                         </span>
                       </td>
@@ -179,7 +179,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
               </tbody>
               {filteredStaff.length > 0 && (
                 <tfoot>
-                  <tr className="border-t-2 border-border bg-bg/30">
+                  <tr className="border-t-2 border-border bg-white/30">
                     <td colSpan={3} className="px-4 py-3 text-text-secondary text-xs font-bold uppercase tracking-wider">
                       Totals
                     </td>
@@ -204,7 +204,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
 
       {/* Refs table */}
       {tab === "refs" && (
-        <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+        <div className="bg-off-white border border-border rounded-sm overflow-hidden">
           {/* Mobile cards */}
           <div className="md:hidden divide-y divide-border">
             {filteredRefs.length === 0 ? (
@@ -220,14 +220,14 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                     {r.games > 0 && <span className="text-xs text-text-secondary font-mono">{r.games} games</span>}
                     {r.courts && <span className="text-xs text-text-secondary">{r.courts}</span>}
                     {r.rate > 0 && <span className="text-xs text-text-secondary font-mono">${r.rate}/game</span>}
-                    <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">{r.payMethod}</span>
+                    <span className="text-xs bg-white px-2 py-0.5 rounded text-text-secondary">{r.payMethod}</span>
                     <span className="text-xs text-text-secondary ml-auto">{r.date}</span>
                   </div>
                 </div>
               ))
             )}
             {filteredRefs.length > 0 && (
-              <div className="px-4 py-3 bg-bg/30 flex items-center justify-between">
+              <div className="px-4 py-3 bg-white/30 flex items-center justify-between">
                 <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Totals</span>
                 <div className="flex items-center gap-4">
                   <span className="font-mono font-bold text-navy text-sm">{filteredRefs.reduce((s, r) => s + r.games, 0)} games</span>
@@ -256,7 +256,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                   </tr>
                 ) : (
                   filteredRefs.map((r, i) => (
-                    <tr key={i} className="hover:bg-bg/40 transition-colors">
+                    <tr key={i} className="hover:bg-white/40 transition-colors">
                       <td className="px-4 py-3 font-medium text-navy">{r.name}</td>
                       <td className="px-4 py-3 text-text-secondary text-xs">{r.date}</td>
                       <td className="px-4 py-3 font-mono font-bold text-navy">
@@ -270,7 +270,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                         {r.pay > 0 ? `$${r.pay.toFixed(0)}` : "—"}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs bg-bg px-2 py-0.5 rounded text-text-secondary">
+                        <span className="text-xs bg-white px-2 py-0.5 rounded text-text-secondary">
                           {r.payMethod}
                         </span>
                       </td>
@@ -280,7 +280,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
               </tbody>
               {filteredRefs.length > 0 && (
                 <tfoot>
-                  <tr className="border-t-2 border-border bg-bg/30">
+                  <tr className="border-t-2 border-border bg-white/30">
                     <td colSpan={2} className="px-4 py-3 text-text-secondary text-xs font-bold uppercase tracking-wider">
                       Totals
                     </td>

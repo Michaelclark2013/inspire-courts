@@ -241,7 +241,8 @@ export default function ProfilePage() {
                 placeholder="(555) 123-4567"
               />
             </div>
-            {/* Password change section */}
+            {/* Password change section — hidden for OAuth users */}
+            {!isOAuthUser && (<>
             <div className="border-t border-light-gray pt-5 mt-1">
               <p className="text-navy font-bold text-xs uppercase tracking-wider mb-4">Change Password</p>
             </div>
@@ -293,6 +294,7 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
+            </>)}
             <button
               type="submit"
               disabled={saving}

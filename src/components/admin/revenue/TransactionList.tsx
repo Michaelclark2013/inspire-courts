@@ -134,9 +134,9 @@ export function TransactionList({ transactions }: Props) {
   }) => {
     if (sortKey !== column) return null;
     return sortDir === "asc" ? (
-      <ChevronUp className="inline w-3 h-3 ml-0.5 text-accent" aria-hidden="true" />
+      <ChevronUp className="inline w-3 h-3 ml-0.5 text-red" aria-hidden="true" />
     ) : (
-      <ChevronDown className="inline w-3 h-3 ml-0.5 text-accent" aria-hidden="true" />
+      <ChevronDown className="inline w-3 h-3 ml-0.5 text-red" aria-hidden="true" />
     );
   };
 
@@ -156,10 +156,10 @@ export function TransactionList({ transactions }: Props) {
               type="button"
               onClick={() => setTimeRange(opt.value)}
               aria-pressed={timeRange === opt.value}
-              className={`px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider transition-colors min-h-[44px] sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 ${
+              className={`px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider transition-colors min-h-[44px] sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 ${
                 timeRange === opt.value
-                  ? "bg-accent text-white"
-                  : "bg-off-white border border-border text-text-secondary hover:text-navy hover:border-accent/50"
+                  ? "bg-red text-white"
+                  : "bg-off-white border border-border text-text-secondary hover:text-navy hover:border-red/50"
               }`}
             >
               {opt.label}
@@ -179,7 +179,7 @@ export function TransactionList({ transactions }: Props) {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search transactions..."
             aria-label="Search transactions"
-            className="w-full bg-off-white border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 min-h-[44px] sm:min-h-0"
+            className="w-full bg-off-white border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 min-h-[44px] sm:min-h-0"
           />
         </div>
 
@@ -192,7 +192,7 @@ export function TransactionList({ transactions }: Props) {
           type="button"
           onClick={() => downloadTransactionsCSV(filtered, "revenue.csv")}
           title="Download CSV"
-          className="flex items-center gap-1.5 bg-off-white border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-navy hover:border-accent/50 text-xs transition-colors flex-shrink-0 min-h-[44px] sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1"
+          className="flex items-center gap-1.5 bg-off-white border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-navy hover:border-red/50 text-xs transition-colors flex-shrink-0 min-h-[44px] sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1"
         >
           <Download className="w-3.5 h-3.5" aria-hidden="true" /> CSV
         </button>
@@ -297,7 +297,7 @@ export function TransactionList({ transactions }: Props) {
                   }
                   className={`px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider ${
                     col.sortable
-                      ? "cursor-pointer hover:text-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1"
+                      ? "cursor-pointer hover:text-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1"
                       : ""
                   }`}
                   tabIndex={col.sortable ? 0 : undefined}

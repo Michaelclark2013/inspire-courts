@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { players, teams } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 // GET /api/portal/roster — get roster for coach's team
 export async function GET() {
@@ -38,7 +39,8 @@ export async function GET() {
     return NextResponse.json({ team, players: roster }, {
       headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=60" },
     });
-  } catch {
+  } catch (err) {
+    logger.error("Failed to load roster", { error: String(err) });
     return NextResponse.json({ error: "Failed to load roster" }, { status: 500 });
   }
 }
@@ -90,7 +92,8 @@ export async function POST(request: NextRequest) {
       .returning();
 
     return NextResponse.json(player, { status: 201 });
-  } catch {
+  } catch (err) {
+    logger.error("Failed to add player", { error: String(err) });
     return NextResponse.json({ error: "Failed to add player" }, { status: 500 });
   }
 }
@@ -127,7 +130,8 @@ export async function DELETE(request: NextRequest) {
       .where(and(eq(players.id, playerId), eq(players.teamId, team.id)));
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
+    logger.error("Failed to remove player", { error: String(err) });
     return NextResponse.json({ error: "Failed to remove player" }, { status: 500 });
   }
 }

@@ -17,7 +17,7 @@ export function RevenueKPIs({ kpis }: Props) {
           key={k.label}
           className={`border rounded-sm p-3 md:p-4 ${
             k.highlight
-              ? "bg-accent/10 border-accent/30"
+              ? "bg-red/10 border-red/30"
               : "bg-white border-light-gray shadow-sm"
           }`}
         >
@@ -26,7 +26,7 @@ export function RevenueKPIs({ kpis }: Props) {
           </p>
           <p
             className={`font-bold text-xl md:text-2xl ${
-              k.highlight ? "text-accent" : "text-navy"
+              k.highlight ? "text-red" : "text-navy"
             }`}
             aria-live="polite"
           >

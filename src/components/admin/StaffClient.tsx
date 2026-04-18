@@ -51,8 +51,8 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
   function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
     if (!active) return <ChevronDown className="w-3 h-3 opacity-40 inline ml-1" aria-hidden="true" />;
     return dir === "asc"
-      ? <ChevronUp className="w-3 h-3 text-accent inline ml-1" aria-hidden="true" />
-      : <ChevronDown className="w-3 h-3 text-accent inline ml-1" aria-hidden="true" />;
+      ? <ChevronUp className="w-3 h-3 text-red inline ml-1" aria-hidden="true" />
+      : <ChevronDown className="w-3 h-3 text-red inline ml-1" aria-hidden="true" />;
   }
 
   const totalStaffPay = staff.reduce((s, r) => s + parseInt(r.totalPay.replace(/[$,]/g, "") || "0"), 0);
@@ -97,7 +97,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
     <>
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Staff</span>
             <Users className="w-4 h-4 text-text-secondary" aria-hidden="true" />
@@ -105,7 +105,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
           <p className="text-2xl font-bold text-navy">{staff.length}</p>
           <p className="text-text-secondary text-xs mt-1">{totalShifts} total shifts</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Referees</span>
             <Shield className="w-4 h-4 text-text-secondary" aria-hidden="true" />
@@ -113,14 +113,14 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
           <p className="text-2xl font-bold text-navy">{refs.length}</p>
           <p className="text-text-secondary text-xs mt-1">{totalGames} total games</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Staff Pay</span>
             <DollarSign className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">${totalStaffPay.toLocaleString()}</p>
         </div>
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Ref Pay</span>
             <DollarSign className="w-4 h-4 text-text-secondary" aria-hidden="true" />
@@ -131,10 +131,10 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
 
       {/* Tabs */}
       <div className="flex gap-2 mb-4">
-        <button onClick={() => { setTab("staff"); setSearch(""); }} className={cn("px-4 py-2 rounded-sm text-sm font-bold uppercase tracking-wider border transition-colors", tab === "staff" ? "bg-accent/10 text-accent border-accent/30" : "bg-bg border-border text-text-secondary hover:text-navy")}>
+        <button onClick={() => { setTab("staff"); setSearch(""); }} className={cn("px-4 py-2 rounded-sm text-sm font-bold uppercase tracking-wider border transition-colors", tab === "staff" ? "bg-red/10 text-red border-red/30" : "bg-white border-border text-text-secondary hover:text-navy")}>
           Event Staff ({staff.length})
         </button>
-        <button onClick={() => { setTab("refs"); setSearch(""); }} className={cn("px-4 py-2 rounded-sm text-sm font-bold uppercase tracking-wider border transition-colors", tab === "refs" ? "bg-accent/10 text-accent border-accent/30" : "bg-bg border-border text-text-secondary hover:text-navy")}>
+        <button onClick={() => { setTab("refs"); setSearch(""); }} className={cn("px-4 py-2 rounded-sm text-sm font-bold uppercase tracking-wider border transition-colors", tab === "refs" ? "bg-red/10 text-red border-red/30" : "bg-white border-border text-text-secondary hover:text-navy")}>
           Referees ({refs.length})
         </button>
       </div>
@@ -142,11 +142,11 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
       {/* Search */}
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" aria-hidden="true" />
-        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${tab === "staff" ? "staff" : "referees"}...`} className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50" />
+        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${tab === "staff" ? "staff" : "referees"}...`} className="w-full bg-white border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors placeholder:text-text-secondary/50" />
       </div>
 
       {/* Table */}
-      <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
+      <div className="bg-off-white border border-border rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
           {tab === "staff" ? (
             <table className="w-full text-sm">
@@ -166,12 +166,12 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
               </thead>
               <tbody>
                 {filteredStaff.map((s, i) => (
-                  <tr key={i} className="border-b border-border/50 hover:bg-bg/50 transition-colors">
+                  <tr key={i} className="border-b border-border/50 hover:bg-white/50 transition-colors">
                     <td className="px-4 py-3 text-navy font-medium">{s.name}</td>
                     <td className="px-4 py-3 text-text-secondary">{s.role}</td>
                     <td className="px-4 py-3 text-navy">{s.shifts}</td>
                     <td className="px-4 py-3 text-navy">{s.hoursWorked}</td>
-                    <td className="px-4 py-3 text-accent font-medium">{s.totalPay}</td>
+                    <td className="px-4 py-3 text-red font-medium">{s.totalPay}</td>
                     <td className="px-4 py-3 text-text-secondary">{s.payMethod}</td>
                     <td className="px-4 py-3 text-text-secondary">
                       <span className="flex items-center gap-1.5">
@@ -207,10 +207,10 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
               </thead>
               <tbody>
                 {filteredRefs.map((r, i) => (
-                  <tr key={i} className="border-b border-border/50 hover:bg-bg/50 transition-colors">
+                  <tr key={i} className="border-b border-border/50 hover:bg-white/50 transition-colors">
                     <td className="px-4 py-3 text-navy font-medium">{r.name}</td>
                     <td className="px-4 py-3 text-navy">{r.gamesReffed}</td>
-                    <td className="px-4 py-3 text-accent font-medium">{r.totalPay}</td>
+                    <td className="px-4 py-3 text-red font-medium">{r.totalPay}</td>
                     <td className="px-4 py-3 text-text-secondary">{r.payMethod}</td>
                     <td className="px-4 py-3 text-text-secondary">
                       <span className="flex items-center gap-1.5">

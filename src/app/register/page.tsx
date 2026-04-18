@@ -225,7 +225,7 @@ export default function RegisterPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-semibold text-sm">{role.label}</p>
-                      <p className="text-white/40 text-xs">{role.description}</p>
+                      <p className="text-white/60 text-xs">{role.description}</p>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                       isActive ? "border-white bg-white" : "border-white/20"
@@ -243,7 +243,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => setShowStaffRoles(!showStaffRoles)}
                 aria-expanded={showStaffRoles}
-                className="text-white/30 hover:text-white/50 text-xs font-medium uppercase tracking-wider transition-colors flex items-center gap-1.5"
+                className="text-white/50 hover:text-white/70 text-xs font-medium uppercase tracking-wider transition-colors flex items-center gap-1.5"
               >
                 {showStaffRoles ? "Hide" : "Staff or Referee?"}
               </button>
@@ -269,7 +269,7 @@ export default function RegisterPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white/70 font-semibold text-xs">{role.label}</p>
-                          <p className="text-white/30 text-[10px]">{role.description}</p>
+                          <p className="text-white/50 text-[10px]">{role.description}</p>
                         </div>
                         <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
                           isActive ? "border-white bg-white" : "border-white/15"

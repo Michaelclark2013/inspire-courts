@@ -27,7 +27,7 @@ function StatusTimeline({ status }: { status: string }) {
                 className={cn(
                   "w-9 h-9 rounded-full flex items-center justify-center border-2 transition-colors",
                   isCurrent
-                    ? "bg-accent/10 border-accent text-accent"
+                    ? "bg-red/10 border-red text-red"
                     : done
                       ? "bg-success/10 border-success text-success"
                       : "bg-off-white border-border text-text-secondary/40"
@@ -38,7 +38,7 @@ function StatusTimeline({ status }: { status: string }) {
               <span
                 className={cn(
                   "text-[10px] font-bold uppercase tracking-wider mt-1.5",
-                  isCurrent ? "text-accent" : done ? "text-success" : "text-text-secondary/50"
+                  isCurrent ? "text-red" : done ? "text-success" : "text-text-secondary/50"
                 )}
               >
                 {stage.label}

@@ -84,28 +84,28 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
     <>
       {/* Pipeline Summary */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-bg-secondary border border-border rounded-sm p-4">
+        <div className="bg-off-white border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total</span>
             <Users className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{teams.length}</p>
         </div>
-        <div className="bg-bg-secondary border border-red/20 rounded-sm p-4">
+        <div className="bg-off-white border border-red/20 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-red text-xs font-bold uppercase tracking-wider">Hot</span>
             <Flame className="w-4 h-4 text-red" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-red">{hotCount}</p>
         </div>
-        <div className="bg-bg-secondary border border-amber-200 rounded-sm p-4">
+        <div className="bg-off-white border border-amber-200 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-amber-600 text-xs font-bold uppercase tracking-wider">Warm</span>
             <Phone className="w-4 h-4 text-amber-600" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-amber-600">{warmCount}</p>
         </div>
-        <div className="bg-bg-secondary border border-emerald-200 rounded-sm p-4">
+        <div className="bg-off-white border border-emerald-200 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-emerald-600 text-xs font-bold uppercase tracking-wider">Registered</span>
             <Mail className="w-4 h-4 text-emerald-600" aria-hidden="true" />
@@ -123,19 +123,19 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search teams or coaches..."
-            className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50"
+            className="w-full bg-white border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors placeholder:text-text-secondary/50"
           />
         </div>
-        <select aria-label="Filter by status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 min-h-[44px] text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-white border border-border rounded-sm px-3 py-2.5 min-h-[44px] text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red">
           {statuses.map((s) => <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>)}
         </select>
-        <select aria-label="Filter by age group" value={ageFilter} onChange={(e) => setAgeFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 min-h-[44px] text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by age group" value={ageFilter} onChange={(e) => setAgeFilter(e.target.value)} className="bg-white border border-border rounded-sm px-3 py-2.5 min-h-[44px] text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red">
           {ages.map((a) => <option key={a} value={a}>{a === "All" ? "All Ages" : a}</option>)}
         </select>
         <button
           onClick={() => downloadCSV(filtered, "teams.csv")}
           title="Download all filtered (CSV)"
-          className="flex items-center gap-2 bg-bg border border-border rounded-sm px-3 py-2.5 text-text-secondary hover:text-navy hover:border-accent/50 text-sm transition-colors flex-shrink-0"
+          className="flex items-center gap-2 bg-white border border-border rounded-sm px-3 py-2.5 text-text-secondary hover:text-navy hover:border-red/50 text-sm transition-colors flex-shrink-0"
         >
           <Download className="w-4 h-4" aria-hidden="true" />
           <span className="hidden sm:inline">CSV</span>
@@ -144,11 +144,11 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
 
       {/* Bulk action bar */}
       {selectedIndices.size > 0 && (
-        <div className="flex items-center gap-3 bg-accent/10 border border-accent/30 rounded-sm px-4 py-2.5 mb-3">
-          <span className="text-accent text-sm font-semibold">{selectedIndices.size} selected</span>
+        <div className="flex items-center gap-3 bg-red/10 border border-red/30 rounded-sm px-4 py-2.5 mb-3">
+          <span className="text-red text-sm font-semibold">{selectedIndices.size} selected</span>
           <button
             onClick={() => downloadCSV(filtered.filter((_, i) => selectedIndices.has(i)), `teams-selected.csv`)}
-            className="flex items-center gap-1.5 bg-accent/20 hover:bg-accent/30 text-accent text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded transition-colors"
+            className="flex items-center gap-1.5 bg-red/20 hover:bg-red/30 text-red text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded transition-colors"
           >
             <Download className="w-3.5 h-3.5" aria-hidden="true" /> Export selected
           </button>
@@ -164,10 +164,10 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
       {/* Mobile card view */}
       <div className="md:hidden space-y-3">
         {filtered.map((t, i) => (
-          <div key={i} className={cn("bg-bg-secondary border border-border rounded-sm p-4", selectedIndices.has(i) ? "border-accent/40 bg-accent/5" : "")}>
+          <div key={i} className={cn("bg-off-white border border-border rounded-sm p-4", selectedIndices.has(i) ? "border-red/40 bg-red/5" : "")}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-navy font-semibold text-sm"><SearchHighlight text={t.teamName} query={search} /></span>
-              <span className={cn("inline-block px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider border", STATUS_COLORS[t.status] || "bg-bg text-text-secondary border-border")}>{t.status}</span>
+              <span className={cn("inline-block px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider border", STATUS_COLORS[t.status] || "bg-white text-text-secondary border-border")}>{t.status}</span>
             </div>
             <div className="text-xs text-text-secondary space-y-1">
               <p>Coach: <SearchHighlight text={t.coach} query={search} /></p>
@@ -179,7 +179,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
           </div>
         ))}
         {filtered.length === 0 && (
-          <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary text-sm">
+          <div className="bg-off-white border border-border rounded-sm p-8 text-center text-text-secondary text-sm">
             <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" aria-hidden="true" />
             No teams found
           </div>
@@ -187,7 +187,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
       </div>
 
       {/* Desktop table */}
-      <div className="hidden md:block bg-bg-secondary border border-border rounded-sm overflow-hidden">
+      <div className="hidden md:block bg-off-white border border-border rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <caption className="sr-only">Teams roster</caption>
@@ -200,7 +200,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                     ref={(el) => { if (el) el.indeterminate = selectedIndices.size > 0 && selectedIndices.size < filtered.length; }}
                     onChange={toggleAll}
                     aria-label="Select all"
-                    className="accent-accent cursor-pointer"
+                    className="accent-red cursor-pointer"
                   />
                 </th>
                 <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Team</th>
@@ -215,14 +215,14 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
             </thead>
             <tbody>
               {filtered.map((t, i) => (
-                <tr key={i} className={`border-b border-border/50 hover:bg-bg/50 transition-colors ${selectedIndices.has(i) ? "bg-accent/5" : ""}`}>
+                <tr key={i} className={`border-b border-border/50 hover:bg-white/50 transition-colors ${selectedIndices.has(i) ? "bg-red/5" : ""}`}>
                   <td className="px-3 py-3 w-8">
                     <input
                       type="checkbox"
                       checked={selectedIndices.has(i)}
                       onChange={() => toggleRow(i)}
                       aria-label={`Select ${t.teamName}`}
-                      className="accent-accent cursor-pointer"
+                      className="accent-red cursor-pointer"
                     />
                   </td>
                   <td className="px-4 py-3 text-navy font-medium"><SearchHighlight text={t.teamName} query={search} /></td>
@@ -231,7 +231,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                     {t.phone && t.phone !== "—" ? (
                       <a
                         href={`tel:${t.phone.replace(/\D/g, "")}`}
-                        className="flex items-center gap-1.5 text-text-secondary hover:text-accent transition-colors group"
+                        className="flex items-center gap-1.5 text-text-secondary hover:text-red transition-colors group"
                         title={`Call ${t.coach}`}
                       >
                         <Phone className="w-3 h-3 flex-shrink-0 group-hover:scale-110 transition-transform" aria-hidden="true" />
@@ -244,7 +244,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                   <td className="px-4 py-3 text-navy">{t.age}</td>
                   <td className="px-4 py-3 text-navy">{t.gender}</td>
                   <td className="px-4 py-3">
-                    <span className={cn("inline-block px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider border", STATUS_COLORS[t.status] || "bg-bg text-text-secondary border-border")}>
+                    <span className={cn("inline-block px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider border", STATUS_COLORS[t.status] || "bg-white text-text-secondary border-border")}>
                       {t.status}
                     </span>
                   </td>

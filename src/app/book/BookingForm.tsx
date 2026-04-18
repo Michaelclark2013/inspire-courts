@@ -92,7 +92,7 @@ export default function BookingForm() {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     } catch {
-      setError("Something went wrong. Please try again or email us directly.");
+      setError(`Could not submit. Check your connection and try again, or email ${FACILITY_EMAIL}.`);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setLoading(false);

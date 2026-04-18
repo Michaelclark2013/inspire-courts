@@ -89,9 +89,14 @@ export default function RegisterPage() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`/api/tournaments/${id}`, { signal: controller.signal })
-      .then((r) => r.json())
-      .then((data) => {
+    async function load() {
+      try {
+        const r = await fetch(`/api/tournaments/${id}`, { signal: controller.signal });
+        if (!r.ok) {
+          setError("Unable to load tournament. Please refresh the page.");
+          return;
+        }
+        const data = await r.json();
         setTournament({
           id: data.id,
           name: data.name,
@@ -107,9 +112,18 @@ export default function RegisterPage() {
           description: data.description ?? null,
           registrationCount: data.teams?.length ?? 0,
         });
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+        // Auto-select division if there's only one option
+        if (data.divisions?.length === 1) {
+          setDivision(data.divisions[0]);
+        }
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setError("Network error. Please check your connection.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
     return () => controller.abort();
   }, [id]);
 
@@ -306,7 +320,7 @@ export default function RegisterPage() {
                   <p id="err-teamName" className="text-red text-xs mt-1">{fieldErrors.teamName}</p>
                 )}
               </div>
-              {tournament.divisions.length > 0 && (
+              {tournament.divisions.length > 1 && (
                 <div>
                   <label htmlFor="treg-division" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Division *
@@ -315,8 +329,13 @@ export default function RegisterPage() {
                     id="treg-division"
                     value={division}
                     onChange={(e) => setDivision(e.target.value)}
+                    onBlur={() => markTouched("division")}
                     required
-                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
+                    aria-invalid={touched.division && !division}
+                    aria-describedby={touched.division && !division ? "err-division" : undefined}
+                    className={`w-full bg-off-white rounded-lg border px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red ${
+                      touched.division && !division ? "border-red/60 bg-red/[0.03]" : "border-light-gray"
+                    }`}
                   >
                     <option value="">Select division</option>
                     {tournament.divisions.map((d) => (
@@ -325,6 +344,14 @@ export default function RegisterPage() {
                       </option>
                     ))}
                   </select>
+                  {touched.division && !division && (
+                    <p id="err-division" className="text-red text-xs mt-1">Please select a division</p>
+                  )}
+                </div>
+              )}
+              {tournament.divisions.length === 1 && (
+                <div className="bg-off-white border border-light-gray rounded-lg px-4 py-3 text-xs text-text-muted">
+                  Division: <span className="text-navy font-semibold">{tournament.divisions[0]}</span>
                 </div>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { logger } from "@/lib/logger";
 
 export function ServiceWorkerRegistrar() {
   const pathname = usePathname();
@@ -36,16 +37,20 @@ export function ServiceWorkerRegistrar() {
         });
       })
       .catch((err) => {
-        console.warn("SW registration failed:", err);
+        logger.warn("SW registration failed", { error: String(err) });
       });
 
     // Reload when the new SW takes over
     let refreshing = false;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
+    const onControllerChange = () => {
       if (refreshing) return;
       refreshing = true;
       window.location.reload();
-    });
+    };
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+    return () => {
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return null;

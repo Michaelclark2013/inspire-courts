@@ -5,6 +5,7 @@ import { Search, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { AdminBarChart, CHART_COLORS } from "@/components/dashboard/Charts";
 import TeamLogo from "@/components/ui/TeamLogo";
 import LogoUploader from "@/components/ui/LogoUploader";
+import { formatPhone } from "@/lib/utils";
 
 interface Team {
   teamName: string;
@@ -232,7 +233,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                       <div>
                         <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-1">Phone</p>
                         <a href={`tel:${team.phone}`} className="text-red text-sm hover:underline">
-                          {team.phone}
+                          {formatPhone(team.phone)}
                         </a>
                       </div>
                     )}
@@ -359,7 +360,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                               <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Phone</p>
                               <p className="text-navy">{team.phone !== "—" ? (
                                 <a href={`tel:${team.phone}`} className="text-red hover:underline">
-                                  {team.phone}
+                                  {formatPhone(team.phone)}
                                 </a>
                               ) : "—"}</p>
                             </div>

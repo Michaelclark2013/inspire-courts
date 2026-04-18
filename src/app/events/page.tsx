@@ -26,6 +26,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/events`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ youth basketball tournaments" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Youth Basketball Tournaments | Inspire Courts AZ",
+    description: "10U–17U boys & girls divisions. 3+ game guarantee, game film available. Register your team.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const REGISTER_URL = "/tournaments";
@@ -188,7 +194,7 @@ export default function EventsPage() {
                   href="https://inspirecourts.leagueapps.com/tournaments"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg shadow-red/30"
+                  className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-red/30"
                 >
                   Register Your Team <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </a>

@@ -9,11 +9,16 @@ import { logger } from "@/lib/logger";
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
-  if (isRateLimited(ip, 3, 15 * 60 * 1000)) {
-    return NextResponse.json({
-      success: true,
-      message: "If that email is associated with an account, a reset link has been sent.",
-    });
+  if (isRateLimited(`forgot-password:${ip}`, 3, 15 * 60 * 1000)) {
+    // Return 429 so monitoring + clients can see the throttle, but keep the
+    // user-facing message generic so we don't leak whether the email exists.
+    return NextResponse.json(
+      {
+        success: true,
+        message: "If that email is associated with an account, a reset link has been sent.",
+      },
+      { status: 429, headers: { "Retry-After": "900" } }
+    );
   }
 
   try {

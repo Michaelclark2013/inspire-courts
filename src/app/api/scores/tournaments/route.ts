@@ -73,10 +73,15 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json(result, {
-      headers: { "Cache-Control": "public, max-age=30" },
+      headers: {
+        "Cache-Control": "public, max-age=30, stale-while-revalidate=60",
+      },
     });
   } catch (err) {
     logger.error("Failed to fetch score tournaments", { error: String(err) });
-    return NextResponse.json([], { status: 500 });
+    return NextResponse.json([], {
+      status: 500,
+      headers: { "Cache-Control": "no-store" },
+    });
   }
 }

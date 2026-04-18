@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { checkins } from "@/lib/db/schema";
+import { checkins, teams } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import {
   appendSheetRow,
   sanitizeSheetRow,
@@ -18,7 +19,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let body: any;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
   const { playerName, teamName, division } = body;
 
   if (!playerName) {
@@ -29,6 +37,33 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = session.user.id ? Number(session.user.id) : null;
+
+  // Coach role: verify the team belongs to this coach — prevents a coach
+  // from checking in players under another coach's team name.
+  if (session.user.role === "coach" && teamName && userId) {
+    try {
+      const [ownedTeam] = await db
+        .select({ name: teams.name })
+        .from(teams)
+        .where(eq(teams.coachUserId, userId))
+        .limit(1);
+      const submittedTeam = String(teamName).trim();
+      if (!ownedTeam || ownedTeam.name !== submittedTeam) {
+        logger.warn("Coach attempted check-in for team they do not own", {
+          userId,
+          submittedTeam,
+          ownedTeam: ownedTeam?.name,
+        });
+        return NextResponse.json(
+          { error: "You can only check in players on your own team." },
+          { status: 403 }
+        );
+      }
+    } catch (err) {
+      logger.error("Team ownership check failed", { error: String(err) });
+      return NextResponse.json({ error: "Authorization check failed" }, { status: 500 });
+    }
+  }
 
   try {
     // Write to DB (source of truth)
@@ -50,7 +85,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    logger.error("Portal check-in failed", { error: String(err), playerName });
+    // Don't log full playerName — just its length so we can debug sizing issues without logging PII.
+    logger.error("Portal check-in failed", {
+      error: String(err),
+      playerNameLength: typeof playerName === "string" ? playerName.length : null,
+    });
     return NextResponse.json({ error: "Failed to check in player" }, { status: 500 });
   }
 }

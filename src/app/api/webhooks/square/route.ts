@@ -6,6 +6,7 @@ import {
 } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { verifyWebhookSignature } from "@/lib/square";
+import { logger } from "@/lib/logger";
 
 // POST /api/webhooks/square — Square payment webhook
 export async function POST(request: NextRequest) {
@@ -20,6 +21,8 @@ export async function POST(request: NextRequest) {
     if (!valid) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
+  } else {
+    logger.warn("Square webhook received without SQUARE_WEBHOOK_SIGNATURE_KEY configured — signature not verified");
   }
 
   let event: {

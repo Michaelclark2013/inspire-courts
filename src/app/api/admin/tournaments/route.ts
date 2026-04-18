@@ -11,7 +11,7 @@ import { revalidatePath } from "next/cache";
 // GET /api/admin/tournaments — list all tournaments
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -63,7 +63,7 @@ export async function GET() {
 // POST /api/admin/tournaments — create a tournament
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

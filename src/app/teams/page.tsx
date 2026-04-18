@@ -64,6 +64,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/teams`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Team Inspire club basketball program" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Team Inspire | Club Basketball on MADE Hoops Circuit",
+    description: "16U & 17U boys club basketball. Now recruiting coaches and players in Gilbert, AZ.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const WHAT_YOU_GET = [

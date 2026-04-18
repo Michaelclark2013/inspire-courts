@@ -19,9 +19,10 @@ function sanitize(value: string): string {
 }
 
 export async function POST(request: NextRequest) {
-  // Rate limit: 5 registrations per 10 minutes per IP
+  // Rate limit: 5 registrations per 10 minutes per IP.
+  // Namespaced key so it doesn't share a counter with other bare-IP endpoints.
   const ip = getClientIp(request);
-  if (isRateLimited(ip, 5, 10 * 60 * 1000)) {
+  if (isRateLimited(`register:${ip}`, 5, 10 * 60 * 1000)) {
     return NextResponse.json(
       { error: "Too many registration attempts. Please try again later." },
       { status: 429 }

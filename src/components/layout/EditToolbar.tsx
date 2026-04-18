@@ -47,29 +47,29 @@ export default function EditToolbar() {
       </Link>
       <Link
         href="/admin"
-        className="flex items-center gap-1.5 text-white/70 hover:text-white text-xs font-semibold px-2 py-2 rounded-full transition-colors"
+        className="flex items-center justify-center gap-1.5 text-white/70 hover:text-white text-xs font-semibold min-w-[44px] min-h-[44px] px-2 rounded-full transition-colors"
         title="Dashboard"
         aria-label="Dashboard"
       >
-        <LayoutDashboard className="w-3.5 h-3.5" aria-hidden="true" />
+        <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
       </Link>
       <button
         type="button"
         onClick={() => signOut({ callbackUrl: "/login" })}
-        className="flex items-center gap-1.5 text-white/70 hover:text-red text-xs font-semibold px-2 py-2 rounded-full transition-colors"
+        className="flex items-center justify-center gap-1.5 text-white/70 hover:text-red text-xs font-semibold min-w-[44px] min-h-[44px] px-2 rounded-full transition-colors"
         title="Sign Out"
         aria-label="Sign Out"
       >
-        <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
+        <LogOut className="w-4 h-4" aria-hidden="true" />
       </button>
       <button
         type="button"
         onClick={() => setDismissed(true)}
-        className="text-white/40 hover:text-white/70 px-1 py-2 transition-colors"
+        className="flex items-center justify-center text-white/40 hover:text-white/70 min-w-[44px] min-h-[44px] transition-colors"
         title="Dismiss"
         aria-label="Dismiss toolbar"
       >
-        <X className="w-3 h-3" aria-hidden="true" />
+        <X className="w-4 h-4" aria-hidden="true" />
       </button>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import {
   UserCheck,
@@ -41,13 +41,14 @@ export default function CoachCheckInPage() {
   const [checkedIn, setCheckedIn] = useState<CheckedIn[]>([]);
   const [checkingIn, setCheckingIn] = useState<number | null>(null);
   const [manualName, setManualName] = useState("");
+  const [manualSubmitting, setManualSubmitting] = useState(false);
   const [showSummary, setShowSummary] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [mutationError, setMutationError] = useState("");
   const [bulkChecking, setBulkChecking] = useState(false);
   const [bulkProgress, setBulkProgress] = useState(0);
   const [undoPlayer, setUndoPlayer] = useState<string | null>(null);
-  const [undoTimeout, setUndoTimeout] = useState<NodeJS.Timeout | null>(null);
+  const undoTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [duplicateWarning, setDuplicateWarning] = useState("");
   const [coachesCheckedIn, setCoachesCheckedIn] = useState<CoachCheckedIn[]>([]);
   const [coachName, setCoachName] = useState("");
@@ -81,6 +82,13 @@ export default function CoachCheckInPage() {
     }
   }, [mutationError]);
 
+  // Clear undo timeout on unmount so it doesn't fire setState after unmount
+  useEffect(() => {
+    return () => {
+      if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+    };
+  }, []);
+
   // Clear duplicate warning after 3s
   useEffect(() => {
     if (duplicateWarning) {
@@ -110,10 +118,9 @@ export default function CoachCheckInPage() {
       if (res.ok) {
         setCheckedIn((prev) => [...prev, { name: playerName, time: new Date().toLocaleTimeString() }]);
         // Set up undo
-        if (undoTimeout) clearTimeout(undoTimeout);
+        if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
         setUndoPlayer(playerName);
-        const t = setTimeout(() => setUndoPlayer(null), 5000);
-        setUndoTimeout(t);
+        undoTimeoutRef.current = setTimeout(() => setUndoPlayer(null), 5000);
       } else {
         setMutationError(`Failed to check in ${playerName}. Try again.`);
       }
@@ -127,12 +134,13 @@ export default function CoachCheckInPage() {
     if (undoPlayer) {
       setCheckedIn((prev) => prev.filter((c) => c.name !== undoPlayer));
       setUndoPlayer(null);
-      if (undoTimeout) clearTimeout(undoTimeout);
+      if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
     }
   }
 
   async function handleManualCheckIn(e: React.FormEvent) {
     e.preventDefault();
+    if (manualSubmitting) return;
     const trimmed = manualName.trim();
     if (!trimmed) return;
 
@@ -142,8 +150,13 @@ export default function CoachCheckInPage() {
       return;
     }
 
-    await checkIn(trimmed);
-    setManualName("");
+    setManualSubmitting(true);
+    try {
+      await checkIn(trimmed);
+      setManualName("");
+    } finally {
+      setManualSubmitting(false);
+    }
   }
 
   async function handleBulkCheckIn() {
@@ -317,7 +330,7 @@ export default function CoachCheckInPage() {
       )}
 
       {/* Quick stats */}
-      <div className="grid gap-4 md:grid-cols-2 mb-8">
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
         <div className="bg-white border border-light-gray rounded-xl p-5">
           <div className="flex items-center gap-2 text-text-muted text-xs uppercase tracking-wider mb-2">
             <Users className="w-3.5 h-3.5" aria-hidden="true" /> Roster
@@ -331,6 +344,23 @@ export default function CoachCheckInPage() {
           <p className="text-emerald-600 text-2xl font-bold">{checkedIn.length} <span className="text-sm text-emerald-600/50 font-normal">of {roster.length}</span></p>
         </div>
       </div>
+
+      {/* Team-complete celebration banner */}
+      {roster.length > 0 && checkedIn.length >= roster.length && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="mb-8 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 border border-emerald-500/40 rounded-xl p-5 flex items-center gap-4 animate-fade-in"
+        >
+          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
+            <CheckCircle2 className="w-6 h-6 text-emerald-600" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-navy font-bold text-base">Full team checked in!</p>
+            <p className="text-text-muted text-sm">You&apos;re ready to play. Good luck out there.</p>
+          </div>
+        </div>
+      )}
 
       {/* Coach Check-In (2 bands max) */}
       <div className="bg-white border border-amber-500/20 rounded-xl p-5 mb-6">
@@ -454,8 +484,12 @@ export default function CoachCheckInPage() {
               />
             </div>
           </div>
-          <button type="submit" disabled={!manualName.trim()} className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
-            <UserCheck className="w-4 h-4" aria-hidden="true" /> Check In
+          <button type="submit" disabled={!manualName.trim() || manualSubmitting} className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
+            {manualSubmitting ? (
+              <><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Checking...</>
+            ) : (
+              <><UserCheck className="w-4 h-4" aria-hidden="true" /> Check In</>
+            )}
           </button>
         </form>
       </div>

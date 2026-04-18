@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search, Trophy, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,22 +21,41 @@ export default function ScoresClient({ games }: { games: Game[] }) {
   const [eventFilter, setEventFilter] = useState("All");
   const [divisionFilter, setDivisionFilter] = useState("All");
 
-  const events = ["All", ...new Set(games.map((g) => g.event))];
-  const divisions = ["All", ...new Set(games.map((g) => g.division).sort())];
+  // Derive events/divisions/courts in a single pass over games
+  const { events, divisions, courtCount } = useMemo(() => {
+    const eventSet = new Set<string>();
+    const divSet = new Set<string>();
+    const courtSet = new Set<string | number>();
+    for (const g of games) {
+      eventSet.add(g.event);
+      divSet.add(g.division);
+      courtSet.add(g.court);
+    }
+    return {
+      events: ["All", ...eventSet],
+      divisions: ["All", ...Array.from(divSet).sort()],
+      courtCount: courtSet.size,
+    };
+  }, [games]);
 
-  const filtered = games.filter((g) => {
-    const matchSearch = g.home.toLowerCase().includes(search.toLowerCase()) || g.away.toLowerCase().includes(search.toLowerCase());
-    const matchEvent = eventFilter === "All" || g.event === eventFilter;
-    const matchDivision = divisionFilter === "All" || g.division === divisionFilter;
-    return matchSearch && matchEvent && matchDivision;
-  });
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase();
+    return games.filter((g) => {
+      const matchSearch = !q || g.home.toLowerCase().includes(q) || g.away.toLowerCase().includes(q);
+      const matchEvent = eventFilter === "All" || g.event === eventFilter;
+      const matchDivision = divisionFilter === "All" || g.division === divisionFilter;
+      return matchSearch && matchEvent && matchDivision;
+    });
+  }, [games, search, eventFilter, divisionFilter]);
 
   // Group by event
-  const grouped = filtered.reduce<Record<string, Game[]>>((acc, g) => {
-    if (!acc[g.event]) acc[g.event] = [];
-    acc[g.event].push(g);
-    return acc;
-  }, {});
+  const grouped = useMemo(() => {
+    return filtered.reduce<Record<string, Game[]>>((acc, g) => {
+      if (!acc[g.event]) acc[g.event] = [];
+      acc[g.event].push(g);
+      return acc;
+    }, {});
+  }, [filtered]);
 
   return (
     <>
@@ -59,7 +78,7 @@ export default function ScoresClient({ games }: { games: Game[] }) {
         </div>
         <div className="bg-off-white border border-border rounded-sm p-4">
           <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Courts Used</span>
-          <p className="text-2xl font-bold text-navy mt-2">{new Set(games.map((g) => g.court)).size}</p>
+          <p className="text-2xl font-bold text-navy mt-2">{courtCount}</p>
         </div>
       </div>
 

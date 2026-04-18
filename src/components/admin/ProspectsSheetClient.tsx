@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Search, ExternalLink, Download } from "lucide-react";
 import { HorizontalBarList, CHART_COLORS, BRAND } from "@/components/dashboard/Charts";
 import SearchHighlight from "@/components/ui/SearchHighlight";
+import { formatPhone } from "@/lib/utils";
 
 function downloadProspectsCSV(rows: Prospect[], filename: string) {
   const headers = ["Team", "Coach", "Phone", "Email", "Status", "Division", "Notes", "Date"];
@@ -230,7 +231,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
                       <div className="flex items-center gap-2">
                         {p.phone !== "—" && (
                           <a href={`tel:${p.phone}`} className="text-xs text-text-secondary hover:text-red transition-colors">
-                            {p.phone}
+                            {formatPhone(p.phone)}
                           </a>
                         )}
                         {p.email !== "—" && (

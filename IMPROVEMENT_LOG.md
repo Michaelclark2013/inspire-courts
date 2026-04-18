@@ -248,3 +248,134 @@
 
 ### Build Status
 - ✅ PASS — `npm run build` clean (0 TypeScript errors)
+
+---
+
+## Run: 2026-04-18 (Cycles 4-9)
+
+**Focus:** Security hardening, error handling, form UX, accessibility, small delight features
+
+### Cycle 4 — Security & resilience
+- Wrap `request.json()` in try/catch across 3 API routes (checkin, roster, tournament PATCH)
+- Add userId type validation on approvals route
+- Add `logger.warn` to silent catch blocks in waiver route (DB + Drive)
+- Add `logger.warn` for missing Square webhook signature key
+- Cap chat history item content to 2000 chars before sending to AI
+- Use sanitized values in checkin Sheets write
+- Add `sizes` prop to facility page fill images
+- Replace hardcoded URLs with SITE_URL in register layout
+- Add error state with retry to team logos page
+- Add error handling + feedback to registration form submission
+- Add aria-label to registration delete button
+- Add focus-visible ring to content editor field input
+- Add loading.tsx skeleton for `tournaments/[id]/registrations/`
+- Fix file icon colors in FilesClient (amber/sky/violet)
+
+### Cycle 5 — Portal error handling
+- Wrap waiver and profile form fetches in try/catch with network error messages
+- Add aria-label to roster delete button
+
+### Cycle 6 — Tournament UX
+- Link tournament detail CTA to internal /register route (not generic LeagueApps)
+- Auto-select division when only one option; hide select, show read-only label
+- Replace loading spinner with structured skeleton on tournament detail page
+
+### Cycle 7 — Mobile nav + dashboard resilience
+- Move focus to first interactive element when mobile nav opens (a11y)
+- Add per-sheet fallback to getDashboardData (partial data instead of crash)
+- Fix hero CTA button size mismatch on mobile
+- Reduce hero CTA animation delay 300ms → 100ms
+
+### Cycle 8 — Error handling + form validation
+- Wrap portal checkin request.json() in try/catch
+- Check fetch .ok on tournament detail load, show error state
+- Division field error highlight + inline message on tournament register
+
+### Cycle 9 — Small delight features
+- Print button on portal scores page
+- Team-complete celebration banner on check-in (all players checked in)
+- "Updated Xs ago" live ticker next to refresh on schedule page
+
+### Cycle 10 — Real bugs (race, leaks, logic)
+- Waiver route: return 500 when BOTH DB and Sheets fail (was returning
+  {success:true} when DB silently failed)
+- Schedule page: add AbortController so unmount doesn't setState
+- Checkin page: cleanup effect for undoTimeout on unmount
+- DeadlineCountdown: show minutes when under 1 hour (was "0 hours")
+- Content editor: aria-labels on remove buttons + field inputs (6 total)
+- Offline page: aria-hidden on decorative SVG
+
+### Cycle 11 — Auth, ref leaks, SSR safety
+- Portal checkin API: verify coach owns team before accepting check-in
+  (auth bypass: coach could check in players under other coaches' teams)
+- Checkin page: undoTimeout moved to useRef (avoids state-batching race)
+- AdminSidebar: typeof window guard + try/catch on localStorage
+- DashboardDBStats: AbortController on both dashboard + live-games polls
+
+### Cycle 12 — Performance
+- ScoresClient: single-pass memoization of events/divisions/courts
+- PlayersSheetClient: combine divisions + teams memos into one pass
+- Portal summary route: replace N+1 team-lookup + count with COUNT subquery
+
+### Cycle 13 — UX polish + API consistency
+- Camps "Contact Us" pre-fills ?type=Camps%20%26%20Clinics
+- forgot-password rate-limit now returns 429 + Retry-After
+- tournaments/schedule 500: Cache-Control no-store; success uses s-maxage
+- Book + contact form network errors now include email address inline
+
+### Cycle 14 — Extract useCopyToClipboard hook
+- New hook with copied flag, 2s reset, execCommand fallback, unmount cleanup
+- Adopted in 3 places (TournamentHeader, tournaments/[id], register/confirmation)
+
+### Cycle 15 — Use centralized formatters
+- Replace inline toLocaleDateString/toLocaleString in 6 admin pages
+- formatDate / formatDateShort / formatCurrency from @/lib/utils
+
+### Cycle 16 — Security hardening
+- auth/register rate-limit namespaced (register:${ip})
+- portal/registrations: explicit coach role guard + lowercase email compare
+- admin/users PUT: Number.isFinite + positive check on id before eq()
+- portal/checkin log: no longer includes full playerName (PII)
+
+### Cycle 17 — ID validation + double-submit guard
+- All 5 admin /tournaments/[id]/* routes validate tournamentId (was passing NaN into eq)
+- Portal manual check-in: manualSubmitting flag + spinner on button
+- Wrap GoogleAnalytics in <Suspense> at layout root
+
+### Cycle 18 — Data display polish
+- TournamentsClient: formatCurrency instead of toLocaleString
+- admin/users: formatDate + formatPhone (was default locale "4/14/2026")
+- admin/approvals + PlayersSheet + ProspectsSheet + TeamsSheet: format phone
+- PlayersSheet: title attr on truncated team name
+
+### Cycle 19 — Button tactile feedback + radius consistency
+- Add active:scale-[0.97] to 14 CTAs (hover:scale-[1.03] without active: press state)
+- about CTA rounded-xl → rounded-full to match button family
+
+### Cycle 20 — Migrate console.* to structured logger
+- usePushNotifications (2x), ServiceWorkerRegistrar, ErrorBoundary
+- portal/loading text upgrade
+
+### Cycle 21 — Mobile UX (tap, scroll, safe-area)
+- ConfirmModal close + action buttons 44x44px + focus rings
+- StandingsTable: isolate table scroll from filter chips, min-w-[640px]
+- QuickContactBar: pb-[env(safe-area-inset-bottom)+0.75rem]
+- EditToolbar: 3 icon buttons now 44x44px centered
+
+### Cycle 22 — Keyboard accessibility
+- KPICard: remove phantom tabIndex={0} (8+ dashboard KPIs were stealing tab stops)
+- ChatWidget, PortalSidebar mobile drawer, AdminFAB: all get Escape-to-close
+
+### Cycle 23 — Twitter cards + register noindex
+- Twitter summary_large_image on about, events, schedule, scores,
+  training, teams, facility, camps (8 pages)
+- tournaments/[id]/register layout: robots noindex,follow
+
+### Cycle 24 — Delete dead code + clearer constants
+- Remove src/components/admin/DashboardDBStats.tsx (442 lines, zero imports)
+- AdminDashboardClient: DASHBOARD_REFRESH_MS named constant with comment
+- google-sheets DRIVE_FOLDERS: comment explains waivers=root is intentional
+
+### Build Status
+- ✅ PASS — `npm run build` clean across all 21 cycles
+- ✅ All pushed to `improvements/round-76-clubform-contact-2026-04-17` branch

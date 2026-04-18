@@ -49,6 +49,12 @@ export const metadata: Metadata = {
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Basketball Camps | Inspire Courts AZ",
+    description: "Youth basketball camps in Gilbert, AZ. Skill development, competitive games, expert coaching.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const jsonLd = {
@@ -205,14 +211,14 @@ export default function CampsPage() {
                 href={LEAGUEAPPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+                className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-[0.97] shadow-lg font-[var(--font-chakra)]"
               >
                 Register Now{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </a>
               <Link
-                href="/contact"
-                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
+                href="/contact?type=Camps+%26+Clinics"
+                className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-[0.97] font-[var(--font-chakra)]"
               >
                 Contact Us{" "}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -262,7 +268,7 @@ export default function CampsPage() {
                   href={LEAGUEAPPS_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-md font-[var(--font-chakra)]"
+                  className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-[0.97] shadow-md font-[var(--font-chakra)]"
                 >
                   Register for This Camp{" "}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -558,14 +564,14 @@ export default function CampsPage() {
                     href={LEAGUEAPPS_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
+                    className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-[0.97] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
                   >
                     Register Now{" "}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                   </a>
                   <Link
                     href="/contact"
-                    className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy w-full sm:w-auto px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
+                    className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy w-full sm:w-auto px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-[0.97] font-[var(--font-chakra)]"
                   >
                     Contact Us{" "}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />

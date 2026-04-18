@@ -90,7 +90,7 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div>
       {divisions.length > 0 && (
         <div className="px-4 py-3 border-b border-white/10 flex flex-wrap items-center gap-2 sm:gap-2" role="group" aria-label="Filter by division">
           <span className="text-white/40 text-xs font-semibold uppercase tracking-wider">Division:</span>
@@ -119,8 +119,9 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
           ))}
         </div>
       )}
-      <table className="w-full text-sm">
-        <caption className="sr-only">Team standings</caption>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[640px]">
+          <caption className="sr-only">Team standings</caption>
         <thead>
           <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
             <th scope="col" className="text-left px-4 py-3 font-semibold">#</th>
@@ -183,8 +184,9 @@ export default function StandingsTable({ eventFilter = "" }: Props) {
               </td>
             </tr>
           ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

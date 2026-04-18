@@ -1,5 +1,3 @@
-"use client";
-
 import { Award } from "lucide-react";
 
 const BADGE_STYLES: Record<number, { bg: string; text: string; label: string }> = {

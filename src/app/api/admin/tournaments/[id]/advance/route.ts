@@ -18,12 +18,15 @@ type Params = { params: Promise<{ id: string }> };
 // POST /api/admin/tournaments/[id]/advance — advance winner after game final
 export async function POST(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   try {
     const body = await request.json();

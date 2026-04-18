@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import { formatDate, formatPhone } from "@/lib/utils";
 
 type User = {
   id: number;
@@ -251,6 +252,7 @@ export default function UsersPage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
+                autoComplete="name"
                 className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-gray-400"
                 placeholder="Coach name"
               />
@@ -265,6 +267,7 @@ export default function UsersPage() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
+                autoComplete="email"
                 className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-gray-400"
                 placeholder="coach@email.com"
               />
@@ -279,10 +282,15 @@ export default function UsersPage() {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
+                minLength={8}
                 autoComplete="new-password"
+                aria-describedby="user-password-hint"
                 className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-gray-400"
                 placeholder="Initial password"
               />
+              <p id="user-password-hint" className="text-navy/50 text-xs mt-1">
+                Min 8 characters. The user can change it after first sign-in.
+              </p>
             </div>
             <div>
               <label htmlFor="user-role" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
@@ -329,6 +337,7 @@ export default function UsersPage() {
                 type="tel"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                autoComplete="tel"
                 className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-gray-400"
                 placeholder="(555) 123-4567"
               />
@@ -560,10 +569,10 @@ export default function UsersPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-text-secondary hidden md:table-cell">
-                      {u.phone || "—"}
+                      {u.phone ? formatPhone(u.phone) : "—"}
                     </td>
                     <td className="px-6 py-4 text-text-secondary hidden md:table-cell">
-                      {new Date(u.createdAt).toLocaleDateString()}
+                      {formatDate(u.createdAt)}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button

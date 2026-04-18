@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { UserCheck, Loader2, CheckCircle2, XCircle, Clock, Shield, AlertTriangle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatPhone } from "@/lib/utils";
 
 interface PendingUser {
   id: number;
@@ -175,7 +175,7 @@ export default function ApprovalsPage() {
                 </div>
                 <p className="text-text-secondary text-xs truncate">{user.email}</p>
                 {user.phone && (
-                  <p className="text-text-secondary text-xs">{user.phone}</p>
+                  <p className="text-text-secondary text-xs">{formatPhone(user.phone)}</p>
                 )}
                 <div className="flex items-center gap-1 mt-1.5 text-text-secondary text-xs">
                   <Clock className="w-3 h-3" aria-hidden="true" />

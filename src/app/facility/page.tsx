@@ -51,6 +51,12 @@ export const metadata: Metadata = {
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Indoor Court Rental Gilbert AZ | Inspire Courts",
+    description: "7 climate-controlled courts for basketball, volleyball, futsal & jiu-jitsu in Gilbert, AZ.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const FEATURES = [
@@ -368,6 +374,7 @@ export default function FacilityPage() {
                     src="/images/history-bagley-banner.jpg"
                     alt="Marvin Bagley III banner hanging at Inspire Courts"
                     fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover"
                   />
                   <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-navy/80 to-transparent px-3 py-2">
@@ -382,6 +389,7 @@ export default function FacilityPage() {
                     src="/images/history-bagley-visit.jpg"
                     alt="Marvin Bagley III visiting Inspire Courts"
                     fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover"
                   />
                   <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-navy/80 to-transparent px-3 py-2">
@@ -459,7 +467,7 @@ export default function FacilityPage() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     href="/book"
-                    className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+                    className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-[0.97] shadow-lg font-[var(--font-chakra)]"
                   >
                     Book Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </Link>

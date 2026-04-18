@@ -6,6 +6,7 @@ export default function OfflinePage() {
       <div className="mb-8">
         {/* Basketball icon */}
         <svg
+          aria-hidden="true"
           className="w-24 h-24 mx-auto text-white/30"
           viewBox="0 0 24 24"
           fill="none"

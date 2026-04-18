@@ -81,6 +81,16 @@ export default function PortalSidebar() {
     return () => controller.abort();
   }, []);
 
+  // Close mobile drawer on Escape
+  useEffect(() => {
+    if (!open) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [open]);
+
   const navItems = role === "parent" ? PARENT_NAV : role === "admin" ? ADMIN_NAV : COACH_NAV;
   const roleLabel = role === "coach" ? "Coach" : role === "parent" ? "Parent" : "Admin";
   const initials = (session?.user?.name || "U")

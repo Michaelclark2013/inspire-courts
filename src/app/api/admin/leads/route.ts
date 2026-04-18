@@ -13,7 +13,7 @@ import {
 // GET /api/admin/leads — read prospect pipeline from Google Sheets
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "prospects")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "prospects")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

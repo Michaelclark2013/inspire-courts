@@ -6,6 +6,7 @@ import DataTable from "@/components/dashboard/DataTable";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import NotionFallback from "@/components/dashboard/NotionFallback";
 import { getAllSponsors, getProperty, isNotionConfigured } from "@/lib/notion";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function SponsorsPage() {
   if (!isNotionConfigured()) {
@@ -53,7 +54,7 @@ export default async function SponsorsPage() {
     amount: getProperty(s, "Amount") || getProperty(s, "Value") || 0,
     amountDisplay: (() => {
       const val = getProperty(s, "Amount") || getProperty(s, "Value");
-      return val ? `$${Number(val).toLocaleString()}` : "—";
+      return val ? formatCurrency(Number(val)) : "—";
     })(),
     event: getProperty(s, "Event") || getProperty(s, "Events") || "—",
     startDate: (() => {

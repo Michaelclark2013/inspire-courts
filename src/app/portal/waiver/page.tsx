@@ -43,22 +43,27 @@ export default function WaiverPage() {
     setSaving(true);
     setError("");
 
-    const res = await fetch("/api/portal/waiver", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        submittedBy: session?.user?.name || session?.user?.email,
-      }),
-    });
+    try {
+      const res = await fetch("/api/portal/waiver", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          submittedBy: session?.user?.name || session?.user?.email,
+        }),
+      });
 
-    if (res.ok) {
-      setSubmitted(true);
-    } else {
-      const data = await res.json();
-      setError(data.error || "Failed to submit waiver");
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to submit waiver");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   }
 
   if (submitted) {

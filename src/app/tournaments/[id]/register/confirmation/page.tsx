@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, Clock, Loader2, Trophy, ArrowRight, Share2, Copy, CalendarPlus } from "lucide-react";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 
 type RegStatus = {
   id: number;
@@ -81,7 +82,7 @@ function ConfirmationContent() {
 
   const isPending = regStatus && !isConfirmed;
 
-  const [copied, setCopied] = useState(false);
+  const [copied, copy] = useCopyToClipboard();
 
   const tournamentUrl = typeof window !== "undefined" ? `${window.location.origin}/tournaments/${id}` : "";
 
@@ -91,9 +92,7 @@ function ConfirmationContent() {
         await navigator.share({ title: "Tournament Registration", url: tournamentUrl });
       } catch { /* user cancelled */ }
     } else {
-      await navigator.clipboard.writeText(tournamentUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await copy(tournamentUrl);
     }
   }
 

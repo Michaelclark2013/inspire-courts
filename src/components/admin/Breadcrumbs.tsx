@@ -53,7 +53,8 @@ export default function Breadcrumbs() {
         <li>
           <Link
             href="/admin"
-            className="hover:text-navy transition-colors inline-flex items-center gap-1"
+            aria-label="Admin dashboard"
+            className="hover:text-navy transition-colors inline-flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded-sm"
           >
             <Home className="w-3.5 h-3.5" aria-hidden="true" />
           </Link>

@@ -20,32 +20,48 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
   const { playerName, teamName, division } = body;
 
-  if (!playerName) {
+  if (!playerName || typeof playerName !== "string") {
     return NextResponse.json(
       { error: "Player name is required" },
       { status: 400 }
     );
   }
 
+  // Sanitize and cap input lengths
+  const safeName = String(playerName).trim().slice(0, 100);
+  const safeTeam = teamName ? String(teamName).trim().slice(0, 100) : "";
+  const safeDivision = division ? String(division).trim().slice(0, 50) : null;
+
   const userId = session.user.id ? Number(session.user.id) : null;
 
-  // Write to DB (source of truth)
-  await db.insert(checkins).values({
-    playerName,
-    teamName: teamName || "",
-    division: division || null,
-    type: "checkin",
-    checkedInBy: userId && !isNaN(userId) ? userId : null,
-  });
+  try {
+    // Write to DB (source of truth)
+    await db.insert(checkins).values({
+      playerName: safeName,
+      teamName: safeTeam,
+      division: safeDivision,
+      type: "checkin",
+      checkedInBy: userId && !isNaN(userId) ? userId : null,
+    });
+  } catch (err) {
+    logger.error("Failed to insert check-in", { error: String(err) });
+    return NextResponse.json({ error: "Failed to save check-in" }, { status: 500 });
+  }
 
   // Fire-and-forget: write to Google Sheets
   if (isGoogleConfigured()) {
     const timestamp = timestampAZ();
     appendSheetRow(SHEETS.playerCheckIn, "A:F", [
-      sanitizeSheetRow([timestamp, playerName, teamName || "", division || "", "CHECKIN", session.user.name || ""]),
+      sanitizeSheetRow([timestamp, safeName, safeTeam, safeDivision || "", "CHECKIN", session.user.name || ""]),
     ]).catch((err) => logger.warn("Failed to sync check-in to Google Sheets", { error: String(err) }));
   }
 

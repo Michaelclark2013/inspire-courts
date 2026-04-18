@@ -35,6 +35,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/about`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ indoor basketball facility" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Inspire Courts AZ",
+    description: "Arizona's premier indoor basketball & volleyball facility — 7 courts, game film, pro-level setup in Gilbert, AZ.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const sportsOrgSchema = {
@@ -346,7 +352,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/events"
-            className="inline-flex items-center gap-2 bg-white text-navy px-8 py-3.5 rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-off-white transition-all duration-200 hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
+            className="inline-flex items-center gap-2 bg-white text-navy px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide hover:bg-off-white transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] shadow-lg font-[var(--font-chakra)]"
           >
             See Upcoming Events <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>

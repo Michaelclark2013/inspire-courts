@@ -10,7 +10,7 @@ import { logger } from "@/lib/logger";
 // GET /api/admin/announcements — list all
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -32,7 +32,7 @@ export async function GET() {
 // POST /api/admin/announcements — create
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/admin/announcements — update existing announcement
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -136,19 +136,26 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/admin/announcements — delete by id
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
-    if (!id || isNaN(Number(id))) {
+    const idParam = searchParams.get("id");
+    const id = Number(idParam);
+    if (!idParam || !Number.isInteger(id) || id <= 0) {
       return NextResponse.json({ error: "Valid id required" }, { status: 400 });
     }
 
-    await db.delete(announcements).where(eq(announcements.id, Number(id)));
-    return NextResponse.json({ success: true });
+    const deleted = await db
+      .delete(announcements)
+      .where(eq(announcements.id, id))
+      .returning({ id: announcements.id });
+    if (deleted.length === 0) {
+      return NextResponse.json({ error: "Announcement not found" }, { status: 404 });
+    }
+    return NextResponse.json({ success: true, id: deleted[0].id });
   } catch (err) {
     logger.error("Failed to delete announcement", { error: String(err) });
     return NextResponse.json({ error: "Failed to delete announcement" }, { status: 500 });

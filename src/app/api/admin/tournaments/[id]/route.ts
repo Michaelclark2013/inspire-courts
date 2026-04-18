@@ -19,12 +19,15 @@ type Params = { params: Promise<{ id: string }> };
 // GET /api/admin/tournaments/[id] — full tournament detail
 export async function GET(_request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   const [tournament] = await db
     .select()
@@ -111,12 +114,15 @@ export async function GET(_request: NextRequest, { params }: Params) {
 // PUT /api/admin/tournaments/[id] — update tournament settings
 export async function PUT(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   const [existing] = await db
     .select()
@@ -134,7 +140,13 @@ export async function PUT(request: NextRequest, { params }: Params) {
     );
   }
 
-  const body = await request.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
   const updates: Record<string, unknown> = { updatedAt: new Date().toISOString() };
 
   const VALID_STATUSES = ["draft", "published", "active", "completed"];
@@ -165,12 +177,15 @@ export async function PUT(request: NextRequest, { params }: Params) {
 // DELETE /api/admin/tournaments/[id] — delete draft tournament
 export async function DELETE(_request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   const [existing] = await db
     .select()

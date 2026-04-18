@@ -20,11 +20,14 @@ import {
 export const revalidate = 300;
 
 async function getDashboardData() {
+  // Per-sheet fallback: if any fetch fails, that sheet returns empty rows
+  // so the dashboard can still render with partial data rather than crash.
+  const empty = { rows: [] as Record<string, string>[] };
   const [teamsData, moneyData, playersData, scoresData] = await Promise.all([
-    fetchSheetWithHeaders(SHEETS.masterTeams),
-    fetchSheetWithHeaders(SHEETS.momMoney),
-    fetchSheetWithHeaders(SHEETS.playerCheckIn),
-    fetchSheetWithHeaders(SHEETS.gameScores),
+    fetchSheetWithHeaders(SHEETS.masterTeams).catch(() => empty),
+    fetchSheetWithHeaders(SHEETS.momMoney).catch(() => empty),
+    fetchSheetWithHeaders(SHEETS.playerCheckIn).catch(() => empty),
+    fetchSheetWithHeaders(SHEETS.gameScores).catch(() => empty),
   ]);
 
   const divisionCounts: Record<string, number> = {};

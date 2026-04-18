@@ -1,5 +1,3 @@
-"use client";
-
 interface ProgressRingProps {
   /** 0-100 percentage */
   percent: number;

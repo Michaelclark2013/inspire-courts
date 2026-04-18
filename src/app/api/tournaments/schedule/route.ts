@@ -21,7 +21,8 @@ export async function GET() {
       { configured: true, headers, rows, tournaments, eventData },
       {
         headers: {
-          "Cache-Control": "public, max-age=300, stale-while-revalidate=600",
+          // s-maxage controls CDN caching separately from the browser (max-age).
+          "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
         },
       }
     );
@@ -36,7 +37,11 @@ export async function GET() {
         eventData: [],
         error: "Failed to fetch schedule",
       },
-      { status: 500 }
+      {
+        status: 500,
+        // Never cache a transient error — forces retry on next request.
+        headers: { "Cache-Control": "no-store" },
+      }
     );
   }
 }

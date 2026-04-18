@@ -110,8 +110,9 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { id, role, name, phone } = body;
 
-    if (!id) {
-      return NextResponse.json({ error: "Missing user id" }, { status: 400 });
+    const numericId = Number(id);
+    if (!id || !Number.isFinite(numericId) || numericId <= 0) {
+      return NextResponse.json({ error: "Missing or invalid user id" }, { status: 400 });
     }
 
     const validRoles = ["admin", "staff", "ref", "front_desk", "coach", "parent"];
@@ -127,7 +128,7 @@ export async function PUT(request: NextRequest) {
     if (phone !== undefined) updates.phone = phone || null;
     if (body.approved !== undefined) updates.approved = body.approved;
 
-    await db.update(users).set(updates).where(eq(users.id, Number(id)));
+    await db.update(users).set(updates).where(eq(users.id, numericId));
 
     return NextResponse.json({ success: true });
   } catch (err) {

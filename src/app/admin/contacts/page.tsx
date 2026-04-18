@@ -3,6 +3,7 @@ export const revalidate = 300;
 import NotionFallback from "@/components/dashboard/NotionFallback";
 import LeadsClient from "@/components/admin/LeadsClient";
 import { getChatLeads, getProperty, isNotionConfigured } from "@/lib/notion";
+import { formatDate } from "@/lib/utils";
 
 export default async function ContactsPage() {
   if (!isNotionConfigured()) {
@@ -31,7 +32,7 @@ export default async function ContactsPage() {
       summary: getProperty(l, "Summary") || "—",
       source: getProperty(l, "Source") || "—",
       transcript: getProperty(l, "Chat Transcript") || "—",
-      date: date ? new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—",
+      date: date ? formatDate(String(date)) : "—",
     };
   });
 

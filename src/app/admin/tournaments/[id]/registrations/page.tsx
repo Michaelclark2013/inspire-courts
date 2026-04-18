@@ -83,15 +83,21 @@ export default function RegistrationsPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    await fetch(`/api/admin/tournaments/${id}/registrations`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setForm({ teamName: "", coachName: "", coachEmail: "", division: "", paymentStatus: "waived", notes: "" });
-    setShowForm(false);
-    fetchRegs();
-    setSaving(false);
+    try {
+      const res = await fetch(`/api/admin/tournaments/${id}/registrations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("Failed to create registration");
+      setForm({ teamName: "", coachName: "", coachEmail: "", division: "", paymentStatus: "waived", notes: "" });
+      setShowForm(false);
+      fetchRegs();
+    } catch {
+      alert("Failed to create registration. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function updateReg(registrationId: number, updates: Record<string, string>) {
@@ -228,7 +234,7 @@ export default function RegistrationsPage() {
               className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
-              Add
+              {saving ? "Adding…" : "Add Team"}
             </button>
           </form>
         </div>
@@ -318,6 +324,7 @@ export default function RegistrationsPage() {
                         onClick={() => deleteReg(reg.id)}
                         className="text-text-muted/50 hover:text-red transition-colors"
                         title="Cancel registration"
+                        aria-label="Cancel registration"
                       >
                         <XCircle className="w-4 h-4" aria-hidden="true" />
                       </button>

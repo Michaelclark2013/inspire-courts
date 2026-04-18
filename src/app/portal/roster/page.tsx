@@ -68,25 +68,29 @@ export default function RosterPage() {
     }
   }, [feedback]);
 
-  const fetchRoster = useCallback(async () => {
+  const fetchRoster = useCallback(async (signal?: AbortSignal) => {
     try {
       setError(false);
-      const res = await fetch("/api/portal/roster");
+      const res = await fetch("/api/portal/roster", { signal });
       if (res.ok) {
         const data = await res.json();
         setTeam(data.team);
         setRoster(data.players);
-        // Fetch logo for this team
+        // Fetch logo for this team (also guarded by signal so unmount aborts it)
         if (data.team?.name) {
-          fetch(`/api/teams/logo?teamName=${encodeURIComponent(data.team.name)}`)
+          fetch(`/api/teams/logo?teamName=${encodeURIComponent(data.team.name)}`, { signal })
             .then((r) => r.json())
             .then((d) => setTeamLogoUrl(d.url || null))
-            .catch(() => {});
+            .catch((err) => {
+              if (err instanceof DOMException && err.name === "AbortError") return;
+              // Logo is non-critical — swallow other errors silently.
+            });
         }
       } else {
         setError(true);
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setError(true);
     } finally {
       setLoading(false);
@@ -94,7 +98,9 @@ export default function RosterPage() {
   }, []);
 
   useEffect(() => {
-    fetchRoster();
+    const controller = new AbortController();
+    fetchRoster(controller.signal);
+    return () => controller.abort();
   }, [fetchRoster]);
 
   async function handleAdd(e: React.FormEvent) {
@@ -304,6 +310,14 @@ export default function RosterPage() {
           {roster.length === 0 ? (
             <div className="text-center py-12 text-text-muted">
               <p className="text-sm">No players on the roster yet.</p>
+              {isCoach && team && (
+                <button
+                  onClick={() => { setShowAdd(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                  className="mt-3 inline-flex items-center gap-1.5 text-red hover:text-red-hover text-sm font-semibold underline underline-offset-2"
+                >
+                  Add your first player
+                </button>
+              )}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -347,6 +361,7 @@ export default function RosterPage() {
                           <button
                             onClick={() => handleRemove(p.id, p.name)}
                             disabled={deletingId === p.id}
+                            aria-label={`Remove ${p.name}`}
                             className="text-light-gray hover:text-red disabled:opacity-40 transition-colors"
                           >
                             {deletingId === p.id ? (

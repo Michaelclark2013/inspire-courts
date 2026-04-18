@@ -32,12 +32,13 @@ export default function SchedulePage() {
   const [error, setError] = useState(false);
   const [selectedDivision, setSelectedDivision] = useState<string>("all");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [secondsAgo, setSecondsAgo] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchGames = useCallback(async () => {
+  const fetchGames = useCallback(async (signal?: AbortSignal) => {
     try {
       setError(false);
-      const res = await fetch("/api/scores/live");
+      const res = await fetch("/api/scores/live", { signal });
       if (res.ok) {
         const data = await res.json();
         setGames(data);
@@ -45,7 +46,8 @@ export default function SchedulePage() {
       } else {
         setError(true);
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setError(true);
     } finally {
       setLoading(false);
@@ -53,13 +55,24 @@ export default function SchedulePage() {
   }, []);
 
   useEffect(() => {
-    fetchGames();
+    const controller = new AbortController();
+    fetchGames(controller.signal);
     // 60s polling
-    intervalRef.current = setInterval(fetchGames, 60_000);
+    intervalRef.current = setInterval(() => fetchGames(controller.signal), 60_000);
     return () => {
+      controller.abort();
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [fetchGames]);
+
+  // "Updated Xs ago" live ticker
+  useEffect(() => {
+    if (!lastUpdated) return;
+    const tick = () => setSecondsAgo(Math.floor((Date.now() - lastUpdated.getTime()) / 1000));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [lastUpdated]);
 
   // Division filter
   const divisions = Array.from(new Set(games.map((g) => g.division).filter(Boolean))) as string[];
@@ -116,14 +129,19 @@ export default function SchedulePage() {
           </p>
         </div>
         {lastUpdated && (
-          <button
-            onClick={fetchGames}
-            className="flex items-center gap-1.5 text-[11px] font-medium text-text-muted bg-off-white hover:bg-navy/[0.04] px-2.5 py-1.5 rounded-lg transition-colors"
-            title="Click to refresh"
-          >
-            <RefreshCw className="w-3 h-3" aria-hidden="true" />
-            Refresh
-          </button>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-text-muted tabular-nums hidden sm:inline" aria-live="polite">
+              Updated {secondsAgo < 5 ? "just now" : secondsAgo < 60 ? `${secondsAgo}s ago` : `${Math.floor(secondsAgo / 60)}m ago`}
+            </span>
+            <button
+              onClick={() => fetchGames()}
+              aria-label="Refresh scores"
+              className="flex items-center gap-1.5 text-[11px] font-medium text-text-muted bg-off-white hover:bg-navy/[0.04] px-2.5 py-1.5 rounded-lg transition-colors"
+            >
+              <RefreshCw className="w-3 h-3" aria-hidden="true" />
+              Refresh
+            </button>
+          </div>
         )}
       </div>
 

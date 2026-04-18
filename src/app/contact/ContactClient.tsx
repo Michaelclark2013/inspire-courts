@@ -73,10 +73,10 @@ function ContactPageInner() {
         trackConversion("contact_form_submit");
         setSubmitted(true);
       } else {
-        setError("Something went wrong. Please try again or email us directly.");
+        setError(`Could not send your message. Try again or email ${FACILITY_EMAIL}.`);
       }
     } catch {
-      setError("Something went wrong. Please try again or email us directly.");
+      setError(`Network error. Check your connection or email ${FACILITY_EMAIL}.`);
     } finally {
       setLoading(false);
     }

@@ -541,6 +541,7 @@ export default function ContentEditorPage() {
                       onClick={() => removeSection(activePage, sIdx)}
                       className="text-navy/30 hover:text-red p-1 transition-colors flex-shrink-0"
                       title="Remove section"
+                      aria-label={`Remove section ${section.name}`}
                     >
                       <Trash2 className="w-4 h-4" aria-hidden="true" />
                     </button>
@@ -563,11 +564,14 @@ export default function ContentEditorPage() {
                           onChange={(e) =>
                             updateFieldLabel(activePage, sIdx, key, e.target.value)
                           }
-                          className="bg-transparent text-navy/70 text-xs font-bold uppercase tracking-wider focus:outline-none focus:text-navy border-b border-transparent focus:border-navy/30 pb-0.5 flex-1 min-w-0"
+                          aria-label={`Field label for ${field.label || key}`}
+                          className="bg-transparent text-navy/70 text-xs font-bold uppercase tracking-wider focus:outline-none focus-visible:ring-2 focus-visible:ring-red/30 focus:text-navy border-b border-transparent focus:border-navy/30 pb-0.5 flex-1 min-w-0 rounded-sm"
                         />
                         <button
                           onClick={() => removeField(activePage, sIdx, key)}
                           className="text-navy/40 hover:text-red transition-colors flex-shrink-0"
+                          title="Remove field"
+                          aria-label={`Remove field ${field.label || key}`}
                         >
                           <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
                         </button>
@@ -577,6 +581,7 @@ export default function ContentEditorPage() {
                           value={field.value}
                           onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
                           rows={3}
+                          aria-label={field.label || key}
                           className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors resize-vertical"
                         />
                       ) : field.type === "image" ? (
@@ -585,6 +590,7 @@ export default function ContentEditorPage() {
                             type="text"
                             value={field.value}
                             onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
+                            aria-label={`${field.label || key} image URL`}
                             className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors"
                             placeholder="https://example.com/image.jpg"
                           />
@@ -604,6 +610,7 @@ export default function ContentEditorPage() {
                           type="text"
                           value={field.value}
                           onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
+                          aria-label={field.label || key}
                           className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors"
                         />
                       )}

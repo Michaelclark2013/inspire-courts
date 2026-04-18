@@ -34,7 +34,7 @@ export default function CheckInError({
           onClick={reset}
           className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 min-h-[44px] rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2"
         >
-          <RefreshCw className="w-4 h-4" />
+          <RefreshCw className="w-4 h-4" aria-hidden="true" />
           Try Again
         </button>
       </div>

@@ -465,8 +465,9 @@ export default function ContentEditorPage() {
           onClick={toggleAllSections}
           className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide transition-colors flex-shrink-0"
           title="Expand/collapse all sections"
+          aria-label="Expand or collapse all sections"
         >
-          <ChevronsUpDown className="w-4 h-4" />
+          <ChevronsUpDown className="w-4 h-4" aria-hidden="true" />
         </button>
       </div>
 
@@ -742,8 +743,9 @@ export default function ContentEditorPage() {
           <button
             onClick={discard}
             className="flex items-center gap-1.5 text-navy/50 hover:text-navy text-xs font-bold uppercase tracking-wide px-3 py-2 rounded-full hover:bg-off-white transition-colors"
+            aria-label="Discard changes"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-3.5 h-3.5" aria-hidden="true" />
             <span className="hidden sm:inline">Discard</span>
           </button>
           <button

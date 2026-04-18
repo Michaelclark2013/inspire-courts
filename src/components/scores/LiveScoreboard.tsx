@@ -536,8 +536,9 @@ function GameCard({
                 onClick={openEdit}
                 className="flex items-center gap-1 text-red/70 hover:text-red px-1.5 py-0.5 rounded transition-colors"
                 title="Edit score"
+                aria-label="Edit score"
               >
-                <Pencil className="w-3 h-3" />
+                <Pencil className="w-3 h-3" aria-hidden="true" />
               </button>
             )}
             {expanded ? (

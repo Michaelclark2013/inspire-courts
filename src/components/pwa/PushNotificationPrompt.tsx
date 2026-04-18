@@ -59,7 +59,7 @@ export default function PushNotificationPrompt() {
             disabled={isLoading}
             className="inline-flex items-center gap-1.5 bg-red hover:bg-red-hover disabled:opacity-60 disabled:cursor-not-allowed text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
-            <Bell className="w-3 h-3" />
+            <Bell className="w-3 h-3" aria-hidden="true" />
             {isLoading ? "Enabling..." : "Enable Notifications"}
           </button>
 

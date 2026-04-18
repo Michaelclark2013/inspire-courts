@@ -14,9 +14,11 @@ function ScoreControlsImpl({
   onChange: (v: number) => void;
   teamName: string;
 }) {
+  const inputId = `sc-${teamName.replace(/\s+/g, "-").toLowerCase()}`;
+
   return (
     <div>
-      <label className="block text-navy/70 text-[10px] font-semibold uppercase tracking-wider mb-1 truncate">
+      <label htmlFor={inputId} className="block text-navy/70 text-[10px] font-semibold uppercase tracking-wider mb-1 truncate">
         {label}
       </label>
       <div className="flex items-center gap-1">
@@ -29,6 +31,7 @@ function ScoreControlsImpl({
           <Minus className="w-4 h-4" />
         </button>
         <input
+          id={inputId}
           type="number"
           inputMode="numeric"
           min={0}

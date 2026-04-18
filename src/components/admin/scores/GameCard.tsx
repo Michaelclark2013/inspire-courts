@@ -226,8 +226,9 @@ function GameCardImpl({
               onChange={(v) => setScoreForm({ ...scoreForm, awayScore: v })}
             />
             <div>
-              <label className="block text-navy/70 text-[10px] font-semibold uppercase tracking-wider mb-1">Quarter</label>
+              <label htmlFor={`gc-quarter-${game.id}`} className="block text-navy/70 text-[10px] font-semibold uppercase tracking-wider mb-1">Quarter</label>
               <select
+                id={`gc-quarter-${game.id}`}
                 value={scoreForm.quarter}
                 onChange={(e) => setScoreForm({ ...scoreForm, quarter: e.target.value })}
                 className="w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-navy text-sm focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus:border-red min-h-[44px]"
@@ -241,8 +242,9 @@ function GameCardImpl({
               </select>
             </div>
             <div>
-              <label className="block text-navy/70 text-[10px] font-semibold uppercase tracking-wider mb-1">Status</label>
+              <label htmlFor={`gc-status-${game.id}`} className="block text-navy/70 text-[10px] font-semibold uppercase tracking-wider mb-1">Status</label>
               <select
+                id={`gc-status-${game.id}`}
                 value={scoreForm.status}
                 onChange={(e) =>
                   setScoreForm({

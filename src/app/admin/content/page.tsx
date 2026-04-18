@@ -656,11 +656,12 @@ export default function ContentEditorPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                               {section.list!.itemFields.map((fieldName) => (
                                 <div key={fieldName}>
-                                  <label className="block text-navy/40 text-[10px] font-bold uppercase tracking-wider mb-1">
+                                  <label htmlFor={`content-${sIdx}-${iIdx}-${fieldName}`} className="block text-navy/40 text-[10px] font-bold uppercase tracking-wider mb-1">
                                     {fieldName}
                                   </label>
                                   {fieldName === "description" || fieldName === "features" ? (
                                     <textarea
+                                      id={`content-${sIdx}-${iIdx}-${fieldName}`}
                                       value={item[fieldName] || ""}
                                       onChange={(e) =>
                                         updateListItem(
@@ -676,6 +677,7 @@ export default function ContentEditorPage() {
                                     />
                                   ) : (
                                     <input
+                                      id={`content-${sIdx}-${iIdx}-${fieldName}`}
                                       type="text"
                                       value={item[fieldName] || ""}
                                       onChange={(e) =>

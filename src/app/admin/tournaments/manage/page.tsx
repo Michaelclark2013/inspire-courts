@@ -286,10 +286,11 @@ export default function TournamentManagePage() {
               <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3">Step 1 — Basic Info</p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2">
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-name" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Tournament Name<span className="text-red ml-0.5">*</span>
                   </label>
                   <input
+                    id="tm-name"
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -300,10 +301,11 @@ export default function TournamentManagePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-format" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Format
                   </label>
                   <select
+                    id="tm-format"
                     value={form.format}
                     onChange={(e) => setForm({ ...form, format: e.target.value })}
                     className={SELECT_CLASS}
@@ -323,10 +325,11 @@ export default function TournamentManagePage() {
               <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3">Step 2 — Schedule</p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-startDate" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Start Date<span className="text-red ml-0.5">*</span>
                   </label>
                   <input
+                    id="tm-startDate"
                     type="date"
                     value={form.startDate}
                     onChange={(e) => setForm({ ...form, startDate: e.target.value })}
@@ -335,10 +338,11 @@ export default function TournamentManagePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-endDate" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     End Date
                   </label>
                   <input
+                    id="tm-endDate"
                     type="date"
                     value={form.endDate}
                     onChange={(e) => setForm({ ...form, endDate: e.target.value })}
@@ -346,10 +350,11 @@ export default function TournamentManagePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-location" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Location
                   </label>
                   <input
+                    id="tm-location"
                     type="text"
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -358,10 +363,11 @@ export default function TournamentManagePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-gameLength" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Game Length (min)
                   </label>
                   <input
+                    id="tm-gameLength"
                     type="number"
                     min={10}
                     value={form.gameLength}
@@ -373,10 +379,11 @@ export default function TournamentManagePage() {
                   <p className="text-text-muted text-[11px] mt-1.5">Standard: 40 min (two 20-min halves)</p>
                 </div>
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-breakLength" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Break Between Games (min)
                   </label>
                   <input
+                    id="tm-breakLength"
                     type="number"
                     min={0}
                     value={form.breakLength}
@@ -395,7 +402,7 @@ export default function TournamentManagePage() {
               <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3">Step 3 — Divisions & Courts</p>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-divisions" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Divisions
                   </label>
                   {/* Selected chips */}
@@ -432,6 +439,7 @@ export default function TournamentManagePage() {
                   </div>
                   <input
                     type="text"
+                    id="tm-divisions"
                     value={form.divisions}
                     onChange={(e) => setForm({ ...form, divisions: e.target.value })}
                     className="w-full bg-off-white border border-border rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
@@ -439,7 +447,7 @@ export default function TournamentManagePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-courts" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Courts
                   </label>
                   {/* Selected chips */}
@@ -476,6 +484,7 @@ export default function TournamentManagePage() {
                   </div>
                   <input
                     type="text"
+                    id="tm-courts"
                     value={form.courts}
                     onChange={(e) => setForm({ ...form, courts: e.target.value })}
                     className="w-full bg-off-white border border-border rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
@@ -490,10 +499,11 @@ export default function TournamentManagePage() {
               <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3">Step 4 — Registration</p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-entryFee" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Entry Fee ($)
                   </label>
                   <input
+                    id="tm-entryFee"
                     type="number"
                     min={0}
                     step="0.01"
@@ -504,10 +514,11 @@ export default function TournamentManagePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-maxTeams" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Max Teams Per Division
                   </label>
                   <input
+                    id="tm-maxTeams"
                     type="number"
                     min={2}
                     value={form.maxTeamsPerDivision}
@@ -517,10 +528,11 @@ export default function TournamentManagePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-regDeadline" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Registration Deadline
                   </label>
                   <input
+                    id="tm-regDeadline"
                     type="date"
                     value={form.registrationDeadline}
                     onChange={(e) => setForm({ ...form, registrationDeadline: e.target.value })}
@@ -528,10 +540,11 @@ export default function TournamentManagePage() {
                   />
                 </div>
                 <div className="lg:col-span-2">
-                  <label className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="tm-description" className="block text-navy/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Description / Rules
                   </label>
                   <input
+                    id="tm-description"
                     type="text"
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}

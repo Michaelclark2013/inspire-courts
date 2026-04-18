@@ -50,8 +50,9 @@ function QuickAddFormImpl({
       <form onSubmit={onSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
           <div>
-            <label className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Home Team<span className="text-red ml-0.5">*</span></label>
+            <label htmlFor="qa-homeTeam" className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Home Team<span className="text-red ml-0.5">*</span></label>
             <input
+              id="qa-homeTeam"
               type="text"
               value={form.homeTeam}
               onChange={(e) => setForm({ ...form, homeTeam: e.target.value })}
@@ -61,8 +62,9 @@ function QuickAddFormImpl({
             />
           </div>
           <div>
-            <label className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Away Team<span className="text-red ml-0.5">*</span></label>
+            <label htmlFor="qa-awayTeam" className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Away Team<span className="text-red ml-0.5">*</span></label>
             <input
+              id="qa-awayTeam"
               type="text"
               value={form.awayTeam}
               onChange={(e) => setForm({ ...form, awayTeam: e.target.value })}
@@ -72,8 +74,9 @@ function QuickAddFormImpl({
             />
           </div>
           <div>
-            <label className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Division</label>
+            <label htmlFor="qa-division" className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Division</label>
             <input
+              id="qa-division"
               type="text"
               value={form.division}
               onChange={(e) => setForm({ ...form, division: e.target.value })}
@@ -82,8 +85,9 @@ function QuickAddFormImpl({
             />
           </div>
           <div>
-            <label className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Court</label>
+            <label htmlFor="qa-court" className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Court</label>
             <input
+              id="qa-court"
               type="text"
               value={form.court}
               onChange={(e) => setForm({ ...form, court: e.target.value })}
@@ -92,9 +96,10 @@ function QuickAddFormImpl({
             />
           </div>
           <div>
-            <label className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Event / Tournament</label>
+            <label htmlFor="qa-event" className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Event / Tournament</label>
             {tournamentOptions.length > 0 ? (
               <select
+                id="qa-event"
                 value={form.eventName}
                 onChange={(e) => setForm({ ...form, eventName: e.target.value })}
                 className={`${inputCls} cursor-pointer`}
@@ -108,6 +113,7 @@ function QuickAddFormImpl({
               </select>
             ) : (
               <input
+                id="qa-event"
                 type="text"
                 value={form.eventName}
                 onChange={(e) => setForm({ ...form, eventName: e.target.value })}

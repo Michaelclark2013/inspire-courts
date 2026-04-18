@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 
@@ -52,61 +52,90 @@ export async function PATCH(request: NextRequest) {
   }
 
   try {
-    const { userId, action } = await request.json();
+    const body = await request.json();
+    const { userId, userIds, action } = body as {
+      userId?: number;
+      userIds?: number[];
+      action?: string;
+    };
 
-    if (!userId || typeof userId !== "number" || !["approve", "reject"].includes(action)) {
+    // Accept either a single userId (legacy) or a bulk userIds array (new).
+    const ids: number[] = Array.isArray(userIds) && userIds.length > 0
+      ? userIds.filter((n) => typeof n === "number" && Number.isInteger(n) && n > 0)
+      : typeof userId === "number" && Number.isInteger(userId) && userId > 0
+        ? [userId]
+        : [];
+
+    if (ids.length === 0 || !action || !["approve", "reject"].includes(action)) {
       return NextResponse.json(
-        { error: "userId (number) and action (approve|reject) are required" },
+        { error: "userId/userIds[] and action (approve|reject) are required" },
         { status: 400 }
       );
     }
 
-    // Verify user exists and is pending
-    const [user] = await db
+    // Fetch all target users up front so we can verify existence, skip
+    // already-approved ones, and capture before-snapshots for the audit log.
+    const targetUsers = await db
       .select()
       .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
+      .where(inArray(users.id, ids));
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (targetUsers.length === 0) {
+      return NextResponse.json({ error: "No matching users found" }, { status: 404 });
     }
 
-    if (user.approved) {
-      return NextResponse.json({ error: "User is already approved" }, { status: 400 });
+    // For approve: only act on still-pending users. For reject: act on all
+    // found ids (rejecting an already-approved user would be destructive —
+    // block it explicitly).
+    const pendingUsers = targetUsers.filter((u) => !u.approved);
+    if (action === "approve" && pendingUsers.length === 0) {
+      return NextResponse.json({ error: "No pending users in that set" }, { status: 400 });
     }
+    if (action === "reject" && pendingUsers.length !== targetUsers.length) {
+      return NextResponse.json({ error: "Cannot reject users who are already approved" }, { status: 400 });
+    }
+
+    const affectedIds = pendingUsers.map((u) => u.id);
 
     if (action === "approve") {
       await db
         .update(users)
         .set({ approved: true, updatedAt: new Date().toISOString() })
-        .where(eq(users.id, userId));
-
-      await recordAudit({
-        session,
-        action: "user.approved",
-        entityType: "user",
-        entityId: userId,
-        before: { approved: user.approved, role: user.role, email: user.email },
-        after: { approved: true, role: user.role, email: user.email },
-      });
-
-      return NextResponse.json({ success: true, message: `${user.name} approved` });
+        .where(inArray(users.id, affectedIds));
     } else {
       // Reject = delete the user
-      await db.delete(users).where(eq(users.id, userId));
+      await db.delete(users).where(inArray(users.id, affectedIds));
+    }
 
+    // Audit every affected user individually so the log answers
+    // "who approved/rejected user X" directly without parsing a list.
+    for (const u of pendingUsers) {
       await recordAudit({
         session,
-        action: "user.rejected",
+        action: action === "approve" ? "user.approved" : "user.rejected",
         entityType: "user",
-        entityId: userId,
-        before: { email: user.email, name: user.name, role: user.role, approved: user.approved },
-        after: null,
+        entityId: u.id,
+        before: { approved: u.approved, role: u.role, email: u.email, name: u.name },
+        after: action === "approve"
+          ? { approved: true, role: u.role, email: u.email, name: u.name }
+          : null,
       });
-
-      return NextResponse.json({ success: true, message: `${user.name} rejected and removed` });
     }
+
+    // Single-user legacy response shape vs bulk response shape
+    if (ids.length === 1 && pendingUsers[0]) {
+      const u = pendingUsers[0];
+      return NextResponse.json({
+        success: true,
+        message: action === "approve" ? `${u.name} approved` : `${u.name} rejected and removed`,
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      count: affectedIds.length,
+      message: `${affectedIds.length} user${affectedIds.length === 1 ? "" : "s"} ${action}d`,
+    });
   } catch (error) {
     logger.error("Approval action failed", { error: String(error) });
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });

@@ -242,7 +242,19 @@ export async function PUT(request: NextRequest, { params }: Params) {
       }
     }
 
-    if (targetIds.length > 1) {
+    // Audit single-row updates too (was bulk-only before). Single path gets
+    // "registration.updated", bulk gets "registration.bulk_update" so queries
+    // can distinguish.
+    if (targetIds.length === 1) {
+      await recordAudit({
+        session,
+        action: "registration.updated",
+        entityType: "tournament_registration",
+        entityId: targetIds[0],
+        before: null,
+        after: updates,
+      });
+    } else if (targetIds.length > 1) {
       await recordAudit({
         session,
         action: "registration.bulk_update",
@@ -272,17 +284,58 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   const { id } = await params;
 
   try {
-    const regId = request.nextUrl.searchParams.get("registrationId");
-    if (!regId) {
-      return NextResponse.json({ error: "registrationId required" }, { status: 400 });
+    const regIdRaw = request.nextUrl.searchParams.get("registrationId");
+    const regId = Number(regIdRaw);
+    if (!regIdRaw || !Number.isInteger(regId) || regId <= 0) {
+      return NextResponse.json({ error: "Valid registrationId required" }, { status: 400 });
     }
+
+    // Fetch the registration first so we can (a) remove the matching
+    // tournament_teams row if one was auto-created when it reached
+    // approved+paid, and (b) write a full before-snapshot to the audit log.
+    const [existing] = await db
+      .select()
+      .from(tournamentRegistrations)
+      .where(eq(tournamentRegistrations.id, regId))
+      .limit(1);
+
+    if (!existing) {
+      return NextResponse.json({ error: "Registration not found" }, { status: 404 });
+    }
+
+    // Cascade: if the registration had reached the state that created a
+    // tournament_teams row (approved + paid/waived, see PUT handler), remove
+    // that row too. Otherwise the team stays in the bracket/seedings after
+    // the registration is cancelled.
+    await db
+      .delete(tournamentTeams)
+      .where(
+        and(
+          eq(tournamentTeams.tournamentId, existing.tournamentId),
+          eq(tournamentTeams.teamName, existing.teamName)
+        )
+      );
 
     await db
       .delete(tournamentRegistrations)
-      .where(eq(tournamentRegistrations.id, Number(regId)));
+      .where(eq(tournamentRegistrations.id, regId));
+
+    await recordAudit({
+      session,
+      action: "registration.deleted",
+      entityType: "tournament_registration",
+      entityId: regId,
+      before: {
+        teamName: existing.teamName,
+        coachEmail: existing.coachEmail,
+        status: existing.status,
+        paymentStatus: existing.paymentStatus,
+      },
+      after: null,
+    });
 
     revalidatePath(`/admin/tournaments/${id}`);
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, id: regId });
   } catch (err) {
     logger.error("Failed to delete registration", { error: String(err) });
     return NextResponse.json({ error: "Failed to delete registration" }, { status: 500 });

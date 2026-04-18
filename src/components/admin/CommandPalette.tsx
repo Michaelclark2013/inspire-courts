@@ -173,7 +173,7 @@ export default function CommandPalette() {
         </div>
 
         {/* Results */}
-        <div ref={listRef} className="max-h-[360px] overflow-y-auto py-2">
+        <div ref={listRef} role="listbox" aria-label="Search results" className="max-h-[360px] overflow-y-auto py-2">
           {filtered.length === 0 ? (
             <p className="text-text-muted text-sm text-center py-8">
               No pages found for &ldquo;{query}&rdquo;
@@ -185,6 +185,8 @@ export default function CommandPalette() {
                 <button
                   key={cmd.href}
                   type="button"
+                  role="option"
+                  aria-selected={i === selected}
                   onClick={() => navigate(cmd.href)}
                   onMouseEnter={() => setSelected(i)}
                   className={`w-full flex items-center gap-3 px-5 py-2.5 text-left transition-colors ${

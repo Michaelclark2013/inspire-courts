@@ -31,7 +31,6 @@
     "nodemailer": "^7.0.13",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-hook-form": "^7.72.1",
     "recharts": "^3.8.1",
     "square": "^44.0.1",
     "web-push": "^3.6.7",

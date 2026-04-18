@@ -433,11 +433,11 @@ export default function ChatWidget() {
             "bottom-6 right-4 lg:right-6",
             "hover:scale-105 active:scale-95"
           )}
-          aria-label="Open chat"
+          aria-label={unreadCount > 0 ? `Open chat, ${unreadCount} unread` : "Open chat"}
         >
           <MessageCircle className="w-6 h-6" aria-hidden="true" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-white text-red text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+            <span className="absolute -top-1 -right-1 bg-white text-red text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md" aria-hidden="true">
               {unreadCount}
             </span>
           )}
@@ -578,6 +578,7 @@ export default function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask anything..."
+                aria-label="Type a message"
                 className="flex-1 bg-off-white border border-light-gray/60 rounded-full px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-text-muted/40"
               />
               <button

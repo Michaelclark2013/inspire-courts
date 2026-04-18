@@ -358,7 +358,7 @@ export default function AdminSidebar() {
               collapsed && "justify-center px-2"
             )}
           >
-            <Trophy className="w-4 h-4 flex-shrink-0" />
+            <Trophy className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
             {!collapsed && "Live Scores"}
           </Link>
           <button
@@ -618,7 +618,7 @@ export default function AdminSidebar() {
                   onClick={() => setShowMore(false)}
                   className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-off-white text-text-muted text-sm min-h-[44px]"
                 >
-                  <Trophy className="w-4 h-4 flex-shrink-0" />
+                  <Trophy className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   Live Scores
                 </Link>
                 <button

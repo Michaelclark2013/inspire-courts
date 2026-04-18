@@ -144,7 +144,7 @@ export default function BracketView({
   if (bracket.length === 0) {
     return (
       <div className="text-center py-16 text-text-muted">
-        <Trophy className="w-8 h-8 mx-auto mb-3 opacity-40" />
+        <Trophy className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
         <p className="text-sm">
           No bracket generated yet. Add teams and generate the bracket to see it
           here.

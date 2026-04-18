@@ -20,7 +20,7 @@ export default function OfflineBanner() {
         aria-live="polite"
         className="bg-emerald-500 text-white text-sm font-semibold px-4 py-2.5 flex items-center justify-center gap-2 animate-pulse"
       >
-        <CheckCircle2 className="w-4 h-4" />
+        <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
         All changes synced!
         {lastSyncResult.failed > 0 && (
           <span className="text-emerald-100 text-xs ml-1">
@@ -53,7 +53,7 @@ export default function OfflineBanner() {
         aria-live="polite"
         className="bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 flex items-center justify-center gap-2"
       >
-        <Wifi className="w-4 h-4" />
+        <Wifi className="w-4 h-4" aria-hidden="true" />
         {pendingCount} update{pendingCount !== 1 ? "s" : ""} pending sync
       </div>
     );
@@ -66,7 +66,7 @@ export default function OfflineBanner() {
       aria-live="assertive"
       className="bg-amber-500 text-white text-sm font-semibold px-4 py-2.5 flex items-center justify-center gap-2"
     >
-      <WifiOff className="w-4 h-4" />
+      <WifiOff className="w-4 h-4" aria-hidden="true" />
       <span>
         You&apos;re offline &mdash; changes are saved locally and will sync when
         reconnected

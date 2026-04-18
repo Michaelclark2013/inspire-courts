@@ -367,7 +367,7 @@ export default function TrainingPage() {
                     <ul className="space-y-2">
                       {trainer.credentials.map((cred) => (
                         <li key={cred} className="flex items-start gap-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
                           <span className="text-text-muted text-sm">{cred}</span>
                         </li>
                       ))}

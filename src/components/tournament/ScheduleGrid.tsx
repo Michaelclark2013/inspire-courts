@@ -52,7 +52,7 @@ export default function ScheduleGrid({ bracket, courts }: Props) {
   if (bracket.length === 0) {
     return (
       <div className="text-center py-16 text-text-muted">
-        <Calendar className="w-8 h-8 mx-auto mb-3 opacity-40" />
+        <Calendar className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
         <p className="text-sm">No games scheduled yet.</p>
       </div>
     );

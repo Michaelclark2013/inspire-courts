@@ -585,7 +585,7 @@ export default function ChatWidget() {
                 aria-label="Send message"
                 className="bg-red hover:bg-red-hover disabled:opacity-50 disabled:cursor-not-allowed text-white px-3.5 py-3 rounded-xl transition-all"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4" aria-hidden="true" />
               </button>
             </form>
             <p className="text-[10px] text-text-muted/30 text-center mt-1.5">Powered by Inspire Courts</p>

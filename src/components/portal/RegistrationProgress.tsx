@@ -18,7 +18,7 @@ export function RegistrationProgress({ steps, completedSteps, totalSteps, progre
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
-            <Zap className="w-4 h-4 text-red" />
+            <Zap className="w-4 h-4 text-red" aria-hidden="true" />
           </div>
           <div>
             <h2 className="text-navy font-bold text-sm">Event Registration</h2>

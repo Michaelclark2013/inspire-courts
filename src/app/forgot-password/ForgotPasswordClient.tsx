@@ -60,7 +60,7 @@ export default function ForgotPasswordClient() {
             /* Success State */
             <div className="text-center py-4">
               <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-6 h-6 text-green-400" />
+                <CheckCircle className="w-6 h-6 text-green-400" aria-hidden="true" />
               </div>
               <h2 className="text-white font-bold text-lg mb-2">Check Your Email</h2>
               <p className="text-white/50 text-sm leading-relaxed mb-6">
@@ -70,7 +70,7 @@ export default function ForgotPasswordClient() {
                 href="/login"
                 className="inline-flex items-center gap-2 text-red text-sm hover:text-red-hover transition-colors"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                 Back to Sign In
               </Link>
             </div>
@@ -78,7 +78,7 @@ export default function ForgotPasswordClient() {
             /* Form State */
             <>
               <div className="flex items-center gap-2 mb-2">
-                <Mail className="w-4 h-4 text-red" />
+                <Mail className="w-4 h-4 text-red" aria-hidden="true" />
                 <h2 className="text-white text-sm font-bold uppercase tracking-wider">
                   Reset Password
                 </h2>

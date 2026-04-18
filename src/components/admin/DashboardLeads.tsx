@@ -55,7 +55,7 @@ export default function DashboardLeads() {
           href="/admin/leads"
           className="flex items-center gap-1 text-text-secondary hover:text-navy text-xs transition-colors"
         >
-          View All <ArrowRight className="w-3 h-3" />
+          View All <ArrowRight className="w-3 h-3" aria-hidden="true" />
         </Link>
       </div>
       <div className="px-5 py-4">

@@ -260,7 +260,7 @@ export default function TournamentManagePage() {
           {/* Quick-Start Template Presets */}
           <div className="mb-6">
             <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3" /> Quick Start — Pick a Template
+              <Sparkles className="w-3 h-3" aria-hidden="true" /> Quick Start — Pick a Template
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {PRESETS.map((preset) => (

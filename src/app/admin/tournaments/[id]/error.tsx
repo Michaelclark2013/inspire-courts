@@ -27,13 +27,13 @@ export default function TournamentDetailError({
             onClick={reset}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
-            <RefreshCw className="w-4 h-4" /> Try again
+            <RefreshCw className="w-4 h-4" aria-hidden="true" /> Try again
           </button>
           <Link
             href="/admin/tournaments/manage"
             className="inline-flex items-center gap-2 border border-border text-navy hover:bg-off-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
-            <Home className="w-4 h-4" /> Back to tournaments
+            <Home className="w-4 h-4" aria-hidden="true" /> Back to tournaments
           </Link>
         </div>
       </div>

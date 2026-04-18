@@ -659,11 +659,11 @@ function GameCard({
           </div>
           <div className="flex items-center gap-2 pt-1">
             <button type="submit" disabled={saving} className="flex items-center gap-1.5 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors">
-              {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+              {saving ? <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" /> : <Check className="w-3 h-3" aria-hidden="true" />}
               Save
             </button>
             <button type="button" onClick={(e) => { e.stopPropagation(); setEditing(false); }} className="flex items-center gap-1 text-white/40 hover:text-white px-3 py-2 rounded-lg text-xs transition-colors">
-              <X className="w-3 h-3" /> Cancel
+              <X className="w-3 h-3" aria-hidden="true" /> Cancel
             </button>
           </div>
         </form>

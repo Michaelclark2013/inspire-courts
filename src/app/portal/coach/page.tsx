@@ -412,7 +412,7 @@ export default function CoachPortalPage() {
                       disabled={lineup.length === 0}
                       className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold py-4 rounded-xl text-sm uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
                     >
-                      <Plus className="w-4 h-4" /> Submit Lineup ({lineup.length} players)
+                      <Plus className="w-4 h-4" aria-hidden="true" /> Submit Lineup ({lineup.length} players)
                     </button>
                   </>
                 )}

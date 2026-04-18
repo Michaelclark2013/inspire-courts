@@ -86,7 +86,7 @@ export default function SchedulePage() {
             onClick={() => { setLoading(true); fetchGames(); }}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
-            <RefreshCw className="w-4 h-4" /> Retry
+            <RefreshCw className="w-4 h-4" aria-hidden="true" /> Retry
           </button>
         </div>
       </div>

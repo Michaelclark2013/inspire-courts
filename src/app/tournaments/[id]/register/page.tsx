@@ -204,7 +204,7 @@ export default function RegisterPage() {
           href={`/tournaments/${id}`}
           className="text-text-muted text-xs hover:text-navy flex items-center gap-1 mb-6 transition-colors"
         >
-          <ChevronLeft className="w-3 h-3" /> Back to {tournament.name}
+          <ChevronLeft className="w-3 h-3" aria-hidden="true" /> Back to {tournament.name}
         </Link>
 
         {/* Header */}

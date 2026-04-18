@@ -79,11 +79,11 @@ export default function VideoShowcase({
           >
             {expanded ? (
               <>
-                Show Less <ChevronUp className="w-4 h-4" />
+                Show Less <ChevronUp className="w-4 h-4" aria-hidden="true" />
               </>
             ) : (
               <>
-                See All {videos.length} Videos <ChevronDown className="w-4 h-4" />
+                See All {videos.length} Videos <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </>
             )}
           </button>

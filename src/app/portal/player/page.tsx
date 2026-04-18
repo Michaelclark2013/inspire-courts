@@ -190,7 +190,7 @@ export default function PlayerPortalPage() {
                   type="submit"
                   className="w-full bg-red hover:bg-red-hover text-white font-bold py-4 rounded-xl text-sm uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
                 >
-                  View My Portal <ArrowRight className="w-4 h-4" />
+                  View My Portal <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </button>
               </form>
             </div>
@@ -365,7 +365,7 @@ export default function PlayerPortalPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-red text-xs font-semibold mt-3 hover:text-red-hover transition-colors"
                   >
-                    Open in Maps <ExternalLink className="w-3 h-3" />
+                    Open in Maps <ExternalLink className="w-3 h-3" aria-hidden="true" />
                   </a>
                 </div>
               </div>

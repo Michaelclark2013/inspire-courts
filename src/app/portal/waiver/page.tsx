@@ -145,7 +145,7 @@ export default function WaiverPage() {
 
           {error && (
             <div role="alert" aria-live="assertive" className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4" /> {error}
+              <AlertTriangle className="w-4 h-4" aria-hidden="true" /> {error}
             </div>
           )}
 

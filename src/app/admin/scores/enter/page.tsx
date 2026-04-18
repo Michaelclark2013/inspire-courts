@@ -329,7 +329,7 @@ export default function ScoreEntryPage() {
             aria-expanded={showForm}
             className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none min-h-[44px]"
           >
-            {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+            {showForm ? <X className="w-4 h-4" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
             {showForm ? "Cancel" : "New Game"}
           </button>
         </div>
@@ -495,7 +495,7 @@ export default function ScoreEntryPage() {
                 onClick={() => setShowForm(true)}
                 className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
               >
-                <Plus className="w-4 h-4" /> New Game
+                <Plus className="w-4 h-4" aria-hidden="true" /> New Game
               </button>
             </div>
           )}

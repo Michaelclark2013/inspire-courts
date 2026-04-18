@@ -125,7 +125,7 @@ export default function RegistrationsPage() {
         href={`/admin/tournaments/${id}`}
         className="text-text-secondary text-xs hover:text-navy flex items-center gap-1 mb-4 transition-colors"
       >
-        <ChevronLeft className="w-3 h-3" /> Back to Tournament
+        <ChevronLeft className="w-3 h-3" aria-hidden="true" /> Back to Tournament
       </Link>
 
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
@@ -141,7 +141,7 @@ export default function RegistrationsPage() {
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
         >
-          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          {showForm ? <X className="w-4 h-4" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
           {showForm ? "Cancel" : "Add Walk-In"}
         </button>
       </div>

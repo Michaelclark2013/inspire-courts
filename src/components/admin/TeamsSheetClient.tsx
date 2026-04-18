@@ -223,7 +223,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                       <div>
                         <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-1">Email</p>
                         <a href={`mailto:${team.email}`} className="text-accent text-sm hover:underline flex items-center gap-1">
-                          {team.email} <ExternalLink className="w-3 h-3" />
+                          {team.email} <ExternalLink className="w-3 h-3" aria-hidden="true" />
                         </a>
                       </div>
                     )}

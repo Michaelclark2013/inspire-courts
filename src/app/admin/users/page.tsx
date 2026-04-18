@@ -200,11 +200,11 @@ export default function UsersPage() {
         >
           {showForm ? (
             <>
-              <X className="w-4 h-4" /> Cancel
+              <X className="w-4 h-4" aria-hidden="true" /> Cancel
             </>
           ) : (
             <>
-              <UserPlus className="w-4 h-4" /> Add User
+              <UserPlus className="w-4 h-4" aria-hidden="true" /> Add User
             </>
           )}
         </button>

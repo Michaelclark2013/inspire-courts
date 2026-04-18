@@ -28,13 +28,13 @@ export default function ScoreEntryError({
             onClick={() => reset()}
             className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
-            <RotateCcw className="w-4 h-4" /> Try again
+            <RotateCcw className="w-4 h-4" aria-hidden="true" /> Try again
           </button>
           <Link
             href="/admin"
             className="inline-flex items-center justify-center gap-2 border border-border hover:border-navy/30 text-navy px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
-            <Home className="w-4 h-4" /> Admin home
+            <Home className="w-4 h-4" aria-hidden="true" /> Admin home
           </Link>
         </div>
       </div>

@@ -286,7 +286,7 @@ export default function RegistrationsPage() {
                         aria-label={`Payment status for ${reg.teamName}`}
                         value={reg.paymentStatus}
                         onChange={(e) => updateReg(reg.id, { paymentStatus: e.target.value })}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red ${PAYMENT_STYLES[reg.paymentStatus] || "bg-gray-100 text-gray-500"}`}
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1.5 rounded-full border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red min-h-[32px] ${PAYMENT_STYLES[reg.paymentStatus] || "bg-gray-100 text-gray-500"}`}
                       >
                         <option value="pending">Pending</option>
                         <option value="paid">Paid</option>
@@ -299,7 +299,7 @@ export default function RegistrationsPage() {
                         aria-label={`Registration status for ${reg.teamName}`}
                         value={reg.status}
                         onChange={(e) => updateReg(reg.id, { status: e.target.value })}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red ${STATUS_STYLES[reg.status] || "bg-gray-100 text-gray-500"}`}
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1.5 rounded-full border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red min-h-[32px] ${STATUS_STYLES[reg.status] || "bg-gray-100 text-gray-500"}`}
                       >
                         <option value="pending">Pending</option>
                         <option value="approved">Approved</option>

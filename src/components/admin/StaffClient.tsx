@@ -49,10 +49,10 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
     setRefSort((s) => s.key === key ? { key, dir: s.dir === "desc" ? "asc" : "desc" } : { key, dir: "desc" });
   }
   function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-    if (!active) return <ChevronDown className="w-3 h-3 opacity-40 inline ml-1" />;
+    if (!active) return <ChevronDown className="w-3 h-3 opacity-40 inline ml-1" aria-hidden="true" />;
     return dir === "asc"
-      ? <ChevronUp className="w-3 h-3 text-accent inline ml-1" />
-      : <ChevronDown className="w-3 h-3 text-accent inline ml-1" />;
+      ? <ChevronUp className="w-3 h-3 text-accent inline ml-1" aria-hidden="true" />
+      : <ChevronDown className="w-3 h-3 text-accent inline ml-1" aria-hidden="true" />;
   }
 
   const totalStaffPay = staff.reduce((s, r) => s + parseInt(r.totalPay.replace(/[$,]/g, "") || "0"), 0);
@@ -100,7 +100,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Staff</span>
-            <Users className="w-4 h-4 text-text-secondary" />
+            <Users className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{staff.length}</p>
           <p className="text-text-secondary text-xs mt-1">{totalShifts} total shifts</p>
@@ -108,7 +108,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Referees</span>
-            <Shield className="w-4 h-4 text-text-secondary" />
+            <Shield className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{refs.length}</p>
           <p className="text-text-secondary text-xs mt-1">{totalGames} total games</p>
@@ -116,14 +116,14 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Staff Pay</span>
-            <DollarSign className="w-4 h-4 text-text-secondary" />
+            <DollarSign className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">${totalStaffPay.toLocaleString()}</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Ref Pay</span>
-            <DollarSign className="w-4 h-4 text-text-secondary" />
+            <DollarSign className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">${totalRefPay.toLocaleString()}</p>
         </div>
@@ -141,7 +141,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" aria-hidden="true" />
         <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${tab === "staff" ? "staff" : "referees"}...`} className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50" />
       </div>
 

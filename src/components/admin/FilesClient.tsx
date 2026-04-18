@@ -76,10 +76,10 @@ function FileGrid({ files }: { files: EnrichedFile[] }) {
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             <div className="hidden sm:flex items-center gap-1 text-text-secondary text-xs">
-              <Clock className="w-3 h-3" />
+              <Clock className="w-3 h-3" aria-hidden="true" />
               {file.modifiedFormatted}
             </div>
-            <ExternalLink className="w-3.5 h-3.5 text-text-secondary group-hover:text-accent transition-colors" />
+            <ExternalLink className="w-3.5 h-3.5 text-text-secondary group-hover:text-accent transition-colors" aria-hidden="true" />
           </div>
         </a>
       ))}
@@ -105,7 +105,7 @@ export default function FilesClient({ rootFiles, responsesFiles }: Props) {
               : "text-text-secondary hover:text-navy"
           }`}
         >
-          <FolderOpen className="w-3.5 h-3.5" />
+          <FolderOpen className="w-3.5 h-3.5" aria-hidden="true" />
           Main Folder ({rootFiles.length})
         </button>
         <button
@@ -116,7 +116,7 @@ export default function FilesClient({ rootFiles, responsesFiles }: Props) {
               : "text-text-secondary hover:text-navy"
           }`}
         >
-          <FileSpreadsheet className="w-3.5 h-3.5" />
+          <FileSpreadsheet className="w-3.5 h-3.5" aria-hidden="true" />
           Responses ({responsesFiles.length})
         </button>
       </div>

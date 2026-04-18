@@ -201,7 +201,7 @@ export default function FAQClient() {
                 href="/contact"
                 className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
-                Contact Us <ArrowRight className="w-4 h-4" />
+                Contact Us <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
               <a
                 href="https://inspirecourts.leagueapps.com/tournaments"
@@ -210,7 +210,7 @@ export default function FAQClient() {
                 onClick={() => trackConversion("register_click")}
                 className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/40 hover:bg-white hover:text-navy text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
-                Register Now <ArrowRight className="w-4 h-4" />
+                Register Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </a>
             </div>
           </AnimateIn>
@@ -235,7 +235,7 @@ export default function FAQClient() {
                 href={link.href}
                 className="flex items-center justify-center gap-1.5 bg-white border border-light-gray hover:border-red/40 hover:text-red text-navy text-xs font-bold uppercase tracking-wide py-3 px-4 rounded-xl transition-colors font-[var(--font-chakra)]"
               >
-                {link.label} <ArrowRight className="w-3 h-3 opacity-60" />
+                {link.label} <ArrowRight className="w-3 h-3 opacity-60" aria-hidden="true" />
               </Link>
             ))}
           </div>

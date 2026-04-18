@@ -206,7 +206,7 @@ export default function DashboardAlerts() {
                     {data.pendingRegistrations}
                   </span>
                 ) : (
-                  <ArrowRight className="w-3.5 h-3.5 opacity-50" />
+                  <ArrowRight className="w-3.5 h-3.5 opacity-50" aria-hidden="true" />
                 )}
               </Link>
             );
@@ -220,10 +220,10 @@ export default function DashboardAlerts() {
           href="/admin/tournaments/manage"
           className="flex items-center justify-center gap-3 bg-red hover:bg-red-hover text-white rounded-xl px-6 py-4 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
         >
-          <Trophy className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          <Trophy className="w-5 h-5 group-hover:scale-110 transition-transform" aria-hidden="true" />
           <span className="text-sm font-bold uppercase tracking-wider">Create New Tournament</span>
           <kbd className="hidden lg:inline-block text-[9px] text-navy/40 bg-white/10 px-1.5 py-0.5 rounded font-mono ml-2">T</kbd>
-          <ArrowRight className="w-4 h-4 opacity-60 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="w-4 h-4 opacity-60 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
         </Link>
         <div className="grid grid-cols-2 gap-3">
           <QuickAction

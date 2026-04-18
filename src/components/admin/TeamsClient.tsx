@@ -87,28 +87,28 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total</span>
-            <Users className="w-4 h-4 text-text-secondary" />
+            <Users className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{teams.length}</p>
         </div>
         <div className="bg-bg-secondary border border-red/20 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-red text-xs font-bold uppercase tracking-wider">Hot</span>
-            <Flame className="w-4 h-4 text-red" />
+            <Flame className="w-4 h-4 text-red" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-red">{hotCount}</p>
         </div>
         <div className="bg-bg-secondary border border-amber-200 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-amber-600 text-xs font-bold uppercase tracking-wider">Warm</span>
-            <Phone className="w-4 h-4 text-amber-600" />
+            <Phone className="w-4 h-4 text-amber-600" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-amber-600">{warmCount}</p>
         </div>
         <div className="bg-bg-secondary border border-emerald-200 rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-emerald-600 text-xs font-bold uppercase tracking-wider">Registered</span>
-            <Mail className="w-4 h-4 text-emerald-600" />
+            <Mail className="w-4 h-4 text-emerald-600" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-emerald-600">{registeredCount}</p>
         </div>
@@ -117,7 +117,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
       {/* Filters + CSV export */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" aria-hidden="true" />
           <input
             type="text"
             value={search}
@@ -137,7 +137,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
           title="Download all filtered (CSV)"
           className="flex items-center gap-2 bg-bg border border-border rounded-sm px-3 py-2.5 text-text-secondary hover:text-navy hover:border-accent/50 text-sm transition-colors flex-shrink-0"
         >
-          <Download className="w-4 h-4" />
+          <Download className="w-4 h-4" aria-hidden="true" />
           <span className="hidden sm:inline">CSV</span>
         </button>
       </div>
@@ -150,7 +150,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
             onClick={() => downloadCSV(filtered.filter((_, i) => selectedIndices.has(i)), `teams-selected.csv`)}
             className="flex items-center gap-1.5 bg-accent/20 hover:bg-accent/30 text-accent text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded transition-colors"
           >
-            <Download className="w-3.5 h-3.5" /> Export selected
+            <Download className="w-3.5 h-3.5" aria-hidden="true" /> Export selected
           </button>
           <button
             onClick={() => setSelectedIndices(new Set())}
@@ -180,7 +180,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
         ))}
         {filtered.length === 0 && (
           <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary text-sm">
-            <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" />
+            <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" aria-hidden="true" />
             No teams found
           </div>
         )}
@@ -234,7 +234,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                         className="flex items-center gap-1.5 text-text-secondary hover:text-accent transition-colors group"
                         title={`Call ${t.coach}`}
                       >
-                        <Phone className="w-3 h-3 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                        <Phone className="w-3 h-3 flex-shrink-0 group-hover:scale-110 transition-transform" aria-hidden="true" />
                         <span className="text-xs">{t.phone}</span>
                       </a>
                     ) : (

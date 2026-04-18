@@ -89,9 +89,9 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
   function SortIcon({ col }: { col: string }) {
     if (sortKey !== col) return <span className="text-text-secondary/40 ml-1">↕</span>;
     return sortDir === "asc" ? (
-      <ChevronUp className="inline w-3 h-3 ml-1 text-accent" />
+      <ChevronUp className="inline w-3 h-3 ml-1 text-accent" aria-hidden="true" />
     ) : (
-      <ChevronDown className="inline w-3 h-3 ml-1 text-accent" />
+      <ChevronDown className="inline w-3 h-3 ml-1 text-accent" aria-hidden="true" />
     );
   }
 
@@ -112,28 +112,28 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Events</span>
-            <Trophy className="w-4 h-4 text-text-secondary" />
+            <Trophy className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{tournaments.length}</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Total Teams</span>
-            <Users className="w-4 h-4 text-text-secondary" />
+            <Users className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{totalTeams}</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Revenue</span>
-            <DollarSign className="w-4 h-4 text-text-secondary" />
+            <DollarSign className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">${totalRevenue.toLocaleString()}</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Avg Teams/Event</span>
-            <TrendingUp className="w-4 h-4 text-text-secondary" />
+            <TrendingUp className="w-4 h-4 text-text-secondary" aria-hidden="true" />
           </div>
           <p className="text-2xl font-bold text-navy">{avgTeams}</p>
         </div>
@@ -168,7 +168,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
           <input
             type="text"
             value={search}
@@ -268,9 +268,9 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
                       <td className="px-4 py-3">
                         <button aria-label={expanded === i ? "Collapse details" : "Expand details"} className="text-text-secondary hover:text-navy transition-colors">
                           {expanded === i ? (
-                            <ChevronUp className="w-4 h-4" />
+                            <ChevronUp className="w-4 h-4" aria-hidden="true" />
                           ) : (
-                            <ChevronDown className="w-4 h-4" />
+                            <ChevronDown className="w-4 h-4" aria-hidden="true" />
                           )}
                         </button>
                       </td>

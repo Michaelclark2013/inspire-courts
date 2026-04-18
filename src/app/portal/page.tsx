@@ -205,7 +205,7 @@ export default function PortalDashboard() {
           </h1>
         </div>
         <div className="bg-red/10 border border-red/20 rounded-2xl p-8 text-center">
-          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" aria-hidden="true" />
           <h3 className="text-navy font-semibold mb-1">Failed to Load Dashboard</h3>
           <p className="text-text-muted text-sm mb-4">
             Could not connect to the server. Check your connection and try again.
@@ -216,7 +216,7 @@ export default function PortalDashboard() {
             disabled={isFetching}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-60 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
-            <RefreshCw className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`} /> Retry
+            <RefreshCw className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`} aria-hidden="true" /> Retry
           </button>
         </div>
       </div>
@@ -253,7 +253,7 @@ export default function PortalDashboard() {
           <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl p-6 lg:p-8">
             <div className="text-center mb-6">
               <div className="w-12 h-12 rounded-full bg-red/10 flex items-center justify-center mx-auto mb-3">
-                <Trophy className="w-6 h-6 text-red" />
+                <Trophy className="w-6 h-6 text-red" aria-hidden="true" />
               </div>
               <h3 className="text-navy font-bold text-base mb-1">Welcome to Inspire Courts</h3>
               <p className="text-text-muted text-sm max-w-sm mx-auto">
@@ -264,19 +264,19 @@ export default function PortalDashboard() {
               <a href="/portal/profile" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
                 <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
                 <span className="text-navy text-sm font-medium">Complete your profile</span>
-                <Calendar className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Calendar className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
               </a>
               {(role === "parent" || role === "coach") && (
                 <a href="/portal/waiver" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
                   <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
                   <span className="text-navy text-sm font-medium">Submit player waivers</span>
-                  <FileCheck className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <FileCheck className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
                 </a>
               )}
               <a href="/tournaments" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
                 <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">{role === "parent" || role === "coach" ? "3" : "2"}</span>
                 <span className="text-navy text-sm font-medium">Browse upcoming tournaments</span>
-                <Trophy className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Trophy className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -335,7 +335,7 @@ export default function PortalDashboard() {
     // Real errors still get surfaced by the error boundary at error.tsx.
     body = (
       <div className="bg-red/10 border border-red/20 rounded-2xl p-6 text-center">
-        <AlertTriangle className="w-8 h-8 text-red mx-auto mb-2" />
+        <AlertTriangle className="w-8 h-8 text-red mx-auto mb-2" aria-hidden="true" />
         <p className="text-navy text-sm font-semibold mb-2">Something went wrong while rendering your dashboard.</p>
         <p className="text-text-muted text-xs">{(err as Error)?.message ?? "Unknown error"}</p>
       </div>
@@ -360,7 +360,7 @@ export default function PortalDashboard() {
 
       {partialError && !allErrored && (
         <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 flex items-center gap-2 text-amber-600 text-xs font-semibold">
-          <AlertTriangle className="w-3.5 h-3.5" />
+          <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
           Some sections couldn&apos;t load. Showing what we have.
           <button
             type="button"

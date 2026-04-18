@@ -101,11 +101,11 @@ export default function ConfirmationPage() {
     <div className="min-h-screen bg-off-white flex items-center justify-center">
       <div className="max-w-md mx-auto px-4 text-center">
         {loading ? (
-          <Loader2 className="w-8 h-8 animate-spin text-text-muted mx-auto" />
+          <Loader2 className="w-8 h-8 animate-spin text-text-muted mx-auto" aria-hidden="true" />
         ) : isConfirmed ? (
           <>
             <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+              <CheckCircle2 className="w-8 h-8 text-emerald-500" aria-hidden="true" />
             </div>
             <h1 className="text-2xl font-bold text-navy font-heading mb-2">
               You&apos;re Registered!
@@ -139,7 +139,7 @@ export default function ConfirmationPage() {
                 href={`/tournaments/${id}`}
                 className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
-                <Trophy className="w-4 h-4" />
+                <Trophy className="w-4 h-4" aria-hidden="true" />
                 View Bracket
               </Link>
               <Link
@@ -147,7 +147,7 @@ export default function ConfirmationPage() {
                 className="flex items-center justify-center gap-2 border border-light-gray hover:border-light-gray/80 text-navy px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
                 Coach Portal
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
 
@@ -158,7 +158,7 @@ export default function ConfirmationPage() {
                 onClick={handleShare}
                 className="inline-flex items-center gap-2 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide transition-colors"
               >
-                {copied ? <><Copy className="w-3.5 h-3.5" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" /> Share</>}
+                {copied ? <><Copy className="w-3.5 h-3.5" aria-hidden="true" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" aria-hidden="true" /> Share</>}
               </button>
               <a
                 href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Tournament at Inspire Courts")}&location=${encodeURIComponent("Inspire Courts AZ, 1090 N Fiesta Blvd, Gilbert, AZ")}&details=${encodeURIComponent("Tournament registration confirmed. View details at " + tournamentUrl)}`}
@@ -166,14 +166,14 @@ export default function ConfirmationPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide transition-colors"
               >
-                <CalendarPlus className="w-3.5 h-3.5" /> Add to Calendar
+                <CalendarPlus className="w-3.5 h-3.5" aria-hidden="true" /> Add to Calendar
               </a>
             </div>
           </>
         ) : timedOut ? (
           <>
             <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Clock className="w-8 h-8 text-amber-500" />
+              <Clock className="w-8 h-8 text-amber-500" aria-hidden="true" />
             </div>
             <h1 className="text-2xl font-bold text-navy font-heading mb-2">
               Still Processing
@@ -190,7 +190,7 @@ export default function ConfirmationPage() {
                 href="/portal"
                 className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
               >
-                Check Coach Portal <ArrowRight className="w-4 h-4" />
+                Check Coach Portal <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
               <Link
                 href="/contact?type=Tournament+Registration"
@@ -203,7 +203,7 @@ export default function ConfirmationPage() {
         ) : isPending ? (
           <>
             <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Clock className="w-8 h-8 text-amber-500" />
+              <Clock className="w-8 h-8 text-amber-500" aria-hidden="true" />
             </div>
             <h1 className="text-2xl font-bold text-navy font-heading mb-2">
               Payment Processing
@@ -215,7 +215,7 @@ export default function ConfirmationPage() {
             <p className="text-text-muted text-sm mb-4">
               This page will update automatically once your payment is confirmed.
             </p>
-            <Loader2 className="w-5 h-5 animate-spin text-amber-500 mx-auto" />
+            <Loader2 className="w-5 h-5 animate-spin text-amber-500 mx-auto" aria-hidden="true" />
           </>
         ) : (
           <>

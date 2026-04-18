@@ -152,14 +152,14 @@ export default function TrainingPage() {
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
               >
                 Book a Session{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
               <a
                 href="#videos"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
               >
                 See Training Videos{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </a>
             </div>
           </AnimateIn>
@@ -237,6 +237,7 @@ export default function TrainingPage() {
                             className={`w-4 h-4 flex-shrink-0 ${
                               opt.highlighted ? "text-red" : "text-green-600"
                             }`}
+                            aria-hidden="true"
                           />
                           <span
                             className={`text-sm ${
@@ -257,7 +258,7 @@ export default function TrainingPage() {
                       }`}
                     >
                       Book Now{" "}
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
@@ -352,7 +353,7 @@ export default function TrainingPage() {
                       />
                     ) : (
                       <div className="text-center">
-                        <Users className="w-12 h-12 text-navy/40 mx-auto mb-2" />
+                        <Users className="w-12 h-12 text-navy/40 mx-auto mb-2" aria-hidden="true" />
                         <span className="text-navy/30 text-xs uppercase tracking-wider font-semibold">Photo Coming Soon</span>
                       </div>
                     )}
@@ -385,7 +386,7 @@ export default function TrainingPage() {
               href="/contact?type=Training+Inquiry"
               className="inline-flex items-center gap-1.5 text-red hover:text-red-hover text-xs font-bold uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
             >
-              Interested in training? Contact us <ArrowRight className="w-3 h-3" />
+              Interested in training? Contact us <ArrowRight className="w-3 h-3" aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -411,7 +412,7 @@ export default function TrainingPage() {
                   className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
                 >
                   Book Your Session
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                 </Link>
               </div>
             </AnimateIn>
@@ -479,7 +480,7 @@ export default function TrainingPage() {
               className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
             >
               Book a Session{" "}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
           </AnimateIn>
         </div>
@@ -502,7 +503,7 @@ export default function TrainingPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Club basketball on the MADE Hoops Circuit</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/events"
@@ -514,7 +515,7 @@ export default function TrainingPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Compete in OFF SZN HOOPS events</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/prep"
@@ -526,7 +527,7 @@ export default function TrainingPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Full-time basketball prep school program</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
           </div>
         </div>

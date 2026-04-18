@@ -168,7 +168,7 @@ export default function ProfilePage() {
 
       {isEnvAdmin ? (
         <div className="bg-white border border-light-gray rounded-xl p-8 text-center">
-          <UserCircle className="w-8 h-8 text-light-gray mx-auto mb-3" />
+          <UserCircle className="w-8 h-8 text-light-gray mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">Admin account</p>
           <p className="text-text-muted text-sm">
             This account is managed via environment variables.
@@ -176,13 +176,13 @@ export default function ProfilePage() {
         </div>
       ) : loading ? (
         <div className="flex items-center justify-center py-16 text-text-muted">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading profile...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading profile...
         </div>
       ) : (
         <>
         <div className="bg-white border border-light-gray rounded-xl p-6 max-w-lg mb-8">
           <div className="flex items-center gap-2 mb-6">
-            <UserCircle className="w-4 h-4 text-red" />
+            <UserCircle className="w-4 h-4 text-red" aria-hidden="true" />
             <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
               Account Details
             </h2>
@@ -310,7 +310,7 @@ export default function ProfilePage() {
           <div className="max-w-lg">
             <div className="bg-white border border-red/20 rounded-xl p-6">
               <div className="flex items-center gap-2 mb-3">
-                <Trash2 className="w-4 h-4 text-red" />
+                <Trash2 className="w-4 h-4 text-red" aria-hidden="true" />
                 <h2 className="text-red font-bold text-sm uppercase tracking-wider">
                   Delete Account
                 </h2>
@@ -324,7 +324,7 @@ export default function ProfilePage() {
                   onClick={() => setShowDeleteConfirm(true)}
                   className="flex items-center gap-2 bg-red/10 hover:bg-red/20 border border-red/30 text-red px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" aria-hidden="true" />
                   Delete My Account
                 </button>
               ) : (
@@ -341,7 +341,7 @@ export default function ProfilePage() {
 
                   {deleteError && (
                     <div role="alert" className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 flex-shrink-0" /> {deleteError}
+                      <AlertTriangle className="w-4 h-4 flex-shrink-0" aria-hidden="true" /> {deleteError}
                     </div>
                   )}
 

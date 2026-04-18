@@ -7,13 +7,14 @@ export default function AdminOfflinePage() {
     <div className="min-h-screen bg-off-white flex flex-col items-center justify-center px-6 text-center">
       <div className="mb-8">
         <svg
-          className="w-20 h-20 mx-auto text-gray-300"
+          className="w-20 h-20 mx-auto text-text-muted"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          aria-hidden="true"
         >
           <line x1="1" y1="1" x2="23" y2="23" />
           <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
@@ -25,25 +26,25 @@ export default function AdminOfflinePage() {
         </svg>
       </div>
 
-      <h1 className="font-chakra text-2xl font-bold text-navy mb-3">
+      <h1 className="font-heading text-2xl font-bold uppercase tracking-tight text-navy mb-3">
         You&apos;re Offline
       </h1>
 
-      <p className="text-gray-500 text-base max-w-md mb-8">
+      <p className="text-text-secondary text-base max-w-md mb-8">
         Score entry and check-in data will sync when you&apos;re reconnected.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3">
         <button
           onClick={() => window.location.reload()}
-          className="bg-red hover:bg-red/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+          className="bg-red hover:bg-red-hover text-white font-semibold px-8 py-3 rounded-lg transition-colors uppercase tracking-wider text-sm"
         >
           Retry
         </button>
 
         <Link
           href="/admin"
-          className="border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold px-8 py-3 rounded-lg transition-colors"
+          className="border border-border text-navy hover:bg-off-white font-semibold px-8 py-3 rounded-lg transition-colors uppercase tracking-wider text-sm"
         >
           Back to Dashboard
         </Link>

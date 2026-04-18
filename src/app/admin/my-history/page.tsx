@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { History, Loader2, Clock, DollarSign, Search } from "lucide-react";
+import { History, Loader2, Clock, DollarSign, Search, AlertTriangle, RefreshCw } from "lucide-react";
 
 type ShiftRow = {
   date: string;
@@ -17,6 +17,7 @@ export default function MyHistoryPage() {
   const { data: session } = useSession();
   const [shifts, setShifts] = useState<ShiftRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [search, setSearch] = useState("");
   const role = session?.user?.role;
 
@@ -26,10 +27,11 @@ export default function MyHistoryPage() {
 
     // Fetch from the appropriate sheet based on role
     const sheetType = role === "ref" ? "ref" : "staff";
+    setFetchError(false);
     fetch(`/api/admin/my-history?type=${sheetType}&name=${encodeURIComponent(session.user.name)}`, { signal: controller.signal })
-      .then((r) => r.json())
+      .then((r) => { if (!r.ok) throw new Error("Failed to load"); return r.json(); })
       .then((data) => setShifts(data.shifts || []))
-      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; })
+      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; setFetchError(true); })
       .finally(() => setLoading(false));
     return () => controller.abort();
   }, [session, role]);
@@ -110,6 +112,15 @@ export default function MyHistoryPage() {
         {loading ? (
           <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
             <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading history...
+          </div>
+        ) : fetchError ? (
+          <div className="text-center py-16" role="alert">
+            <AlertTriangle className="w-8 h-8 mx-auto mb-3 text-red" aria-hidden="true" />
+            <p className="text-navy font-semibold mb-1">Failed to load history</p>
+            <p className="text-text-muted text-sm mb-4">Check your connection and try again.</p>
+            <button onClick={() => { setLoading(true); setFetchError(false); }} className="inline-flex items-center gap-1.5 bg-red hover:bg-red-hover text-white px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors">
+              <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Retry
+            </button>
           </div>
         ) : shifts.length === 0 ? (
           <div className="text-center py-16 text-navy/40">

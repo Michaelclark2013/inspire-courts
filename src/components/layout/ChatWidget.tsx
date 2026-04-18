@@ -323,6 +323,16 @@ export default function ChatWidget() {
     }
   }, []);
 
+  // Escape key closes the chat panel
+  useEffect(() => {
+    if (!open) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeChat();
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [open, closeChat]);
+
   // Persist messages to sessionStorage
   useEffect(() => {
     if (typeof window !== "undefined") {

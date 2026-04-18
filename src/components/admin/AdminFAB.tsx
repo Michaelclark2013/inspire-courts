@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, PenLine, UserCheck, Trophy, Megaphone } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,16 @@ const ACTIONS = [
 
 export default function AdminFAB() {
   const [open, setOpen] = useState(false);
+
+  // Close on Escape so keyboard users aren't trapped
+  useEffect(() => {
+    if (!open) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [open]);
 
   return (
     <>

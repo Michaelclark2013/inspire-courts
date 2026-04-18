@@ -18,10 +18,9 @@ interface KPICardProps {
 export default function KPICard({ title, value, icon: Icon, trend, trendUp, sparklineData, valueColor }: KPICardProps) {
   return (
     <div
-      className="bg-white border border-light-gray shadow-sm rounded-xl p-3 lg:p-5 transition-all duration-200 hover:border-text-secondary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red"
-      role="article"
+      className="bg-white border border-light-gray shadow-sm rounded-xl p-3 lg:p-5 transition-all duration-200 hover:border-text-secondary/30 hover:shadow-md"
+      role="group"
       aria-label={`${title}: ${value}`}
-      tabIndex={0}
     >
       <div className="flex items-start justify-between mb-2 lg:mb-3">
         <p className="text-text-secondary text-[10px] lg:text-xs font-bold uppercase tracking-wider leading-tight">

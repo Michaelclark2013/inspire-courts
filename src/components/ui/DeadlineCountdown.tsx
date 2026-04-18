@@ -36,7 +36,7 @@ export function DeadlineCountdown({
   if (diff <= 0) {
     return (
       <span className={`inline-flex items-center gap-1 text-text-muted text-xs ${className}`}>
-        <Clock className="w-3 h-3" /> Closed
+        <Clock className="w-3 h-3" aria-hidden="true" /> Closed
       </span>
     );
   }

@@ -56,7 +56,7 @@ function TournamentHeader({
         href="/admin/tournaments/manage"
         className="text-text-secondary text-xs hover:text-navy flex items-center gap-1 mb-4 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded w-fit"
       >
-        <ChevronLeft className="w-3 h-3" /> Back to Tournaments
+        <ChevronLeft className="w-3 h-3" aria-hidden="true" /> Back to Tournaments
       </Link>
 
       <StatusTimeline status={data.status} />
@@ -95,7 +95,7 @@ function TournamentHeader({
               href={`/admin/tournaments/${id}/registrations`}
               className="min-h-[44px] flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-border rounded-lg hover:border-navy/30 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              <Users className="w-4 h-4" /> Registrations
+              <Users className="w-4 h-4" aria-hidden="true" /> Registrations
             </Link>
           </Tooltip>
           <Tooltip content={copied ? "Copied!" : "Copy public tournament link"}>
@@ -103,7 +103,7 @@ function TournamentHeader({
               onClick={copyPublicLink}
               className="min-h-[44px] flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-border rounded-lg hover:border-navy/30 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+              {copied ? <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" /> : <Copy className="w-4 h-4" aria-hidden="true" />}
               {copied ? "Copied" : "Share"}
             </button>
           </Tooltip>
@@ -113,7 +113,7 @@ function TournamentHeader({
               target="_blank"
               className="min-h-[44px] flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 border border-border rounded-lg hover:border-navy/30 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              <ExternalLink className="w-4 h-4" /> View
+              <ExternalLink className="w-4 h-4" aria-hidden="true" /> View
             </Link>
           </Tooltip>
           {data.status === "draft" && data.teams.length >= 2 && (
@@ -123,9 +123,9 @@ function TournamentHeader({
               className="min-h-[44px] flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
               {generating ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
               ) : (
-                <Zap className="w-4 h-4" />
+                <Zap className="w-4 h-4" aria-hidden="true" />
               )}
               Generate Bracket
             </button>
@@ -135,7 +135,7 @@ function TournamentHeader({
               onClick={onPublish}
               className="min-h-[44px] flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              <Play className="w-4 h-4" /> Start Tournament
+              <Play className="w-4 h-4" aria-hidden="true" /> Start Tournament
             </button>
           )}
           {data.status === "active" && (
@@ -143,7 +143,7 @@ function TournamentHeader({
               onClick={onComplete}
               className="min-h-[44px] flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-navy px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              <CheckCircle2 className="w-4 h-4" /> Complete
+              <CheckCircle2 className="w-4 h-4" aria-hidden="true" /> Complete
             </button>
           )}
         </div>

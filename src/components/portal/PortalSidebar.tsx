@@ -102,7 +102,7 @@ export default function PortalSidebar() {
           className="text-navy p-1.5"
           aria-label="Toggle sidebar"
         >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {open ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
         </button>
         <Link href="/portal" className="flex items-center gap-2" onClick={() => setOpen(false)}>
           <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts" width={28} height={28} className="object-contain" />

@@ -13,14 +13,14 @@ export default function ErrorBanner({ message, onRetry }: Props) {
       role="alert"
       className="mb-4 bg-red/5 border border-red/20 text-red rounded-lg px-4 py-2.5 flex items-center gap-3 text-sm"
     >
-      <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+      <AlertTriangle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
       <span className="flex-1">{message}</span>
       {onRetry && (
         <button
           onClick={onRetry}
           className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider hover:underline focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded"
         >
-          <RefreshCw className="w-3 h-3" /> Retry
+          <RefreshCw className="w-3 h-3" aria-hidden="true" /> Retry
         </button>
       )}
     </div>

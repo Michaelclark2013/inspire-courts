@@ -14,6 +14,7 @@ import { eq, and, inArray } from "drizzle-orm";
 import { generateBracket, type TeamEntry, type ScheduleConfig } from "@/lib/tournament-engine";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
+import { recordAudit } from "@/lib/audit";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -182,6 +183,19 @@ export async function POST(_request: NextRequest, { params }: Params) {
     revalidatePath(`/admin/tournaments/${id}`);
     revalidatePath(`/tournaments/${id}`);
     revalidatePath("/tournaments");
+
+    await recordAudit({
+      session,
+      action: "tournament.bracket_generated",
+      entityType: "tournament",
+      entityId: tournamentId,
+      before: null,
+      after: {
+        gamesCreated: realGames.length + tbdGames.length,
+        teamCount: teamEntries.length,
+        format: tournament.format,
+      },
+    });
 
     return NextResponse.json({
       success: true,

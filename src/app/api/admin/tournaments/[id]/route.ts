@@ -13,6 +13,7 @@ import {
 import { eq, desc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
+import { recordAudit } from "@/lib/audit";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -168,6 +169,25 @@ export async function PUT(request: NextRequest, { params }: Params) {
     .set(updates)
     .where(eq(tournaments.id, tournamentId));
 
+  // Audit if any material field changed. Distinguish status transitions
+  // (e.g. draft→published) from other edits so the audit stream is easy
+  // to scan.
+  const statusChanged = updates.status && updates.status !== existing.status;
+  await recordAudit({
+    session,
+    action: statusChanged ? "tournament.status_changed" : "tournament.updated",
+    entityType: "tournament",
+    entityId: tournamentId,
+    before: {
+      name: existing.name,
+      status: existing.status,
+      format: existing.format,
+      startDate: existing.startDate,
+      endDate: existing.endDate,
+    },
+    after: updates,
+  });
+
   revalidatePath(`/admin/tournaments/${id}`);
   revalidatePath(`/tournaments/${id}`);
   revalidatePath("/tournaments");
@@ -211,6 +231,19 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
     .delete(tournamentTeams)
     .where(eq(tournamentTeams.tournamentId, tournamentId));
   await db.delete(tournaments).where(eq(tournaments.id, tournamentId));
+
+  await recordAudit({
+    session,
+    action: "tournament.deleted",
+    entityType: "tournament",
+    entityId: tournamentId,
+    before: {
+      name: existing.name,
+      status: existing.status,
+      startDate: existing.startDate,
+    },
+    after: null,
+  });
 
   revalidatePath("/tournaments");
   revalidatePath("/admin/tournaments");

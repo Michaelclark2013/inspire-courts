@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
@@ -11,7 +11,10 @@ import {
 } from "@/lib/google-sheets";
 
 // GET /api/admin/leads — read prospect pipeline from Google Sheets
-export async function GET() {
+//   ?status=New — filter by status (case-insensitive)
+//   ?source=Chat Widget — filter by source (case-insensitive)
+//   ?interest=Tournament — filter by interest (case-insensitive)
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "prospects")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -24,7 +27,7 @@ export async function GET() {
   try {
     const { rows } = await fetchSheetWithHeaders(SHEETS.prospectPipeline);
 
-    const leads = rows
+    let leads = rows
       .filter((row) => Object.values(row).some((v) => v !== ""))
       .map((row) => ({
         timestamp: getCol(row, "Timestamp", "Date", "Created", "Time") || "",
@@ -36,6 +39,20 @@ export async function GET() {
         status: getCol(row, "Status", "Lead Status", "Urgency") || "",
       }))
       .reverse(); // newest first
+
+    // Optional URL-param filters (case-insensitive exact match).
+    const sp = request.nextUrl.searchParams;
+    const statusFilter = sp.get("status")?.toLowerCase();
+    const sourceFilter = sp.get("source")?.toLowerCase();
+    const interestFilter = sp.get("interest")?.toLowerCase();
+    if (statusFilter || sourceFilter || interestFilter) {
+      leads = leads.filter(
+        (l) =>
+          (!statusFilter || l.status.toLowerCase() === statusFilter) &&
+          (!sourceFilter || l.source.toLowerCase() === sourceFilter) &&
+          (!interestFilter || l.interest.toLowerCase() === interestFilter)
+      );
+    }
 
     return NextResponse.json(leads, {
       headers: { "Cache-Control": "private, max-age=30, stale-while-revalidate=60" },

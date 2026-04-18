@@ -6,6 +6,7 @@ import { users } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { logger } from "@/lib/logger";
+import { recordAudit } from "@/lib/audit";
 
 // GET /api/admin/users — list all users
 export async function GET() {
@@ -120,6 +121,24 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 });
     }
 
+    // Fetch the before-snapshot so the audit log can capture the change.
+    const [before] = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        role: users.role,
+        phone: users.phone,
+        approved: users.approved,
+      })
+      .from(users)
+      .where(eq(users.id, numericId))
+      .limit(1);
+
+    if (!before) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const updates: Record<string, unknown> = {
       updatedAt: new Date().toISOString(),
     };
@@ -129,6 +148,24 @@ export async function PUT(request: NextRequest) {
     if (body.approved !== undefined) updates.approved = body.approved;
 
     await db.update(users).set(updates).where(eq(users.id, numericId));
+
+    // Only audit if something actually changed (excluding updatedAt).
+    const after = { ...before, ...updates };
+    const changed =
+      (role && role !== before.role) ||
+      (name && name !== before.name) ||
+      (phone !== undefined && (phone || null) !== before.phone) ||
+      (body.approved !== undefined && body.approved !== before.approved);
+    if (changed) {
+      await recordAudit({
+        session,
+        action: role && role !== before.role ? "user.role_changed" : "user.updated",
+        entityType: "user",
+        entityId: numericId,
+        before,
+        after,
+      });
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -162,9 +199,25 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Cannot delete your own account" }, { status: 400 });
     }
 
-    // Prevent deleting the last admin
-    const [target] = await db.select({ role: users.role }).from(users).where(eq(users.id, numId)).limit(1);
-    if (target?.role === "admin") {
+    // Prevent deleting the last admin; also fetch full before-snapshot for audit.
+    const [target] = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        role: users.role,
+        phone: users.phone,
+        approved: users.approved,
+      })
+      .from(users)
+      .where(eq(users.id, numId))
+      .limit(1);
+
+    if (!target) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (target.role === "admin") {
       const [{ count }] = await db
         .select({ count: sql<number>`count(*)` })
         .from(users)
@@ -175,6 +228,15 @@ export async function DELETE(request: NextRequest) {
     }
 
     await db.delete(users).where(eq(users.id, numId));
+
+    await recordAudit({
+      session,
+      action: "user.deleted",
+      entityType: "user",
+      entityId: numId,
+      before: target,
+      after: null,
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {

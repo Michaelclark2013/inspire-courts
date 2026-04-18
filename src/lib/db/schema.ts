@@ -294,3 +294,34 @@ export const pushSubscriptions = sqliteTable("push_subscriptions", {
   auth: text("auth").notNull(),
   createdAt: text("created_at").default(sql`(datetime('now'))`),
 });
+
+// ── Audit Log ──────────────────────────────────────────────────────────────
+// Append-only log of admin-level mutations. Purpose: answer "who changed X
+// and when" for role changes, approvals, deletions, and any other sensitive
+// admin operation. Entries are never edited or deleted.
+
+export const auditLog = sqliteTable("audit_log", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // Who did the action — user.id of the admin performing it (nullable if
+  // session.user.id is unavailable, though that should never happen for
+  // admin routes).
+  actorUserId: integer("actor_user_id"),
+  actorEmail: text("actor_email"),
+  actorRole: text("actor_role"),
+  // What happened — free-form short slug like "user.role_changed",
+  // "user.approved", "user.rejected", "user.deleted", "registration.bulk_update".
+  action: text("action").notNull(),
+  // Which entity — table name + id combo so we can reconstruct later.
+  entityType: text("entity_type").notNull(),
+  entityId: text("entity_id"),
+  // Before/after snapshot as JSON — enough to revert if needed.
+  beforeJson: text("before_json"),
+  afterJson: text("after_json"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("audit_log_actor_idx").on(table.actorUserId),
+  index("audit_log_entity_idx").on(table.entityType, table.entityId),
+  index("audit_log_created_idx").on(table.createdAt),
+]);

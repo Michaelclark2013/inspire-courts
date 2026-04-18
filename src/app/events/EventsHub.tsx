@@ -440,7 +440,7 @@ export default function EventsHub({
                               href={registerUrl}
                               className="flex-1 flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.02] shadow-md shadow-red/20"
                             >
-                              Register Now <ArrowRight className="w-4 h-4" />
+                              Register Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
                             </Link>
                           ) : event.status === "In Progress" && event.bracketLink ? (
                             <a
@@ -449,7 +449,7 @@ export default function EventsHub({
                               rel="noopener noreferrer"
                               className="flex-1 flex items-center justify-center gap-2 bg-navy hover:bg-navy/90 text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                             >
-                              View Brackets <ExternalLink className="w-4 h-4" />
+                              View Brackets <ExternalLink className="w-4 h-4" aria-hidden="true" />
                             </a>
                           ) : event.status === "Registration Closed" ? (
                             <button
@@ -463,7 +463,7 @@ export default function EventsHub({
                               href={registerUrl}
                               className="flex-1 flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                             >
-                              Register <ArrowRight className="w-4 h-4" />
+                              Register <ArrowRight className="w-4 h-4" aria-hidden="true" />
                             </Link>
                           )}
                         </div>
@@ -507,7 +507,7 @@ export default function EventsHub({
                       href={registerUrl}
                       className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                     >
-                      Browse Tournaments <ArrowRight className="w-4 h-4" />
+                      Browse Tournaments <ArrowRight className="w-4 h-4" aria-hidden="true" />
                     </Link>
                     <a
                       href={`https://instagram.com/${instagramHandle.replace("@", "")}`}
@@ -600,7 +600,7 @@ export default function EventsHub({
                   href="/contact"
                   className="inline-flex items-center justify-center gap-2 bg-white text-red hover:bg-white/90 px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
                 >
-                  Contact Us <ArrowRight className="w-4 h-4" />
+                  Contact Us <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
                 <a
                   href={`mailto:${facilityEmail}`}
@@ -865,7 +865,7 @@ export default function EventsHub({
                 href="/gameday"
                 className="inline-flex items-center gap-2 text-red hover:text-red-hover text-sm font-bold uppercase tracking-wide transition-colors"
               >
-                Full Game Day Page <ArrowRight className="w-4 h-4" />
+                Full Game Day Page <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
           </section>

@@ -143,13 +143,13 @@ export default function SchedulePage() {
                 href="/contact"
                 className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
-                <Mail className="w-4 h-4" /> Contact Us
+                <Mail className="w-4 h-4" aria-hidden="true" /> Contact Us
               </Link>
               <Link
                 href="/events"
                 className="inline-flex items-center gap-2 bg-white/10 border-2 border-white/40 hover:bg-white hover:text-navy text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
-                See Upcoming Events <ArrowRight className="w-4 h-4" />
+                See Upcoming Events <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
           </AnimateIn>

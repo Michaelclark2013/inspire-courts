@@ -145,7 +145,7 @@ export default function ProfilePage() {
             onClick={() => { setLoading(true); fetchProfile(); }}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
-            <RefreshCw className="w-4 h-4" /> Retry
+            <RefreshCw className="w-4 h-4" aria-hidden="true" /> Retry
           </button>
         </div>
       </div>
@@ -190,13 +190,13 @@ export default function ProfilePage() {
 
           {error && (
             <div role="alert" className="bg-red/10 border border-red/30 text-red-hover text-sm rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4" /> {error}
+              <AlertTriangle className="w-4 h-4" aria-hidden="true" /> {error}
             </div>
           )}
 
           {saved && (
             <div role="status" aria-live="polite" className="bg-emerald-50 border border-emerald-500/30 text-emerald-600 text-sm rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4" /> Profile updated successfully.
+              <CheckCircle2 className="w-4 h-4" aria-hidden="true" /> Profile updated successfully.
             </div>
           )}
 

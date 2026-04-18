@@ -15,7 +15,7 @@ export function RecentResults({ games }: { games: LiveGame[] }) {
           href="/portal/scores"
           className="text-red text-xs font-semibold hover:text-red-hover transition-colors flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded"
         >
-          View All <ArrowRight className="w-3 h-3" />
+          View All <ArrowRight className="w-3 h-3" aria-hidden="true" />
         </Link>
       </div>
       <div className="divide-y divide-light-gray">

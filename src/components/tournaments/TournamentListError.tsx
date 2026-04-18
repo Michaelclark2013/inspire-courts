@@ -25,7 +25,7 @@ export default function TournamentListError() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
             >
-              Register on LeagueApps <ArrowRight className="w-4 h-4" />
+              Register on LeagueApps <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
             <Link
               href="/contact?type=Tournament+Registration"

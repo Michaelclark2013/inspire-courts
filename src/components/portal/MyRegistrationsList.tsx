@@ -19,7 +19,7 @@ export function MyRegistrationsList({ registrations }: { registrations: Registra
           href="/tournaments"
           className="inline-flex items-center gap-1.5 text-red text-xs font-semibold hover:text-red-hover transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded"
         >
-          Browse Tournaments <ArrowRight className="w-3 h-3" />
+          Browse Tournaments <ArrowRight className="w-3 h-3" aria-hidden="true" />
         </Link>
       </div>
     );
@@ -38,7 +38,7 @@ export function MyRegistrationsList({ registrations }: { registrations: Registra
           href="/tournaments"
           className="text-red text-xs font-semibold hover:text-red-hover transition-colors flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded"
         >
-          Browse <ArrowRight className="w-3 h-3" />
+          Browse <ArrowRight className="w-3 h-3" aria-hidden="true" />
         </Link>
       </div>
       <div className="divide-y divide-light-gray">

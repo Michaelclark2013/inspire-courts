@@ -124,7 +124,7 @@ function NoNotionFallback() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
-                Register Now <ArrowRight className="w-4 h-4" />
+                Register Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </a>
               <a
                 href="https://instagram.com/inspirecourts"
@@ -189,7 +189,7 @@ export default function EventsPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg shadow-red/30"
                 >
-                  Register Your Team <ArrowRight className="w-4 h-4" />
+                  Register Your Team <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </a>
                 <Link
                   href="/contact?type=Tournament+Registration"
@@ -233,7 +233,7 @@ export default function EventsPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
-                Register Now <ArrowRight className="w-4 h-4" />
+                Register Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </a>
             </div>
           </AnimateIn>

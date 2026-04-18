@@ -227,7 +227,7 @@ export default function CoachCheckInPage() {
             onClick={() => { setLoading(true); fetchRoster(); }}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
-            <RefreshCw className="w-4 h-4" /> Retry
+            <RefreshCw className="w-4 h-4" aria-hidden="true" /> Retry
           </button>
         </div>
       </div>
@@ -447,7 +447,7 @@ export default function CoachCheckInPage() {
             </div>
           </div>
           <button type="submit" disabled={!manualName.trim()} className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
-            <UserCheck className="w-4 h-4" /> Check In
+            <UserCheck className="w-4 h-4" aria-hidden="true" /> Check In
           </button>
         </form>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useVisibilityPolling } from "@/hooks/useVisibilityPolling";
-import { Trophy, Loader2, AlertTriangle, RefreshCw, Radio } from "lucide-react";
+import { Trophy, Loader2, AlertTriangle, RefreshCw, Radio, Printer } from "lucide-react";
 import StandingsTable from "@/components/scores/StandingsTable";
 import ExportBar from "@/components/ui/ExportBar";
 import { exportCSV } from "@/lib/export";
@@ -88,6 +88,15 @@ export default function PortalScoresPage() {
               Scores & Standings
             </h1>
             <ExportBar onExportCSV={() => exportCSV("scores", ["Home Team", "Away Team", "Score", "Division"], games.filter(g => g.status === "final").map(g => [g.homeTeam, g.awayTeam, `${g.homeScore}-${g.awayScore}`, g.division || ""]))} />
+            <button
+              type="button"
+              onClick={() => window.print()}
+              aria-label="Print scores"
+              title="Print scores"
+              className="print:hidden p-1.5 rounded-lg text-text-muted hover:text-navy hover:bg-off-white transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+            >
+              <Printer className="w-4 h-4" aria-hidden="true" />
+            </button>
             {hasLive && (
               <span className="flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
                 <Radio className="w-3 h-3 animate-pulse" aria-hidden="true" /> Live

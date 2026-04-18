@@ -317,7 +317,7 @@ export default function CoachCheckInPage() {
       )}
 
       {/* Quick stats */}
-      <div className="grid gap-4 md:grid-cols-2 mb-8">
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
         <div className="bg-white border border-light-gray rounded-xl p-5">
           <div className="flex items-center gap-2 text-text-muted text-xs uppercase tracking-wider mb-2">
             <Users className="w-3.5 h-3.5" aria-hidden="true" /> Roster
@@ -331,6 +331,23 @@ export default function CoachCheckInPage() {
           <p className="text-emerald-600 text-2xl font-bold">{checkedIn.length} <span className="text-sm text-emerald-600/50 font-normal">of {roster.length}</span></p>
         </div>
       </div>
+
+      {/* Team-complete celebration banner */}
+      {roster.length > 0 && checkedIn.length >= roster.length && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="mb-8 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 border border-emerald-500/40 rounded-xl p-5 flex items-center gap-4 animate-fade-in"
+        >
+          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
+            <CheckCircle2 className="w-6 h-6 text-emerald-600" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-navy font-bold text-base">Full team checked in!</p>
+            <p className="text-text-muted text-sm">You&apos;re ready to play. Good luck out there.</p>
+          </div>
+        </div>
+      )}
 
       {/* Coach Check-In (2 bands max) */}
       <div className="bg-white border border-amber-500/20 rounded-xl p-5 mb-6">

@@ -164,8 +164,9 @@ export default function PlayerPortalPage() {
               </div>
               <form onSubmit={handleLookup} className="space-y-4">
                 <div>
-                  <label className="block text-text-muted text-xs font-bold uppercase tracking-wider mb-2">Your Name</label>
+                  <label htmlFor="player-name" className="block text-text-muted text-xs font-bold uppercase tracking-wider mb-2">Your Name</label>
                   <input
+                    id="player-name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -175,8 +176,9 @@ export default function PlayerPortalPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-text-muted text-xs font-bold uppercase tracking-wider mb-2">Team Name</label>
+                  <label htmlFor="player-team" className="block text-text-muted text-xs font-bold uppercase tracking-wider mb-2">Team Name</label>
                   <input
+                    id="player-team"
                     type="text"
                     value={team}
                     onChange={(e) => setTeam(e.target.value)}

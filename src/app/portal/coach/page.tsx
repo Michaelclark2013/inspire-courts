@@ -129,8 +129,9 @@ export default function CoachPortalPage() {
               </div>
               <form onSubmit={handleLookup} className="space-y-4">
                 <div>
-                  <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2">Your Name</label>
+                  <label htmlFor="coach-name" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2">Your Name</label>
                   <input
+                    id="coach-name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -140,8 +141,9 @@ export default function CoachPortalPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2">Team Name</label>
+                  <label htmlFor="coach-team" className="block text-navy text-xs font-bold uppercase tracking-wider mb-2">Team Name</label>
                   <input
+                    id="coach-team"
                     type="text"
                     value={team}
                     onChange={(e) => setTeam(e.target.value)}

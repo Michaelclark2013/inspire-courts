@@ -392,10 +392,11 @@ export default function RegisterPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <label htmlFor="treg-playerCount" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Number of Players
                   </label>
                   <input
+                    id="treg-playerCount"
                     type="number"
                     inputMode="numeric"
                     min={1}

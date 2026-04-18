@@ -75,8 +75,9 @@ export default function LogoManagementPage() {
         <p className="text-text-secondary text-xs font-bold uppercase tracking-wider mb-3">Upload logo for a team</p>
         <div className="flex gap-3 items-end">
           <div className="flex-1">
-            <label className="block text-text-secondary text-xs mb-1.5">Team Name</label>
+            <label htmlFor="logos-teamName" className="block text-text-secondary text-xs mb-1.5">Team Name</label>
             <input
+              id="logos-teamName"
               type="text"
               value={customTeam}
               onChange={(e) => setCustomTeam(e.target.value)}

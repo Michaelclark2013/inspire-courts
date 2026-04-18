@@ -363,7 +363,7 @@ export default function ContentEditorPage() {
             className="ml-1 opacity-60 hover:opacity-100"
             aria-label="Dismiss"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       )}

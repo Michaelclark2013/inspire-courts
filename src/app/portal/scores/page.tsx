@@ -96,7 +96,7 @@ export default function PortalScoresPage() {
           className="flex items-center gap-1.5 text-[11px] font-medium text-text-muted bg-off-white hover:bg-navy/[0.04] px-2.5 py-1.5 rounded-lg transition-colors"
           title="Click to refresh"
         >
-          <RefreshCw className="w-3 h-3" />
+          <RefreshCw className="w-3 h-3" aria-hidden="true" />
           Refresh
         </button>
       </div>

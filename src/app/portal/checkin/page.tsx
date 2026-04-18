@@ -254,7 +254,7 @@ export default function CoachCheckInPage() {
             onClick={handleBulkCheckIn}
             className="flex items-center gap-2 bg-emerald-50 hover:bg-emerald-500/30 text-emerald-600 px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
-            <UsersRound className="w-4 h-4" />
+            <UsersRound className="w-4 h-4" aria-hidden="true" />
             <span className="hidden sm:inline">Check In All</span>
             <span className="sm:hidden">All</span>
           </button>

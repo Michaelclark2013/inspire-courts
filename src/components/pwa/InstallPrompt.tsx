@@ -92,7 +92,7 @@ export function InstallPrompt() {
         aria-label="Dismiss install prompt"
         className="absolute top-3 right-3 p-1 rounded-full hover:bg-white/20 transition-colors"
       >
-        <X className="w-5 h-5" />
+        <X className="w-5 h-5" aria-hidden="true" />
       </button>
 
       {showIOSBanner ? (

@@ -61,7 +61,7 @@ function TeamRosterPanel({ team, draft, onAddPlayer, onRemovePlayer }: Props) {
                   aria-label={`Remove player ${p.name}`}
                   className="text-text-muted/50 hover:text-red transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               )}
             </div>

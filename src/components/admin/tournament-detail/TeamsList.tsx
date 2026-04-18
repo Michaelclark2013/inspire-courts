@@ -64,12 +64,13 @@ const TeamRow = memo(function TeamRow({
             aria-expanded={expanded}
             className="flex items-center gap-1 text-[10px] text-text-muted hover:text-navy font-semibold uppercase tracking-wide transition-colors ml-1 flex-shrink-0 focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded"
           >
-            <UserPlus className="w-3 h-3" />
+            <UserPlus className="w-3 h-3" aria-hidden="true" />
             {playerCount > 0
               ? `${playerCount} player${playerCount !== 1 ? "s" : ""}`
               : "Roster"}
             <ChevronDown
               className={`w-3 h-3 transition-transform ${expanded ? "rotate-180" : ""}`}
+              aria-hidden="true"
             />
           </button>
         </div>

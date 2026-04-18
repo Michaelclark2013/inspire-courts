@@ -374,7 +374,7 @@ export default function ScoreEntryPage() {
             aria-label="Dismiss"
             className="ml-2 text-white/70 hover:text-white"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       )}

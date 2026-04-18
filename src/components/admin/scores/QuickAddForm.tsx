@@ -43,7 +43,7 @@ function QuickAddFormImpl({
             aria-label="Dismiss error"
             className="ml-4 text-red-700 hover:text-navy focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       )}

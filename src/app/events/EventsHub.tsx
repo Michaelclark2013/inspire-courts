@@ -310,7 +310,7 @@ export default function EventsHub({
                       className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-navy"
                       aria-label="Clear search"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-4 h-4" aria-hidden="true" />
                     </button>
                   )}
                 </div>

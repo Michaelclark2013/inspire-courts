@@ -85,7 +85,7 @@ export default function PushNotificationPrompt() {
         className="text-text-muted hover:text-navy transition-colors p-0.5 rounded focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none flex-shrink-0"
         aria-label="Dismiss notification prompt"
       >
-        <X className="w-4 h-4" />
+        <X className="w-4 h-4" aria-hidden="true" />
       </button>
     </div>
   );

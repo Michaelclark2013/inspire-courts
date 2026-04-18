@@ -156,7 +156,7 @@ export default function AnnouncementsPage() {
         <div className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 mb-6 flex items-center justify-between" role="alert" aria-live="assertive">
           <span>{saveError}</span>
           <button onClick={() => setSaveError("")} className="text-red hover:text-navy ml-4" aria-label="Dismiss">
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       )}
@@ -167,8 +167,8 @@ export default function AnnouncementsPage() {
             {saveError && (
               <div role="alert" aria-live="assertive" className="bg-red/10 border border-red/30 text-red text-sm rounded-lg px-4 py-3 flex items-center justify-between">
                 <span>{saveError}</span>
-                <button type="button" onClick={() => setSaveError("")} className="text-red hover:text-navy ml-4">
-                  <X className="w-4 h-4" />
+                <button type="button" onClick={() => setSaveError("")} className="text-red hover:text-navy ml-4" aria-label="Dismiss error">
+                  <X className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
             )}

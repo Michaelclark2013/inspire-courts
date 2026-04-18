@@ -80,7 +80,7 @@ export function PortalAnnouncements({ announcements }: { announcements: Announce
             aria-label={`Dismiss announcement: ${a.title}`}
             className="absolute top-2 right-2 p-1 rounded-md text-amber-600/70 hover:text-amber-700 hover:bg-amber-100 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       ))}

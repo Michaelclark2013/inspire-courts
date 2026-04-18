@@ -129,7 +129,7 @@ export default function LogoUploader({
                   <p className="text-text-secondary text-xs mt-0.5 truncate max-w-[200px]">{teamName}</p>
                 </div>
                 <button onClick={handleClose} aria-label="Close" className="text-text-secondary hover:text-white transition-colors p-1">
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
 

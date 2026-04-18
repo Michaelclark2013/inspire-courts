@@ -16,6 +16,7 @@ import {
   CalendarPlus,
 } from "lucide-react";
 import { nativeShare } from "@/lib/capacitor";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { downloadICS } from "@/lib/calendar";
 import { DeadlineCountdown } from "@/components/ui/DeadlineCountdown";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
@@ -32,7 +33,7 @@ export default function PublicTournamentPage() {
   const [data, setData] = useState<TournamentDetailPublic | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copied, copy] = useCopyToClipboard();
   const abortRef = useRef<AbortController | null>(null);
   const { addItem: trackView } = useRecentlyViewed();
   const { quality } = useNetworkQuality();
@@ -283,9 +284,7 @@ export default function PublicTournamentPage() {
                       await navigator.share({ title: data.name, url });
                     } catch { /* user cancelled */ }
                   } else {
-                    await navigator.clipboard.writeText(url);
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
+                    await copy(url);
                   }
                 }
               }}

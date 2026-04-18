@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { memo, useState, useCallback } from "react";
+import { memo, useCallback } from "react";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import {
   ChevronLeft,
   Loader2,
@@ -40,15 +41,13 @@ function TournamentHeader({
 }: Props) {
   const id = data.id;
   const updatedLabel = data.updatedAt ? relativeTime(data.updatedAt) : "";
-  const [copied, setCopied] = useState(false);
+  const [copied, copy] = useCopyToClipboard();
 
   const copyPublicLink = useCallback(() => {
     const url = `${window.location.origin}/tournaments/${id}`;
-    navigator.clipboard.writeText(url);
-    setCopied(true);
+    copy(url);
     triggerHaptic("light");
-    setTimeout(() => setCopied(false), 2000);
-  }, [id]);
+  }, [id, copy]);
 
   return (
     <>

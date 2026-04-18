@@ -10,7 +10,7 @@ import {
   games,
   gameScores,
 } from "@/lib/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 
@@ -50,43 +50,37 @@ export async function GET(_request: NextRequest, { params }: Params) {
 
   const gameIds = bracketGames.map((bg) => bg.gameId);
 
-  // Fetch all game details and scores
-  const allGameDetails: Array<{
-    id: number;
-    homeTeam: string;
-    awayTeam: string;
-    division: string | null;
-    court: string | null;
-    scheduledTime: string | null;
-    status: string;
-    homeScore: number;
-    awayScore: number;
-    lastQuarter: string | null;
-  }> = [];
+  // Fetch all game details and scores in two batched queries (no N+1)
+  const [allGames, allScores] = gameIds.length
+    ? await Promise.all([
+        db.select().from(games).where(inArray(games.id, gameIds)),
+        db.select().from(gameScores).where(inArray(gameScores.gameId, gameIds)).orderBy(desc(gameScores.updatedAt)),
+      ])
+    : [[], []];
 
-  for (const gid of gameIds) {
-    const [g] = await db.select().from(games).where(eq(games.id, gid));
-    if (g) {
-      const [score] = await db
-        .select()
-        .from(gameScores)
-        .where(eq(gameScores.gameId, gid))
-        .orderBy(desc(gameScores.updatedAt))
-        .limit(1);
-      allGameDetails.push({
-        id: g.id,
-        homeTeam: g.homeTeam,
-        awayTeam: g.awayTeam,
-        division: g.division,
-        court: g.court,
-        scheduledTime: g.scheduledTime,
-        status: g.status,
-        homeScore: score?.homeScore ?? 0,
-        awayScore: score?.awayScore ?? 0,
-        lastQuarter: score?.quarter ?? null,
-      });
+  // Build a map of latest score per game
+  const latestScoreByGame = new Map<number, typeof allScores[0]>();
+  for (const score of allScores) {
+    if (!latestScoreByGame.has(score.gameId)) {
+      latestScoreByGame.set(score.gameId, score);
     }
   }
+
+  const allGameDetails = allGames.map((g) => {
+    const score = latestScoreByGame.get(g.id);
+    return {
+      id: g.id,
+      homeTeam: g.homeTeam,
+      awayTeam: g.awayTeam,
+      division: g.division,
+      court: g.court,
+      scheduledTime: g.scheduledTime,
+      status: g.status,
+      homeScore: score?.homeScore ?? 0,
+      awayScore: score?.awayScore ?? 0,
+      lastQuarter: score?.quarter ?? null,
+    };
+  });
 
   // Merge bracket info with game details
   const bracketWithScores = bracketGames.map((bg) => {

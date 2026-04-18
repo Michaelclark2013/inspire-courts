@@ -263,7 +263,9 @@ export default function ContentEditorPage() {
     });
   }
 
-  function removeSection(pageId: string, sectionIdx: number) {
+  async function removeSection(pageId: string, sectionIdx: number) {
+    const ok = await confirmDialog({ title: "Remove Section", message: "Remove this entire section? This can't be undone until you reload without saving." });
+    if (!ok) return;
     setContent((prev) => {
       if (!prev) return prev;
       const updated = JSON.parse(JSON.stringify(prev)) as SiteContent;
@@ -288,7 +290,9 @@ export default function ContentEditorPage() {
     });
   }
 
-  function removeField(pageId: string, sectionIdx: number, fieldKey: string) {
+  async function removeField(pageId: string, sectionIdx: number, fieldKey: string) {
+    const ok = await confirmDialog({ title: "Remove Field", message: "Remove this field? This can't be undone until you reload without saving." });
+    if (!ok) return;
     setContent((prev) => {
       if (!prev) return prev;
       const updated = JSON.parse(JSON.stringify(prev)) as SiteContent;

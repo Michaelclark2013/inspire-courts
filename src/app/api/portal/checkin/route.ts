@@ -85,7 +85,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    logger.error("Portal check-in failed", { error: String(err), playerName });
+    // Don't log full playerName — just its length so we can debug sizing issues without logging PII.
+    logger.error("Portal check-in failed", {
+      error: String(err),
+      playerNameLength: typeof playerName === "string" ? playerName.length : null,
+    });
     return NextResponse.json({ error: "Failed to check in player" }, { status: 500 });
   }
 }

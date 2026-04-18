@@ -12,11 +12,20 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // This route is coach-only. Other roles (admin/staff/parent) get an
+  // explicit 403 so a staff user whose email happens to match a coach's
+  // email in the registrations table doesn't see registration data.
+  if (session.user.role !== "coach") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
+    // Normalize email comparison — stored coachEmail is lowercased at write time.
+    const coachEmail = session.user.email.toLowerCase();
     const regs = await db
       .select()
       .from(tournamentRegistrations)
-      .where(eq(tournamentRegistrations.coachEmail, session.user.email));
+      .where(eq(tournamentRegistrations.coachEmail, coachEmail));
 
     if (regs.length === 0) {
       return NextResponse.json([]);

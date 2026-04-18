@@ -312,6 +312,25 @@
 - AdminSidebar: typeof window guard + try/catch on localStorage
 - DashboardDBStats: AbortController on both dashboard + live-games polls
 
+### Cycle 12 — Performance
+- ScoresClient: single-pass memoization of events/divisions/courts
+- PlayersSheetClient: combine divisions + teams memos into one pass
+- Portal summary route: replace N+1 team-lookup + count with COUNT subquery
+
+### Cycle 13 — UX polish + API consistency
+- Camps "Contact Us" pre-fills ?type=Camps%20%26%20Clinics
+- forgot-password rate-limit now returns 429 + Retry-After
+- tournaments/schedule 500: Cache-Control no-store; success uses s-maxage
+- Book + contact form network errors now include email address inline
+
+### Cycle 14 — Extract useCopyToClipboard hook
+- New hook with copied flag, 2s reset, execCommand fallback, unmount cleanup
+- Adopted in 3 places (TournamentHeader, tournaments/[id], register/confirmation)
+
+### Cycle 15 — Use centralized formatters
+- Replace inline toLocaleDateString/toLocaleString in 6 admin pages
+- formatDate / formatDateShort / formatCurrency from @/lib/utils
+
 ### Build Status
-- ✅ PASS — `npm run build` clean across all 8 cycles
+- ✅ PASS — `npm run build` clean across all 12 cycles
 - ✅ All pushed to `improvements/round-76-clubform-contact-2026-04-17` branch

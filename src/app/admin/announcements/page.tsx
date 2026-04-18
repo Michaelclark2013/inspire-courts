@@ -146,7 +146,7 @@ export default function AnnouncementsPage() {
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
         >
-          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          {showForm ? <X className="w-4 h-4" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
           {showForm ? "Cancel" : "New"}
         </button>
       </div>
@@ -282,7 +282,7 @@ export default function AnnouncementsPage() {
             onClick={() => setShowForm(true)}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
-            <Plus className="w-4 h-4" /> Create First Announcement
+            <Plus className="w-4 h-4" aria-hidden="true" /> Create First Announcement
           </button>
         </div>
       ) : (

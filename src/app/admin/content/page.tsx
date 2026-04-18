@@ -611,19 +611,19 @@ export default function ContentEditorPage() {
                       onClick={() => addField(activePage, sIdx, "text")}
                       className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-off-white hover:bg-light-gray px-3 py-2 rounded-lg transition-colors"
                     >
-                      <Type className="w-3 h-3" /> Text
+                      <Type className="w-3 h-3" aria-hidden="true" /> Text
                     </button>
                     <button
                       onClick={() => addField(activePage, sIdx, "textarea")}
                       className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-off-white hover:bg-light-gray px-3 py-2 rounded-lg transition-colors"
                     >
-                      <AlignLeft className="w-3 h-3" /> Paragraph
+                      <AlignLeft className="w-3 h-3" aria-hidden="true" /> Paragraph
                     </button>
                     <button
                       onClick={() => addField(activePage, sIdx, "image")}
                       className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-off-white hover:bg-light-gray px-3 py-2 rounded-lg transition-colors"
                     >
-                      <Image className="w-3 h-3" /> Image
+                      <Image className="w-3 h-3" aria-hidden="true" /> Image
                     </button>
                   </div>
 
@@ -714,7 +714,7 @@ export default function ContentEditorPage() {
                       onClick={() => addListToSection(activePage, sIdx)}
                       className="flex items-center gap-1.5 text-navy/30 hover:text-navy text-xs font-bold uppercase tracking-wide bg-off-white hover:bg-light-gray px-3 py-2 rounded-lg transition-colors"
                     >
-                      <List className="w-3 h-3" /> Add List
+                      <List className="w-3 h-3" aria-hidden="true" /> Add List
                     </button>
                   )}
                 </div>
@@ -729,7 +729,7 @@ export default function ContentEditorPage() {
         onClick={() => addSection(activePage)}
         className="flex items-center gap-2 text-navy/40 hover:text-navy text-sm font-bold uppercase tracking-wide mt-4 md:mt-6 bg-off-white hover:bg-light-gray px-5 py-3 rounded-xl transition-colors w-full justify-center border border-dashed border-border hover:border-navy/30"
       >
-        <Plus className="w-4 h-4" /> Add Section to {currentPage.label}
+        <Plus className="w-4 h-4" aria-hidden="true" /> Add Section to {currentPage.label}
       </button>
 
       {/* Floating sticky save toolbar — visible when dirty */}

@@ -63,25 +63,25 @@ export default function MyHistoryPage() {
       <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mb-4 md:mb-8">
         <div className="bg-white border border-border rounded-xl p-3 md:p-5">
           <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
-            <History className="w-3 h-3" /> Shifts
+            <History className="w-3 h-3" aria-hidden="true" /> Shifts
           </div>
           <p className="text-navy text-xl md:text-2xl font-bold">{shifts.length}</p>
         </div>
         <div className="bg-white border border-border rounded-xl p-3 md:p-5">
           <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
-            <Clock className="w-3 h-3" /> Hours
+            <Clock className="w-3 h-3" aria-hidden="true" /> Hours
           </div>
           <p className="text-navy text-xl md:text-2xl font-bold">{totalHours.toFixed(1)}</p>
         </div>
         <div className="bg-white border border-border rounded-xl p-3 md:p-5">
           <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
-            <DollarSign className="w-3 h-3" /> Earned
+            <DollarSign className="w-3 h-3" aria-hidden="true" /> Earned
           </div>
           <p className="text-navy text-xl md:text-2xl font-bold">${totalPay.toFixed(2)}</p>
         </div>
         <div className="bg-white border border-border rounded-xl p-3 md:p-5">
           <div className="flex items-center gap-1.5 text-navy/50 text-[10px] uppercase tracking-wider mb-1.5">
-            <DollarSign className="w-3 h-3" /> Avg/Shift
+            <DollarSign className="w-3 h-3" aria-hidden="true" /> Avg/Shift
           </div>
           <p className="text-navy text-xl md:text-2xl font-bold">
             {shifts.length > 0 ? `$${(totalPay / shifts.length).toFixed(2)}` : "—"}

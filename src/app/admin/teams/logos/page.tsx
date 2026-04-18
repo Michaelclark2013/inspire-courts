@@ -52,7 +52,7 @@ export default function LogoManagementPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Link href="/admin/teams" className="text-text-secondary hover:text-navy transition-colors text-xs flex items-center gap-1">
-              <ArrowLeft className="w-3 h-3" /> Teams
+              <ArrowLeft className="w-3 h-3" aria-hidden="true" /> Teams
             </Link>
           </div>
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
@@ -66,7 +66,7 @@ export default function LogoManagementPage() {
           onClick={fetchLogos}
           className="flex items-center gap-2 text-text-secondary hover:text-navy transition-colors text-xs border border-border rounded-sm px-3 py-2"
         >
-          <RefreshCw className="w-3.5 h-3.5" /> Refresh
+          <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
         </button>
       </div>
 
@@ -115,7 +115,7 @@ export default function LogoManagementPage() {
             href="/admin/teams"
             className="inline-flex items-center gap-2 text-accent text-sm font-semibold hover:text-accent-hover transition-colors"
           >
-            <Upload className="w-4 h-4" /> Go to Teams
+            <Upload className="w-4 h-4" aria-hidden="true" /> Go to Teams
           </Link>
         </div>
       ) : (

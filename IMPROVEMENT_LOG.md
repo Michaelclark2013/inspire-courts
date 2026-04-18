@@ -331,6 +331,27 @@
 - Replace inline toLocaleDateString/toLocaleString in 6 admin pages
 - formatDate / formatDateShort / formatCurrency from @/lib/utils
 
+### Cycle 16 — Security hardening
+- auth/register rate-limit namespaced (register:${ip})
+- portal/registrations: explicit coach role guard + lowercase email compare
+- admin/users PUT: Number.isFinite + positive check on id before eq()
+- portal/checkin log: no longer includes full playerName (PII)
+
+### Cycle 17 — ID validation + double-submit guard
+- All 5 admin /tournaments/[id]/* routes validate tournamentId (was passing NaN into eq)
+- Portal manual check-in: manualSubmitting flag + spinner on button
+- Wrap GoogleAnalytics in <Suspense> at layout root
+
+### Cycle 18 — Data display polish
+- TournamentsClient: formatCurrency instead of toLocaleString
+- admin/users: formatDate + formatPhone (was default locale "4/14/2026")
+- admin/approvals + PlayersSheet + ProspectsSheet + TeamsSheet: format phone
+- PlayersSheet: title attr on truncated team name
+
+### Cycle 19 — Button tactile feedback + radius consistency
+- Add active:scale-[0.97] to 14 CTAs (hover:scale-[1.03] without active: press state)
+- about CTA rounded-xl → rounded-full to match button family
+
 ### Build Status
-- ✅ PASS — `npm run build` clean across all 12 cycles
+- ✅ PASS — `npm run build` clean across all 16 cycles
 - ✅ All pushed to `improvements/round-76-clubform-contact-2026-04-17` branch

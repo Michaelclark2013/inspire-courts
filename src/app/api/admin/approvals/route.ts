@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { recordAudit } from "@/lib/audit";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -81,10 +82,28 @@ export async function PATCH(request: NextRequest) {
         .set({ approved: true, updatedAt: new Date().toISOString() })
         .where(eq(users.id, userId));
 
+      await recordAudit({
+        session,
+        action: "user.approved",
+        entityType: "user",
+        entityId: userId,
+        before: { approved: user.approved, role: user.role, email: user.email },
+        after: { approved: true, role: user.role, email: user.email },
+      });
+
       return NextResponse.json({ success: true, message: `${user.name} approved` });
     } else {
       // Reject = delete the user
       await db.delete(users).where(eq(users.id, userId));
+
+      await recordAudit({
+        session,
+        action: "user.rejected",
+        entityType: "user",
+        entityId: userId,
+        before: { email: user.email, name: user.name, role: user.role, approved: user.approved },
+        after: null,
+      });
 
       return NextResponse.json({ success: true, message: `${user.name} rejected and removed` });
     }

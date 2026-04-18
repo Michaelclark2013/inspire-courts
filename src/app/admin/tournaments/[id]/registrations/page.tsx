@@ -13,6 +13,7 @@ import {
   XCircle,
   Plus,
   X,
+  Download,
 } from "lucide-react";
 
 type Registration = {
@@ -143,13 +144,24 @@ export default function RegistrationsPage() {
             {regs.length} total registrations
           </p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
-        >
-          {showForm ? <X className="w-4 h-4" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
-          {showForm ? "Cancel" : "Add Walk-In"}
-        </button>
+        <div className="flex items-center gap-2">
+          <a
+            href={`/api/admin/tournaments/${id}/registrations?format=csv`}
+            download
+            aria-label="Export registrations as CSV"
+            className="flex items-center gap-1.5 border border-border bg-white hover:bg-off-white text-navy px-3 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" aria-hidden="true" />
+            CSV
+          </a>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          >
+            {showForm ? <X className="w-4 h-4" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
+            {showForm ? "Cancel" : "Add Walk-In"}
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards */}

@@ -347,6 +347,7 @@ export default function RosterPage() {
                           <button
                             onClick={() => handleRemove(p.id, p.name)}
                             disabled={deletingId === p.id}
+                            aria-label={`Remove ${p.name}`}
                             className="text-light-gray hover:text-red disabled:opacity-40 transition-colors"
                           >
                             {deletingId === p.id ? (

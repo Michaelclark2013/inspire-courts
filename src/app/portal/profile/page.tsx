@@ -68,26 +68,31 @@ export default function ProfilePage() {
     setError("");
     setSaved(false);
 
-    const res = await fetch("/api/portal/profile", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        phone,
-        ...(newPassword ? { currentPassword, newPassword } : {}),
-      }),
-    });
+    try {
+      const res = await fetch("/api/portal/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          ...(newPassword ? { currentPassword, newPassword } : {}),
+        }),
+      });
 
-    if (res.ok) {
-      setSaved(true);
-      setCurrentPassword("");
-      setNewPassword("");
-      setTimeout(() => setSaved(false), 3000);
-    } else {
-      const data = await res.json();
-      setError(data.error || "Failed to save");
+      if (res.ok) {
+        setSaved(true);
+        setCurrentPassword("");
+        setNewPassword("");
+        setTimeout(() => setSaved(false), 3000);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to save");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   }
 
   async function handleDeleteAccount(e: React.FormEvent) {

@@ -22,7 +22,7 @@ export default function PortalLoading() {
       {/* Loading indicator */}
       <div className="flex items-center justify-center py-12 text-text-muted">
         <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" />
-        <span className="text-sm">Loading portal...</span>
+        <span className="text-sm">Loading your dashboard…</span>
       </div>
     </div>
   );

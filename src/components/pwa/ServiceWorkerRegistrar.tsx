@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { logger } from "@/lib/logger";
 
 export function ServiceWorkerRegistrar() {
   const pathname = usePathname();
@@ -36,7 +37,7 @@ export function ServiceWorkerRegistrar() {
         });
       })
       .catch((err) => {
-        console.warn("SW registration failed:", err);
+        logger.warn("SW registration failed", { error: String(err) });
       });
 
     // Reload when the new SW takes over

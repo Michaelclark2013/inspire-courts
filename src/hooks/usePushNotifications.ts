@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 export function usePushNotifications() {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -54,7 +55,7 @@ export function usePushNotifications() {
 
       setIsSubscribed(true);
     } catch (err) {
-      console.error("[push] Subscribe failed:", err);
+      logger.error("[push] Subscribe failed", { error: String(err) });
     } finally {
       setIsLoading(false);
     }
@@ -81,7 +82,7 @@ export function usePushNotifications() {
 
       setIsSubscribed(false);
     } catch (err) {
-      console.error("[push] Unsubscribe failed:", err);
+      logger.error("[push] Unsubscribe failed", { error: String(err) });
     } finally {
       setIsLoading(false);
     }

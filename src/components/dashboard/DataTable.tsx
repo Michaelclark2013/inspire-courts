@@ -16,6 +16,8 @@ interface DataTableProps {
   data: Record<string, any>[];
   searchKey?: string;
   searchPlaceholder?: string;
+  /** Screen-reader-only table caption for accessibility */
+  caption?: string;
 }
 
 export default function DataTable({
@@ -23,6 +25,7 @@ export default function DataTable({
   data,
   searchKey,
   searchPlaceholder = "Search...",
+  caption,
 }: DataTableProps) {
   const [search, setSearch] = useState("");
 
@@ -52,6 +55,7 @@ export default function DataTable({
 
       <div className="overflow-x-auto scroll-shadow-x rounded-xl border border-border min-h-[200px]">
         <table className="w-full text-sm">
+          {caption && <caption className="sr-only">{caption}</caption>}
           <thead>
             <tr className="bg-off-white border-b border-border">
               {columns.map((col) => (

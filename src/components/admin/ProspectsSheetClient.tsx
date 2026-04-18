@@ -150,6 +150,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
           />
         </div>
         <select
+          aria-label="Filter by status"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
@@ -159,6 +160,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
           ))}
         </select>
         <select
+          aria-label="Filter by division"
           value={divFilter}
           onChange={(e) => setDivFilter(e.target.value)}
           className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"

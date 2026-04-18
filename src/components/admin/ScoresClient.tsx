@@ -69,10 +69,10 @@ export default function ScoresClient({ games }: { games: Game[] }) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
           <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search teams..." className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50" />
         </div>
-        <select value={eventFilter} onChange={(e) => setEventFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by event" value={eventFilter} onChange={(e) => setEventFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
           {events.map((e) => <option key={e} value={e}>{e === "All" ? "All Events" : e}</option>)}
         </select>
-        <select value={divisionFilter} onChange={(e) => setDivisionFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by division" value={divisionFilter} onChange={(e) => setDivisionFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
           {divisions.map((d) => <option key={d} value={d}>{d === "All" ? "All Divisions" : d}</option>)}
         </select>
       </div>

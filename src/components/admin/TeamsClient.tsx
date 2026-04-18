@@ -126,10 +126,10 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
             className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50"
           />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 min-h-[44px] text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 min-h-[44px] text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
           {statuses.map((s) => <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>)}
         </select>
-        <select value={ageFilter} onChange={(e) => setAgeFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 min-h-[44px] text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
+        <select aria-label="Filter by age group" value={ageFilter} onChange={(e) => setAgeFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 min-h-[44px] text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
           {ages.map((a) => <option key={a} value={a}>{a === "All" ? "All Ages" : a}</option>)}
         </select>
         <button

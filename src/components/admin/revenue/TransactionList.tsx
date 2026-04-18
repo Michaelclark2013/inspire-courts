@@ -269,6 +269,7 @@ export function TransactionList({ transactions }: Props) {
       {/* Desktop table view (area 13 - proper table semantics, area 20 - scrollable) */}
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-sm" role="table">
+          <caption className="sr-only">Transaction history</caption>
           <thead>
             <tr className="border-b border-light-gray">
               {(

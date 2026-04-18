@@ -167,6 +167,7 @@ export default function PortalSidebar() {
               <span className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">View As</span>
             </div>
             <select
+              aria-label="View portal as role"
               value={viewAsRole || "admin"}
               onChange={(e) => setViewAsRole(e.target.value === "admin" ? null : e.target.value)}
               className="w-full bg-white border border-light-gray rounded-lg px-3 py-2 text-navy text-xs font-medium focus:outline-none focus:border-amber-500/50 focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer appearance-none"

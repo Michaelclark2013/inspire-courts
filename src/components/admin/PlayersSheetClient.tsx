@@ -116,6 +116,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
           />
         </div>
         <select
+          aria-label="Filter by division"
           value={divFilter}
           onChange={(e) => setDivFilter(e.target.value)}
           className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
@@ -125,6 +126,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
           ))}
         </select>
         <select
+          aria-label="Filter by team"
           value={teamFilter}
           onChange={(e) => setTeamFilter(e.target.value)}
           className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"

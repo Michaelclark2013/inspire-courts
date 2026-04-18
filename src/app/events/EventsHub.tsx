@@ -319,6 +319,7 @@ export default function EventsHub({
                 <div className="relative">
                   <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
                   <select
+                    aria-label="Filter by division"
                     value={divisionFilter}
                     onChange={(e) => setDivisionFilter(e.target.value)}
                     className="w-full lg:w-auto appearance-none pl-10 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red focus:border-red transition-colors"
@@ -334,6 +335,7 @@ export default function EventsHub({
                 {/* Status Filter */}
                 <div className="relative">
                   <select
+                    aria-label="Filter by status"
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                     className="w-full lg:w-auto appearance-none pl-4 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red focus:border-red transition-colors"

@@ -54,27 +54,30 @@ export default function DashboardDBStats() {
   const [secondsAgo, setSecondsAgo] = useState(0);
   const [liveGamesDetail, setLiveGamesDetail] = useState<any[]>([]);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (signal?: AbortSignal) => {
     try {
-      const res = await fetch("/api/admin/dashboard");
+      const res = await fetch("/api/admin/dashboard", { signal });
       if (res.ok) {
         const json = await res.json();
         setData(json);
         setError(false);
         setLastFetched(new Date());
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setError(true);
     }
   }, []);
 
   useEffect(() => {
-    fetchData();
-    const refreshInterval = setInterval(() => fetchData(), 30000);
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    const refreshInterval = setInterval(() => fetchData(controller.signal), 30000);
     const tickInterval = setInterval(() => {
       setSecondsAgo((prev) => prev + 1);
     }, 1000);
     return () => {
+      controller.abort();
       clearInterval(refreshInterval);
       clearInterval(tickInterval);
     };
@@ -91,18 +94,24 @@ export default function DashboardDBStats() {
       setLiveGamesDetail([]);
       return;
     }
+    const controller = new AbortController();
     async function fetchLive() {
       try {
-        const res = await fetch("/api/scores/live");
+        const res = await fetch("/api/scores/live", { signal: controller.signal });
         if (res.ok) {
           const games = await res.json();
           setLiveGamesDetail(Array.isArray(games) ? games.filter((g: { status?: string }) => g.status === "live") : []);
         }
-      } catch {}
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+      }
     }
     fetchLive();
     const interval = setInterval(fetchLive, 15000);
-    return () => clearInterval(interval);
+    return () => {
+      controller.abort();
+      clearInterval(interval);
+    };
   }, [data?.liveGames]);
 
   if (error && !data) {
@@ -111,7 +120,7 @@ export default function DashboardDBStats() {
         <AlertTriangle className="w-8 h-8 text-red/60 mx-auto mb-2" aria-hidden="true" />
         <p className="text-navy font-semibold text-sm mb-1">Failed to load dashboard data</p>
         <p className="text-text-secondary text-xs mb-4">Check your connection and try again</p>
-        <button onClick={() => { setError(false); fetchData(); }} className="bg-red hover:bg-red-hover text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors">
+        <button onClick={() => { setError(false); fetchData(); }} type="button" className="bg-red hover:bg-red-hover text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors">
           Retry
         </button>
       </div>

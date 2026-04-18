@@ -98,14 +98,25 @@ export default function AdminSidebar() {
 
   // Persist collapsed state in localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("sidebar-collapsed");
-    if (saved === "true") setCollapsed(true);
+    if (typeof window === "undefined") return;
+    try {
+      const saved = window.localStorage.getItem("sidebar-collapsed");
+      if (saved === "true") setCollapsed(true);
+    } catch {
+      // localStorage may be unavailable (private browsing, quota, etc.)
+    }
   }, []);
 
   function toggleCollapsed() {
     setCollapsed((prev) => {
       const next = !prev;
-      localStorage.setItem("sidebar-collapsed", String(next));
+      if (typeof window !== "undefined") {
+        try {
+          window.localStorage.setItem("sidebar-collapsed", String(next));
+        } catch {
+          // localStorage may be unavailable — state still updates in memory.
+        }
+      }
       return next;
     });
   }

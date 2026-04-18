@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import {
   UserCheck,
@@ -47,7 +47,7 @@ export default function CoachCheckInPage() {
   const [bulkChecking, setBulkChecking] = useState(false);
   const [bulkProgress, setBulkProgress] = useState(0);
   const [undoPlayer, setUndoPlayer] = useState<string | null>(null);
-  const [undoTimeout, setUndoTimeout] = useState<NodeJS.Timeout | null>(null);
+  const undoTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [duplicateWarning, setDuplicateWarning] = useState("");
   const [coachesCheckedIn, setCoachesCheckedIn] = useState<CoachCheckedIn[]>([]);
   const [coachName, setCoachName] = useState("");
@@ -84,9 +84,9 @@ export default function CoachCheckInPage() {
   // Clear undo timeout on unmount so it doesn't fire setState after unmount
   useEffect(() => {
     return () => {
-      if (undoTimeout) clearTimeout(undoTimeout);
+      if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
     };
-  }, [undoTimeout]);
+  }, []);
 
   // Clear duplicate warning after 3s
   useEffect(() => {
@@ -117,10 +117,9 @@ export default function CoachCheckInPage() {
       if (res.ok) {
         setCheckedIn((prev) => [...prev, { name: playerName, time: new Date().toLocaleTimeString() }]);
         // Set up undo
-        if (undoTimeout) clearTimeout(undoTimeout);
+        if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
         setUndoPlayer(playerName);
-        const t = setTimeout(() => setUndoPlayer(null), 5000);
-        setUndoTimeout(t);
+        undoTimeoutRef.current = setTimeout(() => setUndoPlayer(null), 5000);
       } else {
         setMutationError(`Failed to check in ${playerName}. Try again.`);
       }
@@ -134,7 +133,7 @@ export default function CoachCheckInPage() {
     if (undoPlayer) {
       setCheckedIn((prev) => prev.filter((c) => c.name !== undoPlayer));
       setUndoPlayer(null);
-      if (undoTimeout) clearTimeout(undoTimeout);
+      if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
     }
   }
 

@@ -98,7 +98,7 @@ export default function GalleryPageClient() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
               >
-                @inspirecourts <ArrowRight className="w-4 h-4" />
+                @inspirecourts <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </a>
               <a
                 href="https://instagram.com/azfinestmixtape"
@@ -106,7 +106,7 @@ export default function GalleryPageClient() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-white border-2 border-navy hover:bg-navy hover:text-white text-navy px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors font-[var(--font-chakra)]"
               >
-                @azfinestmixtape <ArrowRight className="w-4 h-4" />
+                @azfinestmixtape <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </a>
             </div>
           </AnimateIn>

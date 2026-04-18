@@ -9,7 +9,7 @@ export function MyRegistrationsList({ registrations }: { registrations: Registra
     return (
       <div className="mb-6 bg-white shadow-sm border border-light-gray rounded-2xl p-6 text-center">
         <div className="w-12 h-12 rounded-full bg-off-white flex items-center justify-center mx-auto mb-3">
-          <Trophy className="w-6 h-6 text-light-gray" />
+          <Trophy className="w-6 h-6 text-light-gray" aria-hidden="true" />
         </div>
         <h3 className="text-navy font-semibold text-sm mb-1">No Tournaments Yet</h3>
         <p className="text-text-muted text-xs mb-4 max-w-xs mx-auto">
@@ -30,7 +30,7 @@ export function MyRegistrationsList({ registrations }: { registrations: Registra
       <div className="px-5 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-red/10 rounded-lg flex items-center justify-center">
-            <Trophy className="w-4 h-4 text-red" />
+            <Trophy className="w-4 h-4 text-red" aria-hidden="true" />
           </div>
           <h2 className="text-navy font-bold text-sm">My Tournaments</h2>
         </div>

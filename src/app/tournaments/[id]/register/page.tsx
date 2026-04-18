@@ -160,7 +160,7 @@ export default function RegisterPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-text-muted" />
+        <Loader2 className="w-6 h-6 animate-spin text-text-muted" aria-hidden="true" />
       </div>
     );
   }
@@ -177,7 +177,7 @@ export default function RegisterPage() {
     return (
       <div className="min-h-screen bg-off-white flex items-center justify-center">
         <div className="text-center">
-          <Trophy className="w-10 h-10 mx-auto mb-3 text-text-muted" />
+          <Trophy className="w-10 h-10 mx-auto mb-3 text-text-muted" aria-hidden="true" />
           <p className="text-text-muted mb-4">Registration is not open for this tournament.</p>
           <Link href={`/tournaments/${id}`} className="text-red text-sm hover:text-red-hover">
             View Tournament
@@ -251,7 +251,7 @@ export default function RegisterPage() {
                     }`}
                   >
                     {done ? (
-                      <CheckCircle2 className="w-4 h-4" />
+                      <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
                     ) : (
                       <StepIcon className="w-4 h-4" />
                     )}

@@ -91,7 +91,7 @@ export default function LogoUploader({
         <Image src={currentLogoUrl} alt={teamName} width={64} height={64} className="w-16 h-16 object-contain rounded-full mb-1" unoptimized />
       ) : (
         <div className="w-16 h-16 bg-light-gray rounded-full flex items-center justify-center mb-1">
-          <ImageIcon className="w-7 h-7 text-text-muted" />
+          <ImageIcon className="w-7 h-7 text-text-muted" aria-hidden="true" />
         </div>
       )}
       <span className="text-text-secondary text-xs font-semibold group-hover:text-navy transition-colors">
@@ -104,7 +104,7 @@ export default function LogoUploader({
       title="Upload team logo"
       className="w-7 h-7 flex items-center justify-center rounded-full bg-off-white hover:bg-light-gray transition-colors flex-shrink-0"
     >
-      <Camera className="w-3.5 h-3.5 text-text-secondary" />
+      <Camera className="w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
     </button>
   );
 

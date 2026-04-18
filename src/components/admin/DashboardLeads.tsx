@@ -46,7 +46,7 @@ export default function DashboardLeads() {
     <div className="bg-bg-secondary border border-border rounded-sm overflow-hidden">
       <div className="px-5 py-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Flame className="w-4 h-4 text-amber-600" />
+          <Flame className="w-4 h-4 text-amber-600" aria-hidden="true" />
           <h3 className="text-navy font-bold text-xs uppercase tracking-wider">
             Leads Pipeline
           </h3>

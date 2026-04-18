@@ -85,7 +85,7 @@ export default function TournamentsList({ selectedEvent, onSelectEvent }: Props)
                     </h3>
                     {liveCount > 0 && (
                       <span className="flex items-center gap-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        <Radio className="w-2.5 h-2.5 animate-pulse" />
+                        <Radio className="w-2.5 h-2.5 animate-pulse" aria-hidden="true" />
                         {liveCount} Live
                       </span>
                     )}
@@ -100,12 +100,12 @@ export default function TournamentsList({ selectedEvent, onSelectEvent }: Props)
                     </span>
                     {t.location && <span>{t.location}</span>}
                     <span className="flex items-center gap-1">
-                      <Users className="w-3 h-3" />
+                      <Users className="w-3 h-3" aria-hidden="true" />
                       {t.teams?.length || 0} teams
                     </span>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/40 transition-colors flex-shrink-0" />
+                <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/40 transition-colors flex-shrink-0" aria-hidden="true" />
               </div>
             </Link>
           );

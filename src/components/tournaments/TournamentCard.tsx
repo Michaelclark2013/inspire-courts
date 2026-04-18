@@ -47,7 +47,7 @@ function TournamentCardInner({
           </span>
         </div>
         <span className="text-text-muted text-xs font-semibold uppercase tracking-wider flex-shrink-0">
-          View Results <ArrowRight className="w-3 h-3 inline" />
+          View Results <ArrowRight className="w-3 h-3 inline" aria-hidden="true" />
         </span>
       </Link>
     );

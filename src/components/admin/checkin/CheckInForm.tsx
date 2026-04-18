@@ -141,7 +141,7 @@ export default function CheckInForm({
   return (
     <div className="bg-white border border-border shadow-sm rounded-xl p-5">
       <div className="flex items-center gap-2 mb-4">
-        <UserCheck className="w-4 h-4 text-red" />
+        <UserCheck className="w-4 h-4 text-red" aria-hidden="true" />
         <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
           Quick Check-In
         </h2>
@@ -181,7 +181,7 @@ export default function CheckInForm({
             role="status"
             aria-live="polite"
           >
-            <WifiOff className="w-3 h-3" />
+            <WifiOff className="w-3 h-3" aria-hidden="true" />
             Checked in (offline) — will sync when reconnected
           </div>
         )}
@@ -247,7 +247,7 @@ export default function CheckInForm({
           {saving ? (
             <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
           ) : success ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-300" aria-hidden="true" />
           ) : (
             <UserCheck className="w-4 h-4" aria-hidden="true" />
           )}

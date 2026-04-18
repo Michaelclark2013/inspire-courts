@@ -83,7 +83,7 @@ export default async function TeamsPage() {
             href="/admin/teams/logos"
             className="flex items-center gap-1.5 text-text-secondary hover:text-navy border border-border hover:border-accent/40 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors"
           >
-            <ImageIcon className="w-3.5 h-3.5" /> Logos
+            <ImageIcon className="w-3.5 h-3.5" aria-hidden="true" /> Logos
           </Link>
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 text-center min-w-[52px]">
             <p className="text-emerald-700 font-bold text-base leading-none">{paidCount}</p>
@@ -109,7 +109,7 @@ function SetupPrompt() {
         <p className="text-text-secondary text-sm mt-1 hidden md:block">Master Teams & Payments</p>
       </div>
       <div className="bg-bg-secondary border border-border rounded-xl p-5 text-center">
-        <Users className="w-10 h-10 text-text-secondary mx-auto mb-3" />
+        <Users className="w-10 h-10 text-text-secondary mx-auto mb-3" aria-hidden="true" />
         <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
         <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>
       </div>

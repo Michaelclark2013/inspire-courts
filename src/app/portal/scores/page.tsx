@@ -58,7 +58,7 @@ export default function PortalScoresPage() {
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">Scores & Standings</h1>
         </div>
         <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
-          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" aria-hidden="true" />
           <h3 className="text-navy font-semibold mb-1">Failed to Load Scores</h3>
           <p className="text-text-muted text-sm mb-4">Could not load scores. Check your connection and try again.</p>
           <button
@@ -83,7 +83,7 @@ export default function PortalScoresPage() {
             <ExportBar onExportCSV={() => exportCSV("scores", ["Home Team", "Away Team", "Score", "Division"], games.filter(g => g.status === "final").map(g => [g.homeTeam, g.awayTeam, `${g.homeScore}-${g.awayScore}`, g.division || ""]))} />
             {hasLive && (
               <span className="flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-                <Radio className="w-3 h-3 animate-pulse" /> Live
+                <Radio className="w-3 h-3 animate-pulse" aria-hidden="true" /> Live
               </span>
             )}
           </div>
@@ -132,7 +132,7 @@ export default function PortalScoresPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16 text-text-muted">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading scores...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading scores...
         </div>
       ) : (
         <div className="space-y-8">
@@ -150,7 +150,7 @@ export default function PortalScoresPage() {
           {finalGames.length > 0 ? (
             <div className="bg-white border border-light-gray rounded-xl overflow-hidden">
               <div className="px-6 py-4 border-b border-light-gray flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-red" />
+                <Trophy className="w-4 h-4 text-red" aria-hidden="true" />
                 <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
                   Recent Results
                 </h2>
@@ -182,7 +182,7 @@ export default function PortalScoresPage() {
             </div>
           ) : (
             <div className="bg-white border border-light-gray rounded-xl p-8 text-center">
-              <Trophy className="w-8 h-8 text-light-gray mx-auto mb-3" />
+              <Trophy className="w-8 h-8 text-light-gray mx-auto mb-3" aria-hidden="true" />
               <p className="text-navy font-semibold mb-1">No Results Yet</p>
               <p className="text-text-muted text-sm">
                 {selectedDivision !== "all"

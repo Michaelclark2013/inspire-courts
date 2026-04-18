@@ -106,7 +106,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
           <input
             type="text"
             value={search}
@@ -140,7 +140,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
           title="Download CSV"
           className="flex items-center gap-1.5 bg-bg-secondary border border-border rounded-sm px-3 py-2 text-text-secondary hover:text-navy hover:border-accent/50 text-xs transition-colors flex-shrink-0"
         >
-          <Download className="w-3.5 h-3.5" /> CSV
+          <Download className="w-3.5 h-3.5" aria-hidden="true" /> CSV
         </button>
       </div>
 
@@ -187,7 +187,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
                         )}
                         {p.email !== "—" && (
                           <a href={`mailto:${p.email}`} className="text-text-secondary hover:text-accent transition-colors">
-                            <ExternalLink className="w-3 h-3" />
+                            <ExternalLink className="w-3 h-3" aria-hidden="true" />
                           </a>
                         )}
                       </div>

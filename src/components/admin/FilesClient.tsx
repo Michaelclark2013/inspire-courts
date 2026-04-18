@@ -30,14 +30,14 @@ interface Props {
 
 function FileIcon({ mimeType }: { mimeType: string }) {
   if (mimeType === "application/vnd.google-apps.folder")
-    return <Folder className="w-4 h-4 text-yellow-600" />;
+    return <Folder className="w-4 h-4 text-yellow-600" aria-hidden="true" />;
   if (mimeType === "application/vnd.google-apps.spreadsheet")
-    return <FileSpreadsheet className="w-4 h-4 text-success" />;
+    return <FileSpreadsheet className="w-4 h-4 text-success" aria-hidden="true" />;
   if (mimeType === "application/vnd.google-apps.document")
-    return <FileText className="w-4 h-4 text-blue-600" />;
+    return <FileText className="w-4 h-4 text-blue-600" aria-hidden="true" />;
   if (mimeType.startsWith("image/"))
-    return <Image className="w-4 h-4 text-purple-600" />;
-  return <File className="w-4 h-4 text-text-secondary" />;
+    return <Image className="w-4 h-4 text-purple-600" aria-hidden="true" />;
+  return <File className="w-4 h-4 text-text-secondary" aria-hidden="true" />;
 }
 
 function FileGrid({ files }: { files: EnrichedFile[] }) {

@@ -18,7 +18,7 @@ export default function TournamentsNotFound() {
           href="/tournaments"
           className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
         >
-          Browse Tournaments <ArrowRight className="w-4 h-4" />
+          Browse Tournaments <ArrowRight className="w-4 h-4" aria-hidden="true" />
         </Link>
       </div>
     </div>

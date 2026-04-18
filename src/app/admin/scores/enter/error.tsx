@@ -18,7 +18,7 @@ export default function ScoreEntryError({
   return (
     <div className="p-6">
       <div className="max-w-md mx-auto bg-white border border-border shadow-sm rounded-xl p-6 text-center">
-        <AlertCircle className="w-8 h-8 text-red mx-auto mb-3" />
+        <AlertCircle className="w-8 h-8 text-red mx-auto mb-3" aria-hidden="true" />
         <h2 className="text-navy font-bold text-lg font-heading mb-2">Score Entry Error</h2>
         <p className="text-text-secondary text-sm mb-5">
           Something went wrong loading the score entry page. Your data is safe.

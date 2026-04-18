@@ -341,7 +341,7 @@ export default function ScoreEntryPage() {
           role="alert"
           className="mb-4 bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-4 py-3 flex items-start gap-2"
         >
-          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true" />
           <div className="flex-1">
             <p className="font-semibold">Some data could not be loaded</p>
             <p className="text-xs mt-0.5">
@@ -366,7 +366,7 @@ export default function ScoreEntryPage() {
           aria-live="polite"
           className="fixed bottom-20 md:bottom-6 right-6 z-80 flex items-center gap-3 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl"
         >
-          <Check className="w-4 h-4 flex-shrink-0" />
+          <Check className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           <span className="text-sm font-semibold">{createSuccess}</span>
           <button
             type="button"
@@ -384,7 +384,7 @@ export default function ScoreEntryPage() {
           aria-live="polite"
           className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-80 flex items-center gap-2 bg-navy text-white px-4 py-2.5 rounded-full shadow-xl"
         >
-          <Check className="w-4 h-4" />
+          <Check className="w-4 h-4" aria-hidden="true" />
           <span className="text-xs font-semibold uppercase tracking-wider">{scoreSuccess}</span>
         </div>
       )}

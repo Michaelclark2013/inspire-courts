@@ -72,7 +72,7 @@ export default function WaiverPage() {
     return (
       <div className="p-6 lg:p-8">
         <div className="max-w-lg mx-auto text-center py-20 animate-fade-in">
-          <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto mb-6" />
+          <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto mb-6" aria-hidden="true" />
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading mb-3">
             Waiver Submitted
           </h1>
@@ -137,7 +137,7 @@ export default function WaiverPage() {
 
         <div className="bg-white border border-light-gray rounded-xl p-6">
           <div className="flex items-center gap-2 mb-6">
-            <FileCheck className="w-4 h-4 text-red" />
+            <FileCheck className="w-4 h-4 text-red" aria-hidden="true" />
             <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
               Participation Waiver
             </h2>

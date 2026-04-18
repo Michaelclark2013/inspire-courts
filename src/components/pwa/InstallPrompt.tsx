@@ -100,11 +100,11 @@ export function InstallPrompt() {
           <p className="font-semibold text-sm mb-2">{label}</p>
           <div className="flex items-center gap-2 text-xs text-white/80">
             <span className="inline-flex items-center gap-1">
-              Tap <Share className="w-4 h-4 inline" /> Share
+              Tap <Share className="w-4 h-4 inline" aria-hidden="true" /> Share
             </span>
             <span>then</span>
             <span className="inline-flex items-center gap-1">
-              <Plus className="w-4 h-4 inline" /> Add to Home Screen
+              <Plus className="w-4 h-4 inline" aria-hidden="true" /> Add to Home Screen
             </span>
           </div>
         </div>

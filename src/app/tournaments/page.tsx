@@ -238,7 +238,7 @@ async function TournamentList() {
                   href="/contact?type=Tournament+Registration"
                   className="inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
                 >
-                  Contact Us <ArrowRight className="w-4 h-4" />
+                  Contact Us <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
                 <a
                   href="https://instagram.com/inspirecourts"
@@ -406,7 +406,7 @@ export default async function TournamentsPage() {
               href="/contact?type=Tournament+Registration"
               className="cta-primary shadow-lg hover:shadow-xl font-[var(--font-chakra)] focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px]"
             >
-              Contact Us <ArrowRight className="w-4 h-4" />
+              Contact Us <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
             <Link
               href="/faq"

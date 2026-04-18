@@ -258,7 +258,7 @@ export default function PublicTournamentPage() {
               }}
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              {copied ? <><Copy className="w-3.5 h-3.5" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" /> Share</>}
+              {copied ? <><Copy className="w-3.5 h-3.5" aria-hidden="true" /> Copied!</> : <><Share2 className="w-3.5 h-3.5" aria-hidden="true" /> Share</>}
             </button>
             <a
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(data.name + " at Inspire Courts")}&url=${encodeURIComponent(`https://inspirecourtsaz.com/tournaments/${data.id}`)}`}
@@ -267,7 +267,7 @@ export default function PublicTournamentPage() {
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
               aria-label="Share on X (Twitter)"
             >
-              <Link2 className="w-3.5 h-3.5" /> Post on X
+              <Link2 className="w-3.5 h-3.5" aria-hidden="true" /> Post on X
             </a>
             <a
               href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(data.name)}&dates=${data.startDate.replace(/-/g, "")}/${data.endDate ? data.endDate.replace(/-/g, "") : data.startDate.replace(/-/g, "")}&location=${encodeURIComponent(data.location || "Inspire Courts AZ, Gilbert, AZ")}&details=${encodeURIComponent("Tournament at Inspire Courts. View details: https://inspirecourtsaz.com/tournaments/" + data.id)}`}
@@ -275,7 +275,7 @@ export default function PublicTournamentPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              <CalendarPlus className="w-3.5 h-3.5" /> Google Cal
+              <CalendarPlus className="w-3.5 h-3.5" aria-hidden="true" /> Google Cal
             </a>
             <button
               type="button"
@@ -289,7 +289,7 @@ export default function PublicTournamentPage() {
               })}
               className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wide border border-light-gray hover:border-navy/20 px-3 py-2 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
             >
-              <CalendarPlus className="w-3.5 h-3.5" /> Download .ics
+              <CalendarPlus className="w-3.5 h-3.5" aria-hidden="true" /> Download .ics
             </button>
           </div>
         </header>

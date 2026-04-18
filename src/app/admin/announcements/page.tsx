@@ -272,11 +272,11 @@ export default function AnnouncementsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading announcements...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading announcements...
         </div>
       ) : list.length === 0 && !fetchError ? (
         <div className="text-center py-8 md:py-14 text-navy/40">
-          <Megaphone className="w-8 h-8 mx-auto mb-3 opacity-40" />
+          <Megaphone className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
           <p className="text-sm mb-4">No announcements yet.</p>
           <button
             onClick={() => setShowForm(true)}
@@ -307,7 +307,7 @@ export default function AnnouncementsPage() {
                   </p>
                   <div className="flex items-center gap-3 mt-2 text-navy/30 text-xs">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                      <Clock className="w-3 h-3" aria-hidden="true" />
                       {new Date(a.createdAt).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -330,7 +330,7 @@ export default function AnnouncementsPage() {
                   onClick={() => handleDelete(a.id, a.title)}
                   className="text-navy/40 hover:text-red transition-colors flex-shrink-0"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
             </div>

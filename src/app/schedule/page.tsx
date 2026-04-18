@@ -66,7 +66,7 @@ export default function SchedulePage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-red hover:text-red-hover text-xs font-bold uppercase tracking-wide transition-colors"
             >
-              Open in QuickScores <ExternalLink className="w-3.5 h-3.5" />
+              Open in QuickScores <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function SchedulePage() {
                   <span
                     className="inline-flex items-center gap-1 text-red text-xs font-semibold uppercase group-hover:underline flex-shrink-0"
                   >
-                    View Results <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    View Results <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                   </span>
                 </Link>
               </AnimateIn>

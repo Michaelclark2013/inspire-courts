@@ -41,7 +41,7 @@ export default function DataTable({
     <div>
       {searchKey && (
         <div className="mb-4 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" aria-hidden="true" />
           <input
             type="text"
             value={search}
@@ -77,7 +77,7 @@ export default function DataTable({
                   className="px-4 py-16 text-center text-text-secondary align-middle"
                 >
                   <div className="flex flex-col items-center gap-2">
-                    <Search className="w-5 h-5 text-text-secondary/40" />
+                    <Search className="w-5 h-5 text-text-secondary/40" aria-hidden="true" />
                     <span>No data found</span>
                   </div>
                 </td>

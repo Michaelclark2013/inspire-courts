@@ -360,7 +360,7 @@ export default function DashboardDBStats() {
                 href="/admin/announcements"
                 className="flex items-center gap-1.5 text-amber-600 text-xs font-semibold hover:text-amber-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50"
               >
-                <Megaphone className="w-3 h-3" />
+                <Megaphone className="w-3 h-3" aria-hidden="true" />
                 {data.activeAnnouncements} announcement{data.activeAnnouncements !== 1 ? "s" : ""}
               </Link>
             )}
@@ -368,12 +368,12 @@ export default function DashboardDBStats() {
           {data.upcomingGames.length === 0 ? (
             <div className="px-5 py-8 text-center">
               <div className="w-12 h-12 bg-cyan-500/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <Clock className="w-6 h-6 text-cyan-600/60" />
+                <Clock className="w-6 h-6 text-cyan-600/60" aria-hidden="true" />
               </div>
               <p className="text-navy font-semibold text-sm mb-1">No Games Scheduled</p>
               <p className="text-text-secondary text-xs mb-4">Games will appear here once you create a tournament and set up the bracket</p>
               <Link href="/admin/scores/enter" className="inline-flex items-center gap-2 bg-off-white hover:bg-light-gray text-navy text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
-                <ClipboardList className="w-3.5 h-3.5" /> Add a Game
+                <ClipboardList className="w-3.5 h-3.5" aria-hidden="true" /> Add a Game
               </Link>
             </div>
           ) : (

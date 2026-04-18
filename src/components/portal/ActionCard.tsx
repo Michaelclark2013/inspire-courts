@@ -54,7 +54,7 @@ function ActionCardImpl({ href, icon: Icon, title, desc, color, prefetchOnHover 
           <h3 className="text-navy font-semibold text-sm">{title}</h3>
           <p className="text-text-muted text-xs">{desc}</p>
         </div>
-        <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-navy/30 transition-colors" />
+        <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-navy/30 transition-colors" aria-hidden="true" />
       </div>
     </Link>
   );

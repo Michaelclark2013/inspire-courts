@@ -250,11 +250,11 @@ export default function RegistrationsPage() {
       <div className="bg-white border border-border shadow-sm rounded-xl overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16 text-text-muted">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading registrations...
+            <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading registrations...
           </div>
         ) : regs.length === 0 && !fetchError ? (
           <div className="text-center py-16 text-text-muted">
-            <Users className="w-8 h-8 mx-auto mb-3 opacity-40" />
+            <Users className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
             <p className="text-sm">No registrations yet.</p>
           </div>
         ) : (
@@ -319,7 +319,7 @@ export default function RegistrationsPage() {
                         className="text-text-muted/50 hover:text-red transition-colors"
                         title="Cancel registration"
                       >
-                        <XCircle className="w-4 h-4" />
+                        <XCircle className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </td>
                   </tr>

@@ -22,7 +22,7 @@ export default function SearchBar({
       role="search"
     >
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-navy/30" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-navy/30" aria-hidden="true" />
         <input
           type="text"
           placeholder="Search teams..."

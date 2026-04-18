@@ -55,12 +55,12 @@ export default function Breadcrumbs() {
             href="/admin"
             className="hover:text-navy transition-colors inline-flex items-center gap-1"
           >
-            <Home className="w-3.5 h-3.5" />
+            <Home className="w-3.5 h-3.5" aria-hidden="true" />
           </Link>
         </li>
         {crumbs.slice(1).map((crumb) => (
           <li key={crumb.href} className="flex items-center gap-1.5">
-            <ChevronRight className="w-3 h-3 text-text-muted/50" />
+            <ChevronRight className="w-3 h-3 text-text-muted/50" aria-hidden="true" />
             {crumb.isLast ? (
               <span className="font-semibold text-navy capitalize">{crumb.label}</span>
             ) : (

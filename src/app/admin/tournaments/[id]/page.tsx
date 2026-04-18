@@ -370,7 +370,7 @@ function TournamentDetailInner() {
         >
           {data.bracket.length === 0 ? (
             <EmptyState
-              icon={<Trophy className="w-8 h-8" />}
+              icon={<Trophy className="w-8 h-8" aria-hidden="true" />}
               title="No bracket generated yet"
               subtitle={
                 data.status === "draft"
@@ -399,7 +399,7 @@ function TournamentDetailInner() {
         >
           {data.bracket.length === 0 ? (
             <EmptyState
-              icon={<Calendar className="w-8 h-8" />}
+              icon={<Calendar className="w-8 h-8" aria-hidden="true" />}
               title="No games scheduled yet"
               subtitle="Generate the bracket to create a schedule."
             />
@@ -419,7 +419,7 @@ function TournamentDetailInner() {
         >
           {kpis.final === 0 ? (
             <EmptyState
-              icon={<BarChart3 className="w-8 h-8" />}
+              icon={<BarChart3 className="w-8 h-8" aria-hidden="true" />}
               title="No results yet"
               subtitle="Standings will appear as games are completed."
             />

@@ -148,7 +148,7 @@ export default function CommandPalette() {
       <div className="fixed z-[71] top-[20%] left-1/2 -translate-x-1/2 w-[90vw] max-w-[520px] bg-white rounded-2xl shadow-2xl border border-light-gray overflow-hidden">
         {/* Search input */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-light-gray">
-          <Search className="w-5 h-5 text-text-muted flex-shrink-0" />
+          <Search className="w-5 h-5 text-text-muted flex-shrink-0" aria-hidden="true" />
           <input
             ref={inputRef}
             type="text"

@@ -79,7 +79,7 @@ export default function ScoresPage() {
                 href="/tournaments"
                 className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
               >
-                Browse Tournaments <ArrowRight className="w-4 h-4" />
+                Browse Tournaments <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
           </AnimateIn>

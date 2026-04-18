@@ -79,7 +79,7 @@ export default function SchedulePage() {
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">Schedule</h1>
         </div>
         <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
-          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" aria-hidden="true" />
           <h3 className="text-navy font-semibold mb-1">Failed to Load Schedule</h3>
           <p className="text-text-muted text-sm mb-4">Could not load the schedule. Check your connection and try again.</p>
           <button
@@ -107,7 +107,7 @@ export default function SchedulePage() {
             <ExportBar onExportCSV={() => exportCSV("schedule", ["Date/Time", "Home Team", "Away Team", "Division", "Court", "Status", "Score"], games.map(g => [g.scheduledTime || "", g.homeTeam, g.awayTeam, g.division || "", g.court || "", g.status, `${g.homeScore}-${g.awayScore}`]))} />
             {live.length > 0 && (
               <span className="flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-                <Radio className="w-3 h-3 animate-pulse" /> Live
+                <Radio className="w-3 h-3 animate-pulse" aria-hidden="true" /> Live
               </span>
             )}
           </div>
@@ -158,12 +158,12 @@ export default function SchedulePage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16 text-text-muted">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading schedule...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading schedule...
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white border border-light-gray rounded-xl p-10 text-center">
           <div className="w-14 h-14 rounded-full bg-off-white flex items-center justify-center mx-auto mb-4">
-            <Calendar className="w-7 h-7 text-light-gray" />
+            <Calendar className="w-7 h-7 text-light-gray" aria-hidden="true" />
           </div>
           <p className="text-navy font-semibold mb-1">
             {selectedDivision !== "all" ? `No Games in ${selectedDivision}` : "No Games Scheduled"}
@@ -190,7 +190,7 @@ export default function SchedulePage() {
                 <h2 className={`text-sm font-bold uppercase tracking-wider mb-3 ${section.color}`}>
                   {section.label}
                   {section.label === "Live" && (
-                    <Radio className="w-3.5 h-3.5 inline ml-1.5 animate-pulse" />
+                    <Radio className="w-3.5 h-3.5 inline ml-1.5 animate-pulse" aria-hidden="true" />
                   )}
                 </h2>
                 <div className="space-y-2">
@@ -224,7 +224,7 @@ export default function SchedulePage() {
                             )}
                             {game.status === "live" && (
                               <span className="bg-emerald-50 text-emerald-600 font-bold text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                                <Radio className="w-2.5 h-2.5 animate-pulse" /> Live
+                                <Radio className="w-2.5 h-2.5 animate-pulse" aria-hidden="true" /> Live
                               </span>
                             )}
                             {relTime && (

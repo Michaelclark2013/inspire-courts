@@ -68,7 +68,7 @@ export function DeadlineCountdown({
             : "text-text-muted"
       } ${className}`}
     >
-      <Clock className={`w-3 h-3 ${urgency === "urgent" ? "animate-pulse" : ""}`} />
+      <Clock className={`w-3 h-3 ${urgency === "urgent" ? "animate-pulse" : ""}`} aria-hidden="true" />
       {text}
     </span>
   );

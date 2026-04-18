@@ -63,7 +63,7 @@ export default function MySchedulePage() {
             href="/admin/scores/enter"
             className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
           >
-            <PenLine className="w-3.5 h-3.5" /> Enter Scores
+            <PenLine className="w-3.5 h-3.5" aria-hidden="true" /> Enter Scores
           </Link>
           <button
             onClick={() => loadGames(true)}
@@ -71,7 +71,7 @@ export default function MySchedulePage() {
             className="flex items-center gap-1.5 border border-border hover:border-navy/30 text-text-secondary hover:text-navy px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors disabled:opacity-40"
             title="Refresh"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -90,11 +90,11 @@ export default function MySchedulePage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading schedule...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading schedule...
         </div>
       ) : games.length === 0 && !fetchError ? (
         <div className="bg-white border border-border rounded-xl p-5 text-center">
-          <Calendar className="w-8 h-8 text-navy/30 mx-auto mb-3" />
+          <Calendar className="w-8 h-8 text-navy/30 mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">No games on the schedule</p>
           <p className="text-text-secondary text-sm mb-4">Games will appear here once they&apos;re created.</p>
           <Link
@@ -109,7 +109,7 @@ export default function MySchedulePage() {
           {live.length > 0 && (
             <section>
               <div className="flex items-center gap-2 mb-3">
-                <Radio className="w-4 h-4 text-emerald-600 animate-pulse" />
+                <Radio className="w-4 h-4 text-emerald-600 animate-pulse" aria-hidden="true" />
                 <h2 className="text-emerald-600 font-bold text-sm uppercase tracking-wider">Live Now</h2>
                 <span className="text-emerald-600/60 text-xs">{live.length}</span>
               </div>

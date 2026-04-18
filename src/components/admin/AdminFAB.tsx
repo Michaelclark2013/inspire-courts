@@ -53,7 +53,7 @@ export default function AdminFAB() {
               open ? "rotate-45" : ""
             )}
           >
-            <Plus className="w-6 h-6 text-white" strokeWidth={2.5} />
+            <Plus className="w-6 h-6 text-white" strokeWidth={2.5} aria-hidden="true" />
           </button>
         </Tooltip>
       </div>

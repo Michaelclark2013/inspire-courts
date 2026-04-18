@@ -33,7 +33,7 @@ export default function PoolStandings({ bracket }: Props) {
   if (finalGames.length === 0) {
     return (
       <div className="text-center py-16 text-text-muted">
-        <BarChart3 className="w-8 h-8 mx-auto mb-3 opacity-40" />
+        <BarChart3 className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
         <p className="text-sm">
           No completed games yet. Standings will appear as games finish.
         </p>

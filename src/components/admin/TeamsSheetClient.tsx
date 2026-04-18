@@ -97,9 +97,9 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
   function SortIcon({ col }: { col: keyof Team }) {
     if (sortKey !== col) return <span className="text-text-secondary/40 ml-1">↕</span>;
     return sortDir === "asc" ? (
-      <ChevronUp className="inline w-3 h-3 ml-1 text-accent" />
+      <ChevronUp className="inline w-3 h-3 ml-1 text-accent" aria-hidden="true" />
     ) : (
-      <ChevronDown className="inline w-3 h-3 ml-1 text-accent" />
+      <ChevronDown className="inline w-3 h-3 ml-1 text-accent" aria-hidden="true" />
     );
   }
 
@@ -124,7 +124,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
           <input
             type="text"
             value={search}
@@ -196,6 +196,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                       </span>
                       <ChevronDown
                         className={`w-4 h-4 text-text-secondary transition-transform ${expanded === i ? "rotate-180" : ""}`}
+                        aria-hidden="true"
                       />
                     </div>
                   </div>
@@ -325,9 +326,9 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                       <td className="px-4 py-3">
                         <button aria-label={expanded === i ? "Collapse details" : "Expand details"} className="text-text-secondary hover:text-navy transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
                           {expanded === i ? (
-                            <ChevronUp className="w-4 h-4" />
+                            <ChevronUp className="w-4 h-4" aria-hidden="true" />
                           ) : (
-                            <ChevronDown className="w-4 h-4" />
+                            <ChevronDown className="w-4 h-4" aria-hidden="true" />
                           )}
                         </button>
                       </td>
@@ -350,7 +351,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                               <p className="text-navy">{team.email !== "—" ? (
                                 <a href={`mailto:${team.email}`} className="text-accent hover:underline flex items-center gap-1">
                                   {team.email}
-                                  <ExternalLink className="w-3 h-3" />
+                                  <ExternalLink className="w-3 h-3" aria-hidden="true" />
                                 </a>
                               ) : "—"}</p>
                             </div>

@@ -101,7 +101,7 @@ export default function LeadsPage() {
           onClick={fetchLeads}
           className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-border rounded-lg hover:border-navy/30 transition-colors"
         >
-          <RefreshCw className="w-3.5 h-3.5" /> Refresh
+          <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
         </button>
       </div>
 
@@ -144,7 +144,7 @@ export default function LeadsPage() {
       {/* Filters */}
       <div className="flex items-center gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy/30" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy/30" aria-hidden="true" />
           <input
             type="text"
             value={search}
@@ -172,11 +172,11 @@ export default function LeadsPage() {
       {/* Lead List */}
       {loading ? (
         <div className="flex items-center justify-center py-16 text-navy/40">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading leads...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading leads...
         </div>
       ) : fetchError ? (
         <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
-          <TrendingUp className="w-10 h-10 text-red/40 mx-auto mb-3" />
+          <TrendingUp className="w-10 h-10 text-red/40 mx-auto mb-3" aria-hidden="true" />
           <h3 className="text-navy font-semibold mb-1">Failed to Load Leads</h3>
           <p className="text-text-secondary text-sm mb-4">Could not fetch lead data. Check your connection or try again.</p>
           <button
@@ -234,14 +234,14 @@ export default function LeadsPage() {
                         <div className="space-y-0.5">
                           {lead.email && (
                             <div className="flex items-center gap-1 text-navy/60 text-xs">
-                              <Mail className="w-3 h-3" />
+                              <Mail className="w-3 h-3" aria-hidden="true" />
                               <span className="hidden sm:inline">{lead.email}</span>
                               <span className="sm:hidden">Email</span>
                             </div>
                           )}
                           {lead.phone && (
                             <div className="flex items-center gap-1 text-navy/40 text-xs">
-                              <Phone className="w-3 h-3" />
+                              <Phone className="w-3 h-3" aria-hidden="true" />
                               <span className="hidden sm:inline">{lead.phone}</span>
                               <span className="sm:hidden">Phone</span>
                             </div>

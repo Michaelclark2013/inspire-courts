@@ -63,9 +63,9 @@ export function RegistrationProgress({ steps, completedSteps, totalSteps, progre
               }`}
             >
               {step.done ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" aria-hidden="true" />
               ) : (
-                <Circle className="w-5 h-5 text-light-gray flex-shrink-0" />
+                <Circle className="w-5 h-5 text-light-gray flex-shrink-0" aria-hidden="true" />
               )}
               <div className="flex-1 min-w-0">
                 <p className={`text-sm font-semibold ${step.done ? "text-emerald-600" : "text-navy"}`}>
@@ -73,7 +73,7 @@ export function RegistrationProgress({ steps, completedSteps, totalSteps, progre
                 </p>
                 <p className="text-text-muted text-xs truncate">{step.description}</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-navy/40 transition-colors flex-shrink-0" />
+              <ChevronRight className="w-4 h-4 text-light-gray group-hover:text-navy/40 transition-colors flex-shrink-0" aria-hidden="true" />
             </Link>
           );
         })}

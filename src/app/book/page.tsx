@@ -150,7 +150,7 @@ export default function BookPage() {
                   </p>
                   <p className="text-text-muted text-xs mt-0.5">{desc}</p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform flex-shrink-0" />
+                <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform flex-shrink-0" aria-hidden="true" />
               </Link>
             ))}
           </div>

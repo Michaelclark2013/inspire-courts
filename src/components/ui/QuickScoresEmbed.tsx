@@ -33,7 +33,7 @@ export default function QuickScoresEmbed({ src, title, className = "min-h-[500px
       {!loaded && !timedOut && (
         <div className="absolute inset-0 flex items-center justify-center bg-off-white rounded-2xl z-10">
           <div className="flex flex-col items-center gap-3 text-text-muted">
-            <Loader2 className="w-8 h-8 animate-spin text-red" />
+            <Loader2 className="w-8 h-8 animate-spin text-red" aria-hidden="true" />
             <p className="text-sm font-medium">Loading scores...</p>
           </div>
         </div>
@@ -51,7 +51,7 @@ export default function QuickScoresEmbed({ src, title, className = "min-h-[500px
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
           >
-            Open QuickScores <ExternalLink className="w-4 h-4" />
+            Open QuickScores <ExternalLink className="w-4 h-4" aria-hidden="true" />
           </a>
         </div>
       ) : (

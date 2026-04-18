@@ -59,7 +59,7 @@ export function PortalAnnouncements({ announcements }: { announcements: Announce
           className="bg-amber-50 border border-amber-200 rounded-2xl p-4 relative"
         >
           <div className="flex items-start gap-3">
-            <Megaphone className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+            <Megaphone className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
             <div className="flex-1 min-w-0 pr-6">
               <div className="flex items-center gap-2 flex-wrap mb-0.5">
                 <p className="text-amber-600 text-xs font-bold uppercase tracking-wider">

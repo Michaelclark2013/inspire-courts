@@ -133,7 +133,7 @@ export default function ForgotPasswordClient() {
                   href="/login"
                   className="inline-flex items-center gap-2 text-white/50 text-xs hover:text-white/70 transition-colors"
                 >
-                  <ArrowLeft className="w-3 h-3" />
+                  <ArrowLeft className="w-3 h-3" aria-hidden="true" />
                   Back to Sign In
                 </Link>
               </div>

@@ -30,7 +30,7 @@ export default function CheckInHeader({
           rel="noopener noreferrer"
           className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 min-h-[44px] border border-border rounded-lg hover:border-navy/30 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
         >
-          <ExternalLink className="w-3.5 h-3.5" /> Check-In Sheet
+          <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" /> Check-In Sheet
         </a>
         <button
           onClick={onRefresh}
@@ -39,9 +39,9 @@ export default function CheckInHeader({
           className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2.5 min-h-[44px] border border-border rounded-lg hover:border-navy/30 transition-colors disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
         >
           {isRefreshing ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
           ) : (
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
           )}
           Refresh
         </button>

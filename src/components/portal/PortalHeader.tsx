@@ -55,7 +55,7 @@ function RefreshIndicatorImpl({ lastUpdated, onRefresh, isFetching = false }: Re
           : "text-text-muted bg-off-white hover:bg-navy/[0.04]"
       }`}
     >
-      <RefreshCw className={`w-3 h-3 ${isFetching ? "animate-spin" : ""}`} />
+      <RefreshCw className={`w-3 h-3 ${isFetching ? "animate-spin" : ""}`} aria-hidden="true" />
       {label}
       {isStale && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />}
     </button>

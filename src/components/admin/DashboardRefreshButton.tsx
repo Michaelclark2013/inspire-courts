@@ -22,7 +22,7 @@ export default function DashboardRefreshButton() {
       aria-label="Refresh dashboard data"
       className="flex items-center gap-1.5 text-text-secondary hover:text-navy transition-colors disabled:opacity-40 p-1.5 rounded-sm hover:bg-off-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red"
     >
-      <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+      <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} aria-hidden="true" />
     </button>
   );
 }

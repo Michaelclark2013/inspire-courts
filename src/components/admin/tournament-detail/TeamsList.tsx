@@ -98,7 +98,7 @@ const TeamRow = memo(function TeamRow({
                 aria-label={`Remove ${team.teamName}`}
                 className="min-w-[44px] min-h-[44px] flex items-center justify-center text-text-muted/50 hover:text-red transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none rounded"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>
             )}
           </div>
@@ -140,7 +140,7 @@ function TeamsList({
   return (
     <div className="bg-white border border-border shadow-sm rounded-xl overflow-hidden">
       <div className="px-5 py-3 border-b border-border flex items-center gap-2">
-        <Users className="w-4 h-4 text-red" />
+        <Users className="w-4 h-4 text-red" aria-hidden="true" />
         <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
           Teams ({teams.length})
         </h2>

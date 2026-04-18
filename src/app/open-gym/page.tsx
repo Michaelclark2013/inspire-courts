@@ -278,7 +278,7 @@ export default function OpenGymPage() {
                 href="/book"
                 className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
               >
-                Book a Private Court <ArrowRight className="w-4 h-4" />
+                Book a Private Court <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
               <Link
                 href="/contact"

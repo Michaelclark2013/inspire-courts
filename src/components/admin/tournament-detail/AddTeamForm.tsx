@@ -50,7 +50,7 @@ function AddTeamForm({ format, divisions, onAdd }: Props) {
       className="bg-white border border-border shadow-sm rounded-xl p-5 hover:shadow-md transition-shadow"
     >
       <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-        <Plus className="w-4 h-4 text-red" /> Add Team
+        <Plus className="w-4 h-4 text-red" aria-hidden="true" /> Add Team
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         <input

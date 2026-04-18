@@ -163,7 +163,7 @@ export default function PortalSidebar() {
         {isAdmin && (
           <div className="mx-3 mb-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
             <div className="flex items-center gap-2 mb-2">
-              <Eye className="w-3.5 h-3.5 text-amber-600" />
+              <Eye className="w-3.5 h-3.5 text-amber-600" aria-hidden="true" />
               <span className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">View As</span>
             </div>
             <select
@@ -232,7 +232,7 @@ export default function PortalSidebar() {
                   : "text-text-muted hover:text-navy hover:bg-off-white"
               )}
             >
-              <UserCircle className={cn("w-[18px] h-[18px] flex-shrink-0", pathname === "/portal/profile" && "text-red")} />
+              <UserCircle className={cn("w-[18px] h-[18px] flex-shrink-0", pathname === "/portal/profile" && "text-red")} aria-hidden="true" />
               Profile
             </Link>
           </div>
@@ -242,13 +242,13 @@ export default function PortalSidebar() {
         <div className="px-3 py-4 border-t border-light-gray space-y-0.5">
           {role === "admin" && (
             <Link href="/admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all">
-              <ChevronLeft className="w-[18px] h-[18px]" />
+              <ChevronLeft className="w-[18px] h-[18px]" aria-hidden="true" />
               Admin Dashboard
             </Link>
           )}
           <Link href="/scores" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all">
             <div className="relative">
-              <ExternalLink className="w-[18px] h-[18px]" />
+              <ExternalLink className="w-[18px] h-[18px]" aria-hidden="true" />
               {hasLiveGames && (
                 <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
               )}
@@ -259,7 +259,7 @@ export default function PortalSidebar() {
             onClick={() => signOut({ callbackUrl: "/login" })}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-danger hover:bg-danger/[0.06] transition-all w-full text-left"
           >
-            <LogOut className="w-[18px] h-[18px]" />
+            <LogOut className="w-[18px] h-[18px]" aria-hidden="true" />
             Sign Out
           </button>
         </div>

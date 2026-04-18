@@ -110,7 +110,7 @@ export default function BookingForm() {
       <div role="status" aria-live="polite" className="min-h-[60vh] flex items-center justify-center px-4 py-16">
         <div className="bg-green-50 border border-green-200 rounded-2xl p-10 text-center max-w-md w-full">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
-            <Check className="w-8 h-8 text-green-600" />
+            <Check className="w-8 h-8 text-green-600" aria-hidden="true" />
           </div>
           <h3 className="text-navy font-bold text-2xl uppercase tracking-tight mb-3 font-[var(--font-chakra)]">
             Request Received!

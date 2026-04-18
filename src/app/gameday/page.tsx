@@ -290,7 +290,7 @@ export default function GameDayPage() {
                 href={link.href}
                 className="flex items-center justify-center gap-1.5 bg-white border border-light-gray hover:border-red/40 hover:text-red text-navy text-xs font-bold uppercase tracking-wide py-3 px-4 rounded-xl transition-colors font-[var(--font-chakra)]"
               >
-                {link.label} <ArrowRight className="w-3 h-3 opacity-60" />
+                {link.label} <ArrowRight className="w-3 h-3 opacity-60" aria-hidden="true" />
               </Link>
             ))}
           </div>

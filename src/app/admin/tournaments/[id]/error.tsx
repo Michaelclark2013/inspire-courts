@@ -14,7 +14,7 @@ export default function TournamentDetailError({
     <div className="p-6 sm:p-10 max-w-xl mx-auto">
       <div className="bg-white border border-border shadow-sm rounded-xl p-8 text-center">
         <div className="w-12 h-12 bg-red/10 text-red rounded-full flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle className="w-6 h-6" />
+          <AlertTriangle className="w-6 h-6" aria-hidden="true" />
         </div>
         <h1 className="text-navy font-bold text-lg mb-2">
           Something went wrong loading this tournament

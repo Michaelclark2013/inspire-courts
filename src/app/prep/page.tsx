@@ -190,7 +190,7 @@ export default function PrepPage() {
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-12 h-12 bg-red rounded-xl flex items-center justify-center" aria-hidden="true">
-                      <Target className="w-6 h-6 text-white" />
+                      <Target className="w-6 h-6 text-white" aria-hidden="true" />
                     </div>
                     <h3 className="font-bold text-lg lg:text-xl uppercase tracking-tight font-[var(--font-chakra)]">
                       Program Includes

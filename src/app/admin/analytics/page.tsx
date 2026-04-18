@@ -21,14 +21,14 @@ export default async function AnalyticsPage() {
             rel="noopener noreferrer"
             className="flex items-center gap-2 bg-bg-secondary border border-border hover:border-accent text-navy px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wide transition-colors"
           >
-            Open Google Analytics <ExternalLink className="w-3.5 h-3.5" />
+            Open Google Analytics <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
           </a>
         )}
       </div>
 
       {!gaId ? (
         <div className="bg-bg-secondary border border-border rounded-xl p-5 text-center">
-          <BarChart3 className="w-10 h-10 text-accent mx-auto mb-4" />
+          <BarChart3 className="w-10 h-10 text-accent mx-auto mb-4" aria-hidden="true" />
           <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2">
             Connect Google Analytics
           </h3>
@@ -81,7 +81,7 @@ export default async function AnalyticsPage() {
               >
                 <div className="flex items-start justify-between mb-2">
                   <item.icon className="w-4 h-4 text-text-secondary group-hover:text-accent transition-colors" />
-                  <ArrowUpRight className="w-3 h-3 text-text-secondary/40 group-hover:text-accent transition-colors" />
+                  <ArrowUpRight className="w-3 h-3 text-text-secondary/40 group-hover:text-accent transition-colors" aria-hidden="true" />
                 </div>
                 <p className="text-navy font-bold text-sm">{item.label}</p>
                 <p className="text-text-secondary text-xs mt-0.5">{item.desc}</p>

@@ -23,7 +23,7 @@ export default function CheckInError({
         className="bg-white border border-border shadow-sm rounded-xl p-8 text-center"
         role="alert"
       >
-        <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
+        <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-3" aria-hidden="true" />
         <h2 className="text-navy text-lg font-bold mb-2">
           Something went wrong
         </h2>

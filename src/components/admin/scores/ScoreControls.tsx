@@ -28,7 +28,7 @@ function ScoreControlsImpl({
           onClick={() => onChange(Math.max(0, value - 1))}
           className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center bg-off-white hover:bg-light-gray active:scale-95 border border-border rounded-lg text-navy font-bold transition-all focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
         >
-          <Minus className="w-4 h-4" />
+          <Minus className="w-4 h-4" aria-hidden="true" />
         </button>
         <input
           id={inputId}
@@ -46,7 +46,7 @@ function ScoreControlsImpl({
           onClick={() => onChange(value + 1)}
           className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center bg-off-white hover:bg-light-gray active:scale-95 border border-border rounded-lg text-navy font-bold transition-all focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4" aria-hidden="true" />
         </button>
       </div>
     </div>

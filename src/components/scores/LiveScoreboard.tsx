@@ -164,7 +164,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
     return (
       <div className="text-center py-16">
         <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-5">
-          <Trophy className="w-8 h-8 text-white/20" />
+          <Trophy className="w-8 h-8 text-white/20" aria-hidden="true" />
         </div>
         <h3 className="text-white/60 font-semibold text-sm mb-2">No Games Right Now</h3>
         <p className="text-white/30 text-sm max-w-xs mx-auto mb-6">
@@ -210,7 +210,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
                 aria-label="Timeline view"
                 aria-pressed={viewMode === "timeline"}
               >
-                <List className="w-3.5 h-3.5" />
+                <List className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
               <button
                 type="button"
@@ -219,7 +219,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
                 aria-label="Courts view"
                 aria-pressed={viewMode === "courts"}
               >
-                <LayoutGrid className="w-3.5 h-3.5" />
+                <LayoutGrid className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
             </div>
             <button
@@ -228,7 +228,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
               disabled={refreshing}
               className="flex items-center gap-1.5 text-white/40 hover:text-white text-xs font-semibold transition-colors disabled:opacity-50"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} aria-hidden="true" />
               Refresh
             </button>
           </div>
@@ -340,7 +340,7 @@ export default function LiveScoreboard({ eventFilter = "", canEditScores = false
           {liveGames.length > 0 && (
             <section>
               <div className="flex items-center gap-2 mb-4">
-                <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
+                <Radio className="w-4 h-4 text-emerald-400 animate-pulse" aria-hidden="true" />
                 <h2 className="text-white font-bold text-sm uppercase tracking-wider">
                   Live Now
                 </h2>
@@ -542,9 +542,9 @@ function GameCard({
               </button>
             )}
             {expanded ? (
-              <ChevronUp className="w-3.5 h-3.5 text-white/30" />
+              <ChevronUp className="w-3.5 h-3.5 text-white/30" aria-hidden="true" />
             ) : (
-              <ChevronDown className="w-3.5 h-3.5 text-white/30" />
+              <ChevronDown className="w-3.5 h-3.5 text-white/30" aria-hidden="true" />
             )}
           </div>
         </div>
@@ -615,7 +615,7 @@ function GameCard({
           className="border-t border-red/20 bg-red/5 px-5 py-4 space-y-3"
         >
           <div className="flex items-center gap-2 mb-2">
-            <Pencil className="w-3.5 h-3.5 text-red" />
+            <Pencil className="w-3.5 h-3.5 text-red" aria-hidden="true" />
             <span className="text-red text-xs font-bold uppercase tracking-wider">Update Score</span>
           </div>
           <div className="grid grid-cols-2 gap-3">

@@ -138,7 +138,7 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">Profile</h1>
         </div>
         <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
-          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" aria-hidden="true" />
           <h3 className="text-navy font-semibold mb-1">Failed to Load Profile</h3>
           <p className="text-text-muted text-sm mb-4">Could not load your profile. Check your connection and try again.</p>
           <button

@@ -335,7 +335,7 @@ export default function BracketView({
                                     className="flex-1 flex items-center justify-center gap-1 bg-red hover:bg-red-hover disabled:opacity-40 text-white py-1.5 rounded text-[10px] font-bold uppercase tracking-wider transition-colors"
                                   >
                                     {saving ? (
-                                      <Loader2 className="w-3 h-3 animate-spin" />
+                                      <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
                                     ) : (
                                       <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
                                     )}
@@ -370,7 +370,7 @@ export default function BracketView({
                       {/* Advancement indicator */}
                       {game.winnerAdvancesTo && game.status === "final" && (
                         <div className="px-3 py-1.5 border-t border-border flex items-center gap-1 text-[10px] text-emerald-600">
-                          <ArrowRight className="w-3 h-3" />
+                          <ArrowRight className="w-3 h-3" aria-hidden="true" />
                           Advances to slot #{game.winnerAdvancesTo}
                         </div>
                       )}

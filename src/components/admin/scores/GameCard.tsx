@@ -131,7 +131,7 @@ function GameCardImpl({
           </div>
           {rollbackError && (
             <div className="mt-2 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg px-3 py-1.5">
-              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
               <span>{rollbackError}</span>
             </div>
           )}
@@ -200,7 +200,7 @@ function GameCardImpl({
               role="alert"
               className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg px-3 py-2"
             >
-              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
               <span className="flex-1">{scoreError}</span>
               <button
                 type="button"

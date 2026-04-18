@@ -278,7 +278,7 @@ export default function CampsPage() {
                       className="w-12 h-12 bg-red rounded-xl flex items-center justify-center"
                       aria-hidden="true"
                     >
-                      <Star className="w-6 h-6 text-white" />
+                      <Star className="w-6 h-6 text-white" aria-hidden="true" />
                     </div>
                     <h3 className="font-bold text-lg lg:text-xl uppercase tracking-tight font-[var(--font-chakra)]">
                       Camp Details
@@ -287,7 +287,7 @@ export default function CampsPage() {
                   <div className="space-y-5">
                     <div className="flex items-start gap-4">
                       <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                        <Users className="w-4 h-4 text-white/70" />
+                        <Users className="w-4 h-4 text-white/70" aria-hidden="true" />
                       </div>
                       <div>
                         <p className="text-white/50 text-xs uppercase tracking-wider mb-0.5">
@@ -300,7 +300,7 @@ export default function CampsPage() {
                     </div>
                     <div className="flex items-start gap-4">
                       <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                        <Target className="w-4 h-4 text-white/70" />
+                        <Target className="w-4 h-4 text-white/70" aria-hidden="true" />
                       </div>
                       <div>
                         <p className="text-white/50 text-xs uppercase tracking-wider mb-0.5">
@@ -313,7 +313,7 @@ export default function CampsPage() {
                     </div>
                     <div className="flex items-start gap-4">
                       <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                        <MapPin className="w-4 h-4 text-white/70" />
+                        <MapPin className="w-4 h-4 text-white/70" aria-hidden="true" />
                       </div>
                       <div>
                         <p className="text-white/50 text-xs uppercase tracking-wider mb-0.5">
@@ -330,7 +330,7 @@ export default function CampsPage() {
                     </div>
                     <div className="flex items-start gap-4">
                       <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                        <Clock className="w-4 h-4 text-white/70" />
+                        <Clock className="w-4 h-4 text-white/70" aria-hidden="true" />
                       </div>
                       <div>
                         <p className="text-white/50 text-xs uppercase tracking-wider mb-0.5">
@@ -581,7 +581,7 @@ export default function CampsPage() {
                 <div className="space-y-5">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-red/20 rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                      <Mail className="w-5 h-5 text-red" />
+                      <Mail className="w-5 h-5 text-red" aria-hidden="true" />
                     </div>
                     <div>
                       <p className="text-white/50 text-xs uppercase tracking-wider mb-0.5">
@@ -597,7 +597,7 @@ export default function CampsPage() {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-red/20 rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                      <Phone className="w-5 h-5 text-red" />
+                      <Phone className="w-5 h-5 text-red" aria-hidden="true" />
                     </div>
                     <div>
                       <p className="text-white/50 text-xs uppercase tracking-wider mb-0.5">
@@ -613,7 +613,7 @@ export default function CampsPage() {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-red/20 rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                      <MapPin className="w-5 h-5 text-red" />
+                      <MapPin className="w-5 h-5 text-red" aria-hidden="true" />
                     </div>
                     <div>
                       <p className="text-white/50 text-xs uppercase tracking-wider mb-0.5">

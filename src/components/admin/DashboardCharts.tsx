@@ -148,7 +148,7 @@ export default function DashboardCharts({
 
         {recentGames.length === 0 ? (
           <div className="p-8 text-center">
-            <AlertCircle className="w-8 h-8 text-text-secondary/30 mx-auto mb-3" />
+            <AlertCircle className="w-8 h-8 text-text-secondary/30 mx-auto mb-3" aria-hidden="true" />
             <p className="text-text-secondary text-sm mb-1">No game scores loaded yet</p>
             <p className="text-text-secondary/60 text-xs mb-4">Share the Game Scores sheet with your service account to see data here.</p>
             <Link href="/admin/scores/enter" className="inline-flex items-center gap-1.5 text-accent text-xs font-semibold hover:underline">
@@ -242,7 +242,7 @@ export default function DashboardCharts({
                           {game.winner}
                         </td>
                         <td className="px-2 py-3 text-text-secondary">
-                          <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedRow === i ? "rotate-180" : ""}`} />
+                          <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedRow === i ? "rotate-180" : ""}`} aria-hidden="true" />
                         </td>
                       </tr>
                       {expandedRow === i && (

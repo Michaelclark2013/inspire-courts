@@ -166,7 +166,7 @@ export default function CheckInDashboard({
         <div className="xl:col-span-2 bg-white border border-border shadow-sm rounded-xl overflow-hidden">
           <div className="px-5 py-4 border-b border-border flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Users className="w-4 h-4 text-red" />
+              <Users className="w-4 h-4 text-red" aria-hidden="true" />
               <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
                 Team Status
               </h2>

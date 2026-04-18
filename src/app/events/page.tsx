@@ -108,7 +108,7 @@ function NoNotionFallback() {
         </div>
         <AnimateIn>
           <div className="max-w-2xl mx-auto text-center bg-off-white border border-light-gray rounded-xl p-10">
-            <Trophy className="w-10 h-10 text-red mx-auto mb-4" />
+            <Trophy className="w-10 h-10 text-red mx-auto mb-4" aria-hidden="true" />
             <h3 className="text-navy font-bold text-lg uppercase tracking-tight mb-2 font-[var(--font-chakra)]">
               Basketball Tournaments Coming Soon
             </h3>

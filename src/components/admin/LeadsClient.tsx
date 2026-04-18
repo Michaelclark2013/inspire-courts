@@ -79,14 +79,14 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center gap-1.5">
-            <MessageSquare className="w-3.5 h-3.5 text-text-secondary" />
+            <MessageSquare className="w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Chat</span>
           </div>
           <p className="text-2xl font-bold text-navy mt-2">{chatCount}</p>
         </div>
         <div className="bg-bg-secondary border border-border rounded-sm p-4">
           <div className="flex items-center gap-1.5">
-            <Mail className="w-3.5 h-3.5 text-text-secondary" />
+            <Mail className="w-3.5 h-3.5 text-text-secondary" aria-hidden="true" />
             <span className="text-text-secondary text-xs font-bold uppercase tracking-wider">Contact Form</span>
           </div>
           <p className="text-2xl font-bold text-navy mt-2">{formCount}</p>
@@ -96,7 +96,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" aria-hidden="true" />
           <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search leads..." className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50" />
         </div>
         <select aria-label="Filter by status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
@@ -116,7 +116,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
               className="w-full px-5 py-4 flex items-center gap-4 hover:bg-bg/50 transition-colors text-left"
             >
               <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                {lead.source === "Contact Form" ? <Mail className="w-3.5 h-3.5 text-accent" /> : <MessageSquare className="w-3.5 h-3.5 text-accent" />}
+                {lead.source === "Contact Form" ? <Mail className="w-3.5 h-3.5 text-accent" aria-hidden="true" /> : <MessageSquare className="w-3.5 h-3.5 text-accent" aria-hidden="true" />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-navy font-medium truncate">{lead.name}</p>
@@ -132,7 +132,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                 {lead.interest}
               </span>
               <span className="text-text-secondary text-xs flex-shrink-0 hidden md:block">{lead.date}</span>
-              {expanded === i ? <ChevronUp className="w-4 h-4 text-text-secondary flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-text-secondary flex-shrink-0" />}
+              {expanded === i ? <ChevronUp className="w-4 h-4 text-text-secondary flex-shrink-0" aria-hidden="true" /> : <ChevronDown className="w-4 h-4 text-text-secondary flex-shrink-0" aria-hidden="true" />}
             </button>
             {expanded === i && (
               <div className="px-5 py-4 border-t border-border bg-bg/30 space-y-3">
@@ -170,7 +170,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
         ))}
         {filtered.length === 0 && (
           <div className="bg-bg-secondary border border-border rounded-sm p-8 text-center text-text-secondary">
-            <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" />
+            <Inbox className="w-8 h-8 mx-auto mb-2 text-text-secondary/50" aria-hidden="true" />
             No leads found
           </div>
         )}

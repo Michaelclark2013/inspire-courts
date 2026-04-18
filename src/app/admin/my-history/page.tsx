@@ -92,10 +92,10 @@ export default function MyHistoryPage() {
       {/* Shift table */}
       <div className="bg-white border border-border rounded-xl overflow-hidden">
         <div className="px-4 py-3 border-b border-border flex items-center gap-3 flex-wrap">
-          <History className="w-4 h-4 text-red flex-shrink-0" />
+          <History className="w-4 h-4 text-red flex-shrink-0" aria-hidden="true" />
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider flex-1">Shift History</h2>
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-navy/30" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-navy/30" aria-hidden="true" />
             <input
               type="text"
               value={search}
@@ -109,11 +109,11 @@ export default function MyHistoryPage() {
 
         {loading ? (
           <div className="flex items-center justify-center py-8 md:py-16 text-navy/40">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading history...
+            <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading history...
           </div>
         ) : shifts.length === 0 ? (
           <div className="text-center py-16 text-navy/40">
-            <History className="w-8 h-8 mx-auto mb-3 opacity-40" />
+            <History className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
             <p className="text-sm">No shifts found. Your check-out records will appear here.</p>
           </div>
         ) : (

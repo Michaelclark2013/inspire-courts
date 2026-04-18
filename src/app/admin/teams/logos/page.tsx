@@ -102,11 +102,11 @@ export default function LogoManagementPage() {
       {/* Logos grid */}
       {loading ? (
         <div className="flex items-center justify-center py-16 text-text-secondary">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading logos…
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading logos…
         </div>
       ) : entries.length === 0 ? (
         <div className="bg-bg-secondary border border-border rounded-sm p-10 text-center">
-          <ImageIcon className="w-10 h-10 text-text-secondary/30 mx-auto mb-3" />
+          <ImageIcon className="w-10 h-10 text-text-secondary/30 mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">No logos uploaded yet</p>
           <p className="text-text-secondary text-sm mb-4">
             Upload logos from the Teams page by expanding any team row, or use the form above.
@@ -146,9 +146,9 @@ export default function LogoManagementPage() {
                   className="flex-1 flex items-center justify-center gap-1.5 border border-border hover:border-red/40 hover:text-red text-text-secondary rounded px-2 py-1.5 text-xs transition-colors disabled:opacity-40"
                 >
                   {deletingKey === teamName ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
                   ) : (
-                    <><Trash2 className="w-3.5 h-3.5" /> Delete</>
+                    <><Trash2 className="w-3.5 h-3.5" aria-hidden="true" /> Delete</>
                   )}
                 </button>
               </div>

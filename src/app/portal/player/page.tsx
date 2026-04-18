@@ -171,7 +171,7 @@ export default function PlayerPortalPage() {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="First &amp; last name"
                     required
-                    className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3.5 text-navy text-base focus:outline-none focus:border-red/60 focus:ring-1 focus:ring-red/20 transition-all placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3.5 text-navy text-base focus:outline-none focus:border-red/60 focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-text-muted/50"
                   />
                 </div>
                 <div>
@@ -181,7 +181,7 @@ export default function PlayerPortalPage() {
                     value={team}
                     onChange={(e) => setTeam(e.target.value)}
                     placeholder="e.g. AZ Warriors 14U"
-                    className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3.5 text-navy text-base focus:outline-none focus:border-red/60 focus:ring-1 focus:ring-red/20 transition-all placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-light-gray rounded-xl px-4 py-3.5 text-navy text-base focus:outline-none focus:border-red/60 focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-text-muted/50"
                   />
                 </div>
                 <button

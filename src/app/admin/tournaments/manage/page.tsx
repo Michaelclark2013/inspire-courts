@@ -296,7 +296,7 @@ export default function TournamentManagePage() {
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     required
                     autoFocus={showForm}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-text-muted/50"
                     placeholder="e.g. Spring Classic 2026"
                   />
                 </div>
@@ -334,7 +334,7 @@ export default function TournamentManagePage() {
                     value={form.startDate}
                     onChange={(e) => setForm({ ...form, startDate: e.target.value })}
                     required
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                   />
                 </div>
                 <div>
@@ -346,7 +346,7 @@ export default function TournamentManagePage() {
                     type="date"
                     value={form.endDate}
                     onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                   />
                 </div>
                 <div>
@@ -358,7 +358,7 @@ export default function TournamentManagePage() {
                     type="text"
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                     placeholder="Inspire Courts AZ"
                   />
                 </div>
@@ -374,7 +374,7 @@ export default function TournamentManagePage() {
                     onChange={(e) =>
                       setForm({ ...form, gameLength: Number(e.target.value) })
                     }
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                   />
                   <p className="text-text-muted text-[11px] mt-1.5">Standard: 40 min (two 20-min halves)</p>
                 </div>
@@ -390,7 +390,7 @@ export default function TournamentManagePage() {
                     onChange={(e) =>
                       setForm({ ...form, breakLength: Number(e.target.value) })
                     }
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                   />
                   <p className="text-text-muted text-[11px] mt-1.5">Time between games for court changeover</p>
                 </div>
@@ -442,7 +442,7 @@ export default function TournamentManagePage() {
                     id="tm-divisions"
                     value={form.divisions}
                     onChange={(e) => setForm({ ...form, divisions: e.target.value })}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                     placeholder="Or type custom: 8U, 10U, 12U"
                   />
                 </div>
@@ -487,7 +487,7 @@ export default function TournamentManagePage() {
                     id="tm-courts"
                     value={form.courts}
                     onChange={(e) => setForm({ ...form, courts: e.target.value })}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                     placeholder="Or type custom: Court 1, Court 2"
                   />
                 </div>
@@ -509,7 +509,7 @@ export default function TournamentManagePage() {
                     step="0.01"
                     value={form.entryFee}
                     onChange={(e) => setForm({ ...form, entryFee: e.target.value })}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                     placeholder="50"
                   />
                 </div>
@@ -523,7 +523,7 @@ export default function TournamentManagePage() {
                     min={2}
                     value={form.maxTeamsPerDivision}
                     onChange={(e) => setForm({ ...form, maxTeamsPerDivision: e.target.value })}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                     placeholder="8"
                   />
                 </div>
@@ -536,7 +536,7 @@ export default function TournamentManagePage() {
                     type="date"
                     value={form.registrationDeadline}
                     onChange={(e) => setForm({ ...form, registrationDeadline: e.target.value })}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                   />
                 </div>
                 <div className="lg:col-span-2">
@@ -548,7 +548,7 @@ export default function TournamentManagePage() {
                     type="text"
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                     placeholder="Tournament rules, age requirements, etc."
                   />
                 </div>

@@ -81,7 +81,7 @@ export default function LogoManagementPage() {
               value={customTeam}
               onChange={(e) => setCustomTeam(e.target.value)}
               placeholder="Enter exact team name..."
-              className="w-full bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent placeholder:text-text-secondary/50"
+              className="w-full bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent placeholder:text-text-secondary/50"
             />
           </div>
           {customTeam.trim() && (

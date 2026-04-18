@@ -26,6 +26,9 @@ export async function POST(_request: NextRequest, { params }: Params) {
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   try {
     // Get tournament

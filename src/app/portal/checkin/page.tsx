@@ -41,6 +41,7 @@ export default function CoachCheckInPage() {
   const [checkedIn, setCheckedIn] = useState<CheckedIn[]>([]);
   const [checkingIn, setCheckingIn] = useState<number | null>(null);
   const [manualName, setManualName] = useState("");
+  const [manualSubmitting, setManualSubmitting] = useState(false);
   const [showSummary, setShowSummary] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [mutationError, setMutationError] = useState("");
@@ -139,6 +140,7 @@ export default function CoachCheckInPage() {
 
   async function handleManualCheckIn(e: React.FormEvent) {
     e.preventDefault();
+    if (manualSubmitting) return;
     const trimmed = manualName.trim();
     if (!trimmed) return;
 
@@ -148,8 +150,13 @@ export default function CoachCheckInPage() {
       return;
     }
 
-    await checkIn(trimmed);
-    setManualName("");
+    setManualSubmitting(true);
+    try {
+      await checkIn(trimmed);
+      setManualName("");
+    } finally {
+      setManualSubmitting(false);
+    }
   }
 
   async function handleBulkCheckIn() {
@@ -477,8 +484,12 @@ export default function CoachCheckInPage() {
               />
             </div>
           </div>
-          <button type="submit" disabled={!manualName.trim()} className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
-            <UserCheck className="w-4 h-4" aria-hidden="true" /> Check In
+          <button type="submit" disabled={!manualName.trim() || manualSubmitting} className="flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors">
+            {manualSubmitting ? (
+              <><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Checking...</>
+            ) : (
+              <><UserCheck className="w-4 h-4" aria-hidden="true" /> Check In</>
+            )}
           </button>
         </form>
       </div>

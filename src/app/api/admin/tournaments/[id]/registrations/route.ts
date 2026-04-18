@@ -22,6 +22,9 @@ export async function GET(_request: NextRequest, { params }: Params) {
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   try {
     const regs = await db
@@ -46,6 +49,9 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   try {
     const body = await request.json();

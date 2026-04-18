@@ -25,6 +25,9 @@ export async function GET(_request: NextRequest, { params }: Params) {
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   const [tournament] = await db
     .select()
@@ -117,6 +120,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   const [existing] = await db
     .select()
@@ -177,6 +183,9 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
 
   const { id } = await params;
   const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   const [existing] = await db
     .select()

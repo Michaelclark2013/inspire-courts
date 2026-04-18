@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Work_Sans, Chakra_Petch } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import "@/lib/env"; // validate required env vars at startup
 import Header from "@/components/layout/Header";
@@ -117,7 +118,10 @@ export default function RootLayout({
           <MobileRegisterBar />
           <ChatWidget />
           <EditToolbar />
-          <GoogleAnalytics />
+          {/* GoogleAnalytics uses useSearchParams — must be Suspense-wrapped */}
+          <Suspense fallback={null}>
+            <GoogleAnalytics />
+          </Suspense>
           <MetaPixel />
         </SessionProvider>
         <ServiceWorkerRegistrar />

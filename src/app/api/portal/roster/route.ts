@@ -19,9 +19,14 @@ export async function GET() {
   }
 
   try {
-    // Find the coach's team
+    // Find the coach's team — return only display fields (not coachUserId/timestamps/etc).
     const [team] = await db
-      .select()
+      .select({
+        id: teams.id,
+        name: teams.name,
+        division: teams.division,
+        season: teams.season,
+      })
       .from(teams)
       .where(eq(teams.coachUserId, userId))
       .limit(1);
@@ -30,9 +35,14 @@ export async function GET() {
       return NextResponse.json({ team: null, players: [] });
     }
 
-    // Get players on this team
+    // Get players on this team (scoped columns — no internal timestamps)
     const roster = await db
-      .select()
+      .select({
+        id: players.id,
+        name: players.name,
+        jerseyNumber: players.jerseyNumber,
+        division: players.division,
+      })
       .from(players)
       .where(eq(players.teamId, team.id));
 
@@ -116,8 +126,8 @@ export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const playerId = Number(searchParams.get("id"));
 
-  if (!playerId) {
-    return NextResponse.json({ error: "Missing player id" }, { status: 400 });
+  if (!Number.isInteger(playerId) || playerId <= 0) {
+    return NextResponse.json({ error: "Missing or invalid player id" }, { status: 400 });
   }
 
   // Verify this player belongs to the coach's team
@@ -132,11 +142,16 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    await db
+    const deleted = await db
       .delete(players)
-      .where(and(eq(players.id, playerId), eq(players.teamId, team.id)));
+      .where(and(eq(players.id, playerId), eq(players.teamId, team.id)))
+      .returning({ id: players.id });
 
-    return NextResponse.json({ success: true });
+    if (deleted.length === 0) {
+      return NextResponse.json({ error: "Player not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, id: deleted[0].id });
   } catch (err) {
     logger.error("Failed to remove player", { error: String(err) });
     return NextResponse.json({ error: "Failed to remove player" }, { status: 500 });

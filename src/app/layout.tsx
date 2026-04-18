@@ -4,19 +4,21 @@ import "./globals.css";
 import "@/lib/env"; // validate required env vars at startup
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import MobileRegisterBar from "@/components/layout/MobileRegisterBar";
 import dynamic from "next/dynamic";
-const ChatWidget = dynamic(() => import("@/components/layout/ChatWidget"));
-import EditToolbar from "@/components/layout/EditToolbar";
-import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
-import MetaPixel from "@/components/analytics/MetaPixel";
 import SessionProvider from "@/components/layout/SessionProvider";
-import ScrollProgress from "@/components/ui/ScrollProgress";
 import { RouteLoadingBar } from "@/components/ui/RouteLoadingBar";
 import { NativeStatusBar } from "@/components/native/NativeStatusBar";
 import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar";
-import { InstallPrompt } from "@/components/pwa/InstallPrompt";
-import { UpdatePrompt } from "@/components/pwa/UpdatePrompt";
+
+// Non-critical components loaded after initial paint
+const MobileRegisterBar = dynamic(() => import("@/components/layout/MobileRegisterBar"));
+const ChatWidget = dynamic(() => import("@/components/layout/ChatWidget"));
+const EditToolbar = dynamic(() => import("@/components/layout/EditToolbar"));
+const ScrollProgress = dynamic(() => import("@/components/ui/ScrollProgress"));
+const InstallPrompt = dynamic(() => import("@/components/pwa/InstallPrompt").then(m => ({ default: m.InstallPrompt })));
+const UpdatePrompt = dynamic(() => import("@/components/pwa/UpdatePrompt").then(m => ({ default: m.UpdatePrompt })));
+const GoogleAnalytics = dynamic(() => import("@/components/analytics/GoogleAnalytics"));
+const MetaPixel = dynamic(() => import("@/components/analytics/MetaPixel"));
 import { AppleSplashScreens } from "@/components/pwa/AppleSplashScreens";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/lib/constants";
 

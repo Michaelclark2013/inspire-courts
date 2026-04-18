@@ -8,7 +8,7 @@ import DashboardRefreshButton from "@/components/admin/DashboardRefreshButton";
 import dynamic from "next/dynamic";
 const DashboardCharts = dynamic(() => import("@/components/admin/DashboardCharts"));
 import AdminDashboardClient from "@/components/admin/dashboard/AdminDashboardClient";
-import PushNotificationPrompt from "@/components/pwa/PushNotificationPrompt";
+const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
 import {
   fetchSheetWithHeaders,

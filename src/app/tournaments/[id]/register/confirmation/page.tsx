@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, Clock, Loader2, Trophy, ArrowRight, Share2, Copy, CalendarPlus } from "lucide-react";
@@ -14,7 +14,7 @@ type RegStatus = {
 
 const MAX_POLLS = 60; // Stop after ~3 minutes (60 × 3s)
 
-export default function ConfirmationPage() {
+function ConfirmationContent() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const regId = searchParams.get("reg");
@@ -227,5 +227,13 @@ export default function ConfirmationPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ConfirmationPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-off-white flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-text-muted" aria-hidden="true" /></div>}>
+      <ConfirmationContent />
+    </Suspense>
   );
 }

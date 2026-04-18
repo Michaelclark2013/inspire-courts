@@ -36,7 +36,7 @@ export default function KeyboardShortcutsHint() {
         title="Keyboard shortcuts"
         className="hidden lg:flex fixed bottom-6 right-6 z-[52] w-10 h-10 rounded-full bg-navy/80 hover:bg-navy text-white items-center justify-center shadow-lg transition-colors"
       >
-        <HelpCircle className="w-5 h-5" />
+        <HelpCircle className="w-5 h-5" aria-hidden="true" />
       </button>
 
       {/* Overlay */}
@@ -47,7 +47,7 @@ export default function KeyboardShortcutsHint() {
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider">Keyboard Shortcuts</h3>
               <button onClick={() => setOpen(false)} className="text-text-secondary hover:text-navy transition-colors" aria-label="Close">
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
             <ul className="space-y-3">

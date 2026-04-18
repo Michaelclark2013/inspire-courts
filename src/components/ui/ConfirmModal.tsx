@@ -91,7 +91,7 @@ export default function ConfirmModal({
           className="absolute top-4 right-4 text-text-muted hover:text-navy transition-colors"
           aria-label="Close"
         >
-          <X className="w-4 h-4" />
+          <X className="w-4 h-4" aria-hidden="true" />
         </button>
 
         <div className="flex items-start gap-4">

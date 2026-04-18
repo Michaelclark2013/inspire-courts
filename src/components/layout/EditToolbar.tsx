@@ -51,7 +51,7 @@ export default function EditToolbar() {
         title="Dashboard"
         aria-label="Dashboard"
       >
-        <LayoutDashboard className="w-3.5 h-3.5" />
+        <LayoutDashboard className="w-3.5 h-3.5" aria-hidden="true" />
       </Link>
       <button
         type="button"
@@ -60,7 +60,7 @@ export default function EditToolbar() {
         title="Sign Out"
         aria-label="Sign Out"
       >
-        <LogOut className="w-3.5 h-3.5" />
+        <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
       </button>
       <button
         type="button"
@@ -69,7 +69,7 @@ export default function EditToolbar() {
         title="Dismiss"
         aria-label="Dismiss toolbar"
       >
-        <X className="w-3 h-3" />
+        <X className="w-3 h-3" aria-hidden="true" />
       </button>
     </div>
   );

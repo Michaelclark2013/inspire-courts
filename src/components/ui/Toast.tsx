@@ -103,7 +103,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   className="text-text-muted hover:text-navy flex-shrink-0 p-0.5"
                   aria-label="Dismiss"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
             );

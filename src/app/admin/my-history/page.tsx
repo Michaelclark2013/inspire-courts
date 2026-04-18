@@ -29,11 +29,20 @@ export default function MyHistoryPage() {
     // Fetch from the appropriate sheet based on role
     const sheetType = role === "ref" ? "ref" : "staff";
     setFetchError(false);
-    fetch(`/api/admin/my-history?type=${sheetType}&name=${encodeURIComponent(session.user.name)}`, { signal: controller.signal })
-      .then((r) => { if (!r.ok) throw new Error("Failed to load"); return r.json(); })
-      .then((data) => setShifts(data.shifts || []))
-      .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; setFetchError(true); })
-      .finally(() => setLoading(false));
+    async function load() {
+      try {
+        const r = await fetch(`/api/admin/my-history?type=${sheetType}&name=${encodeURIComponent(session!.user!.name!)}`, { signal: controller.signal });
+        if (!r.ok) throw new Error("Failed to load");
+        const data = await r.json();
+        setShifts(data.shifts || []);
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setFetchError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
     return () => controller.abort();
   }, [session, role]);
 

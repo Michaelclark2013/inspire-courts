@@ -88,17 +88,20 @@ export default function ScoreEntryPage() {
   // Fetch tournament options (once)
   useEffect(() => {
     const ctrl = new AbortController();
-    fetch("/api/admin/tournaments", { signal: ctrl.signal })
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data: TournamentOption[]) => {
+    async function load() {
+      try {
+        const r = await fetch("/api/admin/tournaments", { signal: ctrl.signal });
+        if (!r.ok) throw new Error("Failed");
+        const data: TournamentOption[] = await r.json();
         if (!mountedRef.current) return;
         setTournamentOptions(data);
         setErrors((e) => ({ ...e, tournaments: false }));
-      })
-      .catch((err) => {
-        if (err?.name === "AbortError") return;
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         if (mountedRef.current) setErrors((e) => ({ ...e, tournaments: true }));
-      });
+      }
+    }
+    load();
     return () => ctrl.abort();
   }, []);
 

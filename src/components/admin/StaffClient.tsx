@@ -142,7 +142,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
       {/* Search */}
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${tab === "staff" ? "staff" : "referees"}...`} className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50" />
+        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${tab === "staff" ? "staff" : "referees"}...`} className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50" />
       </div>
 
       {/* Table */}

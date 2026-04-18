@@ -169,7 +169,7 @@ export default function PortalSidebar() {
             <select
               value={viewAsRole || "admin"}
               onChange={(e) => setViewAsRole(e.target.value === "admin" ? null : e.target.value)}
-              className="w-full bg-white border border-light-gray rounded-lg px-3 py-2 text-navy text-xs font-medium focus:outline-none focus:border-amber-500/50 cursor-pointer appearance-none"
+              className="w-full bg-white border border-light-gray rounded-lg px-3 py-2 text-navy text-xs font-medium focus:outline-none focus:border-amber-500/50 focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer appearance-none"
               style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center" }}
             >
               <option value="admin">Admin (default)</option>

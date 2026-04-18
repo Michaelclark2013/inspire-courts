@@ -102,7 +102,7 @@ export default function MyHistoryPage() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search events or notes..."
               aria-label="Search work history"
-              className="bg-off-white border border-border rounded-lg pl-8 pr-3 py-1.5 text-navy text-xs focus:outline-none focus:border-red placeholder:text-gray-400 w-48"
+              className="bg-off-white border border-border rounded-lg pl-8 pr-3 py-1.5 text-navy text-xs focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-gray-400 w-48"
             />
           </div>
         </div>

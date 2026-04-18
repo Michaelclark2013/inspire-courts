@@ -123,7 +123,7 @@ function ResetPasswordForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoFocus
-                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3.5 pr-12 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25"
+                  className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3.5 pr-12 text-white text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-white/25"
                   placeholder="Enter new password"
                 />
                 <button
@@ -148,7 +148,7 @@ function ResetPasswordForm() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm focus:outline-none focus:border-red focus:ring-1 focus:ring-red/30 transition-all placeholder:text-white/25"
+                className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-white/25"
                 placeholder="Confirm new password"
               />
             </div>

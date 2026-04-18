@@ -301,7 +301,7 @@ export default function EventsHub({
                     placeholder="Search tournaments..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-colors"
+                    className="w-full pl-10 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy placeholder:text-text-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-red focus:border-red transition-colors"
                   />
                   {searchQuery && (
                     <button
@@ -321,7 +321,7 @@ export default function EventsHub({
                   <select
                     value={divisionFilter}
                     onChange={(e) => setDivisionFilter(e.target.value)}
-                    className="w-full lg:w-auto appearance-none pl-10 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-colors"
+                    className="w-full lg:w-auto appearance-none pl-10 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red focus:border-red transition-colors"
                   >
                     <option value="all">All Divisions</option>
                     {allDivisions.map((d) => (
@@ -336,7 +336,7 @@ export default function EventsHub({
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full lg:w-auto appearance-none pl-4 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-colors"
+                    className="w-full lg:w-auto appearance-none pl-4 pr-10 py-3 border border-light-gray rounded-xl bg-white text-sm text-navy cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red focus:border-red transition-colors"
                   >
                     <option value="all">All Statuses</option>
                     {allStatuses.map((s) => (

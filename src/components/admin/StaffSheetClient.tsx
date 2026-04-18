@@ -96,7 +96,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
           />
         </div>
       </div>

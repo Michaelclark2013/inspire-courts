@@ -80,7 +80,7 @@ export default function RegisterPage() {
     fieldErrors.coachPhone = "Enter a valid 10-digit phone number";
 
   const fieldClass = (field: string) =>
-    `w-full bg-off-white border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50 transition-colors ${
+    `w-full bg-off-white border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50 transition-colors ${
       touched[field] && fieldErrors[field]
         ? "border-red/60 bg-red/[0.03]"
         : "border-light-gray"
@@ -315,7 +315,7 @@ export default function RegisterPage() {
                     value={division}
                     onChange={(e) => setDivision(e.target.value)}
                     required
-                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                   >
                     <option value="">Select division</option>
                     {tournament.divisions.map((d) => (
@@ -402,7 +402,7 @@ export default function RegisterPage() {
                     max={25}
                     value={playerCount}
                     onChange={(e) => setPlayerCount(e.target.value)}
-                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                    className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                     placeholder="e.g. 10"
                   />
                 </div>

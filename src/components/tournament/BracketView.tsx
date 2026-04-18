@@ -298,7 +298,7 @@ export default function BracketView({
                                         quarter: e.target.value,
                                       })
                                     }
-                                    className="bg-off-white border border-border rounded px-2 py-1.5 text-navy text-xs focus:outline-none focus:border-red"
+                                    className="bg-off-white border border-border rounded px-2 py-1.5 text-navy text-xs focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                                   >
                                     <option value="">Qtr</option>
                                     <option value="1">Q1</option>
@@ -318,7 +318,7 @@ export default function BracketView({
                                           | "final",
                                       })
                                     }
-                                    className="bg-off-white border border-border rounded px-2 py-1.5 text-navy text-xs focus:outline-none focus:border-red"
+                                    className="bg-off-white border border-border rounded px-2 py-1.5 text-navy text-xs focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                                   >
                                     <option value="">Status</option>
                                     <option value="live">Live</option>

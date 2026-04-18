@@ -194,7 +194,9 @@ export interface DriveFile {
 export const DRIVE_FOLDERS = {
   root: "14qiv0ravjnqrjZGBIfnb3R7WaXvOU4EV",
   responses: "1xFZx8-duZW5uPg6nU9syl54Xq31Z3ssT",
-  waivers: "14qiv0ravjnqrjZGBIfnb3R7WaXvOU4EV", // Waivers folder — subfolders per event created inside
+  // Waivers are stored under the root folder; findOrCreateDriveFolder
+  // will create per-event subfolders inside it at write time.
+  waivers: "14qiv0ravjnqrjZGBIfnb3R7WaXvOU4EV",
 } as const;
 
 export const MIME_LABELS: Record<string, string> = {

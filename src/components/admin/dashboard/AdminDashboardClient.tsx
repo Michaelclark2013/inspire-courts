@@ -17,6 +17,10 @@ import DashboardAlertsBar from "./DashboardAlertsBar";
 import QuickActions from "./QuickActions";
 import LeadsSummary from "./LeadsSummary";
 
+// How often the dashboard re-fetches the summary endpoint.
+// Keep in sync with the 30s stale-while-revalidate hint on /api/admin/dashboard/summary.
+const DASHBOARD_REFRESH_MS = 30_000;
+
 // Client orchestrator for the admin dashboard. Fetches the consolidated
 // summary endpoint and renders all sub-components, handling loading,
 // partial errors, abort-on-unmount, and refresh debouncing.
@@ -59,7 +63,7 @@ export default function AdminDashboardClient() {
 
   useEffect(() => {
     fetchData();
-    const refreshInterval = setInterval(() => fetchData(), 30000);
+    const refreshInterval = setInterval(() => fetchData(), DASHBOARD_REFRESH_MS);
     return () => {
       clearInterval(refreshInterval);
       abortRef.current?.abort();

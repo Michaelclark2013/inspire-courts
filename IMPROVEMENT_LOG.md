@@ -352,6 +352,20 @@
 - Add active:scale-[0.97] to 14 CTAs (hover:scale-[1.03] without active: press state)
 - about CTA rounded-xl → rounded-full to match button family
 
+### Cycle 20 — Migrate console.* to structured logger
+- usePushNotifications (2x), ServiceWorkerRegistrar, ErrorBoundary
+- portal/loading text upgrade
+
+### Cycle 21 — Mobile UX (tap, scroll, safe-area)
+- ConfirmModal close + action buttons 44x44px + focus rings
+- StandingsTable: isolate table scroll from filter chips, min-w-[640px]
+- QuickContactBar: pb-[env(safe-area-inset-bottom)+0.75rem]
+- EditToolbar: 3 icon buttons now 44x44px centered
+
+### Cycle 22 — Keyboard accessibility
+- KPICard: remove phantom tabIndex={0} (8+ dashboard KPIs were stealing tab stops)
+- ChatWidget, PortalSidebar mobile drawer, AdminFAB: all get Escape-to-close
+
 ### Build Status
-- ✅ PASS — `npm run build` clean across all 16 cycles
+- ✅ PASS — `npm run build` clean across all 19 cycles
 - ✅ All pushed to `improvements/round-76-clubform-contact-2026-04-17` branch

@@ -98,7 +98,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
           <button
             type="submit"
             disabled={status === "loading"}
-            className="bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_20px_rgba(204,0,0,0.3)] font-[var(--font-chakra)] disabled:opacity-60 disabled:hover:scale-100"
+            className="bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-[0.97] shadow-[0_4px_20px_rgba(204,0,0,0.3)] font-[var(--font-chakra)] disabled:opacity-60 disabled:hover:scale-100"
           >
             {status === "loading" ? "Subscribing..." : "Subscribe"}
           </button>

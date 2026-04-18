@@ -11,7 +11,7 @@ import { revalidatePath } from "next/cache";
 // GET /api/admin/scores — list all games with latest scores
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "score_entry")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -62,7 +62,7 @@ export async function GET() {
 // POST /api/admin/scores — create a game
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "score_entry")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/admin/scores — update a game score
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "score_entry")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

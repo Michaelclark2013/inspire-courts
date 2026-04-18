@@ -346,9 +346,9 @@ export default function ChatWidget() {
 
   // Auto-focus input when chat opens
   useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
+    if (!open) return;
+    const id = setTimeout(() => inputRef.current?.focus(), 100);
+    return () => clearTimeout(id);
   }, [open]);
 
   // Auto-open chat once per session (skip if user already dismissed it)

@@ -16,7 +16,7 @@ type Params = { params: Promise<{ id: string }> };
 // GET /api/admin/tournaments/[id]/registrations
 export async function GET(_request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -43,7 +43,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
 // POST /api/admin/tournaments/[id]/registrations — admin-create (walk-in / comp)
 export async function POST(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 // PUT /api/admin/tournaments/[id]/registrations — update status
 export async function PUT(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -192,7 +192,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 // DELETE /api/admin/tournaments/[id]/registrations?registrationId=123
 export async function DELETE(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

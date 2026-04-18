@@ -10,7 +10,7 @@ import { logger } from "@/lib/logger";
 // GET /api/admin/announcements — list all
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -32,7 +32,7 @@ export async function GET() {
 // POST /api/admin/announcements — create
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/admin/announcements — update existing announcement
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -136,7 +136,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/admin/announcements — delete by id
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

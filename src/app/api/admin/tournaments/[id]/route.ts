@@ -19,7 +19,7 @@ type Params = { params: Promise<{ id: string }> };
 // GET /api/admin/tournaments/[id] — full tournament detail
 export async function GET(_request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -114,7 +114,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
 // PUT /api/admin/tournaments/[id] — update tournament settings
 export async function PUT(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -177,7 +177,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 // DELETE /api/admin/tournaments/[id] — delete draft tournament
 export async function DELETE(_request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

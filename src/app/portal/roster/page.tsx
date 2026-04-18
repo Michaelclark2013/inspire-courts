@@ -68,25 +68,29 @@ export default function RosterPage() {
     }
   }, [feedback]);
 
-  const fetchRoster = useCallback(async () => {
+  const fetchRoster = useCallback(async (signal?: AbortSignal) => {
     try {
       setError(false);
-      const res = await fetch("/api/portal/roster");
+      const res = await fetch("/api/portal/roster", { signal });
       if (res.ok) {
         const data = await res.json();
         setTeam(data.team);
         setRoster(data.players);
-        // Fetch logo for this team
+        // Fetch logo for this team (also guarded by signal so unmount aborts it)
         if (data.team?.name) {
-          fetch(`/api/teams/logo?teamName=${encodeURIComponent(data.team.name)}`)
+          fetch(`/api/teams/logo?teamName=${encodeURIComponent(data.team.name)}`, { signal })
             .then((r) => r.json())
             .then((d) => setTeamLogoUrl(d.url || null))
-            .catch(() => {});
+            .catch((err) => {
+              if (err instanceof DOMException && err.name === "AbortError") return;
+              // Logo is non-critical — swallow other errors silently.
+            });
         }
       } else {
         setError(true);
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setError(true);
     } finally {
       setLoading(false);
@@ -94,7 +98,9 @@ export default function RosterPage() {
   }, []);
 
   useEffect(() => {
-    fetchRoster();
+    const controller = new AbortController();
+    fetchRoster(controller.signal);
+    return () => controller.abort();
   }, [fetchRoster]);
 
   async function handleAdd(e: React.FormEvent) {

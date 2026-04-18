@@ -20,7 +20,7 @@ type Params = { params: Promise<{ id: string }> };
 // POST /api/admin/tournaments/[id]/generate — generate bracket + schedule
 export async function POST(_request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -42,11 +42,15 @@ export function ServiceWorkerRegistrar() {
 
     // Reload when the new SW takes over
     let refreshing = false;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
+    const onControllerChange = () => {
       if (refreshing) return;
       refreshing = true;
       window.location.reload();
-    });
+    };
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+    return () => {
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return null;

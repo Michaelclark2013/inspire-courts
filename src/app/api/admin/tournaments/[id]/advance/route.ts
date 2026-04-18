@@ -18,7 +18,7 @@ type Params = { params: Promise<{ id: string }> };
 // POST /api/admin/tournaments/[id]/advance — advance winner after game final
 export async function POST(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
-  if (!session || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

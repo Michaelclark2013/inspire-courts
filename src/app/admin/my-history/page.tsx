@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { History, Loader2, Clock, DollarSign, Search, AlertTriangle, RefreshCw } from "lucide-react";
+import { History, Loader2, Clock, DollarSign, Search, AlertTriangle, RefreshCw, Download } from "lucide-react";
+import { exportCSV } from "@/lib/export";
 
 type ShiftRow = {
   date: string;
@@ -96,6 +97,14 @@ export default function MyHistoryPage() {
         <div className="px-4 py-3 border-b border-border flex items-center gap-3 flex-wrap">
           <History className="w-4 h-4 text-red flex-shrink-0" aria-hidden="true" />
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider flex-1">Shift History</h2>
+          <button
+            type="button"
+            onClick={() => exportCSV("work-history", ["Date", "Event", "Hours", "Amount", "Notes"], filteredShifts.map(s => [s.date, s.event, s.hoursWorked, s.amount, s.notes]))}
+            disabled={filteredShifts.length === 0}
+            className="flex items-center gap-1.5 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-3 py-1.5 border border-border rounded-lg hover:border-navy/30 transition-colors disabled:opacity-40"
+          >
+            <Download className="w-3.5 h-3.5" aria-hidden="true" /> CSV
+          </button>
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-navy/30" aria-hidden="true" />
             <input

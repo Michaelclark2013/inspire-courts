@@ -11,8 +11,10 @@ import {
   Calendar,
   Tag,
   RefreshCw,
+  Download,
 } from "lucide-react";
 import { SELECT_CLASS } from "@/lib/form-styles";
+import { exportCSV } from "@/lib/export";
 
 type Lead = {
   timestamp: string;
@@ -96,13 +98,23 @@ export default function LeadsPage() {
             {leads.length} total leads from all sources
           </p>
         </div>
-        <button
-          type="button"
-          onClick={fetchLeads}
-          className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-border rounded-lg hover:border-navy/30 transition-colors"
-        >
-          <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => exportCSV("leads", ["Date", "Name", "Email", "Phone", "Interest", "Source", "Status"], filtered.map(l => [l.timestamp, l.name, l.email, l.phone, l.interest, l.source, l.status]))}
+            disabled={filtered.length === 0}
+            className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-border rounded-lg hover:border-navy/30 transition-colors disabled:opacity-40"
+          >
+            <Download className="w-3.5 h-3.5" aria-hidden="true" /> CSV
+          </button>
+          <button
+            type="button"
+            onClick={fetchLeads}
+            className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-border rounded-lg hover:border-navy/30 transition-colors"
+          >
+            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards */}

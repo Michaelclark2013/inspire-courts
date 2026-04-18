@@ -493,6 +493,7 @@ export default function UsersPage() {
                     <td className="px-6 py-4">
                       {editingId === u.id ? (
                         <select
+                          aria-label="Change user role"
                           value={editRole}
                           onChange={(e) => {
                             handleRoleChange(u.id, e.target.value);

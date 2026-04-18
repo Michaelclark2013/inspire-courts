@@ -205,6 +205,7 @@ export default function RegistrationsPage() {
               className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
             />
             <select
+              aria-label="Payment status"
               value={form.paymentStatus}
               onChange={(e) => setForm({ ...form, paymentStatus: e.target.value })}
               className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
@@ -282,6 +283,7 @@ export default function RegistrationsPage() {
                     <td className="px-3 py-3 text-text-muted text-xs">{reg.division || "—"}</td>
                     <td className="px-3 py-3">
                       <select
+                        aria-label={`Payment status for ${reg.teamName}`}
                         value={reg.paymentStatus}
                         onChange={(e) => updateReg(reg.id, { paymentStatus: e.target.value })}
                         className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red ${PAYMENT_STYLES[reg.paymentStatus] || "bg-gray-100 text-gray-500"}`}
@@ -294,6 +296,7 @@ export default function RegistrationsPage() {
                     </td>
                     <td className="px-3 py-3">
                       <select
+                        aria-label={`Registration status for ${reg.teamName}`}
                         value={reg.status}
                         onChange={(e) => updateReg(reg.id, { status: e.target.value })}
                         className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red ${STATUS_STYLES[reg.status] || "bg-gray-100 text-gray-500"}`}

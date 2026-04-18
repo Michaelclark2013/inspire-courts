@@ -7,6 +7,7 @@ import {
   isGoogleConfigured,
   SHEETS,
 } from "@/lib/google-sheets";
+import { formatDateShort } from "@/lib/utils";
 
 export const revalidate = 300;
 
@@ -51,7 +52,7 @@ export default async function ProspectsPage() {
         division: getCol(row, ...DIV_COLS) || "—",
         notes: getCol(row, ...NOTES_COLS) || "",
         date: rawDate
-          ? (() => { try { return new Date(rawDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }); } catch { return rawDate; } })()
+          ? (() => { try { return formatDateShort(rawDate); } catch { return rawDate; } })()
           : "—",
       };
     });

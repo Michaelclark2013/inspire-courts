@@ -7,6 +7,7 @@ import {
   isGoogleConfigured,
   SHEETS,
 } from "@/lib/google-sheets";
+import { formatDateShort } from "@/lib/utils";
 
 export const revalidate = 300;
 
@@ -60,7 +61,7 @@ export default async function StaffPage() {
         hours,
         payMethod: getCol(row, ...PAY_METHOD_COLS) || "—",
         rate,
-        date: rawDate ? new Date(rawDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—",
+        date: rawDate ? formatDateShort(rawDate) : "—",
         pay: rate > 0 ? hours * rate : 0,
       };
     });
@@ -84,7 +85,7 @@ export default async function StaffPage() {
         payMethod: getCol(row, ...PAY_METHOD_COLS) || "—",
         rate,
         pay,
-        date: rawDate ? new Date(rawDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—",
+        date: rawDate ? formatDateShort(rawDate) : "—",
       };
     });
 

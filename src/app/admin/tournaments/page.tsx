@@ -1,6 +1,7 @@
 import NotionFallback from "@/components/dashboard/NotionFallback";
 import TournamentsClient from "@/components/admin/TournamentsClient";
 import { getAllTournaments, getProperty, isNotionConfigured } from "@/lib/notion";
+import { formatDate, formatCurrency } from "@/lib/utils";
 
 export const revalidate = 300;
 
@@ -30,12 +31,12 @@ export default async function TournamentsPage() {
 
     return {
       name: getProperty(t, "Name") || getProperty(t, "Event Name") || "—",
-      date: date ? new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—",
+      date: date ? formatDate(String(date)) : "—",
       rawDate: date || "",
       divisions: Array.isArray(divisions) ? divisions.join(", ") : (divisions || "—"),
       status,
       teams: Number(teams) || 0,
-      fee: fee ? `$${Number(fee).toLocaleString()}` : "—",
+      fee: fee ? formatCurrency(Number(fee) || 0) : "—",
       rawFee: Number(fee) || 0,
       revenue: revenue ? `$${Number(revenue).toLocaleString()}` : "$0",
       rawRevenue: Number(revenue) || 0,

@@ -107,6 +107,10 @@ export default function RegisterPage() {
           description: data.description ?? null,
           registrationCount: data.teams?.length ?? 0,
         });
+        // Auto-select division if there's only one option
+        if (data.divisions?.length === 1) {
+          setDivision(data.divisions[0]);
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -306,7 +310,7 @@ export default function RegisterPage() {
                   <p id="err-teamName" className="text-red text-xs mt-1">{fieldErrors.teamName}</p>
                 )}
               </div>
-              {tournament.divisions.length > 0 && (
+              {tournament.divisions.length > 1 && (
                 <div>
                   <label htmlFor="treg-division" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                     Division *
@@ -325,6 +329,11 @@ export default function RegisterPage() {
                       </option>
                     ))}
                   </select>
+                </div>
+              )}
+              {tournament.divisions.length === 1 && (
+                <div className="bg-off-white border border-light-gray rounded-lg px-4 py-3 text-xs text-text-muted">
+                  Division: <span className="text-navy font-semibold">{tournament.divisions[0]}</span>
                 </div>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

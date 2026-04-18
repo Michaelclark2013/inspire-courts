@@ -6,7 +6,6 @@ import Link from "next/link";
 import {
   Trophy,
   ChevronLeft,
-  Loader2,
   Radio,
   Users,
   DollarSign,
@@ -94,8 +93,41 @@ export default function PublicTournamentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center" aria-busy="true">
-        <Loader2 className="w-6 h-6 animate-spin text-text-muted" aria-label="Loading tournament" />
+      <div className="min-h-screen bg-off-white animate-pulse" aria-busy="true" aria-label="Loading tournament">
+        {/* Header skeleton */}
+        <div className="bg-navy py-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="h-3 w-32 bg-white/10 rounded mb-4" />
+            <div className="h-8 w-2/3 max-w-md bg-white/20 rounded mb-3" />
+            <div className="flex gap-3">
+              <div className="h-4 w-28 bg-white/10 rounded" />
+              <div className="h-4 w-20 bg-white/10 rounded" />
+            </div>
+          </div>
+        </div>
+        {/* Registration bar skeleton */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+          <div className="bg-white border border-light-gray rounded-xl p-4 flex items-center justify-between gap-4">
+            <div className="flex-1">
+              <div className="h-3 w-24 bg-light-gray rounded mb-2" />
+              <div className="h-4 w-48 bg-light-gray/70 rounded" />
+            </div>
+            <div className="h-11 w-32 bg-red/20 rounded-lg" />
+          </div>
+        </div>
+        {/* Content skeleton */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-4">
+          <div className="bg-white border border-light-gray rounded-xl p-6 space-y-3">
+            <div className="h-5 w-40 bg-light-gray rounded" />
+            <div className="h-4 w-full bg-light-gray/70 rounded" />
+            <div className="h-4 w-5/6 bg-light-gray/70 rounded" />
+          </div>
+          <div className="bg-white border border-light-gray rounded-xl p-6 space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-12 bg-light-gray/50 rounded-lg" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -336,9 +368,7 @@ export default function PublicTournamentPage() {
               </div>
             </div>
             <a
-              href="https://inspirecourts.leagueapps.com/tournaments"
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/tournaments/${data.id}/register`}
               className="bg-red hover:bg-red-hover text-white px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0 focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none focus-visible:ring-offset-2 min-h-[44px] inline-flex items-center"
               aria-label={`Register now for ${data.name}`}
             >

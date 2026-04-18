@@ -225,9 +225,9 @@ export default function TournamentManagePage() {
           className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
         >
           {showForm ? (
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden="true" />
           ) : (
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
           )}
           {showForm ? "Cancel" : "New Tournament"}
         </button>
@@ -236,7 +236,7 @@ export default function TournamentManagePage() {
       {/* Success Banner */}
       {successMsg && (
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 mb-6 flex items-center gap-3 animate-fade-in">
-          <Check className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+          <Check className="w-5 h-5 text-emerald-600 flex-shrink-0" aria-hidden="true" />
           <p className="text-emerald-700 text-sm font-semibold">
             &ldquo;{successMsg}&rdquo; created successfully!
           </p>
@@ -247,7 +247,7 @@ export default function TournamentManagePage() {
       {(showForm || (!loading && tournamentList.length === 0)) && (
         <div className="bg-white border border-border shadow-sm rounded-xl p-6 mb-8">
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-6 flex items-center gap-2">
-            <Plus className="w-4 h-4 text-red" /> Create Tournament
+            <Plus className="w-4 h-4 text-red" aria-hidden="true" /> Create Tournament
           </h2>
 
           {createError && (
@@ -415,7 +415,7 @@ export default function TournamentManagePage() {
                           onClick={() => toggleChip("divisions", d)}
                         >
                           {d}
-                          <X className="w-3 h-3" />
+                          <X className="w-3 h-3" aria-hidden="true" />
                         </span>
                       ))}
                     </div>
@@ -460,7 +460,7 @@ export default function TournamentManagePage() {
                           onClick={() => toggleChip("courts", c)}
                         >
                           {c}
-                          <X className="w-3 h-3" />
+                          <X className="w-3 h-3" aria-hidden="true" />
                         </span>
                       ))}
                     </div>
@@ -596,11 +596,11 @@ export default function TournamentManagePage() {
       {/* Tournament List */}
       {loading ? (
         <div className="flex items-center justify-center py-8 md:py-16 text-text-muted">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading tournaments...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading tournaments...
         </div>
       ) : tournamentList.length === 0 ? (
         <div className="text-center py-8 md:py-14 text-text-muted">
-          <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" aria-hidden="true" />
           <h3 className="text-navy font-bold text-lg mb-1">Create Your First Tournament</h3>
           <p className="text-text-muted text-sm mb-6">
             Set up a tournament in under 60 seconds using a template
@@ -609,7 +609,7 @@ export default function TournamentManagePage() {
             onClick={() => setShowForm(true)}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" aria-hidden="true" />
             Get Started
           </button>
         </div>
@@ -682,7 +682,7 @@ function TournamentCard({ tournament: t }: { tournament: Tournament }) {
           </div>
           <div className="flex items-center gap-4 text-text-secondary text-xs">
             <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3" />
+              <Calendar className="w-3 h-3" aria-hidden="true" />
               {new Date(t.startDate + "T00:00:00").toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -691,16 +691,16 @@ function TournamentCard({ tournament: t }: { tournament: Tournament }) {
             </span>
             {t.location && (
               <span className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
+                <MapPin className="w-3 h-3" aria-hidden="true" />
                 {t.location}
               </span>
             )}
             <span className="flex items-center gap-1">
-              <Users className="w-3 h-3" />
+              <Users className="w-3 h-3" aria-hidden="true" />
               {t.teamCount} teams
             </span>
             <span className="flex items-center gap-1">
-              <Gamepad2 className="w-3 h-3" />
+              <Gamepad2 className="w-3 h-3" aria-hidden="true" />
               {t.gameCount} games
             </span>
           </div>
@@ -720,7 +720,7 @@ function TournamentCard({ tournament: t }: { tournament: Tournament }) {
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
           <ProgressRing percent={progressPct} size={36} strokeWidth={3} />
-          <ChevronRight className="w-5 h-5 text-navy/40 group-hover:text-navy/60 transition-colors" />
+          <ChevronRight className="w-5 h-5 text-navy/40 group-hover:text-navy/60 transition-colors" aria-hidden="true" />
         </div>
       </div>
 

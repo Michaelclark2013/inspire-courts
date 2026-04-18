@@ -166,7 +166,7 @@ export default function RegisterPage() {
         {/* Success state */}
         {step === "done" && (
           <div className="bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-8 shadow-2xl text-center">
-            <CheckCircle2 className="w-14 h-14 text-emerald-400 mx-auto mb-4" />
+            <CheckCircle2 className="w-14 h-14 text-emerald-400 mx-auto mb-4" aria-hidden="true" />
             <h2 className="text-white text-lg font-bold mb-2">Account Created!</h2>
             <p className="text-white/50 text-sm">Signing you in...</p>
           </div>
@@ -175,7 +175,7 @@ export default function RegisterPage() {
         {/* Pending approval state */}
         {step === "pending" && (
           <div className="bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-8 shadow-2xl text-center">
-            <Shield className="w-14 h-14 text-amber-400 mx-auto mb-4" />
+            <Shield className="w-14 h-14 text-amber-400 mx-auto mb-4" aria-hidden="true" />
             <h2 className="text-white text-lg font-bold mb-2">Pending Approval</h2>
             <p className="text-white/50 text-sm mb-2">
               Your account has been created but requires admin approval before you can sign in.
@@ -197,7 +197,7 @@ export default function RegisterPage() {
         {step === "role" && (
           <div className="bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-7 shadow-2xl">
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-4 h-4 text-red" />
+              <Shield className="w-4 h-4 text-red" aria-hidden="true" />
               <h2 className="text-white text-sm font-bold uppercase tracking-wider">
                 I am a...
               </h2>
@@ -306,7 +306,7 @@ export default function RegisterPage() {
         {step === "details" && (
           <div className="bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-7 shadow-2xl">
             <div className="flex items-center gap-2 mb-2">
-              <UserPlus className="w-4 h-4 text-red" />
+              <UserPlus className="w-4 h-4 text-red" aria-hidden="true" />
               <h2 className="text-white text-sm font-bold uppercase tracking-wider">
                 Your Details
               </h2>
@@ -503,9 +503,9 @@ function PasswordStrength({ password }: { password: string }) {
         {checks.map((c) => (
           <div key={c.label} className="flex items-center gap-1.5 text-[10px]">
             {c.pass ? (
-              <Check className="w-3 h-3 text-emerald-400" />
+              <Check className="w-3 h-3 text-emerald-400" aria-hidden="true" />
             ) : (
-              <X className="w-3 h-3 text-white/20" />
+              <X className="w-3 h-3 text-white/20" aria-hidden="true" />
             )}
             <span className={c.pass ? "text-emerald-400" : "text-white/30"}>
               {c.label}

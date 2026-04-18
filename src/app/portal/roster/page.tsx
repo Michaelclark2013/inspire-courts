@@ -157,7 +157,7 @@ export default function RosterPage() {
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">My Roster</h1>
         </div>
         <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
-          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" aria-hidden="true" />
           <h3 className="text-navy font-semibold mb-1">Failed to Load Roster</h3>
           <p className="text-text-muted text-sm mb-4">Could not load your roster. Check your connection and try again.</p>
           <button
@@ -211,7 +211,7 @@ export default function RosterPage() {
               onClick={() => setShowAdd(!showAdd)}
               className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4" aria-hidden="true" />
               Add Player
             </button>
           )}
@@ -226,9 +226,9 @@ export default function RosterPage() {
             : "bg-red/10 border border-red/20 text-red"
         }`}>
           {feedback.type === "success" ? (
-            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           ) : (
-            <XCircle className="w-4 h-4 flex-shrink-0" />
+            <XCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           )}
           {feedback.message}
         </div>
@@ -281,18 +281,18 @@ export default function RosterPage() {
       {/* Content */}
       {loading ? (
         <div className="flex items-center justify-center py-16 text-text-muted">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading roster...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading roster...
         </div>
       ) : !team ? (
         <div className="bg-white border border-light-gray rounded-xl p-8 text-center">
-          <AlertCircle className="w-8 h-8 text-light-gray mx-auto mb-3" />
+          <AlertCircle className="w-8 h-8 text-light-gray mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">No team assigned</p>
           <p className="text-text-muted text-sm">Contact the admin to be assigned to a team.</p>
         </div>
       ) : (
         <div className="bg-white border border-light-gray rounded-xl overflow-hidden">
           <div className="px-6 py-4 border-b border-light-gray flex items-center gap-2">
-            <Users className="w-4 h-4 text-red" />
+            <Users className="w-4 h-4 text-red" aria-hidden="true" />
             <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
               {team.name}
             </h2>
@@ -316,7 +316,7 @@ export default function RosterPage() {
                         onClick={() => setSortField("jersey")}
                         className={`flex items-center gap-1 hover:text-navy transition-colors ${sortField === "jersey" ? "text-navy" : ""}`}
                       >
-                        # <ArrowUpDown className="w-3 h-3" />
+                        # <ArrowUpDown className="w-3 h-3" aria-hidden="true" />
                       </button>
                     </th>
                     <th scope="col" className="text-left px-6 py-3 font-semibold">
@@ -324,7 +324,7 @@ export default function RosterPage() {
                         onClick={() => setSortField("name")}
                         className={`flex items-center gap-1 hover:text-navy transition-colors ${sortField === "name" ? "text-navy" : ""}`}
                       >
-                        Player <ArrowUpDown className="w-3 h-3" />
+                        Player <ArrowUpDown className="w-3 h-3" aria-hidden="true" />
                       </button>
                     </th>
                     <th scope="col" className="text-left px-6 py-3 font-semibold">Division</th>

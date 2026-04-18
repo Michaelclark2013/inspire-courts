@@ -84,7 +84,7 @@ export default function GalleryPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Highlights, mixtapes, and game film</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/about"
@@ -96,7 +96,7 @@ export default function GalleryPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Our story, facility, and mission</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/events"
@@ -108,7 +108,7 @@ export default function GalleryPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Upcoming OFF SZN HOOPS events</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
           </div>
         </div>

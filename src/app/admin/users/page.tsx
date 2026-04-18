@@ -224,7 +224,7 @@ export default function UsersPage() {
       {showForm && (
         <div className="bg-white border border-border rounded-xl p-6 mb-8">
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-            <UserPlus className="w-4 h-4 text-red" />
+            <UserPlus className="w-4 h-4 text-red" aria-hidden="true" />
             Create New User
           </h2>
           {error && (
@@ -347,7 +347,7 @@ export default function UsersPage() {
       {/* Search & Filter */}
       <div className="flex items-center gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy/30" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy/30" aria-hidden="true" />
           <input
             type="text"
             value={searchQuery}
@@ -374,7 +374,7 @@ export default function UsersPage() {
       {pendingUsers.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <AlertTriangle className="w-4 h-4 text-amber-600" aria-hidden="true" />
             <h2 className="text-amber-700 font-bold text-sm uppercase tracking-wider">
               Pending Approval ({pendingUsers.length})
             </h2>
@@ -398,14 +398,14 @@ export default function UsersPage() {
                     onClick={() => handleApproval(u.id, true)}
                     className="flex items-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
                   >
-                    <CheckCircle className="w-3.5 h-3.5" /> Approve
+                    <CheckCircle className="w-3.5 h-3.5" aria-hidden="true" /> Approve
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDelete(u.id, u.name)}
                     className="flex items-center gap-1.5 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
                   >
-                    <XCircle className="w-3.5 h-3.5" /> Deny
+                    <XCircle className="w-3.5 h-3.5" aria-hidden="true" /> Deny
                   </button>
                 </div>
               </div>
@@ -417,7 +417,7 @@ export default function UsersPage() {
       {/* Users table */}
       <div className="bg-white border border-border rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-border flex items-center gap-2">
-          <Users className="w-4 h-4 text-red" />
+          <Users className="w-4 h-4 text-red" aria-hidden="true" />
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider">
             All Users
           </h2>
@@ -428,12 +428,12 @@ export default function UsersPage() {
 
         {loading ? (
           <div className="flex items-center justify-center py-16 text-navy/40">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+            <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" />
             Loading users...
           </div>
         ) : userList.length === 0 ? (
           <div className="text-center py-16 text-navy/40">
-            <Shield className="w-8 h-8 mx-auto mb-3 opacity-40" />
+            <Shield className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
             <p className="text-sm">No users yet. Add your first coach or parent account.</p>
           </div>
         ) : (
@@ -483,9 +483,9 @@ export default function UsersPage() {
                           className="opacity-0 group-hover:opacity-100 transition-opacity text-navy/30 hover:text-accent flex-shrink-0"
                         >
                           {copiedEmail === u.id ? (
-                            <Check className="w-3 h-3 text-success" />
+                            <Check className="w-3 h-3 text-success" aria-hidden="true" />
                           ) : (
-                            <Copy className="w-3 h-3" />
+                            <Copy className="w-3 h-3" aria-hidden="true" />
                           )}
                         </button>
                       </span>
@@ -552,7 +552,7 @@ export default function UsersPage() {
                         className="text-navy/30 hover:text-red transition-colors"
                         title="Delete user"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </td>
                   </tr>

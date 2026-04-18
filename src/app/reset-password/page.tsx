@@ -58,7 +58,7 @@ function ResetPasswordForm() {
     return (
       <div className="bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-7 shadow-2xl text-center">
         <div className="w-12 h-12 bg-red/10 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Lock className="w-6 h-6 text-red" />
+          <Lock className="w-6 h-6 text-red" aria-hidden="true" />
         </div>
         <h2 className="text-white font-bold text-lg mb-2">Invalid Link</h2>
         <p className="text-white/50 text-sm mb-6">
@@ -79,7 +79,7 @@ function ResetPasswordForm() {
       {success ? (
         <div className="text-center py-4">
           <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-6 h-6 text-green-400" />
+            <CheckCircle className="w-6 h-6 text-green-400" aria-hidden="true" />
           </div>
           <h2 className="text-white font-bold text-lg mb-2">Password Updated</h2>
           <p className="text-white/50 text-sm leading-relaxed mb-6">
@@ -95,7 +95,7 @@ function ResetPasswordForm() {
       ) : (
         <>
           <div className="flex items-center gap-2 mb-2">
-            <Lock className="w-4 h-4 text-red" />
+            <Lock className="w-4 h-4 text-red" aria-hidden="true" />
             <h2 className="text-white text-sm font-bold uppercase tracking-wider">
               New Password
             </h2>
@@ -175,7 +175,7 @@ function ResetPasswordForm() {
               href="/login"
               className="inline-flex items-center gap-2 text-white/40 text-xs hover:text-white/60 transition-colors"
             >
-              <ArrowLeft className="w-3 h-3" />
+              <ArrowLeft className="w-3 h-3" aria-hidden="true" />
               Back to Sign In
             </Link>
           </div>
@@ -204,7 +204,7 @@ export default function ResetPasswordPage() {
 
         <Suspense fallback={
           <div className="bg-navy-light/80 backdrop-blur border border-white/10 rounded-xl p-7 shadow-2xl text-center">
-            <Loader2 className="w-6 h-6 text-white/40 animate-spin mx-auto" />
+            <Loader2 className="w-6 h-6 text-white/40 animate-spin mx-auto" aria-hidden="true" />
           </div>
         }>
           <ResetPasswordForm />

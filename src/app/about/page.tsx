@@ -290,7 +290,7 @@ export default function AboutPage() {
                 className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
               >
                 View Full Game Day Info
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
             </div>
           </AnimateIn>
@@ -370,7 +370,7 @@ export default function AboutPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Upcoming OFF SZN HOOPS events</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/teams"
@@ -382,7 +382,7 @@ export default function AboutPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Club basketball on the MADE Hoops Circuit</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/training"
@@ -394,7 +394,7 @@ export default function AboutPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">1-on-1 and small group sessions</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
           </div>
         </div>

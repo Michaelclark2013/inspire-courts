@@ -110,7 +110,7 @@ export default function ApprovalsPage() {
       {/* Loading */}
       {loading && (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 text-text-secondary animate-spin" />
+          <Loader2 className="w-6 h-6 text-text-secondary animate-spin" aria-hidden="true" />
         </div>
       )}
 
@@ -118,7 +118,7 @@ export default function ApprovalsPage() {
       {!loading && fetchError && (
         <div className="bg-white border border-light-gray rounded-2xl p-10 text-center shadow-sm">
           <div className="w-14 h-14 rounded-full bg-red/10 flex items-center justify-center mx-auto mb-4">
-            <AlertTriangle className="w-7 h-7 text-red" />
+            <AlertTriangle className="w-7 h-7 text-red" aria-hidden="true" />
           </div>
           <p className="text-navy font-bold text-base mb-1">Failed to load approvals</p>
           <p className="text-text-secondary text-sm max-w-xs mx-auto mb-4">
@@ -137,7 +137,7 @@ export default function ApprovalsPage() {
       {!loading && !fetchError && pending.length === 0 && (
         <div className="bg-white border border-light-gray rounded-2xl p-10 text-center shadow-sm">
           <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-            <CheckCircle2 className="w-7 h-7 text-emerald-500" />
+            <CheckCircle2 className="w-7 h-7 text-emerald-500" aria-hidden="true" />
           </div>
           <p className="text-navy font-bold text-base mb-1">All caught up</p>
           <p className="text-text-secondary text-sm max-w-xs mx-auto">
@@ -178,7 +178,7 @@ export default function ApprovalsPage() {
                   <p className="text-text-secondary text-xs">{user.phone}</p>
                 )}
                 <div className="flex items-center gap-1 mt-1.5 text-text-secondary text-xs">
-                  <Clock className="w-3 h-3" />
+                  <Clock className="w-3 h-3" aria-hidden="true" />
                   Registered {formatDate(user.createdAt)}
                 </div>
               </div>
@@ -191,9 +191,9 @@ export default function ApprovalsPage() {
                   className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wide px-5 py-2.5 rounded-xl shadow-sm shadow-emerald-600/20 transition-all hover:shadow-md hover:shadow-emerald-600/20"
                 >
                   {actionLoading === user.id ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
                   ) : (
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
                   )}
                   Approve
                 </button>
@@ -202,7 +202,7 @@ export default function ApprovalsPage() {
                   disabled={actionLoading === user.id}
                   className="inline-flex items-center gap-1.5 bg-red/10 hover:bg-red/20 disabled:opacity-50 disabled:cursor-not-allowed text-red text-xs font-bold uppercase tracking-wide px-5 py-2.5 rounded-xl transition-colors"
                 >
-                  <XCircle className="w-3.5 h-3.5" />
+                  <XCircle className="w-3.5 h-3.5" aria-hidden="true" />
                   Deny
                 </button>
               </div>

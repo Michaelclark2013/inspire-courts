@@ -98,7 +98,7 @@ export default function ContactPageClient() {
               <AnimateIn>
                 {submitted ? (
                   <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
-                    <Check className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                    <Check className="w-12 h-12 text-green-600 mx-auto mb-4" aria-hidden="true" />
                     <h2 className="text-navy font-bold text-xl uppercase tracking-tight mb-2 font-[var(--font-chakra)]">
                       Message Sent
                     </h2>
@@ -243,7 +243,7 @@ export default function ContactPageClient() {
                       Location
                     </h2>
                     <div className="flex gap-3 text-text-muted text-sm">
-                      <MapPin className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <MapPin className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <div>
                         <p>1090 N Fiesta Blvd</p>
                         <p>Ste 101 &amp; 102</p>
@@ -257,7 +257,7 @@ export default function ContactPageClient() {
                       Email
                     </h2>
                     <div className="flex gap-3 text-text-muted text-sm">
-                      <Mail className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <Mail className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <a
                         href={`mailto:${FACILITY_EMAIL}`}
                         className="hover:text-red transition-colors"
@@ -272,7 +272,7 @@ export default function ContactPageClient() {
                       Social
                     </h2>
                     <div className="flex gap-3 text-text-muted text-sm">
-                      <Camera className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <Camera className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <a
                         href="https://instagram.com/inspirecourts"
                         target="_blank"
@@ -289,7 +289,7 @@ export default function ContactPageClient() {
                       Hours
                     </h2>
                     <div className="flex gap-3 text-text-muted text-sm">
-                      <Clock className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <Clock className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <div>
                         <p className="font-semibold text-navy">Open by Appointment</p>
                         <p className="text-text-muted text-xs mt-0.5">Call or book online — we operate by reservation</p>
@@ -302,7 +302,7 @@ export default function ContactPageClient() {
                       Getting Here
                     </h2>
                     <div className="flex gap-3 text-text-muted text-sm">
-                      <Car className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+                      <Car className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <div className="space-y-1">
                         <p className="font-semibold text-navy">Free Parking On-Site</p>
                         <p>Enter from Fiesta Blvd — parking lot is directly in front of the building. Look for Inspire Courts signage at Suite 101 &amp; 102.</p>
@@ -348,7 +348,7 @@ export default function ContactPageClient() {
                 href={link.href}
                 className="flex items-center justify-center gap-1.5 bg-white border border-light-gray hover:border-red/40 hover:text-red text-navy text-xs font-bold uppercase tracking-wide py-3 px-4 rounded-xl transition-colors font-[var(--font-chakra)]"
               >
-                {link.label} <ArrowRight className="w-3 h-3 opacity-60" />
+                {link.label} <ArrowRight className="w-3 h-3 opacity-60" aria-hidden="true" />
               </Link>
             ))}
           </div>

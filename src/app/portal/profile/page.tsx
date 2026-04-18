@@ -224,7 +224,7 @@ export default function ProfilePage() {
                 onChange={(e) => setName(e.target.value)}
                 required
                 autoComplete="name"
-                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
               />
             </div>
             <div>
@@ -237,7 +237,7 @@ export default function ProfilePage() {
                 value={phone}
                 onChange={(e) => setPhone(formatPhone(e.target.value))}
                 autoComplete="tel"
-                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                 placeholder="(555) 123-4567"
               />
             </div>
@@ -256,7 +256,7 @@ export default function ProfilePage() {
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required={!!newPassword}
                 autoComplete="current-password"
-                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                 placeholder="Required to change password"
               />
             </div>
@@ -270,7 +270,7 @@ export default function ProfilePage() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 autoComplete="new-password"
-                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                 placeholder="New password"
                 minLength={8}
               />
@@ -354,7 +354,7 @@ export default function ProfilePage() {
                       type="text"
                       value={deleteTyped}
                       onChange={(e) => setDeleteTyped(e.target.value)}
-                      className="w-full bg-off-white border border-red/20 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                      className="w-full bg-off-white border border-red/20 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                       placeholder="DELETE"
                       autoComplete="off"
                     />
@@ -370,7 +370,7 @@ export default function ProfilePage() {
                         type="password"
                         value={deletePassword}
                         onChange={(e) => setDeletePassword(e.target.value)}
-                        className="w-full bg-off-white border border-red/20 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                        className="w-full bg-off-white border border-red/20 rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                         placeholder="Your current password"
                         autoComplete="current-password"
                       />

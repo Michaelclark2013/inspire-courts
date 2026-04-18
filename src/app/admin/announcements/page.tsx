@@ -182,7 +182,7 @@ export default function AnnouncementsPage() {
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 required
-                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-gray-400"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-gray-400"
                 placeholder="Announcement title"
               />
             </div>
@@ -196,7 +196,7 @@ export default function AnnouncementsPage() {
                 onChange={(e) => setForm({ ...form, body: e.target.value })}
                 required
                 rows={4}
-                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-gray-400 resize-vertical"
+                className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-gray-400 resize-vertical"
                 placeholder="Write your announcement..."
               />
             </div>
@@ -241,7 +241,7 @@ export default function AnnouncementsPage() {
                   min={new Date().toISOString().split("T")[0]}
                   title="Announcement will be hidden after this date"
                   onChange={(e) => setForm({ ...form, expiresAt: e.target.value })}
-                  className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                  className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                 />
               </div>
             </div>

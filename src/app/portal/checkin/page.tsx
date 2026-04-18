@@ -378,7 +378,7 @@ export default function CoachCheckInPage() {
                 type="text"
                 value={coachName}
                 onChange={(e) => setCoachName(e.target.value)}
-                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-amber-500 placeholder:text-text-muted/50"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-amber-500 focus-visible:ring-2 focus-visible:ring-amber-500 placeholder:text-text-muted/50"
                 placeholder="Enter coach name for band..."
                 aria-label="Coach name for coaching band"
               />
@@ -440,7 +440,7 @@ export default function CoachCheckInPage() {
                 type="text"
                 value={manualName}
                 onChange={(e) => setManualName(e.target.value)}
-                className="w-full bg-off-white border border-light-gray rounded-lg pl-10 pr-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                className="w-full bg-off-white border border-light-gray rounded-lg pl-10 pr-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                 placeholder="Type player name not on roster..."
                 aria-label="Manual player check-in name"
               />
@@ -475,7 +475,7 @@ export default function CoachCheckInPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-off-white border border-light-gray rounded-lg pl-9 pr-3 py-2 text-navy text-xs focus:outline-none focus:border-red placeholder:text-text-muted/50"
+                  className="w-full bg-off-white border border-light-gray rounded-lg pl-9 pr-3 py-2 text-navy text-xs focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
                   placeholder="Search player..."
                   aria-label="Search roster"
                 />

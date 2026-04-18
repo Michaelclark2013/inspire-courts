@@ -366,6 +366,16 @@
 - KPICard: remove phantom tabIndex={0} (8+ dashboard KPIs were stealing tab stops)
 - ChatWidget, PortalSidebar mobile drawer, AdminFAB: all get Escape-to-close
 
+### Cycle 23 — Twitter cards + register noindex
+- Twitter summary_large_image on about, events, schedule, scores,
+  training, teams, facility, camps (8 pages)
+- tournaments/[id]/register layout: robots noindex,follow
+
+### Cycle 24 — Delete dead code + clearer constants
+- Remove src/components/admin/DashboardDBStats.tsx (442 lines, zero imports)
+- AdminDashboardClient: DASHBOARD_REFRESH_MS named constant with comment
+- google-sheets DRIVE_FOLDERS: comment explains waivers=root is intentional
+
 ### Build Status
-- ✅ PASS — `npm run build` clean across all 19 cycles
+- ✅ PASS — `npm run build` clean across all 21 cycles
 - ✅ All pushed to `improvements/round-76-clubform-contact-2026-04-17` branch

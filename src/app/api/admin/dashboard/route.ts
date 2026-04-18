@@ -22,23 +22,27 @@ export async function GET() {
     const now = new Date().toISOString();
 
     const [
-      regStats,
+      regRows,
       allTournaments,
       upcomingGames,
       announcementCount,
       liveGameCount,
     ] = await Promise.all([
-      // Registration aggregate stats
+      // Per-tournament registration breakdown — one query that produces
+      // both the global aggregates (via reduce below) AND the per-tournament
+      // counts used in tournamentStatus. Was two separate scans before.
       db
         .select({
-          total: sql<number>`count(*)`,
+          tournamentId: tournamentRegistrations.tournamentId,
+          count: sql<number>`count(*)`,
           pendingPayments: sql<number>`sum(case when ${tournamentRegistrations.paymentStatus} = 'pending' then 1 else 0 end)`,
           paidRevenueCents: sql<number>`sum(case when ${tournamentRegistrations.paymentStatus} = 'paid' then ${tournamentRegistrations.entryFee} else 0 end)`,
           approved: sql<number>`sum(case when ${tournamentRegistrations.status} = 'approved' then 1 else 0 end)`,
         })
-        .from(tournamentRegistrations),
+        .from(tournamentRegistrations)
+        .groupBy(tournamentRegistrations.tournamentId),
 
-      // Active/published tournaments with registration counts
+      // Active/published tournaments
       db
         .select()
         .from(tournaments)
@@ -72,27 +76,20 @@ export async function GET() {
         .where(eq(games.status, "live")),
     ]);
 
-    // Get registration counts per tournament
-    const tournamentIds = allTournaments.map((t) => t.id);
-    let regCountsByTournament: Record<number, number> = {};
-    if (tournamentIds.length > 0) {
-      const regCounts = await db
-        .select({
-          tournamentId: tournamentRegistrations.tournamentId,
-          count: sql<number>`count(*)`,
-        })
-        .from(tournamentRegistrations)
-        .where(inArray(tournamentRegistrations.tournamentId, tournamentIds))
-        .groupBy(tournamentRegistrations.tournamentId);
-
-      for (const r of regCounts) {
-        regCountsByTournament[r.tournamentId] = r.count;
-      }
+    // Reduce the grouped rows into both the per-tournament map and the
+    // global aggregates used by the top-level KPIs.
+    const regCountsByTournament: Record<number, number> = {};
+    const stats = { total: 0, pendingPayments: 0, paidRevenueCents: 0, approved: 0 };
+    for (const r of regRows) {
+      regCountsByTournament[r.tournamentId] = Number(r.count) || 0;
+      stats.total += Number(r.count) || 0;
+      stats.pendingPayments += Number(r.pendingPayments) || 0;
+      stats.paidRevenueCents += Number(r.paidRevenueCents) || 0;
+      stats.approved += Number(r.approved) || 0;
     }
 
-    const stats = regStats[0];
-    const total = Number(stats?.total) || 0;
-    const approvedCount = Number(stats?.approved) || 0;
+    const total = stats.total;
+    const approvedCount = stats.approved;
 
     const tournamentStatus = allTournaments.map((t) => {
       const divs: string[] = t.divisions ? JSON.parse(t.divisions) : [];
@@ -115,8 +112,8 @@ export async function GET() {
     return NextResponse.json({
       registrations: {
         total,
-        pendingPayments: Number(stats?.pendingPayments) || 0,
-        paidRevenueCents: Number(stats?.paidRevenueCents) || 0,
+        pendingPayments: stats.pendingPayments,
+        paidRevenueCents: stats.paidRevenueCents,
         approvalRate: total > 0 ? Math.round((approvedCount / total) * 100) : 0,
       },
       upcomingGames,

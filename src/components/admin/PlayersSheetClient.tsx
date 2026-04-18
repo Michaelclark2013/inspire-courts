@@ -46,14 +46,19 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
   const [divFilter, setDivFilter] = useState("All");
   const [teamFilter, setTeamFilter] = useState("All");
 
-  const divisions = useMemo(
-    () => ["All", ...Array.from(new Set(players.map((p) => p.division))).sort()],
-    [players]
-  );
-  const teams = useMemo(
-    () => ["All", ...Array.from(new Set(players.map((p) => p.team))).filter(t => t !== "—").sort()],
-    [players]
-  );
+  // Single pass extracts both unique divisions and teams
+  const { divisions, teams } = useMemo(() => {
+    const divSet = new Set<string>();
+    const teamSet = new Set<string>();
+    for (const p of players) {
+      divSet.add(p.division);
+      if (p.team !== "—") teamSet.add(p.team);
+    }
+    return {
+      divisions: ["All", ...Array.from(divSet).sort()],
+      teams: ["All", ...Array.from(teamSet).sort()],
+    };
+  }, [players]);
 
   const filtered = useMemo(() => {
     let list = players;

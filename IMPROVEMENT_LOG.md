@@ -296,6 +296,22 @@
 - Team-complete celebration banner on check-in (all players checked in)
 - "Updated Xs ago" live ticker next to refresh on schedule page
 
+### Cycle 10 — Real bugs (race, leaks, logic)
+- Waiver route: return 500 when BOTH DB and Sheets fail (was returning
+  {success:true} when DB silently failed)
+- Schedule page: add AbortController so unmount doesn't setState
+- Checkin page: cleanup effect for undoTimeout on unmount
+- DeadlineCountdown: show minutes when under 1 hour (was "0 hours")
+- Content editor: aria-labels on remove buttons + field inputs (6 total)
+- Offline page: aria-hidden on decorative SVG
+
+### Cycle 11 — Auth, ref leaks, SSR safety
+- Portal checkin API: verify coach owns team before accepting check-in
+  (auth bypass: coach could check in players under other coaches' teams)
+- Checkin page: undoTimeout moved to useRef (avoids state-batching race)
+- AdminSidebar: typeof window guard + try/catch on localStorage
+- DashboardDBStats: AbortController on both dashboard + live-games polls
+
 ### Build Status
-- ✅ PASS — `npm run build` clean across all 6 cycles
+- ✅ PASS — `npm run build` clean across all 8 cycles
 - ✅ All pushed to `improvements/round-76-clubform-contact-2026-04-17` branch

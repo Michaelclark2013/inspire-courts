@@ -12,7 +12,7 @@ import {
   tournaments,
   waivers,
 } from "@/lib/db/schema";
-import { desc, eq, inArray } from "drizzle-orm";
+import { desc, eq, inArray, sql } from "drizzle-orm";
 
 // GET /api/portal/summary — consolidated dashboard payload.
 // Returns liveGames, announcements, registrations, rosterCount, waiverSubmitted
@@ -168,20 +168,16 @@ export async function GET() {
   let rosterCount: number | null = null;
   if (role === "coach" && !isNaN(userId)) {
     try {
-      const [team] = await db
-        .select()
+      // Single query: get team + player count via COUNT subquery.
+      const [row] = await db
+        .select({
+          teamId: teams.id,
+          playerCount: sql<number>`(SELECT COUNT(*) FROM ${players} WHERE ${players.teamId} = ${teams.id})`,
+        })
         .from(teams)
         .where(eq(teams.coachUserId, userId))
         .limit(1);
-      if (team) {
-        const roster = await db
-          .select({ id: players.id })
-          .from(players)
-          .where(eq(players.teamId, team.id));
-        rosterCount = roster.length;
-      } else {
-        rosterCount = 0;
-      }
+      rosterCount = row ? Number(row.playerCount) : 0;
     } catch {
       rosterCount = null;
     }

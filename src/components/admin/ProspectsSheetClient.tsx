@@ -146,13 +146,13 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search teams, coaches, notes..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
         >
           {statuses.map((s) => (
             <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>
@@ -161,7 +161,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
         <select
           value={divFilter}
           onChange={(e) => setDivFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
         >
           {divisions.map((d) => (
             <option key={d} value={d}>{d === "All" ? "All Divisions" : d}</option>

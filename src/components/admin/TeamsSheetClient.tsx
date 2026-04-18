@@ -130,13 +130,13 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search teams, coaches, email..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
           />
         </div>
         <select
           value={divFilter}
           onChange={(e) => setDivFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
         >
           {divisions.map((d) => (
             <option key={d} value={d}>
@@ -147,7 +147,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
         <select
           value={payFilter}
           onChange={(e) => setPayFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
         >
           {payStatuses.map((s) => (
             <option key={s} value={s}>

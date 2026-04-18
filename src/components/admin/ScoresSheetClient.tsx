@@ -97,7 +97,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search teams..."
                   aria-label="Search teams"
-                  className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
+                  className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
                 />
               </div>
               {/* Desktop division select */}
@@ -105,7 +105,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                 value={divFilter}
                 onChange={(e) => setDivFilter(e.target.value)}
                 aria-label="Filter by division"
-                className="hidden md:block bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
+                className="hidden md:block bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
               >
                 {divisions.map((d) => (
                   <option key={d} value={d}>

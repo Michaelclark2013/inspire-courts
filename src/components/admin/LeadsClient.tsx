@@ -97,12 +97,12 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search leads..." className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-secondary/50" />
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search leads..." className="w-full bg-bg border border-border rounded-sm pl-10 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent transition-colors placeholder:text-text-secondary/50" />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent">
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
           {statuses.map((s) => <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>)}
         </select>
-        <select value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent">
+        <select value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)} className="bg-bg border border-border rounded-sm px-3 py-2.5 text-navy text-sm focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent">
           {sources.map((s) => <option key={s} value={s}>{s === "All" ? "All Sources" : s}</option>)}
         </select>
       </div>

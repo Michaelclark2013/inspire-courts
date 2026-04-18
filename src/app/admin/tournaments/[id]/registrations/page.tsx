@@ -179,7 +179,7 @@ export default function RegistrationsPage() {
               onChange={(e) => setForm({ ...form, teamName: e.target.value })}
               placeholder="Team name *"
               required
-              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
             />
             <input
               type="text"
@@ -187,7 +187,7 @@ export default function RegistrationsPage() {
               onChange={(e) => setForm({ ...form, coachName: e.target.value })}
               placeholder="Coach name *"
               required
-              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
             />
             <input
               type="email"
@@ -195,19 +195,19 @@ export default function RegistrationsPage() {
               onChange={(e) => setForm({ ...form, coachEmail: e.target.value })}
               placeholder="Coach email"
               autoComplete="email"
-              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
             />
             <input
               type="text"
               value={form.division}
               onChange={(e) => setForm({ ...form, division: e.target.value })}
               placeholder="Division"
-              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
             />
             <select
               value={form.paymentStatus}
               onChange={(e) => setForm({ ...form, paymentStatus: e.target.value })}
-              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
             >
               <option value="waived">Waived (Comp)</option>
               <option value="paid">Paid (Cash/Other)</option>
@@ -218,7 +218,7 @@ export default function RegistrationsPage() {
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
               placeholder="Notes"
-              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red placeholder:text-text-muted/50"
+              className="bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red placeholder:text-text-muted/50"
             />
             <button
               type="submit"
@@ -284,7 +284,7 @@ export default function RegistrationsPage() {
                       <select
                         value={reg.paymentStatus}
                         onChange={(e) => updateReg(reg.id, { paymentStatus: e.target.value })}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none ${PAYMENT_STYLES[reg.paymentStatus] || "bg-gray-100 text-gray-500"}`}
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red ${PAYMENT_STYLES[reg.paymentStatus] || "bg-gray-100 text-gray-500"}`}
                       >
                         <option value="pending">Pending</option>
                         <option value="paid">Paid</option>
@@ -296,7 +296,7 @@ export default function RegistrationsPage() {
                       <select
                         value={reg.status}
                         onChange={(e) => updateReg(reg.id, { status: e.target.value })}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none ${STATUS_STYLES[reg.status] || "bg-gray-100 text-gray-500"}`}
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red ${STATUS_STYLES[reg.status] || "bg-gray-100 text-gray-500"}`}
                       >
                         <option value="pending">Pending</option>
                         <option value="approved">Approved</option>

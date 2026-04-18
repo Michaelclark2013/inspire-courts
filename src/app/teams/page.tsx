@@ -140,14 +140,14 @@ export default function TeamsPage() {
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
               >
                 Join the Team{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </a>
               <Link
                 href="/contact"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy px-6 py-3 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)]"
               >
                 Contact Us{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
             </div>
           </AnimateIn>
@@ -334,7 +334,7 @@ export default function TeamsPage() {
                   className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-white transition-colors font-[var(--font-chakra)]"
                 >
                   Join the Team
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                 </a>
               </div>
             </AnimateIn>
@@ -399,7 +399,7 @@ export default function TeamsPage() {
               href="#join"
               className="group inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
             >
-              Join the Team <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              Join the Team <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -422,7 +422,7 @@ export default function TeamsPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">1-on-1 and small group sessions at Inspire Courts</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/camps"
@@ -434,7 +434,7 @@ export default function TeamsPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Youth skill camps at Inspire Courts</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/prep"
@@ -446,7 +446,7 @@ export default function TeamsPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Basketball prep school in Gilbert, AZ</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
           </div>
         </div>

@@ -218,7 +218,7 @@ export default function CoachCheckInPage() {
           </h1>
         </div>
         <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
-          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" />
+          <AlertTriangle className="w-10 h-10 text-red mx-auto mb-3" aria-hidden="true" />
           <h3 className="text-navy font-semibold mb-1">Failed to Load Roster</h3>
           <p className="text-text-muted text-sm mb-4">
             Could not load your roster. Check your connection and try again.
@@ -265,7 +265,7 @@ export default function CoachCheckInPage() {
       {bulkChecking && (
         <div className="mb-6 bg-emerald-50 border border-emerald-500/20 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
+            <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" aria-hidden="true" />
             <span className="text-emerald-600 text-sm font-semibold">
               Checking in {bulkProgress} of {roster.filter((p) => !checkedIn.some((c) => c.name === p.name)).length + bulkProgress}...
             </span>
@@ -282,14 +282,14 @@ export default function CoachCheckInPage() {
       {/* Mutation error banner */}
       {mutationError && (
         <div className="mb-4 bg-red/10 border border-red/20 rounded-xl px-4 py-3 flex items-center gap-2 text-sm text-red">
-          <XCircle className="w-4 h-4 flex-shrink-0" /> {mutationError}
+          <XCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" /> {mutationError}
         </div>
       )}
 
       {/* Duplicate warning */}
       {duplicateWarning && (
         <div className="mb-4 bg-amber-50 border border-amber-500/20 rounded-xl px-4 py-3 flex items-center gap-2 text-sm text-amber-600">
-          <AlertTriangle className="w-4 h-4 flex-shrink-0" /> {duplicateWarning}
+          <AlertTriangle className="w-4 h-4 flex-shrink-0" aria-hidden="true" /> {duplicateWarning}
         </div>
       )}
 
@@ -297,14 +297,14 @@ export default function CoachCheckInPage() {
       {undoPlayer && (
         <div className="mb-4 bg-navy/[0.04] border border-light-gray rounded-xl px-4 py-3 flex items-center justify-between">
           <span className="text-navy text-sm">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 inline mr-1.5" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 inline mr-1.5" aria-hidden="true" />
             {undoPlayer} checked in
           </span>
           <button
             onClick={undoLastCheckIn}
             className="flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider transition-colors"
           >
-            <Undo2 className="w-3.5 h-3.5" /> Undo
+            <Undo2 className="w-3.5 h-3.5" aria-hidden="true" /> Undo
           </button>
         </div>
       )}
@@ -313,13 +313,13 @@ export default function CoachCheckInPage() {
       <div className="grid gap-4 md:grid-cols-2 mb-8">
         <div className="bg-white border border-light-gray rounded-xl p-5">
           <div className="flex items-center gap-2 text-text-muted text-xs uppercase tracking-wider mb-2">
-            <Users className="w-3.5 h-3.5" /> Roster
+            <Users className="w-3.5 h-3.5" aria-hidden="true" /> Roster
           </div>
           <p className="text-navy text-2xl font-bold">{roster.length} <span className="text-sm text-text-muted font-normal">players</span></p>
         </div>
         <div className="bg-white border border-emerald-500/20 rounded-xl p-5">
           <div className="flex items-center gap-2 text-emerald-600 text-xs uppercase tracking-wider mb-2">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Checked In
+            <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" /> Checked In
           </div>
           <p className="text-emerald-600 text-2xl font-bold">{checkedIn.length} <span className="text-sm text-emerald-600/50 font-normal">of {roster.length}</span></p>
         </div>
@@ -329,7 +329,7 @@ export default function CoachCheckInPage() {
       <div className="bg-white border border-amber-500/20 rounded-xl p-5 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-amber-600" />
+            <Shield className="w-4 h-4 text-amber-600" aria-hidden="true" />
             <h2 className="text-amber-600 font-bold text-sm uppercase tracking-wider">
               Coach Check-In
             </h2>
@@ -399,7 +399,7 @@ export default function CoachCheckInPage() {
           </form>
         ) : (
           <div className="flex items-center gap-2 bg-red/10 border border-red/20 rounded-lg px-4 py-3">
-            <AlertTriangle className="w-4 h-4 text-red flex-shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-red flex-shrink-0" aria-hidden="true" />
             <p className="text-red text-sm font-medium">
               Maximum {MAX_COACH_BANDS} coaching bands have been issued. No additional coaches can check in.
             </p>
@@ -418,7 +418,7 @@ export default function CoachCheckInPage() {
                   <span className="text-navy text-sm font-medium">{c.name}</span>
                 </div>
                 <span className="flex items-center gap-1.5 text-light-gray text-xs">
-                  <Clock className="w-3 h-3" />
+                  <Clock className="w-3 h-3" aria-hidden="true" />
                   {c.time}
                 </span>
               </div>
@@ -435,7 +435,7 @@ export default function CoachCheckInPage() {
               Manual Check-In
             </label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-light-gray" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-light-gray" aria-hidden="true" />
               <input
                 id="checkin-manual"
                 type="text"
@@ -456,11 +456,11 @@ export default function CoachCheckInPage() {
       {/* Roster check-in list */}
       {loading ? (
         <div className="flex items-center justify-center py-16 text-text-muted">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading roster...
+          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading roster...
         </div>
       ) : roster.length === 0 ? (
         <div className="bg-white border border-light-gray rounded-xl p-8 text-center">
-          <Users className="w-8 h-8 text-light-gray mx-auto mb-3" />
+          <Users className="w-8 h-8 text-light-gray mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">No roster found</p>
           <p className="text-text-muted text-sm">Add players to your roster first, or use manual check-in above.</p>
         </div>
@@ -471,7 +471,7 @@ export default function CoachCheckInPage() {
             {/* Search filter */}
             {roster.length > 5 && (
               <div className="relative max-w-xs flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-light-gray" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-light-gray" aria-hidden="true" />
                 <input
                   type="text"
                   value={searchQuery}
@@ -505,9 +505,9 @@ export default function CoachCheckInPage() {
                     </span>
                   </div>
                   {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-text-muted" />
+                    <Loader2 className="w-4 h-4 animate-spin text-text-muted" aria-hidden="true" />
                   ) : done ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />
                   ) : (
                     <span className="text-xs text-light-gray uppercase tracking-wider">Tap to check in</span>
                   )}
@@ -533,12 +533,12 @@ export default function CoachCheckInPage() {
             className="w-full px-6 py-4 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" aria-hidden="true" />
               <h2 className="text-emerald-600 font-bold text-sm uppercase tracking-wider">
                 Recently Checked In ({checkedIn.length})
               </h2>
             </div>
-            <ChevronDown className={`w-4 h-4 text-emerald-600/50 transition-transform ${showSummary ? "" : "-rotate-90"}`} />
+            <ChevronDown className={`w-4 h-4 text-emerald-600/50 transition-transform ${showSummary ? "" : "-rotate-90"}`} aria-hidden="true" />
           </button>
           {showSummary && (
             <div className="divide-y divide-light-gray border-t border-emerald-500/10">
@@ -546,7 +546,7 @@ export default function CoachCheckInPage() {
                 <div key={i} className="px-6 py-3 flex items-center justify-between">
                   <span className="text-emerald-600 text-sm font-medium">{c.name}</span>
                   <span className="flex items-center gap-1.5 text-light-gray text-xs">
-                    <Clock className="w-3 h-3" />
+                    <Clock className="w-3 h-3" aria-hidden="true" />
                     {c.time}
                   </span>
                 </div>

@@ -331,7 +331,7 @@ export default function ContentEditorPage() {
   if (!content) {
     return (
       <div className="p-6 lg:p-8 flex items-center justify-center min-h-[50vh]">
-        <RefreshCw className="w-6 h-6 text-red animate-spin" />
+        <RefreshCw className="w-6 h-6 text-red animate-spin" aria-hidden="true" />
       </div>
     );
   }
@@ -353,9 +353,9 @@ export default function ContentEditorPage() {
           }`}
         >
           {toast.type === "success" ? (
-            <Check className="w-4 h-4 flex-shrink-0" />
+            <Check className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           ) : (
-            <X className="w-4 h-4 flex-shrink-0" />
+            <X className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           )}
           {toast.msg}
           <button
@@ -372,7 +372,7 @@ export default function ContentEditorPage() {
       {draftBanner && (
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-4 flex items-center justify-between gap-3">
           <span className="text-amber-600 font-semibold text-sm flex items-center gap-2">
-            <Clock className="w-4 h-4" />
+            <Clock className="w-4 h-4" aria-hidden="true" />
             Draft restored from auto-save
           </span>
           <div className="flex gap-3">
@@ -417,17 +417,17 @@ export default function ContentEditorPage() {
           >
             {saved ? (
               <>
-                <Check className="w-4 h-4" />
+                <Check className="w-4 h-4" aria-hidden="true" />
                 <span className="hidden sm:inline">Saved!</span>
               </>
             ) : saving ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
+                <RefreshCw className="w-4 h-4 animate-spin" aria-hidden="true" />
                 <span className="hidden sm:inline">Saving...</span>
               </>
             ) : (
               <>
-                <Save className="w-4 h-4" />
+                <Save className="w-4 h-4" aria-hidden="true" />
                 <span className="hidden sm:inline">Save</span>
               </>
             )}
@@ -496,9 +496,9 @@ export default function ContentEditorPage() {
               >
                 <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
                   {isExpanded ? (
-                    <ChevronDown className="w-4 h-4 text-navy/40 flex-shrink-0" />
+                    <ChevronDown className="w-4 h-4 text-navy/40 flex-shrink-0" aria-hidden="true" />
                   ) : (
-                    <ChevronRight className="w-4 h-4 text-navy/40 flex-shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-navy/40 flex-shrink-0" aria-hidden="true" />
                   )}
                   <span className="text-navy font-bold text-sm uppercase tracking-wide truncate">
                     {section.name}
@@ -513,7 +513,7 @@ export default function ContentEditorPage() {
                 </div>
                 {lastEdited && !isSectionDirty && (
                   <span className="hidden sm:flex items-center gap-1 text-navy/25 text-[10px] flex-shrink-0 ml-2">
-                    <Clock className="w-3 h-3" />
+                    <Clock className="w-3 h-3" aria-hidden="true" />
                     {timeAgo(lastEdited)}
                   </span>
                 )}
@@ -538,7 +538,7 @@ export default function ContentEditorPage() {
                       className="text-navy/30 hover:text-red p-1 transition-colors flex-shrink-0"
                       title="Remove section"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
 
@@ -547,11 +547,11 @@ export default function ContentEditorPage() {
                     <div key={key}>
                       <div className="flex items-center gap-2 mb-2">
                         {field.type === "image" ? (
-                          <Image className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                          <Image className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" aria-hidden="true" />
                         ) : field.type === "textarea" ? (
-                          <AlignLeft className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                          <AlignLeft className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" aria-hidden="true" />
                         ) : (
-                          <Type className="w-3.5 h-3.5 text-navy/40 flex-shrink-0" />
+                          <Type className="w-3.5 h-3.5 text-navy/40 flex-shrink-0" aria-hidden="true" />
                         )}
                         <input
                           type="text"
@@ -565,7 +565,7 @@ export default function ContentEditorPage() {
                           onClick={() => removeField(activePage, sIdx, key)}
                           className="text-navy/40 hover:text-red transition-colors flex-shrink-0"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
                         </button>
                       </div>
                       {field.type === "textarea" ? (
@@ -632,7 +632,7 @@ export default function ContentEditorPage() {
                   {section.list && (
                     <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-border">
                       <div className="flex items-center gap-2 mb-3 md:mb-4">
-                        <List className="w-4 h-4 text-red" />
+                        <List className="w-4 h-4 text-red" aria-hidden="true" />
                         <span className="text-navy font-bold text-xs uppercase tracking-wider">
                           {section.list.label} ({section.list.items.length})
                         </span>
@@ -651,7 +651,7 @@ export default function ContentEditorPage() {
                                 onClick={() => removeListItem(activePage, sIdx, iIdx)}
                                 className="text-navy/40 hover:text-red transition-colors"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
+                                <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
                               </button>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
@@ -703,7 +703,7 @@ export default function ContentEditorPage() {
                         onClick={() => addListItem(activePage, sIdx)}
                         className="flex items-center gap-1.5 text-red hover:text-red-hover text-xs font-bold uppercase tracking-wide mt-3 transition-colors"
                       >
-                        <Plus className="w-3.5 h-3.5" /> Add{" "}
+                        <Plus className="w-3.5 h-3.5" aria-hidden="true" /> Add{" "}
                         {section.list.label.replace(/s$/, "")}
                       </button>
                     </div>
@@ -756,12 +756,12 @@ export default function ContentEditorPage() {
           >
             {saving ? (
               <>
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
                 Saving...
               </>
             ) : (
               <>
-                <Save className="w-3.5 h-3.5" />
+                <Save className="w-3.5 h-3.5" aria-hidden="true" />
                 Save Changes
               </>
             )}

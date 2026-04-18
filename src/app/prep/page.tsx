@@ -130,14 +130,14 @@ export default function PrepPage() {
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
               >
                 Apply Now{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
               <Link
                 href="/contact"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/80 text-white hover:bg-white hover:text-navy w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] font-[var(--font-chakra)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
               >
                 Learn More{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
             </div>
           </AnimateIn>
@@ -231,7 +231,7 @@ export default function PrepPage() {
                   className="group inline-flex items-center gap-2 text-red font-bold text-sm uppercase tracking-wide hover:text-navy transition-colors font-[var(--font-chakra)]"
                 >
                   Join the Program
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                 </Link>
               </div>
             </AnimateIn>
@@ -443,7 +443,7 @@ export default function PrepPage() {
                   className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-[0_4px_24px_rgba(204,0,0,0.4)] font-[var(--font-chakra)]"
                 >
                   Apply Now{" "}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                 </Link>
               </div>
             </AnimateIn>
@@ -490,7 +490,7 @@ export default function PrepPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Club basketball on the MADE Hoops Circuit</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/training"
@@ -502,7 +502,7 @@ export default function PrepPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">1-on-1 and small group sessions</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/camps"
@@ -514,7 +514,7 @@ export default function PrepPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Youth skill camps at Inspire Courts</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
           </div>
         </div>

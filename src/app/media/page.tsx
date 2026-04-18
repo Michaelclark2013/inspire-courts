@@ -148,7 +148,7 @@ export default function MediaPage() {
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
               >
                 Get a Quote{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
               <a
                 href="https://www.youtube.com/@AZFinestMixtape"
@@ -157,7 +157,7 @@ export default function MediaPage() {
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/60 text-white hover:bg-white hover:text-navy px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
               >
                 Watch on YouTube{" "}
-                <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </a>
             </div>
           </AnimateIn>
@@ -247,6 +247,7 @@ export default function MediaPage() {
                             className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
                               pkg.highlighted ? "text-red" : "text-green-600"
                             }`}
+                            aria-hidden="true"
                           />
                           <span
                             className={`text-sm ${
@@ -272,7 +273,7 @@ export default function MediaPage() {
                         }`}
                       >
                         {pkg.cta}{" "}
-                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                       </Link>
                     )}
                   </div>
@@ -363,7 +364,7 @@ export default function MediaPage() {
                   className="group inline-flex items-center justify-center gap-2 bg-navy hover:bg-navy-dark text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
                 >
                   Inquire About Event Videography{" "}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                 </Link>
               </div>
             </AnimateIn>
@@ -419,7 +420,7 @@ export default function MediaPage() {
                 className="group inline-flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-[1.03] shadow-lg font-[var(--font-chakra)]"
               >
                 @AZFinestMixtape{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </a>
               <a
                 href="https://www.youtube.com/@AZFinestMixtape"
@@ -428,14 +429,14 @@ export default function MediaPage() {
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/60 text-white hover:bg-white hover:text-navy px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
               >
                 YouTube Channel{" "}
-                <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </a>
               <Link
                 href="/contact?type=Media+Services"
                 className="group inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/60 text-white hover:bg-white hover:text-navy px-10 py-5 rounded-full font-bold text-sm uppercase tracking-wide transition-all font-[var(--font-chakra)]"
               >
                 Request Media Services{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
             </div>
           </AnimateIn>
@@ -459,7 +460,7 @@ export default function MediaPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Tournament action and facility photos</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/events"
@@ -471,7 +472,7 @@ export default function MediaPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Upcoming OFF SZN HOOPS events</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
             <Link
               href="/contact?type=Media+Services"
@@ -483,7 +484,7 @@ export default function MediaPage() {
                 </p>
                 <p className="text-text-muted text-xs mt-0.5">Request media services for your player</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-red group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
           </div>
         </div>

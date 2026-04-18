@@ -99,6 +99,7 @@ export async function POST(request: NextRequest) {
   const timestamp = timestampAZ();
 
   // Always persist to database as the source of truth
+  let dbWriteOk = false;
   try {
     await db.insert(waivers).values({
       playerName: playerName.trim(),
@@ -106,6 +107,7 @@ export async function POST(request: NextRequest) {
       email: parentEmail.trim().toLowerCase(),
       phone: parentPhone || null,
     });
+    dbWriteOk = true;
   } catch (err) {
     logger.warn("Waiver DB insert failed, falling back to Sheets", { error: String(err) });
   }
@@ -130,7 +132,8 @@ export async function POST(request: NextRequest) {
       ]),
     ]);
 
-    if (!success) {
+    // If both DB AND Sheets failed, the waiver wasn't saved anywhere — return 500.
+    if (!success && !dbWriteOk) {
       return NextResponse.json(
         { error: "Failed to save waiver. Please try again." },
         { status: 500 }
@@ -193,6 +196,14 @@ export async function POST(request: NextRequest) {
     } catch (err) {
       logger.warn("Drive doc creation failed (non-critical)", { error: String(err) });
     }
+  }
+
+  // If Sheets isn't configured and DB also failed, waiver was not saved.
+  if (!dbWriteOk && !isGoogleConfigured()) {
+    return NextResponse.json(
+      { error: "Failed to save waiver. Please try again." },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ success: true });

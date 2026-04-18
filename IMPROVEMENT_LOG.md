@@ -248,3 +248,54 @@
 
 ### Build Status
 - ✅ PASS — `npm run build` clean (0 TypeScript errors)
+
+---
+
+## Run: 2026-04-18 (Cycles 4-9)
+
+**Focus:** Security hardening, error handling, form UX, accessibility, small delight features
+
+### Cycle 4 — Security & resilience
+- Wrap `request.json()` in try/catch across 3 API routes (checkin, roster, tournament PATCH)
+- Add userId type validation on approvals route
+- Add `logger.warn` to silent catch blocks in waiver route (DB + Drive)
+- Add `logger.warn` for missing Square webhook signature key
+- Cap chat history item content to 2000 chars before sending to AI
+- Use sanitized values in checkin Sheets write
+- Add `sizes` prop to facility page fill images
+- Replace hardcoded URLs with SITE_URL in register layout
+- Add error state with retry to team logos page
+- Add error handling + feedback to registration form submission
+- Add aria-label to registration delete button
+- Add focus-visible ring to content editor field input
+- Add loading.tsx skeleton for `tournaments/[id]/registrations/`
+- Fix file icon colors in FilesClient (amber/sky/violet)
+
+### Cycle 5 — Portal error handling
+- Wrap waiver and profile form fetches in try/catch with network error messages
+- Add aria-label to roster delete button
+
+### Cycle 6 — Tournament UX
+- Link tournament detail CTA to internal /register route (not generic LeagueApps)
+- Auto-select division when only one option; hide select, show read-only label
+- Replace loading spinner with structured skeleton on tournament detail page
+
+### Cycle 7 — Mobile nav + dashboard resilience
+- Move focus to first interactive element when mobile nav opens (a11y)
+- Add per-sheet fallback to getDashboardData (partial data instead of crash)
+- Fix hero CTA button size mismatch on mobile
+- Reduce hero CTA animation delay 300ms → 100ms
+
+### Cycle 8 — Error handling + form validation
+- Wrap portal checkin request.json() in try/catch
+- Check fetch .ok on tournament detail load, show error state
+- Division field error highlight + inline message on tournament register
+
+### Cycle 9 — Small delight features
+- Print button on portal scores page
+- Team-complete celebration banner on check-in (all players checked in)
+- "Updated Xs ago" live ticker next to refresh on schedule page
+
+### Build Status
+- ✅ PASS — `npm run build` clean across all 6 cycles
+- ✅ All pushed to `improvements/round-76-clubform-contact-2026-04-17` branch

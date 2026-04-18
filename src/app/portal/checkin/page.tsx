@@ -81,6 +81,13 @@ export default function CoachCheckInPage() {
     }
   }, [mutationError]);
 
+  // Clear undo timeout on unmount so it doesn't fire setState after unmount
+  useEffect(() => {
+    return () => {
+      if (undoTimeout) clearTimeout(undoTimeout);
+    };
+  }, [undoTimeout]);
+
   // Clear duplicate warning after 3s
   useEffect(() => {
     if (duplicateWarning) {

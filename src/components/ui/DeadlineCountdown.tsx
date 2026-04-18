@@ -43,6 +43,7 @@ export function DeadlineCountdown({
 
   const days = Math.floor(diff / 86_400_000);
   const hours = Math.floor((diff % 86_400_000) / 3_600_000);
+  const minutes = Math.floor((diff % 3_600_000) / 60_000);
 
   let text: string;
   let urgency: "normal" | "soon" | "urgent";
@@ -53,8 +54,12 @@ export function DeadlineCountdown({
   } else if (days >= 1) {
     text = `${label} in ${days} day${days !== 1 ? "s" : ""}`;
     urgency = "soon";
-  } else {
+  } else if (hours >= 1) {
     text = `${label} in ${hours} hour${hours !== 1 ? "s" : ""}`;
+    urgency = "urgent";
+  } else {
+    // Less than an hour — show minutes so "Closes in 0 hours" never appears
+    text = `${label} in ${minutes} minute${minutes !== 1 ? "s" : ""}`;
     urgency = "urgent";
   }
 

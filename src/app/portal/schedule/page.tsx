@@ -35,10 +35,10 @@ export default function SchedulePage() {
   const [secondsAgo, setSecondsAgo] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchGames = useCallback(async () => {
+  const fetchGames = useCallback(async (signal?: AbortSignal) => {
     try {
       setError(false);
-      const res = await fetch("/api/scores/live");
+      const res = await fetch("/api/scores/live", { signal });
       if (res.ok) {
         const data = await res.json();
         setGames(data);
@@ -46,7 +46,8 @@ export default function SchedulePage() {
       } else {
         setError(true);
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setError(true);
     } finally {
       setLoading(false);
@@ -54,10 +55,12 @@ export default function SchedulePage() {
   }, []);
 
   useEffect(() => {
-    fetchGames();
+    const controller = new AbortController();
+    fetchGames(controller.signal);
     // 60s polling
-    intervalRef.current = setInterval(fetchGames, 60_000);
+    intervalRef.current = setInterval(() => fetchGames(controller.signal), 60_000);
     return () => {
+      controller.abort();
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [fetchGames]);
@@ -131,7 +134,7 @@ export default function SchedulePage() {
               Updated {secondsAgo < 5 ? "just now" : secondsAgo < 60 ? `${secondsAgo}s ago` : `${Math.floor(secondsAgo / 60)}m ago`}
             </span>
             <button
-              onClick={fetchGames}
+              onClick={() => fetchGames()}
               aria-label="Refresh scores"
               className="flex items-center gap-1.5 text-[11px] font-medium text-text-muted bg-off-white hover:bg-navy/[0.04] px-2.5 py-1.5 rounded-lg transition-colors"
             >

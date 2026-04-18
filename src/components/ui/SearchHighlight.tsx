@@ -1,5 +1,3 @@
-"use client";
-
 interface SearchHighlightProps {
   text: string;
   query: string;

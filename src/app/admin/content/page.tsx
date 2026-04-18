@@ -530,7 +530,7 @@ export default function ContentEditorPage() {
                       type="text"
                       value={section.name}
                       onChange={(e) => updateSectionName(activePage, sIdx, e.target.value)}
-                      className="bg-off-white border border-border rounded-lg px-3 py-1.5 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors flex-1"
+                      className="bg-off-white border border-border rounded-lg px-3 py-1.5 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors flex-1"
                     />
                     <button
                       onClick={() => removeSection(activePage, sIdx)}
@@ -572,7 +572,7 @@ export default function ContentEditorPage() {
                           value={field.value}
                           onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
                           rows={3}
-                          className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
+                          className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors resize-vertical"
                         />
                       ) : field.type === "image" ? (
                         <div className="space-y-2">
@@ -580,7 +580,7 @@ export default function ContentEditorPage() {
                             type="text"
                             value={field.value}
                             onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
-                            className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
+                            className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors"
                             placeholder="https://example.com/image.jpg"
                           />
                           {field.value && (
@@ -599,7 +599,7 @@ export default function ContentEditorPage() {
                           type="text"
                           value={field.value}
                           onChange={(e) => updateField(activePage, sIdx, key, e.target.value)}
-                          className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
+                          className="w-full bg-off-white border border-border rounded-lg px-4 py-3 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors"
                         />
                       )}
                     </div>
@@ -673,7 +673,7 @@ export default function ContentEditorPage() {
                                         )
                                       }
                                       rows={2}
-                                      className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors resize-vertical"
+                                      className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors resize-vertical"
                                     />
                                   ) : (
                                     <input
@@ -689,7 +689,7 @@ export default function ContentEditorPage() {
                                           e.target.value
                                         )
                                       }
-                                      className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red transition-colors"
+                                      className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-navy text-[16px] md:text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-colors"
                                     />
                                   )}
                                 </div>

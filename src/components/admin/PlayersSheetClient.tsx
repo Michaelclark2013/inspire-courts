@@ -112,13 +112,13 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search players, parents, teams..."
-            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-secondary border border-border rounded-sm pl-8 pr-3 py-2 text-sm text-navy placeholder:text-text-secondary focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
           />
         </div>
         <select
           value={divFilter}
           onChange={(e) => setDivFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
         >
           {divisions.map((d) => (
             <option key={d} value={d}>{d === "All" ? "All Divisions" : d}</option>
@@ -127,7 +127,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
         <select
           value={teamFilter}
           onChange={(e) => setTeamFilter(e.target.value)}
-          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent"
+          className="bg-bg-secondary border border-border rounded-sm px-3 py-2 text-sm text-navy focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
         >
           {teams.slice(0, 50).map((t) => (
             <option key={t} value={t}>{t === "All" ? "All Teams" : t}</option>

@@ -248,7 +248,7 @@ export default function RosterPage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
-                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                 placeholder="First Last"
               />
             </div>
@@ -261,7 +261,7 @@ export default function RosterPage() {
                 type="text"
                 value={form.jerseyNumber}
                 onChange={(e) => setForm({ ...form, jerseyNumber: e.target.value })}
-                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
                 placeholder="#"
               />
             </div>

@@ -128,7 +128,7 @@ export default function LogoUploader({
                   <h3 className="text-white font-bold text-sm uppercase tracking-wider">Team Logo</h3>
                   <p className="text-text-secondary text-xs mt-0.5 truncate max-w-[200px]">{teamName}</p>
                 </div>
-                <button onClick={handleClose} className="text-text-secondary hover:text-white transition-colors p-1">
+                <button onClick={handleClose} aria-label="Close" className="text-text-secondary hover:text-white transition-colors p-1">
                   <X className="w-4 h-4" />
                 </button>
               </div>

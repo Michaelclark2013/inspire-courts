@@ -622,7 +622,7 @@ function GameCard({
               <label className="block text-white/50 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.homeTeam}</label>
               <div className="flex items-center gap-1">
                 <button type="button" onClick={() => setEditHome(Math.max(0, editHome - 1))} className="w-8 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors text-sm">-</button>
-                <input type="number" inputMode="numeric" min={0} value={editHome} onChange={(e) => setEditHome(Number(e.target.value))} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm text-center focus:outline-none focus:border-red tabular-nums" />
+                <input type="number" inputMode="numeric" min={0} value={editHome} onChange={(e) => setEditHome(Number(e.target.value))} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm text-center focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red tabular-nums" />
                 <button type="button" onClick={() => setEditHome(editHome + 1)} className="w-8 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors text-sm">+</button>
               </div>
             </div>
@@ -630,7 +630,7 @@ function GameCard({
               <label className="block text-white/50 text-[10px] font-semibold uppercase tracking-wider mb-1">{game.awayTeam}</label>
               <div className="flex items-center gap-1">
                 <button type="button" onClick={() => setEditAway(Math.max(0, editAway - 1))} className="w-8 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors text-sm">-</button>
-                <input type="number" inputMode="numeric" min={0} value={editAway} onChange={(e) => setEditAway(Number(e.target.value))} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm text-center focus:outline-none focus:border-red tabular-nums" />
+                <input type="number" inputMode="numeric" min={0} value={editAway} onChange={(e) => setEditAway(Number(e.target.value))} className="flex-1 min-w-0 bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm text-center focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red tabular-nums" />
                 <button type="button" onClick={() => setEditAway(editAway + 1)} className="w-8 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold transition-colors text-sm">+</button>
               </div>
             </div>
@@ -638,7 +638,7 @@ function GameCard({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-white/50 text-[10px] font-semibold uppercase tracking-wider mb-1">Quarter</label>
-              <select value={editQuarter} onChange={(e) => setEditQuarter(e.target.value)} className="w-full bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm focus:outline-none focus:border-red">
+              <select value={editQuarter} onChange={(e) => setEditQuarter(e.target.value)} className="w-full bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red">
                 <option value="">--</option>
                 <option value="1">Q1</option>
                 <option value="2">Q2</option>
@@ -649,7 +649,7 @@ function GameCard({
             </div>
             <div>
               <label className="block text-white/50 text-[10px] font-semibold uppercase tracking-wider mb-1">Status</label>
-              <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="w-full bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm focus:outline-none focus:border-red">
+              <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="w-full bg-navy border border-white/10 rounded-lg px-2 py-2 text-white text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red">
                 <option value="">No change</option>
                 <option value="live">Live</option>
                 <option value="final">Final</option>

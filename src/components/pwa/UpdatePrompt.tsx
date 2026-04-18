@@ -32,7 +32,7 @@ export function UpdatePrompt() {
 
   return (
     <div className="fixed top-4 right-4 z-[9999] bg-[#0B1D3A] text-white rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3 animate-slide-down max-w-xs">
-      <RefreshCw className="w-5 h-5 shrink-0 animate-spin" />
+      <RefreshCw className="w-5 h-5 shrink-0 animate-spin" aria-hidden="true" />
       <p className="text-sm flex-1">A new version is available</p>
       <button
         onClick={handleUpdate}

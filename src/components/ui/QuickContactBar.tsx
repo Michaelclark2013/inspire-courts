@@ -23,20 +23,20 @@ export default function QuickContactBar({ subject, label = "Interested?", formHr
             aria-label={`Call Inspire Courts at ${FACILITY_PHONE}`}
             className="inline-flex items-center justify-center w-10 h-10 bg-white/10 border border-white/30 text-white rounded-full transition-colors hover:bg-white/20 flex-shrink-0"
           >
-            <Phone className="w-4 h-4" />
+            <Phone className="w-4 h-4" aria-hidden="true" />
           </a>
           <a
             href={`mailto:${FACILITY_EMAIL}?subject=${encodeURIComponent(subject)}`}
             className="flex-1 inline-flex items-center justify-center gap-1.5 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide transition-colors"
           >
-            <Mail className="w-3.5 h-3.5" />
+            <Mail className="w-3.5 h-3.5" aria-hidden="true" />
             Email Us
           </a>
           <Link
             href={formHref ?? `/contact?type=${encodeURIComponent(subject)}`}
             className="flex-1 inline-flex items-center justify-center gap-1.5 bg-white/10 border border-white/30 text-white px-4 py-2.5 rounded-full font-bold text-xs uppercase tracking-wide transition-colors hover:bg-white/20"
           >
-            <MessageCircle className="w-3.5 h-3.5" />
+            <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
             Contact
           </Link>
         </div>

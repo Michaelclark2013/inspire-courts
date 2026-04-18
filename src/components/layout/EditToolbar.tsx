@@ -42,7 +42,7 @@ export default function EditToolbar() {
         href={editUrl}
         className="flex items-center gap-1.5 bg-red hover:bg-red-hover text-white text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-full transition-colors"
       >
-        <Pencil className="w-3 h-3" />
+        <Pencil className="w-3 h-3" aria-hidden="true" />
         Edit Page
       </Link>
       <Link

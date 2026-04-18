@@ -110,7 +110,7 @@ export function InstallPrompt() {
         </div>
       ) : (
         <div className="flex items-center gap-3 pr-8">
-          <Download className="w-8 h-8 shrink-0 opacity-80" />
+          <Download className="w-8 h-8 shrink-0 opacity-80" aria-hidden="true" />
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm">{label}</p>
           </div>

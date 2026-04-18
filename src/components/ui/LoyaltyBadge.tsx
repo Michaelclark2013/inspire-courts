@@ -46,7 +46,7 @@ export default function LoyaltyBadge({
       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${style.bg} ${style.text}`}
       title={`Member since ${startYear} — ${years} year${years !== 1 ? "s" : ""} with Inspire`}
     >
-      <Award className="w-3 h-3" />
+      <Award className="w-3 h-3" aria-hidden="true" />
       {style.label}
     </span>
   );

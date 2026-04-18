@@ -223,7 +223,7 @@ export default function AdminSidebar() {
             }}
             className="mx-3 mt-3 flex items-center gap-2 w-[calc(100%-24px)] px-3 py-2 bg-off-white border border-border rounded-lg text-text-muted text-xs hover:border-navy/20 hover:text-navy transition-colors"
           >
-            <Search className="w-3.5 h-3.5" />
+            <Search className="w-3.5 h-3.5" aria-hidden="true" />
             <span className="flex-1 text-left">Search pages...</span>
             <kbd className="text-[10px] font-mono bg-white border border-border rounded px-1.5 py-0.5">⌘K</kbd>
           </button>
@@ -329,7 +329,7 @@ export default function AdminSidebar() {
                       : "text-text-muted hover:text-navy hover:bg-off-white"
                   )}
                 >
-                  <Columns3 className="w-4 h-4 flex-shrink-0" />
+                  <Columns3 className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   {!collapsed && "Coach/Parent Portal"}
                 </Link>
               </div>
@@ -347,7 +347,7 @@ export default function AdminSidebar() {
               collapsed && "justify-center px-2"
             )}
           >
-            <ExternalLink className="w-4 h-4 flex-shrink-0" />
+            <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
             {!collapsed && "View Public Site"}
           </Link>
           <Link
@@ -370,7 +370,7 @@ export default function AdminSidebar() {
               collapsed && "justify-center px-2"
             )}
           >
-            <LogOut className="w-4 h-4 flex-shrink-0" />
+            <LogOut className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
             {!collapsed && "Sign Out"}
           </button>
           {/* Collapse toggle */}
@@ -382,10 +382,10 @@ export default function AdminSidebar() {
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? (
-              <PanelLeftOpen className="w-4 h-4 flex-shrink-0" />
+              <PanelLeftOpen className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
             ) : (
               <>
-                <PanelLeftClose className="w-4 h-4 flex-shrink-0" />
+                <PanelLeftClose className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 Collapse
               </>
             )}
@@ -610,7 +610,7 @@ export default function AdminSidebar() {
                   onClick={() => setShowMore(false)}
                   className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-off-white text-text-muted text-sm min-h-[44px]"
                 >
-                  <ExternalLink className="w-4 h-4 flex-shrink-0" />
+                  <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   Public Site
                 </Link>
                 <Link
@@ -626,7 +626,7 @@ export default function AdminSidebar() {
                   onClick={() => signOut({ callbackUrl: "/login" })}
                   className="flex items-center gap-2 px-3 py-3.5 rounded-xl bg-red/5 text-red text-sm col-span-2 min-h-[44px]"
                 >
-                  <LogOut className="w-4 h-4 flex-shrink-0" />
+                  <LogOut className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   Sign Out
                 </button>
               </div>

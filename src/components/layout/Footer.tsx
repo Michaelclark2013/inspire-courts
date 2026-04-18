@@ -166,7 +166,7 @@ export default function Footer() {
                 aria-label="@inspirecourts on Instagram"
               >
                 <span className="w-8 h-8 rounded-lg bg-white/5 group-hover:bg-white/15 flex items-center justify-center transition-colors">
-                  <InstagramIcon className="w-4 h-4 flex-shrink-0" />
+                  <InstagramIcon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 </span>
                 {SOCIAL_LINKS.instagramHandle}
               </a>
@@ -178,7 +178,7 @@ export default function Footer() {
                 aria-label="@azfinestmixtape on Instagram"
               >
                 <span className="w-8 h-8 rounded-lg bg-white/5 group-hover:bg-white/15 flex items-center justify-center transition-colors">
-                  <InstagramIcon className="w-4 h-4 flex-shrink-0" />
+                  <InstagramIcon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 </span>
                 {SOCIAL_LINKS.instagramMixtapeHandle}
               </a>
@@ -190,7 +190,7 @@ export default function Footer() {
                 aria-label="Inspire Courts on YouTube"
               >
                 <span className="w-8 h-8 rounded-lg bg-white/5 group-hover:bg-white/15 flex items-center justify-center transition-colors">
-                  <YouTubeIcon className="w-4 h-4 flex-shrink-0" />
+                  <YouTubeIcon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 </span>
                 YouTube
               </a>

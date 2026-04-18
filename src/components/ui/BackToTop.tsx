@@ -27,7 +27,7 @@ export default function BackToTop() {
           : "opacity-0 translate-y-4 pointer-events-none"
       )}
     >
-      <ChevronUp className="w-5 h-5" />
+      <ChevronUp className="w-5 h-5" aria-hidden="true" />
     </button>
   );
 }

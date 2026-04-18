@@ -108,7 +108,7 @@ export default function DashboardDBStats() {
   if (error && !data) {
     return (
       <div className="bg-red/5 border border-red/20 rounded-sm p-6 mb-8 text-center">
-        <AlertTriangle className="w-8 h-8 text-red/60 mx-auto mb-2" />
+        <AlertTriangle className="w-8 h-8 text-red/60 mx-auto mb-2" aria-hidden="true" />
         <p className="text-navy font-semibold text-sm mb-1">Failed to load dashboard data</p>
         <p className="text-text-secondary text-xs mb-4">Check your connection and try again</p>
         <button onClick={() => { setError(false); fetchData(); }} className="bg-red hover:bg-red-hover text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition-colors">
@@ -158,7 +158,7 @@ export default function DashboardDBStats() {
           className="text-text-secondary hover:text-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50 rounded p-1 min-h-[44px] min-w-[44px] flex items-center justify-center lg:min-h-0 lg:min-w-0 lg:p-0"
           title="Refresh now"
         >
-          <RefreshCw className="w-4 h-4 lg:w-3.5 lg:h-3.5" />
+          <RefreshCw className="w-4 h-4 lg:w-3.5 lg:h-3.5" aria-hidden="true" />
         </button>
       </div>
 
@@ -227,7 +227,7 @@ export default function DashboardDBStats() {
               <Link key={step.num} href={step.href} className="flex items-center gap-3 px-4 py-3 bg-white hover:bg-off-white border border-border rounded-lg transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/50">
                 <span className="w-7 h-7 rounded-full bg-red/20 text-red flex items-center justify-center text-xs font-bold">{step.num}</span>
                 <span className="text-navy text-sm font-medium group-hover:text-navy/80">{step.label}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-text-secondary ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ArrowRight className="w-3.5 h-3.5 text-text-secondary ml-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
               </Link>
             ))}
           </div>

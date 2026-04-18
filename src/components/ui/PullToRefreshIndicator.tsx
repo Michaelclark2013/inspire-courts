@@ -34,7 +34,7 @@ export function PullToRefreshIndicator({
           opacity: Math.min(progress * 1.5, 1),
         }}
       >
-        <RefreshCw className="w-4 h-4 text-red" />
+        <RefreshCw className="w-4 h-4 text-red" aria-hidden="true" />
       </div>
     </div>
   );

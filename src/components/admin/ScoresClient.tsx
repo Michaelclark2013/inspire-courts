@@ -109,13 +109,13 @@ export default function ScoresClient({ games }: { games: Game[] }) {
                 <caption className="sr-only">Game scores</caption>
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Home</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Away</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Score</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Division</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Court</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Date</th>
-                    <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Time</th>
+                    <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Home</th>
+                    <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Away</th>
+                    <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Score</th>
+                    <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Division</th>
+                    <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Court</th>
+                    <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Date</th>
+                    <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Time</th>
                   </tr>
                 </thead>
                 <tbody>

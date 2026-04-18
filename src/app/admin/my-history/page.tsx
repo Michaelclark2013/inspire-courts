@@ -122,11 +122,11 @@ export default function MyHistoryPage() {
               <caption className="sr-only">Work history shifts</caption>
               <thead>
                 <tr className="border-b border-border text-navy/50 text-xs uppercase tracking-wider">
-                  <th className="text-left px-6 py-3 font-semibold">Date</th>
-                  <th className="text-left px-6 py-3 font-semibold">Event</th>
-                  <th className="text-center px-6 py-3 font-semibold">Hours</th>
-                  <th className="text-right px-6 py-3 font-semibold">Amount</th>
-                  <th className="text-left px-6 py-3 font-semibold">Notes</th>
+                  <th scope="col" className="text-left px-6 py-3 font-semibold">Date</th>
+                  <th scope="col" className="text-left px-6 py-3 font-semibold">Event</th>
+                  <th scope="col" className="text-center px-6 py-3 font-semibold">Hours</th>
+                  <th scope="col" className="text-right px-6 py-3 font-semibold">Amount</th>
+                  <th scope="col" className="text-left px-6 py-3 font-semibold">Notes</th>
                 </tr>
               </thead>
               <tbody>

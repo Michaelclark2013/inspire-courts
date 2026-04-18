@@ -382,10 +382,10 @@ export default function DashboardDBStats() {
                 <caption className="sr-only">Today&apos;s game schedule</caption>
                 <thead>
                   <tr className="border-b border-border text-text-secondary text-[10px] uppercase tracking-wider">
-                    <th className="text-left px-4 py-2 font-semibold">Time</th>
-                    <th className="text-left px-4 py-2 font-semibold">Matchup</th>
-                    <th className="text-left px-4 py-2 font-semibold">Court</th>
-                    <th className="text-left px-4 py-2 font-semibold">Div</th>
+                    <th scope="col" className="text-left px-4 py-2 font-semibold">Time</th>
+                    <th scope="col" className="text-left px-4 py-2 font-semibold">Matchup</th>
+                    <th scope="col" className="text-left px-4 py-2 font-semibold">Court</th>
+                    <th scope="col" className="text-left px-4 py-2 font-semibold">Div</th>
                   </tr>
                 </thead>
                 <tbody>

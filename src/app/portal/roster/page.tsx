@@ -311,7 +311,7 @@ export default function RosterPage() {
                 <caption className="sr-only">Team roster players</caption>
                 <thead>
                   <tr className="border-b border-light-gray text-text-muted text-xs uppercase tracking-wider">
-                    <th className="text-left px-6 py-3 font-semibold">
+                    <th scope="col" className="text-left px-6 py-3 font-semibold">
                       <button
                         onClick={() => setSortField("jersey")}
                         className={`flex items-center gap-1 hover:text-navy transition-colors ${sortField === "jersey" ? "text-navy" : ""}`}
@@ -319,7 +319,7 @@ export default function RosterPage() {
                         # <ArrowUpDown className="w-3 h-3" />
                       </button>
                     </th>
-                    <th className="text-left px-6 py-3 font-semibold">
+                    <th scope="col" className="text-left px-6 py-3 font-semibold">
                       <button
                         onClick={() => setSortField("name")}
                         className={`flex items-center gap-1 hover:text-navy transition-colors ${sortField === "name" ? "text-navy" : ""}`}
@@ -327,8 +327,8 @@ export default function RosterPage() {
                         Player <ArrowUpDown className="w-3 h-3" />
                       </button>
                     </th>
-                    <th className="text-left px-6 py-3 font-semibold">Division</th>
-                    {isCoach && <th className="px-6 py-3"></th>}
+                    <th scope="col" className="text-left px-6 py-3 font-semibold">Division</th>
+                    {isCoach && <th scope="col" className="px-6 py-3"></th>}
                   </tr>
                 </thead>
                 <tbody>

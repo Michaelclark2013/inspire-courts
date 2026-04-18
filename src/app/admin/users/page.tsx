@@ -442,13 +442,13 @@ export default function UsersPage() {
               <caption className="sr-only">User accounts</caption>
               <thead>
                 <tr className="border-b border-border text-navy/50 text-xs uppercase tracking-wider">
-                  <th className="text-left px-6 py-3 font-semibold">Name</th>
-                  <th className="text-left px-6 py-3 font-semibold hidden sm:table-cell">Email</th>
-                  <th className="text-left px-6 py-3 font-semibold">Role</th>
-                  <th className="text-left px-6 py-3 font-semibold hidden lg:table-cell">Status</th>
-                  <th className="text-left px-6 py-3 font-semibold hidden md:table-cell">Phone</th>
-                  <th className="text-left px-6 py-3 font-semibold hidden md:table-cell">Created</th>
-                  <th className="px-6 py-3"></th>
+                  <th scope="col" className="text-left px-6 py-3 font-semibold">Name</th>
+                  <th scope="col" className="text-left px-6 py-3 font-semibold hidden sm:table-cell">Email</th>
+                  <th scope="col" className="text-left px-6 py-3 font-semibold">Role</th>
+                  <th scope="col" className="text-left px-6 py-3 font-semibold hidden lg:table-cell">Status</th>
+                  <th scope="col" className="text-left px-6 py-3 font-semibold hidden md:table-cell">Phone</th>
+                  <th scope="col" className="text-left px-6 py-3 font-semibold hidden md:table-cell">Created</th>
+                  <th scope="col" className="px-6 py-3"></th>
                 </tr>
               </thead>
               <tbody>

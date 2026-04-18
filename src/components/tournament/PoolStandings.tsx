@@ -117,28 +117,28 @@ export default function PoolStandings({ bracket }: Props) {
                 <caption className="sr-only">Pool standings</caption>
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left text-text-muted text-[10px] font-bold uppercase tracking-wider px-5 py-2.5 w-8">
+                    <th scope="col" className="text-left text-text-muted text-[10px] font-bold uppercase tracking-wider px-5 py-2.5 w-8">
                       #
                     </th>
-                    <th className="text-left text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5">
+                    <th scope="col" className="text-left text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5">
                       Team
                     </th>
-                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th scope="col" className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       W
                     </th>
-                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th scope="col" className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       L
                     </th>
-                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-14">
+                    <th scope="col" className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-14">
                       Win%
                     </th>
-                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th scope="col" className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       PF
                     </th>
-                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th scope="col" className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       PA
                     </th>
-                    <th className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
+                    <th scope="col" className="text-center text-text-muted text-[10px] font-bold uppercase tracking-wider px-3 py-2.5 w-12">
                       +/-
                     </th>
                   </tr>

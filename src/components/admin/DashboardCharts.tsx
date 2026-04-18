@@ -161,22 +161,22 @@ export default function DashboardCharts({
               <caption className="sr-only">Recent game scores</caption>
               <thead>
                 <tr className="border-b border-light-gray">
-                  <th className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
                     Home
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-bold text-text-secondary uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-center text-xs font-bold text-text-secondary uppercase tracking-wider">
                     Score
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
                     Away
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider hidden md:table-cell">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider hidden md:table-cell">
                     Division
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider hidden lg:table-cell">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider hidden lg:table-cell">
                     Court
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider hidden lg:table-cell">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider hidden lg:table-cell">
                     Winner
                   </th>
                 </tr>

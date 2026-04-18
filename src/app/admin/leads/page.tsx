@@ -194,22 +194,22 @@ export default function LeadsPage() {
               <caption className="sr-only">Prospect pipeline leads</caption>
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-5 py-3">
+                  <th scope="col" className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-5 py-3">
                     Name
                   </th>
-                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
+                  <th scope="col" className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
                     Contact
                   </th>
-                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
+                  <th scope="col" className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
                     Interest
                   </th>
-                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
+                  <th scope="col" className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3">
                     Source
                   </th>
-                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden lg:table-cell">
+                  <th scope="col" className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden lg:table-cell">
                     Status
                   </th>
-                  <th className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
+                  <th scope="col" className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-3 py-3 hidden md:table-cell">
                     Date
                   </th>
                 </tr>

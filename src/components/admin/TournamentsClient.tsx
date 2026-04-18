@@ -233,7 +233,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
                     <SortIcon col={key} />
                   </th>
                 ))}
-                <th className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
+                <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">
                   Details
                 </th>
               </tr>

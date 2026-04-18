@@ -193,7 +193,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
             <caption className="sr-only">Teams roster</caption>
             <thead>
               <tr className="border-b border-border">
-                <th className="px-3 py-3 w-8">
+                <th scope="col" className="px-3 py-3 w-8">
                   <input
                     type="checkbox"
                     checked={filtered.length > 0 && selectedIndices.size === filtered.length}
@@ -203,14 +203,14 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                     className="accent-accent cursor-pointer"
                   />
                 </th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Team</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Coach</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Phone</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Age</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Gender</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Status</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Outreach</th>
-                <th className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Source</th>
+                <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Team</th>
+                <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Coach</th>
+                <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Phone</th>
+                <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Age</th>
+                <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Gender</th>
+                <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Status</th>
+                <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Outreach</th>
+                <th scope="col" className="text-left text-text-secondary text-xs font-bold uppercase tracking-wider px-4 py-3 whitespace-nowrap">Source</th>
               </tr>
             </thead>
             <tbody>

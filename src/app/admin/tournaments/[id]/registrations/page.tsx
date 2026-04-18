@@ -263,13 +263,13 @@ export default function RegistrationsPage() {
               <caption className="sr-only">Tournament registrations</caption>
               <thead>
                 <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wider">
-                  <th className="text-left px-5 py-3 font-semibold">Team</th>
-                  <th className="text-left px-3 py-3 font-semibold">Coach</th>
-                  <th className="text-left px-3 py-3 font-semibold">Division</th>
-                  <th className="text-left px-3 py-3 font-semibold">Payment</th>
-                  <th className="text-left px-3 py-3 font-semibold">Status</th>
-                  <th className="text-left px-3 py-3 font-semibold">Date</th>
-                  <th className="px-3 py-3"></th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold">Team</th>
+                  <th scope="col" className="text-left px-3 py-3 font-semibold">Coach</th>
+                  <th scope="col" className="text-left px-3 py-3 font-semibold">Division</th>
+                  <th scope="col" className="text-left px-3 py-3 font-semibold">Payment</th>
+                  <th scope="col" className="text-left px-3 py-3 font-semibold">Status</th>
+                  <th scope="col" className="text-left px-3 py-3 font-semibold">Date</th>
+                  <th scope="col" className="px-3 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

@@ -688,7 +688,7 @@ function GameCard({
                         {s.quarter === "OT" ? "OT" : `Q${s.quarter}`}
                       </th>
                     ))}
-                    <th className="text-center py-1 px-2 font-bold">T</th>
+                    <th scope="col" className="text-center py-1 px-2 font-bold">T</th>
                   </tr>
                 </thead>
                 <tbody>

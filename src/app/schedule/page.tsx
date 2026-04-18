@@ -23,6 +23,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/schedule`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ tournament schedules" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Schedules & Brackets | Inspire Courts AZ",
+    description: "Live schedules, brackets, and results. Schedules drop 48 hours before tip-off.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 export default function SchedulePage() {

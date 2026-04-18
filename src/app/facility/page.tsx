@@ -51,6 +51,12 @@ export const metadata: Metadata = {
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Indoor Court Rental Gilbert AZ | Inspire Courts",
+    description: "7 climate-controlled courts for basketball, volleyball, futsal & jiu-jitsu in Gilbert, AZ.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const FEATURES = [

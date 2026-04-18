@@ -79,6 +79,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/training`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ private basketball training" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Basketball Training | Inspire Courts AZ",
+    description: "1-on-1 and small group basketball training in Gilbert, AZ. Skill development, shooting, ball handling.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const TRAINING_OPTIONS = [

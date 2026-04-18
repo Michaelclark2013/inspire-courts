@@ -26,6 +26,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/events`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ youth basketball tournaments" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Youth Basketball Tournaments | Inspire Courts AZ",
+    description: "10U–17U boys & girls divisions. 3+ game guarantee, game film available. Register your team.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const REGISTER_URL = "/tournaments";

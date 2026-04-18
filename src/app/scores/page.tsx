@@ -18,6 +18,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/scores`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ Live Scores" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Live Scores & Standings | Inspire Courts AZ",
+    description: "Real-time game scores and league standings from Inspire Courts AZ tournaments.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 export default function ScoresPage() {

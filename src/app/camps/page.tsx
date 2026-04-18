@@ -49,6 +49,12 @@ export const metadata: Metadata = {
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Basketball Camps | Inspire Courts AZ",
+    description: "Youth basketball camps in Gilbert, AZ. Skill development, competitive games, expert coaching.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const jsonLd = {

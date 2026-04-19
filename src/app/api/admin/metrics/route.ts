@@ -15,6 +15,7 @@ import {
 import { and, eq, gte, sql, inArray } from "drizzle-orm";
 import { canAccess } from "@/lib/permissions";
 import { logger } from "@/lib/logger";
+import { withTiming } from "@/lib/timing";
 
 // GET /api/admin/metrics — compact multi-entity counts for admin dashboards.
 //
@@ -25,7 +26,7 @@ import { logger } from "@/lib/logger";
 //
 // admin-only — some counts (pending approvals, audit activity) leak
 // operational info.
-export async function GET() {
+export const GET = withTiming("admin.metrics", async () => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -116,4 +117,4 @@ export async function GET() {
     logger.error("metrics fetch failed", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 });
   }
-}
+});

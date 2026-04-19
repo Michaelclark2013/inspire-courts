@@ -56,3 +56,13 @@ export const chatSchema = z.object({
 export const subscribeSchema = z.object({
   email: z.string().email("A valid email is required"),
 });
+
+// Admin announcements — validated server-side on POST. Audience is an
+// enum so unknown values fall back to "all" (mirrors the previous
+// hand-rolled validation).
+export const announcementSchema = z.object({
+  title: z.string().min(1, "Title is required").max(255),
+  body: z.string().min(1, "Body is required").max(10000),
+  audience: z.enum(["all", "coaches", "parents"]).optional(),
+  expiresAt: z.string().datetime().optional().nullable(),
+});

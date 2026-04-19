@@ -10,6 +10,8 @@ import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
+import { announcementSchema } from "@/lib/schemas";
+import { apiValidationError } from "@/lib/api-helpers";
 
 // Public surfaces that read announcements — any create/update/delete
 // should bust these so admins see their change reflected immediately.
@@ -87,26 +89,18 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const { title, body: content, audience, expiresAt } = body;
-
-    if (!title || !content) {
-      return NextResponse.json(
-        { error: "Title and body are required" },
-        { status: 400 }
-      );
+    const raw = await request.json();
+    const parsed = announcementSchema.safeParse(raw);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path.join(".") || "_root";
+        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+      }
+      return apiValidationError(fieldErrors);
     }
-
-    if (typeof title !== "string" || title.length > 255) {
-      return NextResponse.json({ error: "Title must be 255 characters or less" }, { status: 400 });
-    }
-
-    if (typeof content !== "string" || content.length > 10000) {
-      return NextResponse.json({ error: "Body must be 10,000 characters or less" }, { status: 400 });
-    }
-
-    const validAudiences = ["all", "coaches", "parents"];
-    const safeAudience = validAudiences.includes(audience) ? audience : "all";
+    const { title, body: content, audience, expiresAt } = parsed.data;
+    const safeAudience = audience ?? "all";
 
     const userId = session.user.id ? Number(session.user.id) : null;
 

@@ -6,6 +6,7 @@ import { auditLog } from "@/lib/db/schema";
 import { and, desc, gte, sql, type SQL } from "drizzle-orm";
 import { canAccess } from "@/lib/permissions";
 import { logger } from "@/lib/logger";
+import { withTiming } from "@/lib/timing";
 
 // GET /api/admin/audit-log/stats
 //
@@ -17,7 +18,7 @@ import { logger } from "@/lib/logger";
 //
 // Optional window: ?since=<ISO timestamp> to narrow to "last N days".
 // Default window is the last 30 days to keep the aggregation cheap.
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.audit_stats", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "audit_log")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -85,4 +86,4 @@ export async function GET(request: NextRequest) {
     logger.error("Failed to fetch audit stats", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch audit stats" }, { status: 500 });
   }
-}
+});

@@ -152,7 +152,7 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = request.nextUrl;
     const idParam = searchParams.get("id");
     const id = Number(idParam);
     if (!idParam || !Number.isInteger(id) || id <= 0) {

@@ -7,6 +7,7 @@ import { eq, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 // GET /api/admin/users — list all users
 export async function GET() {
@@ -43,6 +44,17 @@ export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate limit per-IP: bcrypt.hash(password, 12) is a deliberate CPU bottleneck;
+  // a compromised admin session could otherwise flood this endpoint and
+  // self-DoS the API. 20 new users per minute per IP is far above legitimate use.
+  const ip = getClientIp(request);
+  if (isRateLimited(`admin-create-user:${ip}`, 20, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many user-create requests. Slow down and try again." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
   }
 
   try {
@@ -206,7 +218,7 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = request.nextUrl;
     const id = searchParams.get("id");
 
     if (!id) {

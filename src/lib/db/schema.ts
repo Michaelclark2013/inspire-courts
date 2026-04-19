@@ -236,7 +236,9 @@ export const checkins = sqliteTable("checkins", {
   playerName: text("player_name").notNull(),
   teamName: text("team_name").notNull(),
   division: text("division"),
-  type: text("type", { enum: ["checkin", "waiver"] })
+  // "no_show" lets front-desk staff explicitly mark a team as absent with
+  // forfeiture instead of leaving the slot ambiguous (not-yet-checked-in).
+  type: text("type", { enum: ["checkin", "waiver", "no_show"] })
     .notNull()
     .default("checkin"),
   checkedInBy: integer("checked_in_by").references(() => users.id),

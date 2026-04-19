@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { playerName, teamName, division } = body;
+  const { playerName, teamName, division, type } = body;
 
   if (!playerName || typeof playerName !== "string") {
     return NextResponse.json(
@@ -103,6 +103,15 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
+
+  // type is either a regular check-in (default), a waiver submission record,
+  // or an explicit no-show marker. Front desk uses "no_show" to clear
+  // forfeit slots during a tournament rather than leaving them ambiguous.
+  const VALID_TYPES = ["checkin", "waiver", "no_show"] as const;
+  const safeType: (typeof VALID_TYPES)[number] =
+    typeof type === "string" && (VALID_TYPES as readonly string[]).includes(type)
+      ? (type as (typeof VALID_TYPES)[number])
+      : "checkin";
 
   // Sanitize and cap input lengths
   const safeName = String(playerName).trim().slice(0, 100);
@@ -117,7 +126,7 @@ export async function POST(request: NextRequest) {
       playerName: safeName,
       teamName: safeTeam,
       division: safeDivision,
-      type: "checkin",
+      type: safeType,
       checkedInBy: userId && !isNaN(userId) ? userId : null,
     });
   } catch (err) {
@@ -125,13 +134,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to save check-in" }, { status: 500 });
   }
 
-  // Fire-and-forget: write to Google Sheets
+  // Fire-and-forget: write to Google Sheets. Sheet marker mirrors type so
+  // the spreadsheet view distinguishes check-ins from no-shows.
   if (isGoogleConfigured()) {
     const timestamp = timestampAZ();
+    const sheetMarker = safeType === "no_show" ? "NO_SHOW" : safeType === "waiver" ? "WAIVER" : "CHECKIN";
     appendSheetRow(SHEETS.playerCheckIn, "A:F", [
-      sanitizeSheetRow([timestamp, safeName, safeTeam, safeDivision || "", "CHECKIN", session.user.name || ""]),
+      sanitizeSheetRow([timestamp, safeName, safeTeam, safeDivision || "", sheetMarker, session.user.name || ""]),
     ]).catch((err) => logger.warn("Failed to sync check-in to Google Sheets", { error: String(err) }));
   }
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, type: safeType });
 }

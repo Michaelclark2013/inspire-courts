@@ -148,15 +148,21 @@ export async function POST(request: NextRequest) {
 
   const userId = session.user.id ? Number(session.user.id) : null;
 
+  let insertedRow: typeof checkins.$inferSelect | undefined;
   try {
-    // Write to DB (source of truth)
-    await db.insert(checkins).values({
-      playerName: safeName,
-      teamName: safeTeam,
-      division: safeDivision,
-      type: safeType,
-      checkedInBy: userId && !isNaN(userId) ? userId : null,
-    });
+    // Write to DB (source of truth) — .returning() so the caller gets the
+    // new row's id, matching the pattern used by every other admin POST.
+    const [row] = await db
+      .insert(checkins)
+      .values({
+        playerName: safeName,
+        teamName: safeTeam,
+        division: safeDivision,
+        type: safeType,
+        checkedInBy: userId && !isNaN(userId) ? userId : null,
+      })
+      .returning();
+    insertedRow = row;
   } catch (err) {
     logger.error("Failed to insert check-in", { error: String(err) });
     return NextResponse.json({ error: "Failed to save check-in" }, { status: 500 });
@@ -172,5 +178,5 @@ export async function POST(request: NextRequest) {
     ]).catch((err) => logger.warn("Failed to sync check-in to Google Sheets", { error: String(err) }));
   }
 
-  return NextResponse.json({ success: true, type: safeType });
+  return NextResponse.json({ success: true, type: safeType, checkin: insertedRow });
 }

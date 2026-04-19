@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { tournaments, resetTokens } from "@/lib/db/schema";
+import { tournaments, resetTokens, auditLog } from "@/lib/db/schema";
 import { and, eq, lt } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
@@ -15,6 +15,9 @@ import { logger } from "@/lib/logger";
 //   1. Tournaments past registrationDeadline → set registrationOpen=false
 //   2. Tournaments with endDate in the past and status=active → status=completed
 //   3. Reset-password tokens expired more than 24h ago → deleted
+//   4. Audit-log rows older than AUDIT_LOG_RETENTION_DAYS (default 365) → deleted.
+//      The audit table is append-only but must have some retention so it
+//      doesn't grow forever. Set env to Infinity to keep everything.
 //
 // Returns per-sweep counts so an ops dashboard can confirm what happened.
 export async function POST(request: NextRequest) {
@@ -77,6 +80,19 @@ export async function POST(request: NextRequest) {
       .where(lt(resetTokens.expiresAt, yesterday))
       .returning({ id: resetTokens.id });
 
+    // 4. Audit-log GC. Default 365d retention keeps a year of admin
+    // changes for compliance; configurable via AUDIT_LOG_RETENTION_DAYS.
+    // Setting the env var to "0" or a negative number disables the sweep.
+    const retentionDays = Number(process.env.AUDIT_LOG_RETENTION_DAYS ?? "365");
+    let prunedAuditRows: { id: number }[] = [];
+    if (Number.isFinite(retentionDays) && retentionDays > 0) {
+      const cutoff = new Date(now.getTime() - retentionDays * 24 * 60 * 60 * 1000).toISOString();
+      prunedAuditRows = await db
+        .delete(auditLog)
+        .where(lt(auditLog.createdAt, cutoff))
+        .returning({ id: auditLog.id });
+    }
+
     // Revalidate public tournaments listing if anything changed so users
     // see the new status/registration state immediately.
     if (closed.length > 0 || completed.length > 0) {
@@ -90,6 +106,8 @@ export async function POST(request: NextRequest) {
       closedRegistrations: closed.length,
       completedTournaments: completed.length,
       prunedResetTokens: prunedTokens.length,
+      prunedAuditRows: prunedAuditRows.length,
+      auditRetentionDays: retentionDays > 0 ? retentionDays : null,
     });
   } catch (err) {
     logger.error("Maintenance cron failed", { error: String(err) });

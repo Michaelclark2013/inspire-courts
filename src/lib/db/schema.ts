@@ -20,7 +20,12 @@ export const users = sqliteTable("users", {
   updatedAt: text("updated_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => [
+  // Admin approvals endpoint filters by approved=false — previously a
+  // full-table scan on every poll of /api/admin/approvals.
+  index("users_approved_idx").on(table.approved),
+  index("users_role_idx").on(table.role),
+]);
 
 // ── Teams ───────────────────────────────────────────────────────────────────
 
@@ -227,6 +232,11 @@ export const tournamentRegistrations = sqliteTable("tournament_registrations", {
   index("registrations_tournament_idx").on(table.tournamentId),
   index("registrations_order_idx").on(table.squareOrderId),
   index("registrations_payment_status_idx").on(table.paymentStatus),
+  // Admin filters by status (?status=pending|approved|rejected) — previously
+  // full-table scans.
+  index("registrations_status_idx").on(table.status),
+  // Audit-log lookups + "find a coach's registrations" need this.
+  index("registrations_coach_email_idx").on(table.coachEmail),
 ]);
 
 // ── Check-Ins ───────────────────────────────────────────────────────────────

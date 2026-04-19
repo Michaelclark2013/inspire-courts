@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { desc, eq, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 
@@ -15,29 +15,56 @@ async function requireAdmin() {
   return session;
 }
 
-// GET — list all pending (unapproved) users
-export async function GET() {
+// GET — list pending (unapproved) users.
+//   ?page=   1-indexed page (default 1)
+//   ?limit=  page size (default 50, max 200)
+// Response shape: { users, total, page, limit, totalPages }
+// The legacy `users` key is preserved so the admin approvals page
+// continues to work during migration.
+export async function GET(request: NextRequest) {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const pending = await db
-      .select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        role: users.role,
-        phone: users.phone,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .where(eq(users.approved, false));
+  const sp = request.nextUrl.searchParams;
+  const page = Math.max(1, Math.floor(Number(sp.get("page")) || 1));
+  const rawLimit = Math.floor(Number(sp.get("limit")) || 50);
+  const limit = Math.min(Math.max(1, rawLimit || 50), 200);
+  const offset = (page - 1) * limit;
 
-    return NextResponse.json({ users: pending }, {
-      headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=30" },
-    });
+  try {
+    const [pending, [{ total }]] = await Promise.all([
+      db
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          role: users.role,
+          phone: users.phone,
+          createdAt: users.createdAt,
+        })
+        .from(users)
+        .where(eq(users.approved, false))
+        .orderBy(desc(users.createdAt))
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ total: sql<number>`count(*)` })
+        .from(users)
+        .where(eq(users.approved, false)),
+    ]);
+
+    return NextResponse.json(
+      {
+        users: pending,
+        total: Number(total) || 0,
+        page,
+        limit,
+        totalPages: Math.max(1, Math.ceil((Number(total) || 0) / limit)),
+      },
+      { headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=30" } }
+    );
   } catch (error) {
     logger.error("Failed to fetch pending approvals", { error: String(error) });
     return NextResponse.json({ error: "Failed to fetch approvals" }, { status: 500 });

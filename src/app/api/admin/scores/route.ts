@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
-import { games, gameScores } from "@/lib/db/schema";
+import { games, gameScores, tournaments } from "@/lib/db/schema";
 import { eq, desc, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
@@ -13,6 +13,28 @@ import { recordAudit } from "@/lib/audit";
 // ?limit, so a misbehaving client can't dump the entire games table.
 const SCORES_MAX_LIMIT = 200;
 const SCORES_DEFAULT_LIMIT = 50;
+
+// Games are stored with an `eventName` string that matches a tournament's
+// `name`. When a score/status changes, the public /tournaments/[id] page
+// shows the updated result — so we need to bust that ISR cache too.
+// Returns the revalidated path if a match was found, else null.
+async function revalidateTournamentForEvent(eventName: string | null): Promise<string | null> {
+  if (!eventName) return null;
+  try {
+    const [t] = await db
+      .select({ id: tournaments.id })
+      .from(tournaments)
+      .where(eq(tournaments.name, eventName))
+      .limit(1);
+    if (t) {
+      revalidatePath(`/tournaments/${t.id}`);
+      return `/tournaments/${t.id}`;
+    }
+  } catch {
+    // Non-fatal — revalidation is a best-effort cache bust.
+  }
+  return null;
+}
 
 // GET /api/admin/scores — list games with latest scores (paginated).
 //   ?page=                 1-indexed page (default 1)
@@ -184,6 +206,7 @@ export async function POST(request: NextRequest) {
 
     revalidatePath("/scores");
     revalidatePath("/admin/scores");
+    await revalidateTournamentForEvent(game.eventName);
     return NextResponse.json(game, { status: 201 });
   } catch (err) {
     logger.error("Failed to create game", { error: String(err) });
@@ -272,6 +295,9 @@ export async function PUT(request: NextRequest) {
 
     revalidatePath("/scores");
     revalidatePath("/admin/scores");
+    // If this game belongs to a tournament, bust that tournament's ISR page
+    // too so the public bracket view updates.
+    await revalidateTournamentForEvent(beforeGame.eventName);
     return NextResponse.json({ success: true });
   } catch (err) {
     logger.error("Failed to update game score", { error: String(err) });
@@ -339,6 +365,7 @@ export async function DELETE(request: NextRequest) {
 
     revalidatePath("/scores");
     revalidatePath("/admin/scores");
+    await revalidateTournamentForEvent(existing.eventName);
     return NextResponse.json({ success: true, id: gameId });
   } catch (err) {
     logger.error("Failed to delete game", { gameId, error: String(err) });

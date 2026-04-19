@@ -327,7 +327,12 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 }
 
-// DELETE /api/admin/tournaments/[id]/registrations?registrationId=123
+// DELETE /api/admin/tournaments/[id]/registrations
+//   Single: ?registrationId=123 (legacy query param)
+//   Bulk:   body { ids: number[] }
+//
+// Both paths cascade-remove any matching tournament_teams rows so the
+// bracket doesn't keep a stale team reference.
 export async function DELETE(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
@@ -337,58 +342,94 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   const { id } = await params;
 
   try {
+    // Accept either ?registrationId= (legacy) or a body { ids: number[] }.
     const regIdRaw = request.nextUrl.searchParams.get("registrationId");
-    const regId = Number(regIdRaw);
-    if (!regIdRaw || !Number.isInteger(regId) || regId <= 0) {
-      return NextResponse.json({ error: "Valid registrationId required" }, { status: 400 });
+
+    let bodyIds: number[] = [];
+    // Only try to parse a body if the client sent one (DELETE without body
+    // is common). Failure falls through to the query-param path.
+    try {
+      const contentLength = request.headers.get("content-length");
+      if (contentLength && Number(contentLength) > 0) {
+        const body = await request.json();
+        if (Array.isArray(body?.ids)) {
+          bodyIds = body.ids.filter(
+            (n: unknown) => typeof n === "number" && Number.isInteger(n) && n > 0
+          );
+        }
+      }
+    } catch {
+      // Ignore body parse errors; fall back to query param.
     }
 
-    // Fetch the registration first so we can (a) remove the matching
-    // tournament_teams row if one was auto-created when it reached
-    // approved+paid, and (b) write a full before-snapshot to the audit log.
-    const [existing] = await db
+    const targetIds: number[] = bodyIds.length > 0
+      ? bodyIds
+      : (() => {
+          const regId = Number(regIdRaw);
+          if (!regIdRaw || !Number.isInteger(regId) || regId <= 0) return [];
+          return [regId];
+        })();
+
+    if (targetIds.length === 0) {
+      return NextResponse.json(
+        { error: "Valid registrationId query param or ids[] body required" },
+        { status: 400 }
+      );
+    }
+
+    // Fetch all targeted registrations so we can (a) cascade the
+    // tournament_teams cleanup by teamName, and (b) capture before-snapshots
+    // per-row for the audit log.
+    const existing = await db
       .select()
       .from(tournamentRegistrations)
-      .where(eq(tournamentRegistrations.id, regId))
-      .limit(1);
+      .where(inArray(tournamentRegistrations.id, targetIds));
 
-    if (!existing) {
-      return NextResponse.json({ error: "Registration not found" }, { status: 404 });
+    if (existing.length === 0) {
+      return NextResponse.json({ error: "No matching registrations" }, { status: 404 });
     }
 
-    // Cascade: if the registration had reached the state that created a
-    // tournament_teams row (approved + paid/waived, see PUT handler), remove
-    // that row too. Otherwise the team stays in the bracket/seedings after
-    // the registration is cancelled.
-    await db
-      .delete(tournamentTeams)
-      .where(
-        and(
-          eq(tournamentTeams.tournamentId, existing.tournamentId),
-          eq(tournamentTeams.teamName, existing.teamName)
-        )
-      );
+    // Cascade: remove every matching tournament_teams row in one query.
+    const teamNames = Array.from(new Set(existing.map((r) => r.teamName)));
+    if (teamNames.length > 0) {
+      await db
+        .delete(tournamentTeams)
+        .where(
+          and(
+            eq(tournamentTeams.tournamentId, existing[0].tournamentId),
+            inArray(tournamentTeams.teamName, teamNames)
+          )
+        );
+    }
 
     await db
       .delete(tournamentRegistrations)
-      .where(eq(tournamentRegistrations.id, regId));
+      .where(inArray(tournamentRegistrations.id, targetIds));
 
-    await recordAudit({
-      session,
-      action: "registration.deleted",
-      entityType: "tournament_registration",
-      entityId: regId,
-      before: {
-        teamName: existing.teamName,
-        coachEmail: existing.coachEmail,
-        status: existing.status,
-        paymentStatus: existing.paymentStatus,
-      },
-      after: null,
-    });
+    // Audit each deletion individually so the log stays useful for lookups.
+    for (const row of existing) {
+      await recordAudit({
+        session,
+        action: "registration.deleted",
+        entityType: "tournament_registration",
+        entityId: row.id,
+        before: {
+          teamName: row.teamName,
+          coachEmail: row.coachEmail,
+          status: row.status,
+          paymentStatus: row.paymentStatus,
+        },
+        after: null,
+      });
+    }
 
     revalidatePath(`/admin/tournaments/${id}`);
-    return NextResponse.json({ ok: true, id: regId });
+
+    // Preserve legacy single-id response shape when the caller went that path.
+    if (targetIds.length === 1 && bodyIds.length === 0) {
+      return NextResponse.json({ ok: true, id: targetIds[0] });
+    }
+    return NextResponse.json({ ok: true, deleted: existing.length, ids: existing.map((r) => r.id) });
   } catch (err) {
     logger.error("Failed to delete registration", { error: String(err) });
     return NextResponse.json({ error: "Failed to delete registration" }, { status: 500 });

@@ -202,17 +202,23 @@ export async function POST(request: NextRequest, { params }: Params) {
       );
     }
 
+    // Length caps + sanitization — previously raw strings went straight
+    // to the DB. notes in particular was unbounded.
+    if (notes !== undefined && notes !== null && (typeof notes !== "string" || notes.length > 2000)) {
+      return NextResponse.json({ error: "notes must be ≤2000 characters" }, { status: 400 });
+    }
+
     const [reg] = await db
       .insert(tournamentRegistrations)
       .values({
         tournamentId,
-        teamName,
-        coachName,
-        coachEmail: coachEmail || "",
-        division: division || null,
+        teamName: String(teamName).trim().slice(0, 200),
+        coachName: String(coachName).trim().slice(0, 200),
+        coachEmail: coachEmail ? String(coachEmail).trim().toLowerCase().slice(0, 255) : "",
+        division: division ? String(division).trim().slice(0, 50) : null,
         paymentStatus: (paymentStatus as "pending" | "paid" | "waived") || "waived",
         status: "approved",
-        notes: notes || null,
+        notes: notes ? String(notes).trim().slice(0, 2000) : null,
       })
       .returning();
 
@@ -273,7 +279,12 @@ export async function PUT(request: NextRequest, { params }: Params) {
     };
     if (status) updates.status = status;
     if (paymentStatus) updates.paymentStatus = paymentStatus;
-    if (notes !== undefined) updates.notes = notes;
+    if (notes !== undefined) {
+      if (notes !== null && (typeof notes !== "string" || notes.length > 2000)) {
+        return NextResponse.json({ error: "notes must be ≤2000 characters" }, { status: 400 });
+      }
+      updates.notes = notes === null ? null : String(notes).trim().slice(0, 2000);
+    }
 
     // Snapshot BEFORE the write so the audit log can answer "what was the
     // status/payment before this approval?". Previously `before: null`.

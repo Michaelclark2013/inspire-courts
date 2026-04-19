@@ -32,23 +32,21 @@ export async function GET() {
   try {
     const now = new Date().toISOString();
 
+    // First pass: cheap existence check for tournaments + per-table
+    // counts in parallel. We can skip the expensive registration aggregate
+    // when there are zero tournaments (common for a fresh deployment or
+    // after an archive pass).
     const [
-      regStats,
       allTournaments,
+      [tournamentRegMeta],
       upcomingGames,
       announcementCount,
       liveGamesRaw,
     ] = await Promise.all([
-      db
-        .select({
-          total: sql<number>`count(*)`,
-          pendingPayments: sql<number>`sum(case when ${tournamentRegistrations.paymentStatus} = 'pending' then 1 else 0 end)`,
-          paidRevenueCents: sql<number>`sum(case when ${tournamentRegistrations.paymentStatus} = 'paid' then ${tournamentRegistrations.entryFee} else 0 end)`,
-          approved: sql<number>`sum(case when ${tournamentRegistrations.status} = 'approved' then 1 else 0 end)`,
-        })
-        .from(tournamentRegistrations),
-
       db.select().from(tournaments),
+      db
+        .select({ count: sql<number>`count(*)` })
+        .from(tournamentRegistrations),
 
       db
         .select({
@@ -77,13 +75,32 @@ export async function GET() {
         .limit(30),
     ]);
 
+    // Only run the registration aggregate if any registrations exist —
+    // previously we scanned the full table unconditionally even on empty
+    // or freshly-archived deployments. Combined with the per-tournament
+    // count below (which was already gated), both registrations queries
+    // now short-circuit when there's nothing to sum.
+    const hasRegistrations = Number(tournamentRegMeta?.count) > 0;
+    const stats = hasRegistrations
+      ? (
+          await db
+            .select({
+              total: sql<number>`count(*)`,
+              pendingPayments: sql<number>`sum(case when ${tournamentRegistrations.paymentStatus} = 'pending' then 1 else 0 end)`,
+              paidRevenueCents: sql<number>`sum(case when ${tournamentRegistrations.paymentStatus} = 'paid' then ${tournamentRegistrations.entryFee} else 0 end)`,
+              approved: sql<number>`sum(case when ${tournamentRegistrations.status} = 'approved' then 1 else 0 end)`,
+            })
+            .from(tournamentRegistrations)
+        )[0]
+      : { total: 0, pendingPayments: 0, paidRevenueCents: 0, approved: 0 };
+
     // Registration counts per tournament
     const publishedOrActive = allTournaments.filter((t) =>
       ["published", "active"].includes(t.status)
     );
     const tournamentIds = publishedOrActive.map((t) => t.id);
     const regCountsByTournament: Record<number, number> = {};
-    if (tournamentIds.length > 0) {
+    if (hasRegistrations && tournamentIds.length > 0) {
       const regCounts = await db
         .select({
           tournamentId: tournamentRegistrations.tournamentId,
@@ -98,7 +115,6 @@ export async function GET() {
       }
     }
 
-    const stats = regStats[0];
     const total = Number(stats?.total) || 0;
     const approvedCount = Number(stats?.approved) || 0;
 

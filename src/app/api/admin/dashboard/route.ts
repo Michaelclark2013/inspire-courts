@@ -12,10 +12,22 @@ import {
 import { eq, sql, inArray, or, isNull, gte } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
+// DEPRECATED: this route was superseded by /api/admin/dashboard/summary
+// in cycle 12. Kept reachable for backwards-compat, but logs a single
+// deprecation warning per process so lingering clients show up in logs.
+let deprecationWarned = false;
+
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!deprecationWarned) {
+    logger.warn(
+      "/api/admin/dashboard is deprecated — clients should migrate to /api/admin/dashboard/summary"
+    );
+    deprecationWarned = true;
   }
 
   try {
@@ -121,7 +133,14 @@ export async function GET() {
       activeAnnouncements: Number(announcementCount[0]?.count) || 0,
       liveGames: Number(liveGameCount[0]?.count) || 0,
     }, {
-      headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=30" },
+      headers: {
+        "Cache-Control": "private, max-age=10, stale-while-revalidate=30",
+        // RFC 8594: signal deprecation to well-behaved clients so they
+        // can log / surface the migration path.
+        Deprecation: "true",
+        Link: '</api/admin/dashboard/summary>; rel="successor-version"',
+        Sunset: "Mon, 01 Jan 2027 00:00:00 GMT",
+      },
     });
   } catch (error) {
     logger.error("Dashboard API error", { error: String(error) });

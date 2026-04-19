@@ -20,7 +20,10 @@ function revalidateAnnouncementSurfaces() {
 }
 
 // GET /api/admin/announcements — list all
-export async function GET() {
+// Supports If-None-Match: admin UIs that poll will get a 304 when the
+// list hasn't changed. ETag is derived from row count + newest
+// createdAt, which is cheap to compute and captures every mutation.
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -32,8 +35,23 @@ export async function GET() {
       .from(announcements)
       .orderBy(desc(announcements.createdAt));
 
+    // Cheap ETag — count + newest timestamp changes on any insert/update/delete.
+    const newest = all[0]?.createdAt ?? "";
+    const etag = `"${all.length}-${newest}"`;
+
+    const ifNoneMatch = request.headers.get("if-none-match");
+    if (ifNoneMatch === etag) {
+      return new NextResponse(null, {
+        status: 304,
+        headers: { ETag: etag, "Cache-Control": "private, max-age=15, stale-while-revalidate=60" },
+      });
+    }
+
     return NextResponse.json(all, {
-      headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=60" },
+      headers: {
+        "Cache-Control": "private, max-age=15, stale-while-revalidate=60",
+        ETag: etag,
+      },
     });
   } catch (err) {
     logger.error("Failed to fetch announcements", { error: String(err) });

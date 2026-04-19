@@ -11,6 +11,7 @@ import { asc, desc, eq, and, inArray, sql, type SQL } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { withTiming } from "@/lib/timing";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -47,7 +48,7 @@ const REG_SORT_COLUMNS = {
 //   ?page=             1-indexed page (default 1)
 //   ?limit=            rows per page (default 50, max 200)
 // JSON response: { data, total, page, limit, totalPages }
-export async function GET(request: NextRequest, { params }: Params) {
+export const GET = withTiming("admin.registrations.list", async (request: NextRequest, { params }: Params) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -191,7 +192,7 @@ export async function GET(request: NextRequest, { params }: Params) {
     logger.error("Failed to fetch registrations", { tournamentId, error: String(err) });
     return NextResponse.json({ error: "Failed to fetch registrations" }, { status: 500 });
   }
-}
+});
 
 // POST /api/admin/tournaments/[id]/registrations — admin-create (walk-in / comp)
 export async function POST(request: NextRequest, { params }: Params) {

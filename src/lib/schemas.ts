@@ -78,6 +78,18 @@ export const tournamentCreateSchema = z.object({
   description: z.string().max(5000).optional().nullable(),
 });
 
+// Admin game create — mirrors games table columns the POST handler
+// inserts. scheduledTime is kept as a bounded string so either ISO
+// or human-readable "Sat 10am" labels can flow through.
+export const gameCreateSchema = z.object({
+  homeTeam: z.string().min(1, "homeTeam is required").max(200),
+  awayTeam: z.string().min(1, "awayTeam is required").max(200),
+  division: z.string().max(50).optional().nullable(),
+  court: z.string().max(50).optional().nullable(),
+  eventName: z.string().max(200).optional().nullable(),
+  scheduledTime: z.string().max(40).optional().nullable(),
+});
+
 // Admin checkin — front desk dual-writes to DB + Google Sheets. Type
 // covers regular check-in, waiver submission, and explicit no-show so
 // forfeit slots can be cleared during a tournament.

@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { withTiming } from "@/lib/timing";
 
 // Whitelist of safe sortable columns. Never let clients inject arbitrary
 // column names into an ORDER BY clause.
@@ -24,7 +25,7 @@ const USER_SORT_COLUMNS = {
 // Response: { data: User[], total }
 // Note: non-paginated today (user counts are small) but the response shape
 // is pagination-ready so adding ?page+?limit later is non-breaking.
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.users.list", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
     logger.error("Failed to fetch users", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
   }
-}
+});
 
 // POST /api/admin/users — create a user
 export async function POST(request: NextRequest) {

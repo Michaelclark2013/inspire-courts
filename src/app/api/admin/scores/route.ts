@@ -11,6 +11,8 @@ import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 import { withTiming } from "@/lib/timing";
+import { gameCreateSchema } from "@/lib/schemas";
+import { apiValidationError } from "@/lib/api-helpers";
 
 // Pagination cap — no single page can be larger than this regardless of
 // ?limit, so a misbehaving client can't dump the entire games table.
@@ -193,41 +195,32 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const { homeTeam, awayTeam, division, court, eventName, scheduledTime } = body;
-
-    // Strict type + length validation — previously these strings went
-    // straight into the DB with no guards, so a non-string value would
-    // coerce to "[object Object]" and an unbounded string could bloat the
-    // games table. Mirror the announcements POST pattern.
-    if (typeof homeTeam !== "string" || !homeTeam.trim() || homeTeam.length > 200) {
-      return NextResponse.json({ error: "homeTeam must be 1–200 characters" }, { status: 400 });
+    let raw: unknown;
+    try {
+      raw = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
-    if (typeof awayTeam !== "string" || !awayTeam.trim() || awayTeam.length > 200) {
-      return NextResponse.json({ error: "awayTeam must be 1–200 characters" }, { status: 400 });
+    const parsed = gameCreateSchema.safeParse(raw);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path.join(".") || "_root";
+        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+      }
+      return apiValidationError(fieldErrors);
     }
-    if (division !== undefined && division !== null && (typeof division !== "string" || division.length > 50)) {
-      return NextResponse.json({ error: "division must be a string ≤50 chars" }, { status: 400 });
-    }
-    if (court !== undefined && court !== null && (typeof court !== "string" || court.length > 50)) {
-      return NextResponse.json({ error: "court must be a string ≤50 chars" }, { status: 400 });
-    }
-    if (eventName !== undefined && eventName !== null && (typeof eventName !== "string" || eventName.length > 200)) {
-      return NextResponse.json({ error: "eventName must be a string ≤200 chars" }, { status: 400 });
-    }
-    if (scheduledTime !== undefined && scheduledTime !== null && (typeof scheduledTime !== "string" || scheduledTime.length > 40)) {
-      return NextResponse.json({ error: "scheduledTime must be an ISO-like string" }, { status: 400 });
-    }
+    const { homeTeam, awayTeam, division, court, eventName, scheduledTime } = parsed.data;
 
     const [game] = await db
       .insert(games)
       .values({
         homeTeam: homeTeam.trim().slice(0, 200),
         awayTeam: awayTeam.trim().slice(0, 200),
-        division: division ? String(division).trim().slice(0, 50) : null,
-        court: court ? String(court).trim().slice(0, 50) : null,
-        eventName: eventName ? String(eventName).trim().slice(0, 200) : null,
-        scheduledTime: scheduledTime ? String(scheduledTime).slice(0, 40) : null,
+        division: division ? division.trim().slice(0, 50) : null,
+        court: court ? court.trim().slice(0, 50) : null,
+        eventName: eventName ? eventName.trim().slice(0, 200) : null,
+        scheduledTime: scheduledTime ? scheduledTime.slice(0, 40) : null,
         status: "scheduled",
       })
       .returning();

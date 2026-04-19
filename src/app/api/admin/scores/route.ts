@@ -214,8 +214,19 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT /api/admin/scores — update a game score
+// PUT /api/admin/scores — update a game score (legacy path; see PATCH below)
 export async function PUT(request: NextRequest) {
+  return updateGameScore(request);
+}
+
+// PATCH /api/admin/scores — idiomatic partial-update alias for PUT.
+// A game-score update only mutates a subset of fields (scores, quarter,
+// and/or status), which matches PATCH semantics better than PUT.
+export async function PATCH(request: NextRequest) {
+  return updateGameScore(request);
+}
+
+async function updateGameScore(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

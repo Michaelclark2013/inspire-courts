@@ -103,13 +103,20 @@ export async function GET(_request: NextRequest, { params }: Params) {
     };
   });
 
-  return NextResponse.json({
-    ...tournament,
-    divisions: tournament.divisions ? JSON.parse(tournament.divisions) : [],
-    courts: tournament.courts ? JSON.parse(tournament.courts) : [],
-    teams,
-    bracket: bracketWithScores,
-  });
+  return NextResponse.json(
+    {
+      ...tournament,
+      divisions: tournament.divisions ? JSON.parse(tournament.divisions) : [],
+      courts: tournament.courts ? JSON.parse(tournament.courts) : [],
+      teams,
+      bracket: bracketWithScores,
+    },
+    {
+      // Expose the row's updatedAt as an ETag so clients can send it back
+      // in If-Match on PUT for optimistic concurrency.
+      headers: { ETag: `"${tournament.updatedAt}"` },
+    }
+  );
 }
 
 // PUT /api/admin/tournaments/[id] — update tournament settings
@@ -138,6 +145,21 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json(
       { error: "Cannot edit active or completed tournaments" },
       { status: 400 }
+    );
+  }
+
+  // Optimistic concurrency: if the client sent an If-Match header with the
+  // row's updatedAt, 412 when it no longer matches (another admin edited
+  // the tournament since the client last loaded it). Clients that don't
+  // send the header (legacy / GET-less PUT) still work — this is additive.
+  const ifMatch = request.headers.get("if-match");
+  if (ifMatch && ifMatch !== existing.updatedAt && ifMatch !== `"${existing.updatedAt}"`) {
+    return NextResponse.json(
+      {
+        error: "Tournament was modified by another admin. Refresh and retry.",
+        currentUpdatedAt: existing.updatedAt,
+      },
+      { status: 412 }
     );
   }
 

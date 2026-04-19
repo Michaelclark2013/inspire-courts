@@ -252,6 +252,19 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (paymentStatus) updates.paymentStatus = paymentStatus;
     if (notes !== undefined) updates.notes = notes;
 
+    // Snapshot BEFORE the write so the audit log can answer "what was the
+    // status/payment before this approval?". Previously `before: null`.
+    const beforeRows = await db
+      .select({
+        id: tournamentRegistrations.id,
+        status: tournamentRegistrations.status,
+        paymentStatus: tournamentRegistrations.paymentStatus,
+        notes: tournamentRegistrations.notes,
+      })
+      .from(tournamentRegistrations)
+      .where(inArray(tournamentRegistrations.id, targetIds));
+    const beforeById = new Map(beforeRows.map((r) => [r.id, r]));
+
     // Single batched UPDATE covers both single and bulk paths.
     await db
       .update(tournamentRegistrations)
@@ -297,14 +310,14 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
     // Audit single-row updates too (was bulk-only before). Single path gets
     // "registration.updated", bulk gets "registration.bulk_update" so queries
-    // can distinguish.
+    // can distinguish. `before` now carries the pre-write snapshot.
     if (targetIds.length === 1) {
       await recordAudit({
         session,
         action: "registration.updated",
         entityType: "tournament_registration",
         entityId: targetIds[0],
-        before: null,
+        before: beforeById.get(targetIds[0]) ?? null,
         after: updates,
       });
     } else if (targetIds.length > 1) {
@@ -313,7 +326,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
         action: "registration.bulk_update",
         entityType: "tournament_registration",
         entityId: targetIds.join(","),
-        before: null,
+        before: { ids: beforeRows },
         after: { ids: targetIds, updates },
       });
     }

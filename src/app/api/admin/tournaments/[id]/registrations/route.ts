@@ -13,7 +13,7 @@ import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { withTiming } from "@/lib/timing";
 import { registrationCreateSchema } from "@/lib/schemas";
-import { parseJsonBody, apiError } from "@/lib/api-helpers";
+import { parseJsonBody } from "@/lib/api-helpers";
 
 type Params = { params: Promise<{ id: string }> };
 

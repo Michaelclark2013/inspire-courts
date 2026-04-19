@@ -129,6 +129,33 @@ export const gameCreateSchema = z.object({
   scheduledTime: z.string().max(40).optional().nullable(),
 });
 
+// Admin tournament update — partial patch. `format` enum here is the
+// POST-era set PLUS two legacy names ("single_elimination",
+// "double_elimination", "pool_to_bracket") that predate the create
+// schema; PUT keeps accepting them so existing rows can be edited.
+export const tournamentUpdateSchema = z.object({
+  name: z.string().max(200).optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional().nullable(),
+  location: z.string().max(200).optional().nullable(),
+  format: z
+    .enum([
+      "single_elim",
+      "double_elim",
+      "round_robin",
+      "pool_play",
+      "single_elimination",
+      "double_elimination",
+      "pool_to_bracket",
+    ])
+    .optional(),
+  divisions: z.array(z.string()).optional(),
+  courts: z.array(z.string()).optional(),
+  gameLength: z.number().int().positive().max(600).optional(),
+  breakLength: z.number().int().nonnegative().max(120).optional(),
+  status: z.enum(["draft", "published", "active", "completed"]).optional(),
+});
+
 // Admin walk-in registration — admin-created regs skip the public
 // payment/approval flow and go straight to approved+waived. Every
 // field length-capped to match the DB sanitization the handler does

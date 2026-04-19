@@ -15,7 +15,8 @@ import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { withTiming } from "@/lib/timing";
-import { apiNotFound, apiError } from "@/lib/api-helpers";
+import { apiNotFound, apiError, parseJsonBody } from "@/lib/api-helpers";
+import { tournamentUpdateSchema } from "@/lib/schemas";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -168,28 +169,22 @@ export async function PUT(request: NextRequest, { params }: Params) {
     );
   }
 
-  let body: Record<string, unknown>;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+  const parsed = await parseJsonBody(request, tournamentUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.data;
 
   const updates: Record<string, unknown> = { updatedAt: new Date().toISOString() };
-
-  const VALID_STATUSES = ["draft", "published", "active", "completed"];
-  const VALID_FORMATS = ["single_elimination", "double_elimination", "round_robin", "pool_play", "pool_to_bracket"];
-
-  if (body.name && typeof body.name === "string") updates.name = body.name.slice(0, 200);
-  if (body.startDate && typeof body.startDate === "string") updates.startDate = body.startDate;
+  if (body.name) updates.name = body.name.slice(0, 200);
+  if (body.startDate) updates.startDate = body.startDate;
   if (body.endDate !== undefined) updates.endDate = body.endDate || null;
-  if (body.location !== undefined) updates.location = typeof body.location === "string" ? body.location.slice(0, 200) : null;
-  if (body.format && typeof body.format === "string" && VALID_FORMATS.includes(body.format)) updates.format = body.format;
+  if (body.location !== undefined)
+    updates.location = body.location ? body.location.slice(0, 200) : null;
+  if (body.format) updates.format = body.format;
   if (body.divisions) updates.divisions = JSON.stringify(body.divisions);
   if (body.courts) updates.courts = JSON.stringify(body.courts);
-  if (body.gameLength && typeof body.gameLength === "number" && body.gameLength > 0) updates.gameLength = body.gameLength;
-  if (body.breakLength !== undefined && typeof body.breakLength === "number" && body.breakLength >= 0) updates.breakLength = body.breakLength;
-  if (body.status && typeof body.status === "string" && VALID_STATUSES.includes(body.status)) updates.status = body.status;
+  if (body.gameLength) updates.gameLength = body.gameLength;
+  if (body.breakLength !== undefined) updates.breakLength = body.breakLength;
+  if (body.status) updates.status = body.status;
 
   // Return the full updated row via .returning() so the caller can sync
   // state without a round-trip refetch.

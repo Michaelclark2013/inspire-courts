@@ -8,35 +8,44 @@ import { eq, and, or, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { teamAddSchema } from "@/lib/schemas";
+import { parseJsonBody, apiError } from "@/lib/api-helpers";
+import { withTiming } from "@/lib/timing";
 
 type Params = { params: Promise<{ id: string }> };
 
 // GET /api/admin/tournaments/[id]/teams
-export async function GET(_request: NextRequest, { params }: Params) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export const GET = withTiming(
+  "admin.tournament.teams.list",
+  async (_request: NextRequest, { params }: Params) => {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+      return apiError("Unauthorized", 401);
+    }
 
-  const { id } = await params;
-  const tournamentId = Number(id);
-  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
-    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
-  }
+    const { id } = await params;
+    const tournamentId = Number(id);
+    if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+      return apiError("Invalid tournament id", 400);
+    }
 
-  try {
-    const teams = await db
-      .select()
-      .from(tournamentTeams)
-      .where(eq(tournamentTeams.tournamentId, tournamentId))
-      .orderBy(tournamentTeams.seed);
+    try {
+      const teams = await db
+        .select()
+        .from(tournamentTeams)
+        .where(eq(tournamentTeams.tournamentId, tournamentId))
+        .orderBy(tournamentTeams.seed);
 
-    return NextResponse.json(teams);
-  } catch (err) {
-    logger.error("Failed to fetch tournament teams", { tournamentId, error: String(err) });
-    return NextResponse.json({ error: "Failed to fetch teams" }, { status: 500 });
+      return NextResponse.json(teams);
+    } catch (err) {
+      logger.error("Failed to fetch tournament teams", {
+        tournamentId,
+        error: String(err),
+      });
+      return apiError("Failed to fetch teams", 500);
+    }
   }
-}
+);
 
 // POST /api/admin/tournaments/[id]/teams — add a team
 export async function POST(request: NextRequest, { params }: Params) {
@@ -51,28 +60,18 @@ export async function POST(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
   }
 
-  try {
-    const body = await request.json();
-    const { teamName, teamId, division, seed, poolGroup } = body;
-    if (!teamName || typeof teamName !== "string" || !teamName.trim()) {
-      return NextResponse.json({ error: "Team name is required" }, { status: 400 });
-    }
+  const parsed = await parseJsonBody(request, teamAddSchema);
+  if (!parsed.ok) return parsed.response;
+  const { teamName, teamId, division, seed, poolGroup } = parsed.data;
 
+  try {
     // Sanitize + cap lengths — teamName propagates into every games row
     // via the bracket generator, so unbounded input is a real risk.
     const safeTeamName = teamName.trim().slice(0, 100);
-    const safeDivision =
-      typeof division === "string" && division ? division.trim().slice(0, 50) : null;
-    const safePoolGroup =
-      typeof poolGroup === "string" && poolGroup ? poolGroup.trim().slice(0, 20) : null;
-    const safeTeamId =
-      teamId != null && Number.isInteger(Number(teamId)) && Number(teamId) > 0
-        ? Number(teamId)
-        : null;
-    const safeSeed =
-      seed != null && Number.isInteger(Number(seed)) && Number(seed) > 0
-        ? Number(seed)
-        : undefined;
+    const safeDivision = division ? division.trim().slice(0, 50) : null;
+    const safePoolGroup = poolGroup ? poolGroup.trim().slice(0, 20) : null;
+    const safeTeamId = teamId ?? null;
+    const safeSeed = seed;
 
     // Get current team count for auto-seeding
     const existing = await db

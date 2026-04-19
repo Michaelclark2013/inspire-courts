@@ -129,6 +129,17 @@ export const gameCreateSchema = z.object({
   scheduledTime: z.string().max(40).optional().nullable(),
 });
 
+// Admin team add — teamName flows into every bracket games row via
+// the tournament generator, so every field is length-capped. teamId
+// optionally links back to a persistent Team row for stats.
+export const teamAddSchema = z.object({
+  teamName: z.string().min(1, "Team name is required").max(100),
+  teamId: z.number().int().positive().optional().nullable(),
+  division: z.string().max(50).optional().nullable(),
+  seed: z.number().int().positive().optional(),
+  poolGroup: z.string().max(20).optional().nullable(),
+});
+
 // Admin checkin — front desk dual-writes to DB + Google Sheets. Type
 // covers regular check-in, waiver submission, and explicit no-show so
 // forfeit slots can be cleared during a tournament.

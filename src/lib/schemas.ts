@@ -223,6 +223,26 @@ export const announcementUpdateSchema = z.object({
   expiresAt: z.string().datetime().optional().nullable(),
 });
 
+// Admin team update — partial patch of a tournament_teams row.
+// `players` is a JSON array stored stringified; schema validates
+// the array shape and the handler still sanitizes each player
+// (length caps) before JSON.stringify to protect the bracket engine.
+export const teamUpdateSchema = z.object({
+  teamEntryId: z.number().int().positive(),
+  seed: z.number().int().positive().optional(),
+  poolGroup: z.string().max(20).optional().nullable(),
+  eliminated: z.boolean().optional(),
+  players: z
+    .array(
+      z.object({
+        name: z.string().min(1).max(100),
+        jersey: z.string().max(10).optional().nullable(),
+      })
+    )
+    .max(50)
+    .optional(),
+});
+
 // Admin checkin — front desk dual-writes to DB + Google Sheets. Type
 // covers regular check-in, waiver submission, and explicit no-show so
 // forfeit slots can be cleared during a tournament.

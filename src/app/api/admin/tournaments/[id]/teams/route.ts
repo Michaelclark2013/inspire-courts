@@ -8,8 +8,8 @@ import { eq, and, or, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
-import { teamAddSchema } from "@/lib/schemas";
-import { parseJsonBody, apiError } from "@/lib/api-helpers";
+import { teamAddSchema, teamUpdateSchema } from "@/lib/schemas";
+import { parseJsonBody, apiError, apiNotFound } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 
 type Params = { params: Promise<{ id: string }> };
@@ -112,14 +112,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
   }
 
+  const parsed = await parseJsonBody(request, teamUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { teamEntryId, seed, poolGroup, eliminated, players } = parsed.data;
+
   try {
-    const body = await request.json();
-    const { teamEntryId, seed, poolGroup, eliminated, players } = body;
-
-    if (!teamEntryId || !Number.isInteger(teamEntryId) || teamEntryId <= 0) {
-      return NextResponse.json({ error: "Valid teamEntryId required" }, { status: 400 });
-    }
-
     // Pre-flight: return actionable errors instead of a generic 500.
     const [existing] = await db
       .select({ id: tournamentTeams.id, tournamentId: tournamentTeams.tournamentId })
@@ -127,42 +124,28 @@ export async function PUT(request: NextRequest, { params }: Params) {
       .where(eq(tournamentTeams.id, teamEntryId))
       .limit(1);
     if (!existing) {
-      return NextResponse.json({ error: "Team entry not found" }, { status: 404 });
+      return apiNotFound("Team entry not found");
     }
     if (existing.tournamentId !== tournamentId) {
-      return NextResponse.json(
-        { error: "Team entry does not belong to this tournament" },
-        { status: 403 }
-      );
+      return apiError("Team entry does not belong to this tournament", 403);
     }
 
     const updates: Record<string, unknown> = {};
-    if (seed !== undefined) {
-      if (!Number.isInteger(seed) || seed <= 0) {
-        return NextResponse.json({ error: "seed must be a positive integer" }, { status: 400 });
-      }
-      updates.seed = seed;
-    }
+    if (seed !== undefined) updates.seed = seed;
     if (poolGroup !== undefined) {
-      updates.poolGroup =
-        typeof poolGroup === "string" && poolGroup ? poolGroup.trim().slice(0, 20) : null;
+      updates.poolGroup = poolGroup ? poolGroup.trim().slice(0, 20) : null;
     }
-    if (eliminated !== undefined) updates.eliminated = Boolean(eliminated);
+    if (eliminated !== undefined) updates.eliminated = eliminated;
     if (players !== undefined) {
-      if (!Array.isArray(players)) {
-        return NextResponse.json({ error: "players must be an array" }, { status: 400 });
-      }
-      const sanitized = players
-        .filter((p) => p && typeof p.name === "string" && p.name.trim())
-        .map((p) => ({
-          name: String(p.name).trim().slice(0, 100),
-          jersey: p.jersey ? String(p.jersey).trim().slice(0, 10) : "",
-        }));
+      const sanitized = players.map((p) => ({
+        name: p.name.trim().slice(0, 100),
+        jersey: p.jersey ? p.jersey.trim().slice(0, 10) : "",
+      }));
       updates.players = JSON.stringify(sanitized);
     }
 
     if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+      return apiError("No fields to update", 400);
     }
 
     // Snapshot BEFORE the write so the audit log captures what changed.

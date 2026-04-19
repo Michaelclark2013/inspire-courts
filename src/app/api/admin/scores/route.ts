@@ -20,17 +20,38 @@ const SCORES_DEFAULT_LIMIT = 50;
 // `name`. When a score/status changes, the public /tournaments/[id] page
 // shows the updated result — so we need to bust that ISR cache too.
 // Returns the revalidated path if a match was found, else null.
+//
+// Caches eventName → tournamentId lookups for 60s per process because the
+// same handler is called on every score update for the same event and
+// most real traffic clusters by event.
+const eventToTournamentCache = new Map<string, { id: number | null; expiresAt: number }>();
+const EVENT_CACHE_TTL_MS = 60_000;
+
 async function revalidateTournamentForEvent(eventName: string | null): Promise<string | null> {
   if (!eventName) return null;
   try {
-    const [t] = await db
-      .select({ id: tournaments.id })
-      .from(tournaments)
-      .where(eq(tournaments.name, eventName))
-      .limit(1);
-    if (t) {
-      revalidatePath(`/tournaments/${t.id}`);
-      return `/tournaments/${t.id}`;
+    const cached = eventToTournamentCache.get(eventName);
+    const now = Date.now();
+    let tournamentId: number | null;
+    if (cached && cached.expiresAt > now) {
+      tournamentId = cached.id;
+    } else {
+      const [t] = await db
+        .select({ id: tournaments.id })
+        .from(tournaments)
+        .where(eq(tournaments.name, eventName))
+        .limit(1);
+      tournamentId = t?.id ?? null;
+      eventToTournamentCache.set(eventName, { id: tournamentId, expiresAt: now + EVENT_CACHE_TTL_MS });
+      // Cap the cache at ~200 entries.
+      if (eventToTournamentCache.size > 200) {
+        const firstKey = eventToTournamentCache.keys().next().value;
+        if (firstKey) eventToTournamentCache.delete(firstKey);
+      }
+    }
+    if (tournamentId != null) {
+      revalidatePath(`/tournaments/${tournamentId}`);
+      return `/tournaments/${tournamentId}`;
     }
   } catch {
     // Non-fatal — revalidation is a best-effort cache bust.

@@ -21,6 +21,10 @@ const DEFAULT_LIMIT = 50;
 //   ?actorUserId=123
 //   ?limit=50 (max 200)
 //   ?before=<ISO timestamp>  (cursor for older-than pagination)
+//   ?format=csv              Download ALL matching rows (up to 10_000) as
+//                             CSV — bypasses the pagination cap for
+//                             compliance / export workflows. Ignores
+//                             ?limit and ?before.
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   // Audit log is admin-only by design — it may contain PII in before/after
@@ -56,8 +60,66 @@ export async function GET(request: NextRequest) {
   }
   if (before) filters.push(lt(auditLog.createdAt, before));
 
+  const format = sp.get("format");
+
   try {
     const where = filters.length > 0 ? and(...filters) : undefined;
+
+    if (format === "csv") {
+      // Hard cap at 10_000 rows so a broad filter can't download the
+      // whole table; admins needing more can narrow their filters.
+      const CSV_MAX = 10_000;
+      const csvRows = await db
+        .select()
+        .from(auditLog)
+        .where(where)
+        .orderBy(desc(auditLog.createdAt))
+        .limit(CSV_MAX);
+
+      const header = [
+        "id",
+        "createdAt",
+        "actorUserId",
+        "actorEmail",
+        "actorRole",
+        "action",
+        "entityType",
+        "entityId",
+        "beforeJson",
+        "afterJson",
+      ];
+      const cell = (v: unknown) => {
+        const s = v == null ? "" : String(v);
+        return `"${s.replace(/"/g, '""')}"`;
+      };
+      const lines = [
+        header.map(cell).join(","),
+        ...csvRows.map((r) =>
+          [
+            r.id,
+            r.createdAt,
+            r.actorUserId,
+            r.actorEmail,
+            r.actorRole,
+            r.action,
+            r.entityType,
+            r.entityId,
+            r.beforeJson,
+            r.afterJson,
+          ]
+            .map(cell)
+            .join(",")
+        ),
+      ];
+      return new NextResponse(lines.join("\n"), {
+        headers: {
+          "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": `attachment; filename="audit-log-${new Date().toISOString().slice(0, 10)}.csv"`,
+          "Cache-Control": "no-store",
+          ...(csvRows.length === CSV_MAX ? { "X-Row-Cap-Reached": "true" } : {}),
+        },
+      });
+    }
     // Fetch page + 1 for cursor detection, and total count in parallel so
     // the UI can show "X of Y".
     const [rows, [{ total }]] = await Promise.all([

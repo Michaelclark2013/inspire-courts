@@ -87,6 +87,13 @@ export async function PATCH(request: NextRequest) {
     };
 
     // Accept either a single userId (legacy) or a bulk userIds array (new).
+    const BULK_APPROVALS_CAP = 200;
+    if (Array.isArray(userIds) && userIds.length > BULK_APPROVALS_CAP) {
+      return NextResponse.json(
+        { error: `userIds[] cannot exceed ${BULK_APPROVALS_CAP} entries; chunk the request` },
+        { status: 400 }
+      );
+    }
     const ids: number[] = Array.isArray(userIds) && userIds.length > 0
       ? userIds.filter((n) => typeof n === "number" && Number.isInteger(n) && n > 0)
       : typeof userId === "number" && Number.isInteger(userId) && userId > 0

@@ -208,6 +208,19 @@ export async function POST(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "notes must be ≤2000 characters" }, { status: 400 });
     }
 
+    // Validate paymentStatus against enum BEFORE insert. Was previously
+    // cast unchecked, so a caller could submit any string and SQLite would
+    // happily write it (CHECK constraints aren't enforced here).
+    const paymentStatusEnum = ["pending", "paid", "refunded", "waived"] as const;
+    if (paymentStatus !== undefined && !paymentStatusEnum.includes(paymentStatus as typeof paymentStatusEnum[number])) {
+      return NextResponse.json(
+        { error: `paymentStatus must be one of: ${paymentStatusEnum.join(", ")}` },
+        { status: 400 }
+      );
+    }
+    const safePaymentStatus =
+      (paymentStatus as typeof paymentStatusEnum[number]) || "waived";
+
     const [reg] = await db
       .insert(tournamentRegistrations)
       .values({
@@ -216,7 +229,7 @@ export async function POST(request: NextRequest, { params }: Params) {
         coachName: String(coachName).trim().slice(0, 200),
         coachEmail: coachEmail ? String(coachEmail).trim().toLowerCase().slice(0, 255) : "",
         division: division ? String(division).trim().slice(0, 50) : null,
-        paymentStatus: (paymentStatus as "pending" | "paid" | "waived") || "waived",
+        paymentStatus: safePaymentStatus,
         status: "approved",
         notes: notes ? String(notes).trim().slice(0, 2000) : null,
       })
@@ -264,6 +277,15 @@ export async function PUT(request: NextRequest, { params }: Params) {
     };
 
     // Accept either a single id (legacy) or a bulk `ids` array.
+    // Cap bulk size — the two downstream loops (team-promotion + audit
+    // entries) scale linearly with the array length.
+    const BULK_IDS_CAP = 200;
+    if (Array.isArray(ids) && ids.length > BULK_IDS_CAP) {
+      return NextResponse.json(
+        { error: `ids[] cannot exceed ${BULK_IDS_CAP} entries; chunk the request` },
+        { status: 400 }
+      );
+    }
     const targetIds: number[] = Array.isArray(ids) && ids.length > 0
       ? ids.filter((n) => Number.isInteger(n) && n > 0)
       : registrationId && Number.isInteger(registrationId) && registrationId > 0
@@ -409,6 +431,13 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       // Ignore body parse errors; fall back to query param.
     }
 
+    const DELETE_BULK_CAP = 200;
+    if (bodyIds.length > DELETE_BULK_CAP) {
+      return NextResponse.json(
+        { error: `ids[] cannot exceed ${DELETE_BULK_CAP} entries; chunk the request` },
+        { status: 400 }
+      );
+    }
     const targetIds: number[] = bodyIds.length > 0
       ? bodyIds
       : (() => {

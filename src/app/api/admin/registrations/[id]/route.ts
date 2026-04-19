@@ -36,8 +36,30 @@ export async function GET(_request: NextRequest, { params }: Params) {
   }
 
   try {
+    // Column-scoped select — don't return any columns we don't need and
+    // never will want in an admin UI (e.g. raw Square payment IDs stay
+    // available if the admin loads the tournament-scoped list, but this
+    // convenience endpoint focuses on what a human would audit).
     const [registration] = await db
-      .select()
+      .select({
+        id: tournamentRegistrations.id,
+        tournamentId: tournamentRegistrations.tournamentId,
+        teamName: tournamentRegistrations.teamName,
+        coachName: tournamentRegistrations.coachName,
+        coachEmail: tournamentRegistrations.coachEmail,
+        coachPhone: tournamentRegistrations.coachPhone,
+        division: tournamentRegistrations.division,
+        playerCount: tournamentRegistrations.playerCount,
+        entryFee: tournamentRegistrations.entryFee,
+        paymentStatus: tournamentRegistrations.paymentStatus,
+        status: tournamentRegistrations.status,
+        rosterSubmitted: tournamentRegistrations.rosterSubmitted,
+        waiversSigned: tournamentRegistrations.waiversSigned,
+        notes: tournamentRegistrations.notes,
+        squareOrderId: tournamentRegistrations.squareOrderId,
+        createdAt: tournamentRegistrations.createdAt,
+        updatedAt: tournamentRegistrations.updatedAt,
+      })
       .from(tournamentRegistrations)
       .where(eq(tournamentRegistrations.id, regId))
       .limit(1);

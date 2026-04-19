@@ -331,9 +331,13 @@ export const auditLog = sqliteTable("audit_log", {
   afterJson: text("after_json"),
   // Request fingerprint — captured for security investigations (e.g.
   // "was this admin action taken from an unusual IP after a credential
-  // theft?"). Both nullable because non-request call sites may exist.
+  // theft?"). All nullable because non-request call sites may exist.
   actorIp: text("actor_ip"),
   actorUserAgent: text("actor_user_agent"),
+  // Per-request correlation id from middleware (X-Request-Id). Joins
+  // audit entries to the server logs + client error reports for the
+  // same request.
+  requestId: text("request_id"),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),

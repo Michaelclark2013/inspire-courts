@@ -31,10 +31,12 @@ export async function recordAudit(opts: {
   try {
     const actorUserId = session?.user?.id ? Number(session.user.id) : null;
 
-    // Capture IP + User-Agent for security investigations. Length-cap UA
-    // so a pathological header can't bloat the audit table.
+    // Capture IP + User-Agent + X-Request-Id for security investigations
+    // and log correlation. Length-cap UA + requestId so a pathological
+    // header can't bloat the audit table.
     let actorIp: string | null = null;
     let actorUserAgent: string | null = null;
+    let requestId: string | null = null;
     if (request) {
       try {
         actorIp = getClientIp(request) || null;
@@ -43,6 +45,8 @@ export async function recordAudit(opts: {
       }
       const ua = request.headers.get("user-agent");
       actorUserAgent = ua ? ua.slice(0, 500) : null;
+      const rid = request.headers.get("x-request-id");
+      requestId = rid ? rid.slice(0, 100) : null;
     }
 
     await db.insert(auditLog).values({
@@ -56,6 +60,7 @@ export async function recordAudit(opts: {
       afterJson: opts.after === undefined ? null : JSON.stringify(opts.after),
       actorIp,
       actorUserAgent,
+      requestId,
     });
   } catch (err) {
     logger.warn("audit log write failed", {

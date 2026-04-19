@@ -7,17 +7,29 @@ import {
   isGoogleConfigured,
   SHEETS,
 } from "@/lib/google-sheets";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 // GET /api/admin/my-history?type=staff|ref&name=John
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session) {
+  if (!session?.user?.role) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const role = session.user.role as string;
   if (!["admin", "staff", "ref"].includes(role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate-limit — this endpoint hits the Google Sheets API on every call,
+  // so a compromised staff/ref session could exhaust our Sheets quota.
+  // 30 reads/min per IP is well above legitimate personal-history use.
+  const ip = getClientIp(request);
+  if (isRateLimited(`admin-my-history:${ip}`, 30, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many requests. Slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
   }
 
   if (!isGoogleConfigured()) {

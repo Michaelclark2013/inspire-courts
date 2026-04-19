@@ -87,10 +87,33 @@ export async function GET(request: NextRequest, { params }: Params) {
       : asc(sortCol);
 
   try {
+    // Scoped selector shared by CSV + paginated JSON paths — excludes
+    // Square payment tokens (squarePaymentId, squareOrderId, squareCheckoutUrl)
+    // that the admin UI never needs and that shouldn't ride on every
+    // list-view response.
+    const regSelectColumns = {
+      id: tournamentRegistrations.id,
+      tournamentId: tournamentRegistrations.tournamentId,
+      teamName: tournamentRegistrations.teamName,
+      coachName: tournamentRegistrations.coachName,
+      coachEmail: tournamentRegistrations.coachEmail,
+      coachPhone: tournamentRegistrations.coachPhone,
+      division: tournamentRegistrations.division,
+      playerCount: tournamentRegistrations.playerCount,
+      entryFee: tournamentRegistrations.entryFee,
+      paymentStatus: tournamentRegistrations.paymentStatus,
+      status: tournamentRegistrations.status,
+      rosterSubmitted: tournamentRegistrations.rosterSubmitted,
+      waiversSigned: tournamentRegistrations.waiversSigned,
+      notes: tournamentRegistrations.notes,
+      createdAt: tournamentRegistrations.createdAt,
+      updatedAt: tournamentRegistrations.updatedAt,
+    };
+
     if (format === "csv") {
       // CSV: no pagination — admin wants the full filtered set.
       const regs = await db
-        .select()
+        .select(regSelectColumns)
         .from(tournamentRegistrations)
         .where(whereClause)
         .orderBy(orderBy);
@@ -145,7 +168,7 @@ export async function GET(request: NextRequest, { params }: Params) {
 
     const [pagedRegs, [{ total }]] = await Promise.all([
       db
-        .select()
+        .select(regSelectColumns)
         .from(tournamentRegistrations)
         .where(whereClause)
         .orderBy(orderBy)
@@ -249,9 +272,29 @@ export async function POST(request: NextRequest, { params }: Params) {
       seed: existingTeams.length + 1,
     });
 
+    // Walk-in registrations created by an admin skip the public
+     // payment/approval flow and go straight to approved+waived, so they're
+    // a high-consequence audit target (free entry granted by an admin).
+    await recordAudit({
+      session,
+      request,
+      action: "registration.created",
+      entityType: "tournament_registration",
+      entityId: reg.id,
+      before: null,
+      after: {
+        tournamentId: reg.tournamentId,
+        teamName: reg.teamName,
+        coachName: reg.coachName,
+        coachEmail: reg.coachEmail,
+        paymentStatus: reg.paymentStatus,
+        status: reg.status,
+      },
+    });
+
     revalidatePath(`/admin/tournaments/${id}`);
     revalidatePath(`/tournaments/${id}`);
-    return NextResponse.json(reg);
+    return NextResponse.json(reg, { status: 201 });
   } catch (err) {
     logger.error("Failed to create registration", { tournamentId, error: String(err) });
     return NextResponse.json({ error: "Failed to create registration" }, { status: 500 });

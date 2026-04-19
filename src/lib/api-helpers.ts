@@ -46,3 +46,22 @@ export function apiValidationError(
     { status: 422 }
   );
 }
+
+/**
+ * Standard 404 helper. Every admin route was hand-rolling its own
+ * not-found message ("Not found", "Registration not found", "Game not
+ * found", etc.) which made client-side detection string-brittle. The
+ * canonical shape is:
+ *
+ *     { error: "Not found", detail?: "Registration not found" }
+ *
+ * Clients can match on `error === "Not found"` for generic handling
+ * while the optional `detail` preserves the specific entity name for
+ * human-readable UI.
+ */
+export function apiNotFound(detail?: string) {
+  return NextResponse.json(
+    { error: "Not found", ...(detail ? { detail } : {}) },
+    { status: 404 }
+  );
+}

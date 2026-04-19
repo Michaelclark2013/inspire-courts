@@ -4,23 +4,57 @@ import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { tournaments, tournamentTeams, tournamentGames } from "@/lib/db/schema";
-import { desc, eq, sql, inArray } from "drizzle-orm";
+import { asc, desc, eq, sql, inArray, and, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
 
-// GET /api/admin/tournaments — list all tournaments
-export async function GET() {
+// Safe sortable columns — prevents ORDER BY injection via ?sort=.
+const TOURNAMENT_SORT_COLUMNS = {
+  name: tournaments.name,
+  status: tournaments.status,
+  startDate: tournaments.startDate,
+  createdAt: tournaments.createdAt,
+} as const;
+
+const VALID_STATUS = ["draft", "published", "active", "completed"] as const;
+
+// GET /api/admin/tournaments — list tournaments with enriched counts.
+//   ?status=draft|published|active|completed    filter
+//   ?sort=name|status|startDate|createdAt       sortable
+//   ?dir=asc|desc                               default desc for date columns
+// Response: { data: Tournament[], total }
+// Previously returned a bare array with no total/filter/sort.
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const allTournaments = await db
-    .select()
-    .from(tournaments)
-    .orderBy(desc(tournaments.createdAt));
+  const sp = request.nextUrl.searchParams;
+  const statusFilter = sp.get("status");
+  const sortKey = (sp.get("sort") || "createdAt") as keyof typeof TOURNAMENT_SORT_COLUMNS;
+  const sortCol = TOURNAMENT_SORT_COLUMNS[sortKey] || tournaments.createdAt;
+  const dir = sp.get("dir") === "asc" ? asc : sp.get("dir") === "desc" ? desc : null;
+  const orderBy = dir
+    ? dir(sortCol)
+    : sortKey === "createdAt" || sortKey === "startDate"
+      ? desc(sortCol)
+      : asc(sortCol);
 
-  if (allTournaments.length === 0) return NextResponse.json([]);
+  const filters: SQL[] = [];
+  if (statusFilter && (VALID_STATUS as readonly string[]).includes(statusFilter)) {
+    filters.push(eq(tournaments.status, statusFilter as (typeof VALID_STATUS)[number]));
+  }
+  const whereClause = filters.length > 0 ? and(...filters) : undefined;
+
+  const [allTournaments, [{ total }]] = await Promise.all([
+    db.select().from(tournaments).where(whereClause).orderBy(orderBy),
+    db.select({ total: sql<number>`count(*)` }).from(tournaments).where(whereClause),
+  ]);
+
+  if (allTournaments.length === 0) {
+    return NextResponse.json({ data: [], total: Number(total) || 0 });
+  }
 
   const ids = allTournaments.map((t) => t.id);
 
@@ -55,9 +89,10 @@ export async function GET() {
     gameCount: gameMap.get(t.id) ?? 0,
   }));
 
-  return NextResponse.json(enriched, {
-    headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=30" },
-  });
+  return NextResponse.json(
+    { data: enriched, total: Number(total) || 0 },
+    { headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=30" } }
+  );
 }
 
 // POST /api/admin/tournaments — create a tournament

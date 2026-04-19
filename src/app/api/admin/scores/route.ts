@@ -167,6 +167,7 @@ export async function POST(request: NextRequest) {
     });
 
     revalidatePath("/scores");
+    revalidatePath("/admin/scores");
     return NextResponse.json(game, { status: 201 });
   } catch (err) {
     logger.error("Failed to create game", { error: String(err) });
@@ -254,9 +255,77 @@ export async function PUT(request: NextRequest) {
     }
 
     revalidatePath("/scores");
+    revalidatePath("/admin/scores");
     return NextResponse.json({ success: true });
   } catch (err) {
     logger.error("Failed to update game score", { error: String(err) });
     return NextResponse.json({ error: "Failed to update score" }, { status: 500 });
+  }
+}
+
+// DELETE /api/admin/scores?gameId=123
+// Remove a game that was created in error. Cascades to gameScores so
+// we don't leave orphaned score history. Refuses to delete games that
+// are already part of a tournament bracket (tournamentGames row exists) —
+// use POST /tournaments/[id]/reset-bracket for that path instead.
+export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const gameIdRaw = request.nextUrl.searchParams.get("gameId");
+  const gameId = Number(gameIdRaw);
+  if (!gameIdRaw || !Number.isInteger(gameId) || gameId <= 0) {
+    return NextResponse.json({ error: "Valid gameId required" }, { status: 400 });
+  }
+
+  try {
+    const [existing] = await db.select().from(games).where(eq(games.id, gameId)).limit(1);
+    if (!existing) {
+      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+    }
+
+    // Protect against orphaning a bracket slot: if this game is part of
+    // a tournament_games row, the admin should use reset-bracket instead.
+    const { tournamentGames } = await import("@/lib/db/schema");
+    const [linked] = await db
+      .select({ id: tournamentGames.id })
+      .from(tournamentGames)
+      .where(eq(tournamentGames.gameId, gameId))
+      .limit(1);
+    if (linked) {
+      return NextResponse.json(
+        { error: "Game is part of a tournament bracket. Use reset-bracket instead." },
+        { status: 400 }
+      );
+    }
+
+    // All-or-nothing: gameScores children first, then the game itself.
+    await db.transaction(async (tx) => {
+      await tx.delete(gameScores).where(eq(gameScores.gameId, gameId));
+      await tx.delete(games).where(eq(games.id, gameId));
+    });
+
+    await recordAudit({
+      session,
+      action: "game.deleted",
+      entityType: "game",
+      entityId: gameId,
+      before: {
+        homeTeam: existing.homeTeam,
+        awayTeam: existing.awayTeam,
+        status: existing.status,
+        eventName: existing.eventName,
+      },
+      after: null,
+    });
+
+    revalidatePath("/scores");
+    revalidatePath("/admin/scores");
+    return NextResponse.json({ success: true, id: gameId });
+  } catch (err) {
+    logger.error("Failed to delete game", { gameId, error: String(err) });
+    return NextResponse.json({ error: "Failed to delete game" }, { status: 500 });
   }
 }

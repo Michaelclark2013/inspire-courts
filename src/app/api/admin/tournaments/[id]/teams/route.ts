@@ -166,10 +166,37 @@ export async function PUT(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "No fields to update" }, { status: 400 });
     }
 
+    // Snapshot BEFORE the write so the audit log captures what changed.
+    const [before] = await db
+      .select({
+        id: tournamentTeams.id,
+        teamName: tournamentTeams.teamName,
+        seed: tournamentTeams.seed,
+        poolGroup: tournamentTeams.poolGroup,
+        eliminated: tournamentTeams.eliminated,
+        players: tournamentTeams.players,
+      })
+      .from(tournamentTeams)
+      .where(eq(tournamentTeams.id, teamEntryId))
+      .limit(1);
+
     await db
       .update(tournamentTeams)
       .set(updates)
       .where(eq(tournamentTeams.id, teamEntryId));
+
+    // Distinguish roster edits (players field) from seed/pool shuffling
+    // so the audit stream is easy to scan. Roster changes are higher-
+    // consequence because they affect who actually plays.
+    const rosterChanged = updates.players !== undefined;
+    await recordAudit({
+      session,
+      action: rosterChanged ? "tournament_team.roster_updated" : "tournament_team.updated",
+      entityType: "tournament_team",
+      entityId: teamEntryId,
+      before,
+      after: updates,
+    });
 
     revalidatePath(`/admin/tournaments/${id}`);
     return NextResponse.json({ success: true, id: teamEntryId });

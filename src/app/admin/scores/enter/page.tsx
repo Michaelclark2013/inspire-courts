@@ -92,7 +92,9 @@ export default function ScoreEntryPage() {
       try {
         const r = await fetch("/api/admin/tournaments", { signal: ctrl.signal });
         if (!r.ok) throw new Error("Failed");
-        const data: TournamentOption[] = await r.json();
+        const body = await r.json();
+        // API now returns { data, total }; accept bare array for safety.
+        const data: TournamentOption[] = Array.isArray(body) ? body : body.data || [];
         if (!mountedRef.current) return;
         setTournamentOptions(data);
         setErrors((e) => ({ ...e, tournaments: false }));

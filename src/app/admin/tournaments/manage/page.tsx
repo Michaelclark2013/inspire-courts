@@ -132,7 +132,11 @@ export default function TournamentManagePage() {
   const fetchTournaments = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/tournaments");
-      if (res.ok) setTournamentList(await res.json());
+      if (res.ok) {
+        const body = await res.json();
+        // API now returns { data, total }; accept bare array for safety.
+        setTournamentList(Array.isArray(body) ? body : body.data || []);
+      }
     } catch {
       // ignore
     } finally {

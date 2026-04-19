@@ -7,7 +7,7 @@ import {
   tournamentRegistrations,
   tournamentTeams,
 } from "@/lib/db/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, sql, type SQL } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
@@ -21,8 +21,20 @@ function csvCell(v: unknown): string {
   return `"${s.replace(/"/g, '""')}"`;
 }
 
+// Pagination cap per request (CSV export is unbounded).
+const REG_MAX_LIMIT = 200;
+const REG_DEFAULT_LIMIT = 50;
+const VALID_STATUS = ["pending", "approved", "rejected", "waitlisted"] as const;
+const VALID_PAYMENT = ["pending", "paid", "refunded", "waived"] as const;
+
 // GET /api/admin/tournaments/[id]/registrations
-//   ?format=csv → streams a CSV download instead of JSON
+//   ?format=csv        stream CSV (unbounded, ignores pagination)
+//   ?status=           filter by registration status
+//   ?paymentStatus=    filter by payment status
+//   ?division=         filter by division
+//   ?page=             1-indexed page (default 1)
+//   ?limit=            rows per page (default 50, max 200)
+// JSON response: { data, total, page, limit, totalPages }
 export async function GET(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
@@ -35,15 +47,30 @@ export async function GET(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
   }
 
-  try {
-    const regs = await db
-      .select()
-      .from(tournamentRegistrations)
-      .where(eq(tournamentRegistrations.tournamentId, tournamentId))
-      .orderBy(tournamentRegistrations.createdAt);
+  const sp = request.nextUrl.searchParams;
+  const format = sp.get("format");
+  const statusParam = sp.get("status");
+  const paymentParam = sp.get("paymentStatus");
+  const divisionParam = sp.get("division");
 
-    const format = request.nextUrl.searchParams.get("format");
+  const filters: SQL[] = [eq(tournamentRegistrations.tournamentId, tournamentId)];
+  if (statusParam && (VALID_STATUS as readonly string[]).includes(statusParam)) {
+    filters.push(eq(tournamentRegistrations.status, statusParam as (typeof VALID_STATUS)[number]));
+  }
+  if (paymentParam && (VALID_PAYMENT as readonly string[]).includes(paymentParam)) {
+    filters.push(eq(tournamentRegistrations.paymentStatus, paymentParam as (typeof VALID_PAYMENT)[number]));
+  }
+  if (divisionParam) filters.push(eq(tournamentRegistrations.division, divisionParam));
+  const whereClause = and(...filters);
+
+  try {
     if (format === "csv") {
+      // CSV: no pagination — admin wants the full filtered set.
+      const regs = await db
+        .select()
+        .from(tournamentRegistrations)
+        .where(whereClause)
+        .orderBy(tournamentRegistrations.createdAt);
       const header = [
         "id",
         "teamName",
@@ -86,7 +113,33 @@ export async function GET(request: NextRequest, { params }: Params) {
       });
     }
 
-    return NextResponse.json(regs);
+    // JSON path: pagination.
+    const page = Math.max(1, Math.floor(Number(sp.get("page")) || 1));
+    const rawLimit = Math.floor(Number(sp.get("limit")) || REG_DEFAULT_LIMIT);
+    const limit = Math.min(Math.max(1, rawLimit || REG_DEFAULT_LIMIT), REG_MAX_LIMIT);
+    const offset = (page - 1) * limit;
+
+    const [pagedRegs, [{ total }]] = await Promise.all([
+      db
+        .select()
+        .from(tournamentRegistrations)
+        .where(whereClause)
+        .orderBy(tournamentRegistrations.createdAt)
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ total: sql<number>`count(*)` })
+        .from(tournamentRegistrations)
+        .where(whereClause),
+    ]);
+
+    return NextResponse.json({
+      data: pagedRegs,
+      total: Number(total) || 0,
+      page,
+      limit,
+      totalPages: Math.max(1, Math.ceil((Number(total) || 0) / limit)),
+    });
   } catch (err) {
     logger.error("Failed to fetch registrations", { tournamentId, error: String(err) });
     return NextResponse.json({ error: "Failed to fetch registrations" }, { status: 500 });

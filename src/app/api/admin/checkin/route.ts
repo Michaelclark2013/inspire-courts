@@ -72,6 +72,7 @@ export async function GET(request: NextRequest) {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="checkins-${new Date().toISOString().slice(0, 10)}.csv"`,
           "Cache-Control": "no-store",
+          Vary: "Accept-Encoding",
         },
       });
     }

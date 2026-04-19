@@ -329,6 +329,11 @@ export const auditLog = sqliteTable("audit_log", {
   // Before/after snapshot as JSON — enough to revert if needed.
   beforeJson: text("before_json"),
   afterJson: text("after_json"),
+  // Request fingerprint — captured for security investigations (e.g.
+  // "was this admin action taken from an unusual IP after a credential
+  // theft?"). Both nullable because non-request call sites may exist.
+  actorIp: text("actor_ip"),
+  actorUserAgent: text("actor_user_agent"),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),

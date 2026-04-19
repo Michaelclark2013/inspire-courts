@@ -155,6 +155,21 @@ export async function POST(request: NextRequest) {
         role: users.role,
       });
 
+    // Admin-created users — including ones granted the `admin` role —
+    // were previously unlogged. Now every create lands in the audit trail.
+    await recordAudit({
+      session,
+      action: "user.created",
+      entityType: "user",
+      entityId: newUser.id,
+      before: null,
+      after: {
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role,
+      },
+    });
+
     return NextResponse.json(newUser, { status: 201 });
   } catch (err) {
     logger.error("Failed to create user", { error: String(err) });

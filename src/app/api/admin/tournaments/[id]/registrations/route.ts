@@ -132,6 +132,7 @@ export async function GET(request: NextRequest, { params }: Params) {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="tournament-${tournamentId}-registrations.csv"`,
           "Cache-Control": "no-store",
+          Vary: "Accept-Encoding",
         },
       });
     }

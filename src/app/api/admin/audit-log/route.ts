@@ -116,6 +116,9 @@ export async function GET(request: NextRequest) {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="audit-log-${new Date().toISOString().slice(0, 10)}.csv"`,
           "Cache-Control": "no-store",
+          // Let edge compressors vary their response correctly and hint
+          // that gzip is welcome. 10k-row audit dumps are multiple MB.
+          Vary: "Accept-Encoding",
           ...(csvRows.length === CSV_MAX ? { "X-Row-Cap-Reached": "true" } : {}),
         },
       });

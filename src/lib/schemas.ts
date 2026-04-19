@@ -73,6 +73,16 @@ export const userCreateSchema = z.object({
   memberSince: z.string().max(10).optional().nullable(),
 });
 
+// Admin user update — fields optional so partial updates pass through.
+// `id` is required; every other field is patch-style.
+export const userUpdateSchema = z.object({
+  id: z.number().int().positive(),
+  role: z.enum(["admin", "staff", "ref", "front_desk", "coach", "parent"]).optional(),
+  name: z.string().min(1).max(200).optional(),
+  phone: z.string().max(30).optional().nullable(),
+  approved: z.boolean().optional(),
+});
+
 // Admin approvals PATCH — accepts either a single userId (legacy) or
 // a bulk userIds[] array capped server-side at 200.
 export const approvalsPatchSchema = z

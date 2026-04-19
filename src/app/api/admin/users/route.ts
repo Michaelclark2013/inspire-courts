@@ -9,8 +9,8 @@ import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { withTiming } from "@/lib/timing";
-import { userCreateSchema } from "@/lib/schemas";
-import { parseJsonBody } from "@/lib/api-helpers";
+import { userCreateSchema, userUpdateSchema } from "@/lib/schemas";
+import { parseJsonBody, apiNotFound } from "@/lib/api-helpers";
 
 // Whitelist of safe sortable columns. Never let clients inject arbitrary
 // column names into an ORDER BY clause.
@@ -158,32 +158,12 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const parsed = await parseJsonBody(request, userUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { id, role, name, phone, approved } = parsed.data;
+  const numericId = id;
+
   try {
-    const body = await request.json();
-    const { id, role, name, phone } = body;
-
-    const numericId = Number(id);
-    if (!id || !Number.isFinite(numericId) || numericId <= 0) {
-      return NextResponse.json({ error: "Missing or invalid user id" }, { status: 400 });
-    }
-
-    const validRoles = ["admin", "staff", "ref", "front_desk", "coach", "parent"];
-    if (role && !validRoles.includes(role)) {
-      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
-    }
-
-    // Mirror POST's type/length validation — previously name/phone were
-    // inserted unchecked on PUT, so an admin session could store an
-    // arbitrarily long or non-string value via PUT that POST would reject.
-    if (name !== undefined) {
-      if (typeof name !== "string" || name.trim().length === 0 || name.length > 200) {
-        return NextResponse.json({ error: "Name must be 1–200 characters" }, { status: 400 });
-      }
-    }
-    if (phone !== undefined && phone !== null && (typeof phone !== "string" || phone.length > 30)) {
-      return NextResponse.json({ error: "Phone must be a string ≤30 chars" }, { status: 400 });
-    }
-
     // Fetch the before-snapshot so the audit log can capture the change.
     const [before] = await db
       .select({
@@ -199,7 +179,7 @@ export async function PUT(request: NextRequest) {
       .limit(1);
 
     if (!before) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return apiNotFound("User not found");
     }
 
     const updates: Record<string, unknown> = {
@@ -207,8 +187,8 @@ export async function PUT(request: NextRequest) {
     };
     if (role) updates.role = role;
     if (name) updates.name = name.trim().slice(0, 200);
-    if (phone !== undefined) updates.phone = phone ? String(phone).trim().slice(0, 30) : null;
-    if (body.approved !== undefined) updates.approved = body.approved;
+    if (phone !== undefined) updates.phone = phone ? phone.trim().slice(0, 30) : null;
+    if (approved !== undefined) updates.approved = approved;
 
     // .returning() the safe fields so the client can sync state without
     // an additional GET /api/admin/users call.
@@ -232,7 +212,7 @@ export async function PUT(request: NextRequest) {
       (role && role !== before.role) ||
       (name && name !== before.name) ||
       (phone !== undefined && (phone || null) !== before.phone) ||
-      (body.approved !== undefined && body.approved !== before.approved);
+      (approved !== undefined && approved !== before.approved);
     if (changed) {
       await recordAudit({
         session,

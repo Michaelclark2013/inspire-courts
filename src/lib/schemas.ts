@@ -193,6 +193,17 @@ export const teamAddSchema = z.object({
   poolGroup: z.string().max(20).optional().nullable(),
 });
 
+// Admin announcement update — partial patch shape. At least one of
+// title/body/audience/expiresAt must be present; handler enforces that
+// (Zod `refine` is overkill here since the "no fields" 400 is cheap).
+export const announcementUpdateSchema = z.object({
+  id: z.number().int().positive(),
+  title: z.string().min(1).max(255).optional(),
+  body: z.string().min(1).max(10000).optional(),
+  audience: z.enum(["all", "coaches", "parents"]).optional(),
+  expiresAt: z.string().datetime().optional().nullable(),
+});
+
 // Admin checkin — front desk dual-writes to DB + Google Sheets. Type
 // covers regular check-in, waiver submission, and explicit no-show so
 // forfeit slots can be cleared during a tournament.

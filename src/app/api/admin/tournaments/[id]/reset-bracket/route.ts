@@ -13,6 +13,7 @@ import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -24,7 +25,7 @@ type Params = { params: Promise<{ id: string }> };
 // Gated by status — refuses to reset a tournament that is "active" or
 // "completed" (live games being played, or games already finalized). Use
 // admin support for those.
-export async function POST(_request: NextRequest, { params }: Params) {
+export async function POST(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -34,6 +35,17 @@ export async function POST(_request: NextRequest, { params }: Params) {
   const tournamentId = Number(id);
   if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
+
+  // Idempotency replay — a retry after a DB wipe partially committed
+  // would otherwise try to wipe an already-empty bracket.
+  const idemKey = request.headers.get("idempotency-key");
+  const cached = lookupIdempotent(session.user.id, idemKey);
+  if (cached) {
+    return NextResponse.json(cached.body, {
+      status: cached.status,
+      headers: { "Idempotent-Replay": "true" },
+    });
   }
 
   const [tournament] = await db
@@ -95,7 +107,9 @@ export async function POST(_request: NextRequest, { params }: Params) {
     revalidatePath(`/tournaments/${id}`);
     revalidatePath("/tournaments");
 
-    return NextResponse.json({ success: true, deletedGameCount: gameIds.length });
+    const responseBody = { success: true, deletedGameCount: gameIds.length };
+    storeIdempotent(session.user.id, idemKey, responseBody, 200);
+    return NextResponse.json(responseBody);
   } catch (err) {
     logger.error("Failed to reset bracket", { tournamentId, error: String(err) });
     return NextResponse.json({ error: "Failed to reset bracket" }, { status: 500 });

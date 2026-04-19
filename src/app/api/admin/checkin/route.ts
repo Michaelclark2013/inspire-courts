@@ -12,6 +12,7 @@ import {
 } from "@/lib/google-sheets";
 import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
+import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 
 const ALLOWED_ROLES = ["admin", "front_desk", "staff"];
 
@@ -132,6 +133,17 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Idempotency — a front-desk tablet with flaky wifi can otherwise
+  // double-check-in the same player.
+  const idemKey = request.headers.get("idempotency-key");
+  const cached = lookupIdempotent(session.user.id, idemKey);
+  if (cached) {
+    return NextResponse.json(cached.body, {
+      status: cached.status,
+      headers: { "Idempotent-Replay": "true" },
+    });
+  }
+
   // type is either a regular check-in (default), a waiver submission record,
   // or an explicit no-show marker. Front desk uses "no_show" to clear
   // forfeit slots during a tournament rather than leaving them ambiguous.
@@ -178,5 +190,8 @@ export async function POST(request: NextRequest) {
     ]).catch((err) => logger.warn("Failed to sync check-in to Google Sheets", { error: String(err) }));
   }
 
-  return NextResponse.json({ success: true, type: safeType, checkin: insertedRow });
+  const responseBody = { success: true, type: safeType, checkin: insertedRow };
+  storeIdempotent(session.user.id, idemKey, responseBody, 201);
+  // Return 201 for create consistency with every other admin create endpoint.
+  return NextResponse.json(responseBody, { status: 201 });
 }

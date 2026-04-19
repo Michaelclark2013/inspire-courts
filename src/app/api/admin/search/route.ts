@@ -42,7 +42,13 @@ export async function GET(request: NextRequest) {
   }
 
   // Cap query length — no reason to LIKE against an unbounded string.
-  const safeQ = q.slice(0, 100);
+  // Also escape the LIKE metacharacters (%, _, \) so a search for "%"
+  // doesn't match every row. SQLite recognizes \ as an escape character
+  // when ESCAPE is provided; Drizzle's `like()` doesn't expose ESCAPE, so
+  // we have to escape manually and rely on literal matching for the caller
+  // — backslash literals in the needle are not treated as special, so
+  // escaping the wildcards is what matters here.
+  const safeQ = q.slice(0, 100).replace(/[\\%_]/g, "\\$&");
   const needle = `%${safeQ}%`;
 
   const requestedTypes = (sp.get("types") || "")

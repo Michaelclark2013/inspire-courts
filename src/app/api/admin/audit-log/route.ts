@@ -13,6 +13,9 @@ const DEFAULT_LIMIT = 50;
 
 // GET /api/admin/audit-log — paginated audit-log read (admin only).
 //   ?entityType=user|tournament|tournament_registration
+//   ?entityId=42              narrow to a single entity (requires entityType
+//                             to be useful, but not enforced so callers can
+//                             search loosely)
 //   ?action=user.deleted | tournament.bracket_generated | ...
 //   ?actorUserId=123
 //   ?limit=50 (max 200)
@@ -28,6 +31,7 @@ export async function GET(request: NextRequest) {
   const sp = request.nextUrl.searchParams;
 
   const entityType = sp.get("entityType");
+  const entityId = sp.get("entityId");
   const action = sp.get("action");
   const actorUserIdRaw = sp.get("actorUserId");
   const limitRaw = sp.get("limit");
@@ -41,6 +45,7 @@ export async function GET(request: NextRequest) {
 
   const filters: SQL[] = [];
   if (entityType) filters.push(eq(auditLog.entityType, entityType));
+  if (entityId) filters.push(eq(auditLog.entityId, String(entityId)));
   if (action) filters.push(eq(auditLog.action, action));
   if (actorUserIdRaw) {
     const actorUserId = Number(actorUserIdRaw);

@@ -183,6 +183,18 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 });
     }
 
+    // Mirror POST's type/length validation — previously name/phone were
+    // inserted unchecked on PUT, so an admin session could store an
+    // arbitrarily long or non-string value via PUT that POST would reject.
+    if (name !== undefined) {
+      if (typeof name !== "string" || name.trim().length === 0 || name.length > 200) {
+        return NextResponse.json({ error: "Name must be 1–200 characters" }, { status: 400 });
+      }
+    }
+    if (phone !== undefined && phone !== null && (typeof phone !== "string" || phone.length > 30)) {
+      return NextResponse.json({ error: "Phone must be a string ≤30 chars" }, { status: 400 });
+    }
+
     // Fetch the before-snapshot so the audit log can capture the change.
     const [before] = await db
       .select({
@@ -205,8 +217,8 @@ export async function PUT(request: NextRequest) {
       updatedAt: new Date().toISOString(),
     };
     if (role) updates.role = role;
-    if (name) updates.name = name;
-    if (phone !== undefined) updates.phone = phone || null;
+    if (name) updates.name = name.trim().slice(0, 200);
+    if (phone !== undefined) updates.phone = phone ? String(phone).trim().slice(0, 30) : null;
     if (body.approved !== undefined) updates.approved = body.approved;
 
     // .returning() the safe fields so the client can sync state without

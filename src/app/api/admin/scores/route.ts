@@ -130,22 +130,38 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { homeTeam, awayTeam, division, court, eventName, scheduledTime } = body;
 
-    if (!homeTeam || !awayTeam) {
-      return NextResponse.json(
-        { error: "Home and away teams are required" },
-        { status: 400 }
-      );
+    // Strict type + length validation — previously these strings went
+    // straight into the DB with no guards, so a non-string value would
+    // coerce to "[object Object]" and an unbounded string could bloat the
+    // games table. Mirror the announcements POST pattern.
+    if (typeof homeTeam !== "string" || !homeTeam.trim() || homeTeam.length > 200) {
+      return NextResponse.json({ error: "homeTeam must be 1–200 characters" }, { status: 400 });
+    }
+    if (typeof awayTeam !== "string" || !awayTeam.trim() || awayTeam.length > 200) {
+      return NextResponse.json({ error: "awayTeam must be 1–200 characters" }, { status: 400 });
+    }
+    if (division !== undefined && division !== null && (typeof division !== "string" || division.length > 50)) {
+      return NextResponse.json({ error: "division must be a string ≤50 chars" }, { status: 400 });
+    }
+    if (court !== undefined && court !== null && (typeof court !== "string" || court.length > 50)) {
+      return NextResponse.json({ error: "court must be a string ≤50 chars" }, { status: 400 });
+    }
+    if (eventName !== undefined && eventName !== null && (typeof eventName !== "string" || eventName.length > 200)) {
+      return NextResponse.json({ error: "eventName must be a string ≤200 chars" }, { status: 400 });
+    }
+    if (scheduledTime !== undefined && scheduledTime !== null && (typeof scheduledTime !== "string" || scheduledTime.length > 40)) {
+      return NextResponse.json({ error: "scheduledTime must be an ISO-like string" }, { status: 400 });
     }
 
     const [game] = await db
       .insert(games)
       .values({
-        homeTeam,
-        awayTeam,
-        division: division || null,
-        court: court || null,
-        eventName: eventName || null,
-        scheduledTime: scheduledTime || null,
+        homeTeam: homeTeam.trim().slice(0, 200),
+        awayTeam: awayTeam.trim().slice(0, 200),
+        division: division ? String(division).trim().slice(0, 50) : null,
+        court: court ? String(court).trim().slice(0, 50) : null,
+        eventName: eventName ? String(eventName).trim().slice(0, 200) : null,
+        scheduledTime: scheduledTime ? String(scheduledTime).slice(0, 40) : null,
         status: "scheduled",
       })
       .returning();

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { checkins } from "@/lib/db/schema";
-import { and, desc, eq, gte, lte, type SQL } from "drizzle-orm";
+import { and, desc, eq, gte, lte, sql, type SQL } from "drizzle-orm";
 import {
   appendSheetRow,
   isGoogleConfigured,
@@ -46,14 +46,17 @@ export async function GET(request: NextRequest) {
   if (since) filters.push(gte(checkins.timestamp, since));
   if (until) filters.push(lte(checkins.timestamp, until));
 
-  try {
-    const rows = await db
-      .select()
-      .from(checkins)
-      .where(filters.length > 0 ? and(...filters) : undefined)
-      .orderBy(desc(checkins.timestamp));
+  const whereClause = filters.length > 0 ? and(...filters) : undefined;
 
+  try {
     if (format === "csv") {
+      // CSV: unbounded — admins want the full filtered set.
+      const rows = await db
+        .select()
+        .from(checkins)
+        .where(whereClause)
+        .orderBy(desc(checkins.timestamp));
+
       const header = ["id", "playerName", "teamName", "division", "type", "checkedInBy", "timestamp"];
       const lines = [
         header.map(csvCell).join(","),
@@ -72,9 +75,34 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(rows, {
-      headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=60" },
-    });
+    // JSON: paginated. Default 50, capped at 200.
+    const CHECKIN_MAX_LIMIT = 200;
+    const page = Math.max(1, Math.floor(Number(sp.get("page")) || 1));
+    const rawLimit = Math.floor(Number(sp.get("limit")) || 50);
+    const limit = Math.min(Math.max(1, rawLimit || 50), CHECKIN_MAX_LIMIT);
+    const offset = (page - 1) * limit;
+
+    const [pagedRows, [{ total }]] = await Promise.all([
+      db
+        .select()
+        .from(checkins)
+        .where(whereClause)
+        .orderBy(desc(checkins.timestamp))
+        .limit(limit)
+        .offset(offset),
+      db.select({ total: sql<number>`count(*)` }).from(checkins).where(whereClause),
+    ]);
+
+    return NextResponse.json(
+      {
+        data: pagedRows,
+        total: Number(total) || 0,
+        page,
+        limit,
+        totalPages: Math.max(1, Math.ceil((Number(total) || 0) / limit)),
+      },
+      { headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=60" } }
+    );
   } catch (err) {
     logger.error("Failed to fetch check-ins", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch check-ins" }, { status: 500 });

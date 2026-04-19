@@ -1,6 +1,26 @@
 
 ---
 
+## 2026-04-19 — Automated Improvement Run
+
+### Summary
+- 12 issues identified across 10 audit categories; key fixes already committed by cycle 43 earlier same day; 4 items flagged for manual review.
+
+### Changes Made (confirmed in cycle 43 commit f22fc23)
+- [SEO/Metadata]: Added twitter card metadata to 6 public pages that were missing it (book, gameday, open-gym, media, gallery, prep)
+- [Accessibility]: Added `aria-label` to 6 score-editor buttons in LiveScoreboard (`Increase/Decrease {team} score`) and `aria-label` to 2 score inputs
+
+### Flagged for Manual Review
+- [Dependencies]: nodemailer ≤8.0.4 — SMTP injection vuln (GHSA-c7w3-x93f-qmm8, GHSA-vvjj-xcjg-gr5g); fix requires upgrade to 8.x (breaking from 7.x); next-auth depends on it indirectly
+- [Dependencies]: drizzle-kit 0.31.x → esbuild ≤0.24.2 dev-only vuln (GHSA-67mh-4wv8-2f99); fix requires downgrading to drizzle-kit 0.18.1 (breaking)
+- [Build]: `src/middleware.ts` deprecated in Next.js 16 — should migrate to `proxy.ts`; API changes required beyond a simple rename
+- [Type Safety]: `let body: any` in portal/roster + portal/checkin routes; `Record<string, unknown>` causes Drizzle type errors on `division || fallback` patterns — needs Zod or explicit casts
+
+### Build Status
+- ✅ PASS — `npm run build` clean
+
+---
+
 ## Run: 2026-04-14
 
 **Focus:** SEO metadata, UX loading/error states, API security hardening

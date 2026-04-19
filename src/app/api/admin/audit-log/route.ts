@@ -3,8 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { auditLog } from "@/lib/db/schema";
-import { and, desc, eq, lt, type SQL } from "drizzle-orm";
+import { and, desc, eq, lt, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { canAccess } from "@/lib/permissions";
 
 // Cap how many rows a single request can pull regardless of ?limit — keeps
 // a malicious or buggy client from dumping the entire log in one hit.
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   // Audit log is admin-only by design — it may contain PII in before/after
   // snapshots and is the source of truth for compliance questions.
-  if (!session?.user?.role || session.user.role !== "admin") {
+  if (!session?.user?.role || !canAccess(session.user.role, "audit_log")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -57,20 +58,30 @@ export async function GET(request: NextRequest) {
 
   try {
     const where = filters.length > 0 ? and(...filters) : undefined;
-    const rows = await db
-      .select()
-      .from(auditLog)
-      .where(where)
-      .orderBy(desc(auditLog.createdAt))
-      .limit(limit + 1); // fetch one extra to detect whether more exist
+    // Fetch page + 1 for cursor detection, and total count in parallel so
+    // the UI can show "X of Y".
+    const [rows, [{ total }]] = await Promise.all([
+      db
+        .select()
+        .from(auditLog)
+        .where(where)
+        .orderBy(desc(auditLog.createdAt))
+        .limit(limit + 1),
+      db.select({ total: sql<number>`count(*)` }).from(auditLog).where(where),
+    ]);
 
     const hasMore = rows.length > limit;
-    const items = hasMore ? rows.slice(0, limit) : rows;
-    const nextCursor = hasMore ? items[items.length - 1].createdAt : null;
+    const data = hasMore ? rows.slice(0, limit) : rows;
+    const nextCursor = hasMore ? data[data.length - 1].createdAt : null;
 
     return NextResponse.json(
       {
-        items,
+        // `data` matches the convention used by every other admin list GET;
+        // `items` is kept as an alias for any existing callers until they
+        // migrate.
+        data,
+        items: data,
+        total: Number(total) || 0,
         nextCursor,
         limit,
       },

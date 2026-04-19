@@ -8,6 +8,8 @@ import { eq, desc, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
 import { recordAudit } from "@/lib/audit";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 
 // Pagination cap — no single page can be larger than this regardless of
 // ?limit, so a misbehaving client can't dump the entire games table.
@@ -148,6 +150,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Rate-limit game creation to keep a scripted loop from flooding games.
+  const ip = getClientIp(request);
+  if (isRateLimited(`admin-create-game:${ip}`, 60, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many game-create requests. Slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+
+  // Idempotency guard: replay same response if the client retries with
+  // the same Idempotency-Key (e.g. flaky network after a POST).
+  const idemKey = request.headers.get("idempotency-key");
+  const cached = lookupIdempotent(session.user.id, idemKey);
+  if (cached) {
+    return NextResponse.json(cached.body, {
+      status: cached.status,
+      headers: { "Idempotent-Replay": "true" },
+    });
+  }
+
   try {
     const body = await request.json();
     const { homeTeam, awayTeam, division, court, eventName, scheduledTime } = body;
@@ -207,6 +229,7 @@ export async function POST(request: NextRequest) {
     revalidatePath("/scores");
     revalidatePath("/admin/scores");
     await revalidateTournamentForEvent(game.eventName);
+    storeIdempotent(session.user.id, idemKey, game, 201);
     return NextResponse.json(game, { status: 201 });
   } catch (err) {
     logger.error("Failed to create game", { error: String(err) });

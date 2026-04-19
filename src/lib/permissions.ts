@@ -60,7 +60,10 @@ export type AdminPage =
   | "my_history"
   | "announcements"
   | "leads"
-  | "approvals";
+  | "approvals"
+  | "audit_log"
+  | "search"
+  | "health";
 
 const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
@@ -86,6 +89,11 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   announcements: ["admin"],
   leads: ["admin"],
   approvals: ["admin"],
+  // audit_log + search expose PII in before/after snapshots + cross-entity
+  // result sets. Health exposes infra config. All three are admin-only.
+  audit_log: ["admin"],
+  search: ["admin"],
+  health: ["admin"],
 };
 
 export function canAccess(role: UserRole | undefined, page: AdminPage): boolean {

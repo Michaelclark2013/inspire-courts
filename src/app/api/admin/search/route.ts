@@ -10,6 +10,7 @@ import {
 } from "@/lib/db/schema";
 import { like, or } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { canAccess } from "@/lib/permissions";
 
 // Global admin search across users, teams (tournament_teams), registrations,
 // and tournaments. Each entity type returns up to PER_TYPE_LIMIT matches so
@@ -27,7 +28,7 @@ const ALL_TYPES: SearchType[] = ["users", "teams", "registrations", "tournaments
 // Only admin role — search results include PII (emails, phones).
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || session.user.role !== "admin") {
+  if (!session?.user?.role || !canAccess(session.user.role, "search")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -47,7 +47,16 @@ export async function POST(request: NextRequest) {
 
   const subject = typeof body.subject === "string" ? body.subject.trim().slice(0, 200) : "";
   const message = typeof body.message === "string" ? body.message.trim().slice(0, 10_000) : "";
-  const audience = body.audience === "coaches" || body.audience === "parents" || body.audience === "all" ? body.audience : null;
+
+  // Audience → role set map. Single source of truth for validation + query.
+  const AUDIENCE_ROLE_MAP: Record<string, string[]> = {
+    coaches: ["coach"],
+    parents: ["parent"],
+    refs: ["ref"],
+    staff: ["staff", "front_desk"],
+    all: ["coach", "parent", "ref", "staff", "front_desk"],
+  };
+  const audience = typeof body.audience === "string" && body.audience in AUDIENCE_ROLE_MAP ? body.audience : null;
   const tournamentId = Number.isInteger(body.tournamentId) ? Number(body.tournamentId) : null;
 
   if (!subject || !message) {
@@ -58,28 +67,25 @@ export async function POST(request: NextRequest) {
   }
   if (!audience) {
     return NextResponse.json(
-      { error: "audience must be coaches, parents, or all" },
+      { error: `audience must be one of: ${Object.keys(AUDIENCE_ROLE_MAP).join(", ")}` },
       { status: 400 }
     );
   }
 
   try {
-    // Collect recipient emails. If tournamentId is supplied, pull from
-    // tournamentRegistrations (coach-side only — parents don't register
-    // teams here). Otherwise fall back to the users table filtered by
-    // role.
+    // Collect recipient emails. If tournamentId is supplied AND audience is
+    // coaches/all, pull from tournamentRegistrations (coach-side only —
+    // parents/refs/staff don't register teams). Otherwise fall back to the
+    // users table filtered by the audience role set.
     let recipients: string[] = [];
-    if (tournamentId) {
+    if (tournamentId && (audience === "coaches" || audience === "all")) {
       const regs = await db
         .select({ email: tournamentRegistrations.coachEmail })
         .from(tournamentRegistrations)
         .where(eq(tournamentRegistrations.tournamentId, tournamentId));
       recipients = regs.map((r) => r.email).filter((e): e is string => !!e);
     } else {
-      const roleFilter: string[] =
-        audience === "coaches" ? ["coach"] :
-        audience === "parents" ? ["parent"] :
-        ["coach", "parent"];
+      const roleFilter = AUDIENCE_ROLE_MAP[audience];
       const rows = await db
         .select({ email: users.email })
         .from(users)

@@ -15,6 +15,7 @@ import { generateBracket, type TeamEntry, type ScheduleConfig } from "@/lib/tour
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -36,6 +37,17 @@ export async function POST(request: NextRequest, { params }: Params) {
   }
 
   const dryRun = request.nextUrl.searchParams.get("dryRun") === "1";
+
+  // Idempotency-Key guard — a double-click or retry on a flaky connection
+  // would otherwise trigger two full bracket writes. Skip for dry runs.
+  const idemKey = dryRun ? null : request.headers.get("idempotency-key");
+  const cached = lookupIdempotent(session.user.id, idemKey);
+  if (cached) {
+    return NextResponse.json(cached.body, {
+      status: cached.status,
+      headers: { "Idempotent-Replay": "true" },
+    });
+  }
 
   try {
     // Get tournament
@@ -202,10 +214,12 @@ export async function POST(request: NextRequest, { params }: Params) {
       },
     });
 
-    return NextResponse.json({
+    const responseBody = {
       success: true,
       gamesCreated: realGames.length + tbdGames.length,
-    });
+    };
+    storeIdempotent(session.user.id, idemKey, responseBody, 200);
+    return NextResponse.json(responseBody);
   } catch (err) {
     logger.error("Failed to generate bracket", { tournamentId, error: String(err) });
     return NextResponse.json({ error: "Failed to generate bracket" }, { status: 500 });

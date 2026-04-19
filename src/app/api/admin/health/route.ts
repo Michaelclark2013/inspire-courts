@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { sql } from "drizzle-orm";
 import { isGoogleConfigured } from "@/lib/google-sheets";
 import { logger } from "@/lib/logger";
+import { canAccess } from "@/lib/permissions";
 
 // Track when the server process started so we can report uptime.
 // Module-level so it's set once per Lambda / node process.
@@ -35,7 +36,7 @@ interface HealthResponse {
 // per-check "unconfigured" — those are degradations, not outages.
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || session.user.role !== "admin") {
+  if (!session?.user?.role || !canAccess(session.user.role, "health")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

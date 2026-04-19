@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -30,7 +31,7 @@ type Params = { params: Promise<{ id: string }> };
 //
 // Brackets, teams, and registrations are NOT copied — those are event-
 // specific and would just confuse a fresh draft.
-export async function POST(_request: NextRequest, { params }: Params) {
+export async function POST(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -40,6 +41,17 @@ export async function POST(_request: NextRequest, { params }: Params) {
   const tournamentId = Number(id);
   if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
+
+  // Idempotency replay — a double-click on the duplicate button otherwise
+  // creates two "(Copy)" rows.
+  const idemKey = request.headers.get("idempotency-key");
+  const cached = lookupIdempotent(session.user.id, idemKey);
+  if (cached) {
+    return NextResponse.json(cached.body, {
+      status: cached.status,
+      headers: { "Idempotent-Replay": "true" },
+    });
   }
 
   try {
@@ -91,6 +103,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
     });
 
     revalidatePath("/admin/tournaments");
+    storeIdempotent(session.user.id, idemKey, copy, 201);
     return NextResponse.json(copy, { status: 201 });
   } catch (err) {
     logger.error("Failed to duplicate tournament", {

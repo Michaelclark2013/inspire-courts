@@ -55,6 +55,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/prep`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Prep basketball academy" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Inspire Prep — Basketball Prep School in Gilbert, AZ",
+    description: "Elite basketball development meets academic excellence. Train, compete, and prepare for the next level at Inspire Courts AZ.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const PROGRAM_HIGHLIGHTS = [

@@ -7,7 +7,7 @@ import {
   tournamentRegistrations,
   tournamentTeams,
 } from "@/lib/db/schema";
-import { eq, and, inArray, sql, type SQL } from "drizzle-orm";
+import { asc, desc, eq, and, inArray, sql, type SQL } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
@@ -27,11 +27,23 @@ const REG_DEFAULT_LIMIT = 50;
 const VALID_STATUS = ["pending", "approved", "rejected", "waitlisted"] as const;
 const VALID_PAYMENT = ["pending", "paid", "refunded", "waived"] as const;
 
+// Whitelist of sortable columns — prevents ORDER BY injection.
+const REG_SORT_COLUMNS = {
+  teamName: tournamentRegistrations.teamName,
+  coachName: tournamentRegistrations.coachName,
+  status: tournamentRegistrations.status,
+  paymentStatus: tournamentRegistrations.paymentStatus,
+  division: tournamentRegistrations.division,
+  createdAt: tournamentRegistrations.createdAt,
+} as const;
+
 // GET /api/admin/tournaments/[id]/registrations
 //   ?format=csv        stream CSV (unbounded, ignores pagination)
 //   ?status=           filter by registration status
 //   ?paymentStatus=    filter by payment status
 //   ?division=         filter by division
+//   ?sort=             teamName|coachName|status|paymentStatus|division|createdAt
+//   ?dir=              asc|desc (default asc for text cols, desc for createdAt)
 //   ?page=             1-indexed page (default 1)
 //   ?limit=            rows per page (default 50, max 200)
 // JSON response: { data, total, page, limit, totalPages }
@@ -63,6 +75,17 @@ export async function GET(request: NextRequest, { params }: Params) {
   if (divisionParam) filters.push(eq(tournamentRegistrations.division, divisionParam));
   const whereClause = and(...filters);
 
+  // Sort with a whitelist. Default to createdAt asc (oldest-first, so the
+  // queue-style view is preserved) to match the previous behavior.
+  const sortKey = (sp.get("sort") || "createdAt") as keyof typeof REG_SORT_COLUMNS;
+  const sortCol = REG_SORT_COLUMNS[sortKey] || tournamentRegistrations.createdAt;
+  const dir = sp.get("dir") === "desc" ? desc : sp.get("dir") === "asc" ? asc : null;
+  const orderBy = dir
+    ? dir(sortCol)
+    : sortKey === "createdAt"
+      ? asc(sortCol)
+      : asc(sortCol);
+
   try {
     if (format === "csv") {
       // CSV: no pagination — admin wants the full filtered set.
@@ -70,7 +93,7 @@ export async function GET(request: NextRequest, { params }: Params) {
         .select()
         .from(tournamentRegistrations)
         .where(whereClause)
-        .orderBy(tournamentRegistrations.createdAt);
+        .orderBy(orderBy);
       const header = [
         "id",
         "teamName",
@@ -124,7 +147,7 @@ export async function GET(request: NextRequest, { params }: Params) {
         .select()
         .from(tournamentRegistrations)
         .where(whereClause)
-        .orderBy(tournamentRegistrations.createdAt)
+        .orderBy(orderBy)
         .limit(limit)
         .offset(offset),
       db

@@ -21,6 +21,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/gallery`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ photo gallery" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Photo Gallery | Inspire Courts AZ",
+    description: "Tournament action, facility photos, and player highlights from Inspire Courts AZ and OFF SZN HOOPS events.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 export default function GalleryPage() {

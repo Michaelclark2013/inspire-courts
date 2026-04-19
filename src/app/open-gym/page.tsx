@@ -86,6 +86,12 @@ export const metadata: Metadata = {
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Open Gym | Inspire Courts AZ",
+    description: "Drop-in open gym basketball at Inspire Courts. Regulation hardwood, climate-controlled, Gilbert AZ.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const SCHEDULE = [

@@ -7,6 +7,8 @@ import { tournaments, tournamentTeams, tournamentGames } from "@/lib/db/schema";
 import { asc, desc, eq, sql, inArray, and, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 
 // Safe sortable columns — prevents ORDER BY injection via ?sort=.
 const TOURNAMENT_SORT_COLUMNS = {
@@ -102,6 +104,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Rate-limit creates. 10 new tournaments per minute is well above
+  // legitimate admin use; anything higher is either a bug or abuse.
+  const ip = getClientIp(request);
+  if (isRateLimited(`admin-create-tournament:${ip}`, 10, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many tournament-create requests. Slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+
+  // Idempotency: if the caller sent an Idempotency-Key header and we've
+  // already seen it from this user, return the cached response so network
+  // retries don't duplicate-insert a tournament.
+  const idemKey = request.headers.get("idempotency-key");
+  const cached = lookupIdempotent(session.user.id, idemKey);
+  if (cached) {
+    return NextResponse.json(cached.body, {
+      status: cached.status,
+      headers: { "Idempotent-Replay": "true" },
+    });
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await request.json();
@@ -169,6 +193,7 @@ export async function POST(request: NextRequest) {
 
     revalidatePath("/tournaments");
     revalidatePath("/admin/tournaments");
+    storeIdempotent(session.user.id, idemKey, tournament, 201);
     return NextResponse.json(tournament, { status: 201 });
   } catch (err) {
     logger.error("Failed to create tournament", { error: String(err) });

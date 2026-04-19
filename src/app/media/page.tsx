@@ -34,6 +34,12 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/media`,
     images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "AZFinestMixtape basketball media services" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Basketball Media Services | @AZFinestMixtape",
+    description: "Professional game film, highlight reels, mixtapes, and social media content for youth basketball players.",
+    images: [`${SITE_URL}/images/hero-bg.jpg`],
+  },
 };
 
 const SERVICES = [

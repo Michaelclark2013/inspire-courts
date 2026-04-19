@@ -8,6 +8,8 @@ import { desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 
 // Public surfaces that read announcements — any create/update/delete
 // should bust these so admins see their change reflected immediately.
@@ -44,6 +46,26 @@ export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate-limit creation. Announcements go to the public home + portal,
+  // so a burst of inserts would bloat the UI and spam ISR revalidations.
+  const ip = getClientIp(request);
+  if (isRateLimited(`admin-announce:${ip}`, 20, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many announcement attempts. Slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+
+  // Idempotency replay: same Idempotency-Key + same admin user = cached response.
+  const idemKey = request.headers.get("idempotency-key");
+  const cached = lookupIdempotent(session.user.id, idemKey);
+  if (cached) {
+    return NextResponse.json(cached.body, {
+      status: cached.status,
+      headers: { "Idempotent-Replay": "true" },
+    });
   }
 
   try {
@@ -94,6 +116,7 @@ export async function POST(request: NextRequest) {
       },
     });
     revalidateAnnouncementSurfaces();
+    storeIdempotent(session.user.id, idemKey, announcement, 201);
     return NextResponse.json(announcement, { status: 201 });
   } catch (err) {
     logger.error("Failed to create announcement", { error: String(err) });

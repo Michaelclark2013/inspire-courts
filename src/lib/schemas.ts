@@ -129,6 +129,19 @@ export const gameCreateSchema = z.object({
   scheduledTime: z.string().max(40).optional().nullable(),
 });
 
+// Admin game score update (PUT/PATCH). Partial by design: the handler
+// inserts a new gameScores row when home+awayScore are present and/or
+// flips the games.status when status is present. quarter is whatever
+// label (Q1, H2, OT, "1") the ref enters, so keep it open-ended but
+// length-capped.
+export const scoreUpdateSchema = z.object({
+  gameId: z.number().int().positive(),
+  homeScore: z.number().int().nonnegative().max(999).optional(),
+  awayScore: z.number().int().nonnegative().max(999).optional(),
+  quarter: z.string().max(20).optional().nullable(),
+  status: z.enum(["scheduled", "live", "final"]).optional(),
+});
+
 // Admin tournament update — partial patch. `format` enum here is the
 // POST-era set PLUS two legacy names ("single_elimination",
 // "double_elimination", "pool_to_bracket") that predate the create

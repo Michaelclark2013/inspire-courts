@@ -11,8 +11,8 @@ import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 import { withTiming } from "@/lib/timing";
-import { gameCreateSchema } from "@/lib/schemas";
-import { parseJsonBody } from "@/lib/api-helpers";
+import { gameCreateSchema, scoreUpdateSchema } from "@/lib/schemas";
+import { parseJsonBody, apiNotFound, apiError } from "@/lib/api-helpers";
 
 // Pagination cap — no single page can be larger than this regardless of
 // ?limit, so a misbehaving client can't dump the entire games table.
@@ -256,17 +256,14 @@ export async function PATCH(request: NextRequest) {
 async function updateGameScore(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return apiError("Unauthorized", 401);
   }
 
+  const parsed = await parseJsonBody(request, scoreUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { gameId, homeScore, awayScore, quarter, status } = parsed.data;
+
   try {
-    const body = await request.json();
-    const { gameId, homeScore, awayScore, quarter, status } = body;
-
-    if (!gameId) {
-      return NextResponse.json({ error: "gameId is required" }, { status: 400 });
-    }
-
     // Snapshot the game row before any changes so the audit log can
     // capture before/after state for disputes.
     const [beforeGame] = await db
@@ -276,15 +273,11 @@ async function updateGameScore(request: NextRequest) {
       .limit(1);
 
     if (!beforeGame) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+      return apiNotFound("Game not found");
     }
 
     // Update game status (with audit if it actually changed)
     if (status) {
-      const validStatuses = ["scheduled", "live", "final"];
-      if (!validStatuses.includes(status)) {
-        return NextResponse.json({ error: "Invalid status" }, { status: 400 });
-      }
       if (status !== beforeGame.status) {
         await db.update(games).set({ status }).where(eq(games.id, gameId));
         await recordAudit({
@@ -305,9 +298,6 @@ async function updateGameScore(request: NextRequest) {
 
     // Insert new score entry (with audit of the new entry)
     if (homeScore !== undefined && awayScore !== undefined) {
-      if (typeof homeScore !== "number" || typeof awayScore !== "number" || homeScore < 0 || awayScore < 0) {
-        return NextResponse.json({ error: "Scores must be non-negative numbers" }, { status: 400 });
-      }
       const userId = session.user.id ? Number(session.user.id) : null;
       await db.insert(gameScores).values({
         gameId,

@@ -9,6 +9,8 @@ import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { withTiming } from "@/lib/timing";
+import { userCreateSchema } from "@/lib/schemas";
+import { parseJsonBody } from "@/lib/api-helpers";
 
 // Whitelist of safe sortable columns. Never let clients inject arbitrary
 // column names into an ORDER BY clause.
@@ -84,44 +86,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const parsed = await parseJsonBody(request, userCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { email, name, password, role, phone, memberSince } = parsed.data;
+  const safeEmail = email.trim().toLowerCase().slice(0, 255);
+  const safeName = name.trim().slice(0, 200);
+  const safePhone = phone ? phone.trim().slice(0, 30) : null;
+
   try {
-    const body = await request.json();
-    const { email, name, password, role, phone, memberSince } = body;
-
-    if (!email || !name || !password || !role) {
-      return NextResponse.json(
-        { error: "Missing required fields: email, name, password, role" },
-        { status: 400 }
-      );
-    }
-
-    // Type + length validation. Bcrypt silently truncates passwords at
-    // 72 bytes so two different long passwords can collide — reject
-    // anything over 72 chars outright rather than accept a silent
-    // truncation that the user doesn't know about.
-    if (typeof email !== "string" || email.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: "Invalid email (max 255 chars)" }, { status: 400 });
-    }
-    if (typeof name !== "string" || name.length === 0 || name.length > 200) {
-      return NextResponse.json({ error: "Name must be 1–200 characters" }, { status: 400 });
-    }
-    if (typeof password !== "string" || password.length < 8 || password.length > 72) {
-      return NextResponse.json(
-        { error: "Password must be 8–72 characters (bcrypt truncates at 72 bytes)" },
-        { status: 400 }
-      );
-    }
-    if (phone !== undefined && phone !== null && (typeof phone !== "string" || phone.length > 30)) {
-      return NextResponse.json({ error: "Phone must be 30 characters or less" }, { status: 400 });
-    }
-
-    if (!["admin", "staff", "ref", "front_desk", "coach", "parent"].includes(role)) {
-      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
-    }
-
-    const safeEmail = email.trim().toLowerCase().slice(0, 255);
-    const safeName = name.trim().slice(0, 200);
-    const safePhone = phone ? String(phone).trim().slice(0, 30) : null;
 
     // Check if email already exists
     const [existing] = await db

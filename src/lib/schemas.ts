@@ -57,6 +57,35 @@ export const subscribeSchema = z.object({
   email: z.string().email("A valid email is required"),
 });
 
+// Admin user create — bcrypt.hash(12) is CPU-expensive so POST is
+// rate-limited upstream; this schema covers the shape only. Password
+// is capped at 72 because bcrypt silently truncates beyond that and
+// we refuse to let two different long passwords collide.
+export const userCreateSchema = z.object({
+  email: z.string().email("Invalid email").max(255),
+  name: z.string().min(1, "Name is required").max(200),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(72, "Password must be 72 characters or fewer (bcrypt truncates)"),
+  role: z.enum(["admin", "staff", "ref", "front_desk", "coach", "parent"]),
+  phone: z.string().max(30).optional().nullable(),
+  memberSince: z.string().max(10).optional().nullable(),
+});
+
+// Admin approvals PATCH — accepts either a single userId (legacy) or
+// a bulk userIds[] array capped server-side at 200.
+export const approvalsPatchSchema = z
+  .object({
+    userId: z.number().int().positive().optional(),
+    userIds: z.array(z.number().int().positive()).max(200).optional(),
+    action: z.enum(["approve", "reject"]),
+  })
+  .refine(
+    (v) => v.userId != null || (Array.isArray(v.userIds) && v.userIds.length > 0),
+    "userId or userIds[] is required"
+  );
+
 // Admin tournament create — mirrors the columns the POST handler
 // inserts. Description and location caps match the DB-side trims.
 export const tournamentCreateSchema = z.object({

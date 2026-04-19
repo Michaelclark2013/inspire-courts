@@ -7,6 +7,8 @@ import { desc, eq, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { withTiming } from "@/lib/timing";
+import { approvalsPatchSchema } from "@/lib/schemas";
+import { parseJsonBody } from "@/lib/api-helpers";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -79,34 +81,13 @@ export const PATCH = withTiming("admin.approvals.patch", async (request: NextReq
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const parsed = await parseJsonBody(request, approvalsPatchSchema);
+  if (!parsed.ok) return parsed.response;
+  const { userId, userIds, action } = parsed.data;
+  const ids: number[] =
+    Array.isArray(userIds) && userIds.length > 0 ? userIds : userId ? [userId] : [];
+
   try {
-    const body = await request.json();
-    const { userId, userIds, action } = body as {
-      userId?: number;
-      userIds?: number[];
-      action?: string;
-    };
-
-    // Accept either a single userId (legacy) or a bulk userIds array (new).
-    const BULK_APPROVALS_CAP = 200;
-    if (Array.isArray(userIds) && userIds.length > BULK_APPROVALS_CAP) {
-      return NextResponse.json(
-        { error: `userIds[] cannot exceed ${BULK_APPROVALS_CAP} entries; chunk the request` },
-        { status: 400 }
-      );
-    }
-    const ids: number[] = Array.isArray(userIds) && userIds.length > 0
-      ? userIds.filter((n) => typeof n === "number" && Number.isInteger(n) && n > 0)
-      : typeof userId === "number" && Number.isInteger(userId) && userId > 0
-        ? [userId]
-        : [];
-
-    if (ids.length === 0 || !action || !["approve", "reject"].includes(action)) {
-      return NextResponse.json(
-        { error: "userId/userIds[] and action (approve|reject) are required" },
-        { status: 400 }
-      );
-    }
 
     // Fetch all target users up front so we can verify existence, skip
     // already-approved ones, and capture before-snapshots for the audit log.

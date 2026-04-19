@@ -67,9 +67,22 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(rows, {
-      headers: { "Cache-Control": "private, max-age=30, stale-while-revalidate=60" },
-    });
+    // Last-Modified = newest signedAt in the result set so browsers + CDNs
+    // can revalidate with If-Modified-Since and get a 304 when nothing
+    // changed between polls (the data here is append-only, so "newest row's
+    // signedAt" is a tight proxy for "last mutation").
+    const lastModified = rows.length > 0 ? rows[0].signedAt : undefined;
+    const headers: Record<string, string> = {
+      "Cache-Control": "private, max-age=30, stale-while-revalidate=60",
+    };
+    if (lastModified) {
+      try {
+        headers["Last-Modified"] = new Date(lastModified).toUTCString();
+      } catch {
+        // Non-fatal — a bad date just means the client can't use If-Modified-Since.
+      }
+    }
+    return NextResponse.json(rows, { headers });
   } catch (err) {
     logger.error("Failed to fetch waivers", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch waivers" }, { status: 500 });

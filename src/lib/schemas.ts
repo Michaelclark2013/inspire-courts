@@ -223,6 +223,12 @@ export const announcementUpdateSchema = z.object({
   expiresAt: z.string().datetime().optional().nullable(),
 });
 
+// Admin team delete body — single field, but Zod gives us consistent
+// 422 errors instead of the hand-rolled 400 the handler used to throw.
+export const teamDeleteSchema = z.object({
+  teamEntryId: z.number().int().positive(),
+});
+
 // Admin team update — partial patch of a tournament_teams row.
 // `players` is a JSON array stored stringified; schema validates
 // the array shape and the handler still sanitizes each player

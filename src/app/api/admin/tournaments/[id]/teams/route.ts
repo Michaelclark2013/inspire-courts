@@ -8,7 +8,7 @@ import { eq, and, or, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
-import { teamAddSchema, teamUpdateSchema } from "@/lib/schemas";
+import { teamAddSchema, teamUpdateSchema, teamDeleteSchema } from "@/lib/schemas";
 import { parseJsonBody, apiError, apiNotFound } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 
@@ -216,12 +216,9 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       );
     }
 
-    const body = await request.json();
-    const { teamEntryId } = body;
-
-    if (!teamEntryId || !Number.isInteger(teamEntryId) || teamEntryId <= 0) {
-      return NextResponse.json({ error: "Valid teamEntryId required" }, { status: 400 });
-    }
+    const parsed = await parseJsonBody(request, teamDeleteSchema);
+    if (!parsed.ok) return parsed.response;
+    const { teamEntryId } = parsed.data;
 
     // Fetch the team row so we can (a) audit the deletion with a
     // snapshot and (b) clean up any placeholder bracket games that

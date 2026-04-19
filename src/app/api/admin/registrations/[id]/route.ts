@@ -10,6 +10,7 @@ import {
 } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { apiNotFound } from "@/lib/api-helpers";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -65,7 +66,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
       .limit(1);
 
     if (!registration) {
-      return NextResponse.json({ error: "Registration not found" }, { status: 404 });
+      return apiNotFound("Registration not found");
     }
 
     const [tournament] = await db

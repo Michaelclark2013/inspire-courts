@@ -57,6 +57,27 @@ export const subscribeSchema = z.object({
   email: z.string().email("A valid email is required"),
 });
 
+// Admin tournament create — mirrors the columns the POST handler
+// inserts. Description and location caps match the DB-side trims.
+export const tournamentCreateSchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().optional().nullable(),
+  location: z.string().max(500).optional().nullable(),
+  format: z
+    .enum(["single_elim", "double_elim", "round_robin", "pool_play"])
+    .optional(),
+  divisions: z.array(z.string()).optional(),
+  courts: z.array(z.string()).optional(),
+  gameLength: z.number().int().positive().max(600).optional(),
+  breakLength: z.number().int().nonnegative().max(120).optional(),
+  entryFee: z.number().nonnegative().optional().nullable(),
+  maxTeamsPerDivision: z.number().int().positive().optional().nullable(),
+  registrationDeadline: z.string().optional().nullable(),
+  registrationOpen: z.boolean().optional(),
+  description: z.string().max(5000).optional().nullable(),
+});
+
 // Admin checkin — front desk dual-writes to DB + Google Sheets. Type
 // covers regular check-in, waiver submission, and explicit no-show so
 // forfeit slots can be cleared during a tournament.

@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache";
 import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
+import { withTiming } from "@/lib/timing";
 
 // Pagination cap — no single page can be larger than this regardless of
 // ?limit, so a misbehaving client can't dump the entire games table.
@@ -68,7 +69,7 @@ async function revalidateTournamentForEvent(eventName: string | null): Promise<s
 // Backwards note: was returning a bare array. Now returns the wrapped shape
 // above so clients can reliably paginate. Legacy clients that consumed the
 // array should migrate to reading `.data`.
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.scores.list", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -162,7 +163,7 @@ export async function GET(request: NextRequest) {
     logger.error("Failed to fetch admin scores", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });
   }
-}
+});
 
 // POST /api/admin/scores — create a game
 export async function POST(request: NextRequest) {

@@ -8,7 +8,7 @@ import {
   games,
   gameScores,
 } from "@/lib/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, inArray } from "drizzle-orm";
 import { computeAdvancement, type BracketGame } from "@/lib/tournament-engine";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
@@ -42,34 +42,45 @@ export async function POST(request: NextRequest, { params }: Params) {
       .from(tournamentGames)
       .where(eq(tournamentGames.tournamentId, tournamentId));
 
-    // Build BracketGame array with scores
-    const allBracketGames: BracketGame[] = await Promise.all(
-      bracketEntries.map(async (bg) => {
-        const [game] = await db
-          .select()
-          .from(games)
-          .where(eq(games.id, bg.gameId));
-        const [score] = await db
-          .select()
-          .from(gameScores)
-          .where(eq(gameScores.gameId, bg.gameId))
-          .orderBy(desc(gameScores.updatedAt))
-          .limit(1);
+    // Batch-fetch games + scores for all bracket entries in 2 queries instead
+    // of 2 queries per entry. A 16-team bracket now does 2 round-trips
+    // instead of 32 (was the N+1 bottleneck on the advance endpoint).
+    const gameIds = bracketEntries.map((bg) => bg.gameId);
+    const [gameRows, scoreRows] = gameIds.length
+      ? await Promise.all([
+          db.select().from(games).where(inArray(games.id, gameIds)),
+          db
+            .select()
+            .from(gameScores)
+            .where(inArray(gameScores.gameId, gameIds))
+            .orderBy(desc(gameScores.updatedAt)),
+        ])
+      : [[], []];
 
-        return {
-          id: bg.id,
-          gameId: bg.gameId,
-          bracketPosition: bg.bracketPosition ?? 0,
-          homeTeam: game?.homeTeam ?? "TBD",
-          awayTeam: game?.awayTeam ?? "TBD",
-          homeScore: score?.homeScore ?? 0,
-          awayScore: score?.awayScore ?? 0,
-          status: game?.status ?? "scheduled",
-          winnerAdvancesTo: bg.winnerAdvancesTo,
-          loserDropsTo: bg.loserDropsTo,
-        };
-      })
-    );
+    const gameById = new Map(gameRows.map((g) => [g.id, g]));
+    // scoreRows is ordered newest-first per gameId; keep only the first
+    // (= latest) score we see for each gameId.
+    const latestScoreByGame = new Map<number, typeof scoreRows[0]>();
+    for (const s of scoreRows) {
+      if (!latestScoreByGame.has(s.gameId)) latestScoreByGame.set(s.gameId, s);
+    }
+
+    const allBracketGames: BracketGame[] = bracketEntries.map((bg) => {
+      const game = gameById.get(bg.gameId);
+      const score = latestScoreByGame.get(bg.gameId);
+      return {
+        id: bg.id,
+        gameId: bg.gameId,
+        bracketPosition: bg.bracketPosition ?? 0,
+        homeTeam: game?.homeTeam ?? "TBD",
+        awayTeam: game?.awayTeam ?? "TBD",
+        homeScore: score?.homeScore ?? 0,
+        awayScore: score?.awayScore ?? 0,
+        status: game?.status ?? "scheduled",
+        winnerAdvancesTo: bg.winnerAdvancesTo,
+        loserDropsTo: bg.loserDropsTo,
+      };
+    });
 
     const result = computeAdvancement(allBracketGames, gameId);
 

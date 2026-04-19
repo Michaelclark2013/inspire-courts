@@ -7,21 +7,59 @@ import { games, gameScores } from "@/lib/db/schema";
 import { eq, desc, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
+import { recordAudit } from "@/lib/audit";
 
-// GET /api/admin/scores — list all games with latest scores
-export async function GET() {
+// Pagination cap — no single page can be larger than this regardless of
+// ?limit, so a misbehaving client can't dump the entire games table.
+const SCORES_MAX_LIMIT = 200;
+const SCORES_DEFAULT_LIMIT = 50;
+
+// GET /api/admin/scores — list games with latest scores (paginated).
+//   ?page=   1-indexed page (default 1)
+//   ?limit=  page size (default 50, max 200)
+// Response: { data: Game[], total, page, limit, totalPages }
+// Backwards note: was returning a bare array. Now returns the wrapped shape
+// above so clients can reliably paginate. Legacy clients that consumed the
+// array should migrate to reading `.data`.
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const sp = request.nextUrl.searchParams;
+  const page = Math.max(1, Math.floor(Number(sp.get("page")) || 1));
+  const rawLimit = Math.floor(Number(sp.get("limit")) || SCORES_DEFAULT_LIMIT);
+  const limit = Math.min(Math.max(1, rawLimit || SCORES_DEFAULT_LIMIT), SCORES_MAX_LIMIT);
+  const offset = (page - 1) * limit;
+
   try {
-    const allGames = await db.select().from(games).orderBy(desc(games.createdAt));
+    // Count first so we can return total / totalPages without fetching
+    // everything just to .length it.
+    const [{ total }] = await db
+      .select({ total: sql<number>`count(*)` })
+      .from(games);
+    const totalCount = Number(total) || 0;
 
-    if (allGames.length === 0) return NextResponse.json([]);
+    const pagedGames = await db
+      .select()
+      .from(games)
+      .orderBy(desc(games.createdAt))
+      .limit(limit)
+      .offset(offset);
 
-    // Batch: get latest score per game in 1 query instead of N
-    const ids = allGames.map((g) => g.id);
+    if (pagedGames.length === 0) {
+      return NextResponse.json({
+        data: [],
+        total: totalCount,
+        page,
+        limit,
+        totalPages: Math.max(1, Math.ceil(totalCount / limit)),
+      });
+    }
+
+    // Batch: get latest score per game on the current page in 1 query.
+    const ids = pagedGames.map((g) => g.id);
     const latestScores = await db
       .select({
         gameId: gameScores.gameId,
@@ -34,13 +72,12 @@ export async function GET() {
       .where(inArray(gameScores.gameId, ids))
       .orderBy(desc(gameScores.updatedAt));
 
-    // Build map: gameId → latest score (first occurrence since ordered by updatedAt desc)
     const scoreMap = new Map<number, (typeof latestScores)[0]>();
     for (const s of latestScores) {
       if (!scoreMap.has(s.gameId)) scoreMap.set(s.gameId, s);
     }
 
-    const gamesWithScores = allGames.map((game) => {
+    const gamesWithScores = pagedGames.map((game) => {
       const latest = scoreMap.get(game.id);
       return {
         ...game,
@@ -50,9 +87,16 @@ export async function GET() {
       };
     });
 
-    return NextResponse.json(gamesWithScores, {
-      headers: { "Cache-Control": "private, max-age=5, stale-while-revalidate=10" },
-    });
+    return NextResponse.json(
+      {
+        data: gamesWithScores,
+        total: totalCount,
+        page,
+        limit,
+        totalPages: Math.max(1, Math.ceil(totalCount / limit)),
+      },
+      { headers: { "Cache-Control": "private, max-age=5, stale-while-revalidate=10" } }
+    );
   } catch (err) {
     logger.error("Failed to fetch admin scores", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });
@@ -113,16 +157,42 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "gameId is required" }, { status: 400 });
     }
 
-    // Update game status
+    // Snapshot the game row before any changes so the audit log can
+    // capture before/after state for disputes.
+    const [beforeGame] = await db
+      .select()
+      .from(games)
+      .where(eq(games.id, gameId))
+      .limit(1);
+
+    if (!beforeGame) {
+      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+    }
+
+    // Update game status (with audit if it actually changed)
     if (status) {
       const validStatuses = ["scheduled", "live", "final"];
       if (!validStatuses.includes(status)) {
         return NextResponse.json({ error: "Invalid status" }, { status: 400 });
       }
-      await db.update(games).set({ status }).where(eq(games.id, gameId));
+      if (status !== beforeGame.status) {
+        await db.update(games).set({ status }).where(eq(games.id, gameId));
+        await recordAudit({
+          session,
+          action: "game.status_changed",
+          entityType: "game",
+          entityId: gameId,
+          before: {
+            status: beforeGame.status,
+            homeTeam: beforeGame.homeTeam,
+            awayTeam: beforeGame.awayTeam,
+          },
+          after: { status },
+        });
+      }
     }
 
-    // Insert new score entry
+    // Insert new score entry (with audit of the new entry)
     if (homeScore !== undefined && awayScore !== undefined) {
       if (typeof homeScore !== "number" || typeof awayScore !== "number" || homeScore < 0 || awayScore < 0) {
         return NextResponse.json({ error: "Scores must be non-negative numbers" }, { status: 400 });
@@ -134,6 +204,20 @@ export async function PUT(request: NextRequest) {
         awayScore,
         quarter: quarter || null,
         updatedBy: userId && !isNaN(userId) ? userId : null,
+      });
+      await recordAudit({
+        session,
+        action: "game.score_entered",
+        entityType: "game",
+        entityId: gameId,
+        before: null,
+        after: {
+          homeTeam: beforeGame.homeTeam,
+          awayTeam: beforeGame.awayTeam,
+          homeScore,
+          awayScore,
+          quarter: quarter || null,
+        },
       });
     }
 

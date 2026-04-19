@@ -3,10 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
-import { tournamentTeams, tournaments } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { tournamentTeams, tournaments, games, tournamentGames } from "@/lib/db/schema";
+import { eq, and, or, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
+import { recordAudit } from "@/lib/audit";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -161,10 +162,78 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     const body = await request.json();
     const { teamEntryId } = body;
 
+    if (!teamEntryId || !Number.isInteger(teamEntryId) || teamEntryId <= 0) {
+      return NextResponse.json({ error: "Valid teamEntryId required" }, { status: 400 });
+    }
+
+    // Fetch the team row so we can (a) audit the deletion with a
+    // snapshot and (b) clean up any placeholder bracket games that
+    // reference it by name.
+    const [teamRow] = await db
+      .select()
+      .from(tournamentTeams)
+      .where(
+        and(
+          eq(tournamentTeams.id, teamEntryId),
+          eq(tournamentTeams.tournamentId, tournamentId)
+        )
+      )
+      .limit(1);
+
+    if (!teamRow) {
+      return NextResponse.json({ error: "Team not found in this tournament" }, { status: 404 });
+    }
+
+    // Downstream cleanup: draft tournaments shouldn't have live bracket games
+    // yet (the status check above enforces that), but if placeholder
+    // tournament_games rows were created, reset any slots in the games table
+    // where this team is referenced so the admin doesn't see stale names.
+    const bracketEntries = await db
+      .select({ gameId: tournamentGames.gameId })
+      .from(tournamentGames)
+      .where(eq(tournamentGames.tournamentId, tournamentId));
+
+    if (bracketEntries.length > 0) {
+      const bracketGameIds = bracketEntries.map((b) => b.gameId);
+      // Reset the team name to "TBD" wherever it appears as home or away.
+      await db
+        .update(games)
+        .set({ homeTeam: "TBD" })
+        .where(
+          and(
+            inArray(games.id, bracketGameIds),
+            eq(games.homeTeam, teamRow.teamName)
+          )
+        );
+      await db
+        .update(games)
+        .set({ awayTeam: "TBD" })
+        .where(
+          and(
+            inArray(games.id, bracketGameIds),
+            eq(games.awayTeam, teamRow.teamName)
+          )
+        );
+    }
+
     await db.delete(tournamentTeams).where(eq(tournamentTeams.id, teamEntryId));
 
+    await recordAudit({
+      session,
+      action: "tournament_team.deleted",
+      entityType: "tournament_team",
+      entityId: teamEntryId,
+      before: {
+        tournamentId: teamRow.tournamentId,
+        teamName: teamRow.teamName,
+        division: teamRow.division,
+        seed: teamRow.seed,
+      },
+      after: null,
+    });
+
     revalidatePath(`/admin/tournaments/${id}`);
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, id: teamEntryId });
   } catch (err) {
     logger.error("Failed to delete tournament team", { tournamentId, error: String(err) });
     return NextResponse.json({ error: "Failed to delete team" }, { status: 500 });

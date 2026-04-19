@@ -12,7 +12,7 @@ import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { withTiming } from "@/lib/timing";
-import { registrationCreateSchema } from "@/lib/schemas";
+import { registrationCreateSchema, registrationUpdateSchema } from "@/lib/schemas";
 import { parseJsonBody } from "@/lib/api-helpers";
 
 type Params = { params: Promise<{ id: string }> };
@@ -280,47 +280,26 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
   const { id } = await params;
 
+  const parsed = await parseJsonBody(request, registrationUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { registrationId, ids, status, paymentStatus, notes } = parsed.data;
+
+  const targetIds: number[] = Array.isArray(ids) && ids.length > 0
+    ? ids
+    : registrationId
+      ? [registrationId]
+      : [];
+
+  const updates: Record<string, unknown> = {
+    updatedAt: new Date().toISOString(),
+  };
+  if (status) updates.status = status;
+  if (paymentStatus) updates.paymentStatus = paymentStatus;
+  if (notes !== undefined) {
+    updates.notes = notes === null ? null : notes.trim().slice(0, 2000);
+  }
+
   try {
-    const body = await request.json();
-    const { registrationId, ids, status, paymentStatus, notes } = body as {
-      registrationId?: number;
-      ids?: number[];
-      status?: string;
-      paymentStatus?: string;
-      notes?: string;
-    };
-
-    // Accept either a single id (legacy) or a bulk `ids` array.
-    // Cap bulk size — the two downstream loops (team-promotion + audit
-    // entries) scale linearly with the array length.
-    const BULK_IDS_CAP = 200;
-    if (Array.isArray(ids) && ids.length > BULK_IDS_CAP) {
-      return NextResponse.json(
-        { error: `ids[] cannot exceed ${BULK_IDS_CAP} entries; chunk the request` },
-        { status: 400 }
-      );
-    }
-    const targetIds: number[] = Array.isArray(ids) && ids.length > 0
-      ? ids.filter((n) => Number.isInteger(n) && n > 0)
-      : registrationId && Number.isInteger(registrationId) && registrationId > 0
-        ? [registrationId]
-        : [];
-
-    if (targetIds.length === 0) {
-      return NextResponse.json({ error: "registrationId or ids[] required" }, { status: 400 });
-    }
-
-    const updates: Record<string, unknown> = {
-      updatedAt: new Date().toISOString(),
-    };
-    if (status) updates.status = status;
-    if (paymentStatus) updates.paymentStatus = paymentStatus;
-    if (notes !== undefined) {
-      if (notes !== null && (typeof notes !== "string" || notes.length > 2000)) {
-        return NextResponse.json({ error: "notes must be ≤2000 characters" }, { status: 400 });
-      }
-      updates.notes = notes === null ? null : String(notes).trim().slice(0, 2000);
-    }
 
     // Snapshot BEFORE the write so the audit log can answer "what was the
     // status/payment before this approval?". Previously `before: null`.

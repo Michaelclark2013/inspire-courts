@@ -169,6 +169,25 @@ export const tournamentUpdateSchema = z.object({
   status: z.enum(["draft", "published", "active", "completed"]).optional(),
 });
 
+// Admin registration bulk-update — either registrationId (legacy)
+// or ids[] (bulk, capped at 200). At least one target-status field
+// must be set but we let the handler decide if the request is a
+// no-op; schema just validates types.
+export const registrationUpdateSchema = z
+  .object({
+    registrationId: z.number().int().positive().optional(),
+    ids: z.array(z.number().int().positive()).max(200).optional(),
+    status: z
+      .enum(["pending", "approved", "rejected", "cancelled", "waitlist"])
+      .optional(),
+    paymentStatus: z.enum(["pending", "paid", "refunded", "waived"]).optional(),
+    notes: z.string().max(2000).optional().nullable(),
+  })
+  .refine(
+    (v) => v.registrationId != null || (Array.isArray(v.ids) && v.ids.length > 0),
+    "registrationId or ids[] is required"
+  );
+
 // Admin walk-in registration — admin-created regs skip the public
 // payment/approval flow and go straight to approved+waived. Every
 // field length-capped to match the DB sanitization the handler does

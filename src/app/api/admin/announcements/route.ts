@@ -7,6 +7,7 @@ import { announcements } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
+import { recordAudit } from "@/lib/audit";
 
 // Public surfaces that read announcements — any create/update/delete
 // should bust these so admins see their change reflected immediately.
@@ -80,6 +81,18 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
+    await recordAudit({
+      session,
+      action: "announcement.created",
+      entityType: "announcement",
+      entityId: announcement.id,
+      before: null,
+      after: {
+        title: announcement.title,
+        audience: announcement.audience,
+        expiresAt: announcement.expiresAt,
+      },
+    });
     revalidateAnnouncementSurfaces();
     return NextResponse.json(announcement, { status: 201 });
   } catch (err) {
@@ -126,15 +139,31 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "No fields to update" }, { status: 400 });
     }
 
+    // Snapshot BEFORE update so audit captures the previous values.
+    const [before] = await db
+      .select()
+      .from(announcements)
+      .where(eq(announcements.id, Number(id)))
+      .limit(1);
+
+    if (!before) {
+      return NextResponse.json({ error: "Announcement not found" }, { status: 404 });
+    }
+
     const [updated] = await db
       .update(announcements)
       .set(updates)
       .where(eq(announcements.id, Number(id)))
       .returning();
 
-    if (!updated) {
-      return NextResponse.json({ error: "Announcement not found" }, { status: 404 });
-    }
+    await recordAudit({
+      session,
+      action: "announcement.updated",
+      entityType: "announcement",
+      entityId: before.id,
+      before: { title: before.title, audience: before.audience, expiresAt: before.expiresAt },
+      after: updates,
+    });
 
     revalidateAnnouncementSurfaces();
     return NextResponse.json(updated);
@@ -162,10 +191,18 @@ export async function DELETE(request: NextRequest) {
     const deleted = await db
       .delete(announcements)
       .where(eq(announcements.id, id))
-      .returning({ id: announcements.id });
+      .returning({ id: announcements.id, title: announcements.title, audience: announcements.audience });
     if (deleted.length === 0) {
       return NextResponse.json({ error: "Announcement not found" }, { status: 404 });
     }
+    await recordAudit({
+      session,
+      action: "announcement.deleted",
+      entityType: "announcement",
+      entityId: deleted[0].id,
+      before: { title: deleted[0].title, audience: deleted[0].audience },
+      after: null,
+    });
     revalidateAnnouncementSurfaces();
     return NextResponse.json({ success: true, id: deleted[0].id });
   } catch (err) {

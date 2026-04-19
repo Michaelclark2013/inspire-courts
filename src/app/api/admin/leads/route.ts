@@ -20,8 +20,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Surface data-source health instead of silently returning [].
+  // Admin UIs that want a warning banner can check the
+  // X-Data-Source header and/or the response body.
   if (!isGoogleConfigured()) {
-    return NextResponse.json([]);
+    return NextResponse.json([], {
+      headers: { "X-Data-Source": "unavailable", "X-Data-Source-Reason": "sheets-not-configured" },
+    });
   }
 
   try {
@@ -55,13 +60,22 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(leads, {
-      headers: { "Cache-Control": "private, max-age=30, stale-while-revalidate=60" },
+      headers: {
+        "Cache-Control": "private, max-age=30, stale-while-revalidate=60",
+        "X-Data-Source": "sheets",
+      },
     });
   } catch (error) {
+    // Sheets outage: return empty array with 503 + source header so the
+    // admin UI can show a "Sheets unavailable" banner rather than silently
+    // display zero leads as if there genuinely are none.
     logger.error("Failed to fetch leads from Google Sheets", { error: String(error) });
     return NextResponse.json(
-      { error: "Failed to fetch leads" },
-      { status: 500 }
+      { error: "Failed to fetch leads from Google Sheets", source: "sheets", items: [] },
+      {
+        status: 503,
+        headers: { "X-Data-Source": "unavailable", "X-Data-Source-Reason": "sheets-error" },
+      }
     );
   }
 }

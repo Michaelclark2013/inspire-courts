@@ -138,7 +138,19 @@ function TournamentDetailInner() {
         });
         if (!res.ok) throw new Error("Failed to add team");
         triggerHaptic("light");
-        await fetchData();
+        // Replace the optimistic row with the server-assigned one instead
+        // of re-fetching the entire tournament (which was pulling teams +
+        // bracket + scores every time a team was added). The only new
+        // server-side info is the real id, so splice it in-place.
+        const saved = await res.json();
+        setData((cur) =>
+          cur
+            ? {
+                ...cur,
+                teams: cur.teams.map((t) => (t.id === tempId ? { ...optimistic, ...saved } : t)),
+              }
+            : cur,
+        );
       } catch {
         // rollback
         setData((cur) =>
@@ -149,7 +161,7 @@ function TournamentDetailInner() {
         setMutationError("Failed to add team");
       }
     },
-    [data, id, fetchData],
+    [data, id],
   );
 
   const removeTeam = useCallback(

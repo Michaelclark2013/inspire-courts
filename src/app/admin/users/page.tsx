@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   UserPlus,
   Trash2,
@@ -68,6 +68,20 @@ export default function UsersPage() {
   // Search & filter
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+
+  // Derived: apply role + search filter. Memoized so we don't re-scan
+  // userList on unrelated state changes (copied-email flash, confirmDelete
+  // toggling, etc.) — previously this was an inline .filter in JSX.
+  const filteredUsers = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return userList.filter((u) => {
+      if (roleFilter && u.role !== roleFilter) return false;
+      if (q) {
+        return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+      }
+      return true;
+    });
+  }, [userList, roleFilter, searchQuery]);
 
   // Form state
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -481,16 +495,7 @@ export default function UsersPage() {
                 </tr>
               </thead>
               <tbody>
-                {userList
-                  .filter((u) => {
-                    if (roleFilter && u.role !== roleFilter) return false;
-                    if (searchQuery) {
-                      const q = searchQuery.toLowerCase();
-                      return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
-                    }
-                    return true;
-                  })
-                  .map((u) => (
+                {filteredUsers.map((u) => (
                   <tr
                     key={u.id}
                     className="border-b border-border hover:bg-off-white transition-colors"

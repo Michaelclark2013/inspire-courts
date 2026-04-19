@@ -113,35 +113,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
 
     // Filter out byes and create games + tournament_games
     const realGames = slots.filter((s) => !s.isBye && s.awayTeam && s.awayTeam !== "");
-
-    for (const slot of realGames) {
-      // Create the game row
-      const [game] = await db
-        .insert(games)
-        .values({
-          homeTeam: slot.homeTeam,
-          awayTeam: slot.awayTeam,
-          division: config.division || null,
-          court: slot.court,
-          eventName: tournament.name,
-          scheduledTime: slot.scheduledTime,
-          status: "scheduled",
-        })
-        .returning();
-
-      // Create the bracket link
-      await db.insert(tournamentGames).values({
-        tournamentId,
-        gameId: game.id,
-        round: slot.round,
-        bracketPosition: slot.bracketPosition,
-        poolGroup: slot.poolGroup || null,
-        winnerAdvancesTo: slot.winnerAdvancesTo,
-        loserDropsTo: slot.loserDropsTo,
-      });
-    }
-
-    // Also create placeholder games for TBD matchups (future rounds)
+    // Placeholder games for TBD matchups (future rounds)
     const tbdGames = slots.filter(
       (s) =>
         !s.isBye &&
@@ -149,36 +121,41 @@ export async function POST(_request: NextRequest, { params }: Params) {
         (s.homeTeam === "TBD" || s.awayTeam === "TBD")
     );
 
-    for (const slot of tbdGames) {
-      const [game] = await db
-        .insert(games)
-        .values({
-          homeTeam: slot.homeTeam,
-          awayTeam: slot.awayTeam,
-          division: config.division || null,
-          court: slot.court,
-          eventName: tournament.name,
-          scheduledTime: slot.scheduledTime,
-          status: "scheduled",
-        })
-        .returning();
+    // All-or-nothing bracket write. Previously: dozens of separate writes
+    // with no rollback — a mid-loop timeout would leave the tournament
+    // with a half-built bracket AND status still = "draft". Now a
+    // function-level timeout rolls the whole thing back.
+    await db.transaction(async (tx) => {
+      for (const slot of [...realGames, ...tbdGames]) {
+        const [game] = await tx
+          .insert(games)
+          .values({
+            homeTeam: slot.homeTeam,
+            awayTeam: slot.awayTeam,
+            division: config.division || null,
+            court: slot.court,
+            eventName: tournament.name,
+            scheduledTime: slot.scheduledTime,
+            status: "scheduled",
+          })
+          .returning();
 
-      await db.insert(tournamentGames).values({
-        tournamentId,
-        gameId: game.id,
-        round: slot.round,
-        bracketPosition: slot.bracketPosition,
-        poolGroup: slot.poolGroup || null,
-        winnerAdvancesTo: slot.winnerAdvancesTo,
-        loserDropsTo: slot.loserDropsTo,
-      });
-    }
+        await tx.insert(tournamentGames).values({
+          tournamentId,
+          gameId: game.id,
+          round: slot.round,
+          bracketPosition: slot.bracketPosition,
+          poolGroup: slot.poolGroup || null,
+          winnerAdvancesTo: slot.winnerAdvancesTo,
+          loserDropsTo: slot.loserDropsTo,
+        });
+      }
 
-    // Update tournament status
-    await db
-      .update(tournaments)
-      .set({ status: "published", updatedAt: new Date().toISOString() })
-      .where(eq(tournaments.id, tournamentId));
+      await tx
+        .update(tournaments)
+        .set({ status: "published", updatedAt: new Date().toISOString() })
+        .where(eq(tournaments.id, tournamentId));
+    });
 
     revalidatePath(`/admin/tournaments/${id}`);
     revalidatePath(`/tournaments/${id}`);

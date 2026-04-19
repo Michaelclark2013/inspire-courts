@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ shifts: [] });
   }
 
-  const { searchParams } = new URL(request.url);
+  const { searchParams } = request.nextUrl;
   const type = searchParams.get("type") || "staff";
   // Non-admin users can only view their own history
   const name = role === "admin"

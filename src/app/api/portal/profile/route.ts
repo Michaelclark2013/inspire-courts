@@ -92,13 +92,27 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       );
     }
-    // Verify current password
+    // Verify current password. Always run a bcrypt.compare (against a dummy
+    // hash for OAuth accounts that have no real password) so response-time
+    // can't be used to distinguish OAuth from credentials accounts.
     const [user] = await db
       .select({ passwordHash: users.passwordHash })
       .from(users)
       .where(eq(users.id, userId))
       .limit(1);
-    if (!user || !(await bcrypt.compare(String(body.currentPassword), user.passwordHash))) {
+    const isOAuth = !user || user.passwordHash === "google-oauth";
+    // dummyHash is a valid bcrypt-formatted hash that will never match;
+    // using a real one keeps compare() timing consistent with the real path.
+    const DUMMY_HASH = "$2a$12$CwTycUXWue0Thq9StjUM0uJ8.KnLq6/pNSfvWRTQNZc5J.u8M6E4S";
+    const hashToCompare = isOAuth ? DUMMY_HASH : user.passwordHash;
+    const valid = await bcrypt.compare(String(body.currentPassword), hashToCompare);
+    if (isOAuth) {
+      return NextResponse.json(
+        { error: "This account uses Google sign-in; set a password via your Google account" },
+        { status: 400 }
+      );
+    }
+    if (!valid) {
       return NextResponse.json({ error: "Current password is incorrect" }, { status: 403 });
     }
     if (String(body.newPassword).length < 8) {

@@ -223,14 +223,18 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
     );
   }
 
-  // Delete related records first
-  await db
-    .delete(tournamentGames)
-    .where(eq(tournamentGames.tournamentId, tournamentId));
-  await db
-    .delete(tournamentTeams)
-    .where(eq(tournamentTeams.tournamentId, tournamentId));
-  await db.delete(tournaments).where(eq(tournaments.id, tournamentId));
+  // All-or-nothing: wrap the three deletes in a transaction so a mid-way
+  // failure can't leave orphaned tournamentGames/tournamentTeams rows
+  // pointing at a missing tournament (or vice versa).
+  await db.transaction(async (tx) => {
+    await tx
+      .delete(tournamentGames)
+      .where(eq(tournamentGames.tournamentId, tournamentId));
+    await tx
+      .delete(tournamentTeams)
+      .where(eq(tournamentTeams.tournamentId, tournamentId));
+    await tx.delete(tournaments).where(eq(tournaments.id, tournamentId));
+  });
 
   await recordAudit({
     session,

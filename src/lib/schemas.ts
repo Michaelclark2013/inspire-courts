@@ -129,6 +129,19 @@ export const gameCreateSchema = z.object({
   scheduledTime: z.string().max(40).optional().nullable(),
 });
 
+// Admin walk-in registration — admin-created regs skip the public
+// payment/approval flow and go straight to approved+waived. Every
+// field length-capped to match the DB sanitization the handler does
+// server-side. paymentStatus enum mirrors the DB CHECK constraint.
+export const registrationCreateSchema = z.object({
+  teamName: z.string().min(1, "Team name is required").max(200),
+  coachName: z.string().min(1, "Coach name is required").max(200),
+  coachEmail: z.string().email().max(255).optional().nullable(),
+  division: z.string().max(50).optional().nullable(),
+  paymentStatus: z.enum(["pending", "paid", "refunded", "waived"]).optional(),
+  notes: z.string().max(2000).optional().nullable(),
+});
+
 // Admin team add — teamName flows into every bracket games row via
 // the tournament generator, so every field is length-capped. teamId
 // optionally links back to a persistent Team row for stats.

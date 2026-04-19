@@ -12,6 +12,8 @@ import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { withTiming } from "@/lib/timing";
+import { registrationCreateSchema } from "@/lib/schemas";
+import { parseJsonBody, apiError } from "@/lib/api-helpers";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -207,56 +209,23 @@ export async function POST(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
   }
 
+  const parsed = await parseJsonBody(request, registrationCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { teamName, coachName, coachEmail, division, paymentStatus, notes } = parsed.data;
+  const safePaymentStatus = paymentStatus ?? "waived";
+
   try {
-    const body = await request.json();
-
-    const { teamName, coachName, coachEmail, division, paymentStatus, notes } =
-      body as {
-        teamName: string;
-        coachName: string;
-        coachEmail?: string;
-        division?: string;
-        paymentStatus?: string;
-        notes?: string;
-      };
-
-    if (!teamName || !coachName) {
-      return NextResponse.json(
-        { error: "Team name and coach name required" },
-        { status: 400 }
-      );
-    }
-
-    // Length caps + sanitization — previously raw strings went straight
-    // to the DB. notes in particular was unbounded.
-    if (notes !== undefined && notes !== null && (typeof notes !== "string" || notes.length > 2000)) {
-      return NextResponse.json({ error: "notes must be ≤2000 characters" }, { status: 400 });
-    }
-
-    // Validate paymentStatus against enum BEFORE insert. Was previously
-    // cast unchecked, so a caller could submit any string and SQLite would
-    // happily write it (CHECK constraints aren't enforced here).
-    const paymentStatusEnum = ["pending", "paid", "refunded", "waived"] as const;
-    if (paymentStatus !== undefined && !paymentStatusEnum.includes(paymentStatus as typeof paymentStatusEnum[number])) {
-      return NextResponse.json(
-        { error: `paymentStatus must be one of: ${paymentStatusEnum.join(", ")}` },
-        { status: 400 }
-      );
-    }
-    const safePaymentStatus =
-      (paymentStatus as typeof paymentStatusEnum[number]) || "waived";
-
     const [reg] = await db
       .insert(tournamentRegistrations)
       .values({
         tournamentId,
-        teamName: String(teamName).trim().slice(0, 200),
-        coachName: String(coachName).trim().slice(0, 200),
-        coachEmail: coachEmail ? String(coachEmail).trim().toLowerCase().slice(0, 255) : "",
-        division: division ? String(division).trim().slice(0, 50) : null,
+        teamName: teamName.trim().slice(0, 200),
+        coachName: coachName.trim().slice(0, 200),
+        coachEmail: coachEmail ? coachEmail.trim().toLowerCase().slice(0, 255) : "",
+        division: division ? division.trim().slice(0, 50) : null,
         paymentStatus: safePaymentStatus,
         status: "approved",
-        notes: notes ? String(notes).trim().slice(0, 2000) : null,
+        notes: notes ? notes.trim().slice(0, 2000) : null,
       })
       .returning();
 

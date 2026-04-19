@@ -63,9 +63,13 @@ export default function RegistrationsPage() {
 
   const fetchRegs = useCallback(async () => {
     try {
-      const res = await fetch(`/api/admin/tournaments/${id}/registrations`);
+      // Pull up to the max page size — this page renders the whole list
+      // today. If the API shape stays { data, total }, unwrap it; fallback
+      // to bare array for backwards safety.
+      const res = await fetch(`/api/admin/tournaments/${id}/registrations?limit=200`);
       if (res.ok) {
-        setRegs(await res.json());
+        const body = await res.json();
+        setRegs(Array.isArray(body) ? body : body.data || []);
         setFetchError(false);
       } else {
         setFetchError(true);

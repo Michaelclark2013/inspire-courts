@@ -29,9 +29,11 @@ export default function DashboardAlerts() {
 
   const fetchAlerts = useCallback(async () => {
     try {
-      // Fetch tournament data for alerts
+      // Fetch tournament data for alerts. API now returns { data, total };
+      // handle both shapes during migration.
       const tourRes = await fetch("/api/admin/tournaments");
-      const tournaments = tourRes.ok ? await tourRes.json() : [];
+      const tourBody = tourRes.ok ? await tourRes.json() : null;
+      const tournaments = Array.isArray(tourBody) ? tourBody : tourBody?.data || [];
 
       const activeTournaments = tournaments.filter(
         (t: { status: string }) => t.status === "active"

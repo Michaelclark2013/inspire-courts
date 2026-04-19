@@ -13,6 +13,10 @@ import {
 import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
+import { checkinSchema } from "@/lib/schemas";
+import { apiValidationError } from "@/lib/api-helpers";
+import { withTiming } from "@/lib/timing";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 const ALLOWED_ROLES = ["admin", "front_desk", "staff"];
 
@@ -28,7 +32,7 @@ function csvCell(v: unknown): string {
 //   ?since=      ISO date, checked-in on/after
 //   ?until=      ISO date, checked-in on/before
 //   ?format=csv  download CSV instead of JSON
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.checkin.list", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !ALLOWED_ROLES.includes(session.user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -95,6 +99,21 @@ export async function GET(request: NextRequest) {
       db.select({ total: sql<number>`count(*)` }).from(checkins).where(whereClause),
     ]);
 
+    // Cheap ETag — total + newest row timestamp. Front-desk tablets poll
+    // this list during tournaments; a 304 saves the full payload.
+    const newest = pagedRows[0]?.timestamp ?? "";
+    const etag = `"${total}-${newest}-p${page}l${limit}"`;
+    const ifNoneMatch = request.headers.get("if-none-match");
+    if (ifNoneMatch === etag) {
+      return new NextResponse(null, {
+        status: 304,
+        headers: {
+          ETag: etag,
+          "Cache-Control": "private, max-age=15, stale-while-revalidate=60",
+        },
+      });
+    }
+
     return NextResponse.json(
       {
         data: pagedRows,
@@ -103,13 +122,18 @@ export async function GET(request: NextRequest) {
         limit,
         totalPages: Math.max(1, Math.ceil((Number(total) || 0) / limit)),
       },
-      { headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=60" } }
+      {
+        headers: {
+          "Cache-Control": "private, max-age=15, stale-while-revalidate=60",
+          ETag: etag,
+        },
+      }
     );
   } catch (err) {
     logger.error("Failed to fetch check-ins", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch check-ins" }, { status: 500 });
   }
-}
+});
 
 // POST /api/admin/checkin — check in a player (dual-write: DB + Sheets)
 export async function POST(request: NextRequest) {
@@ -118,20 +142,32 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: Record<string, unknown>;
+  // Rate-limit check-in POSTs. A misbehaving tablet / compromised
+  // front-desk session could otherwise blast the DB + Sheets endpoint.
+  // 120/min per IP is well above even a busy tournament weigh-in.
+  const ip = getClientIp(request);
+  if (isRateLimited(`admin-checkin:${ip}`, 120, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many check-in attempts. Slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+
+  let raw: unknown;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { playerName, teamName, division, type } = body;
-
-  if (!playerName || typeof playerName !== "string") {
-    return NextResponse.json(
-      { error: "Player name is required" },
-      { status: 400 }
-    );
+  const parsed = checkinSchema.safeParse(raw);
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      const key = issue.path.join(".") || "_root";
+      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+    }
+    return apiValidationError(fieldErrors);
   }
 
   // Idempotency — a front-desk tablet with flaky wifi can otherwise
@@ -145,18 +181,10 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // type is either a regular check-in (default), a waiver submission record,
-  // or an explicit no-show marker. Front desk uses "no_show" to clear
-  // forfeit slots during a tournament rather than leaving them ambiguous.
-  const VALID_TYPES = ["checkin", "waiver", "no_show"] as const;
-  const safeType: (typeof VALID_TYPES)[number] =
-    typeof type === "string" && (VALID_TYPES as readonly string[]).includes(type)
-      ? (type as (typeof VALID_TYPES)[number])
-      : "checkin";
-
-  // Sanitize and cap input lengths
-  const safeName = String(playerName).trim().slice(0, 100);
-  const safeTeam = teamName ? String(teamName).trim().slice(0, 100) : "";
+  const { playerName, teamName, division, type } = parsed.data;
+  const safeType = type ?? "checkin";
+  const safeName = playerName.trim().slice(0, 100);
+  const safeTeam = teamName ? teamName.trim().slice(0, 100) : "";
   const safeDivision = division ? String(division).trim().slice(0, 50) : null;
 
   const userId = session.user.id ? Number(session.user.id) : null;

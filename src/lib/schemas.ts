@@ -57,6 +57,26 @@ export const subscribeSchema = z.object({
   email: z.string().email("A valid email is required"),
 });
 
+// Admin checkin — front desk dual-writes to DB + Google Sheets. Type
+// covers regular check-in, waiver submission, and explicit no-show so
+// forfeit slots can be cleared during a tournament.
+export const checkinSchema = z.object({
+  playerName: z.string().min(1, "Player name is required").max(100),
+  teamName: z.string().max(100).optional(),
+  division: z.string().max(50).optional().nullable(),
+  type: z.enum(["checkin", "waiver", "no_show"]).optional(),
+});
+
+// Admin notify broadcast — gated behind canAccess("tournaments") and
+// aggressively rate-limited (Gmail quota). Audience is a discriminant
+// that maps to a role-set server-side.
+export const notifySchema = z.object({
+  subject: z.string().min(1, "Subject is required").max(200),
+  message: z.string().min(1, "Message is required").max(10000),
+  audience: z.enum(["coaches", "parents", "refs", "staff", "all"]),
+  tournamentId: z.number().int().positive().optional().nullable(),
+});
+
 // Admin announcements — validated server-side on POST. Audience is an
 // enum so unknown values fall back to "all" (mirrors the previous
 // hand-rolled validation).

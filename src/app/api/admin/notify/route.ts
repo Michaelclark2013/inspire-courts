@@ -9,6 +9,9 @@ import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { sendBroadcastEmail } from "@/lib/notify";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { notifySchema } from "@/lib/schemas";
+import { apiValidationError } from "@/lib/api-helpers";
+import { withTiming } from "@/lib/timing";
 
 // POST /api/admin/notify — admin-triggered email broadcast.
 //
@@ -24,7 +27,7 @@ import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 // aggressively (per-IP) because each broadcast can cost a lot of Gmail API
 // quota. Writes a notify.broadcast audit entry capturing recipient count
 // and subject so sends are traceable.
-export async function POST(request: NextRequest) {
+export const POST = withTiming("admin.notify", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -38,17 +41,29 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const subject = typeof body.subject === "string" ? body.subject.trim().slice(0, 200) : "";
-  const message = typeof body.message === "string" ? body.message.trim().slice(0, 10_000) : "";
+  const parsed = notifySchema.safeParse(raw);
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      const key = issue.path.join(".") || "_root";
+      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+    }
+    return apiValidationError(fieldErrors);
+  }
 
-  // Audience → role set map. Single source of truth for validation + query.
+  const { subject: rawSubject, message: rawMessage, audience, tournamentId: tournamentIdRaw } = parsed.data;
+  const subject = rawSubject.trim().slice(0, 200);
+  const message = rawMessage.trim().slice(0, 10_000);
+  const tournamentId = tournamentIdRaw ?? null;
+
+  // Audience → role set map. Single source of truth for recipient query.
   const AUDIENCE_ROLE_MAP: Record<string, string[]> = {
     coaches: ["coach"],
     parents: ["parent"],
@@ -56,21 +71,6 @@ export async function POST(request: NextRequest) {
     staff: ["staff", "front_desk"],
     all: ["coach", "parent", "ref", "staff", "front_desk"],
   };
-  const audience = typeof body.audience === "string" && body.audience in AUDIENCE_ROLE_MAP ? body.audience : null;
-  const tournamentId = Number.isInteger(body.tournamentId) ? Number(body.tournamentId) : null;
-
-  if (!subject || !message) {
-    return NextResponse.json(
-      { error: "subject and message are required" },
-      { status: 400 }
-    );
-  }
-  if (!audience) {
-    return NextResponse.json(
-      { error: `audience must be one of: ${Object.keys(AUDIENCE_ROLE_MAP).join(", ")}` },
-      { status: 400 }
-    );
-  }
 
   try {
     // Collect recipient emails. If tournamentId is supplied AND audience is
@@ -130,4 +130,4 @@ export async function POST(request: NextRequest) {
     logger.error("Admin notify broadcast failed", { error: String(err) });
     return NextResponse.json({ error: "Failed to send broadcast" }, { status: 500 });
   }
-}
+});

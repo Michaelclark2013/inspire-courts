@@ -3,36 +3,62 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, asc, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
-// GET /api/admin/users — list all users
-export async function GET() {
+// Whitelist of safe sortable columns. Never let clients inject arbitrary
+// column names into an ORDER BY clause.
+const USER_SORT_COLUMNS = {
+  name: users.name,
+  email: users.email,
+  role: users.role,
+  createdAt: users.createdAt,
+} as const;
+
+// GET /api/admin/users — list users with total count and optional sort.
+//   ?sort=name|email|role|createdAt   (default: createdAt)
+//   ?dir=asc|desc                     (default: desc for createdAt, asc otherwise)
+// Response: { data: User[], total }
+// Note: non-paginated today (user counts are small) but the response shape
+// is pagination-ready so adding ?page+?limit later is non-breaking.
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const allUsers = await db
-      .select({
-        id: users.id,
-        email: users.email,
-        name: users.name,
-        role: users.role,
-        phone: users.phone,
-        memberSince: users.memberSince,
-        approved: users.approved,
-        createdAt: users.createdAt,
-      })
-      .from(users);
+  const sp = request.nextUrl.searchParams;
+  const sortKey = (sp.get("sort") || "createdAt") as keyof typeof USER_SORT_COLUMNS;
+  const sortCol = USER_SORT_COLUMNS[sortKey] || users.createdAt;
+  const dir = sp.get("dir") === "asc" ? asc : sp.get("dir") === "desc" ? desc : null;
+  // Default direction: createdAt is newest-first; text columns sort A-Z.
+  const orderBy = dir ? dir(sortCol) : sortKey === "createdAt" ? desc(sortCol) : asc(sortCol);
 
-    return NextResponse.json(allUsers, {
-      headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=30" },
-    });
+  try {
+    const [allUsers, [{ total }]] = await Promise.all([
+      db
+        .select({
+          id: users.id,
+          email: users.email,
+          name: users.name,
+          role: users.role,
+          phone: users.phone,
+          memberSince: users.memberSince,
+          approved: users.approved,
+          createdAt: users.createdAt,
+        })
+        .from(users)
+        .orderBy(orderBy),
+      db.select({ total: sql<number>`count(*)` }).from(users),
+    ]);
+
+    return NextResponse.json(
+      { data: allUsers, total: Number(total) || 0 },
+      { headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=30" } }
+    );
   } catch (err) {
     logger.error("Failed to fetch users", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
@@ -183,10 +209,24 @@ export async function PUT(request: NextRequest) {
     if (phone !== undefined) updates.phone = phone || null;
     if (body.approved !== undefined) updates.approved = body.approved;
 
-    await db.update(users).set(updates).where(eq(users.id, numericId));
+    // .returning() the safe fields so the client can sync state without
+    // an additional GET /api/admin/users call.
+    const [updatedRow] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, numericId))
+      .returning({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        role: users.role,
+        phone: users.phone,
+        approved: users.approved,
+        memberSince: users.memberSince,
+        createdAt: users.createdAt,
+      });
 
     // Only audit if something actually changed (excluding updatedAt).
-    const after = { ...before, ...updates };
     const changed =
       (role && role !== before.role) ||
       (name && name !== before.name) ||
@@ -199,11 +239,11 @@ export async function PUT(request: NextRequest) {
         entityType: "user",
         entityId: numericId,
         before,
-        after,
+        after: updatedRow,
       });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, user: updatedRow });
   } catch (err) {
     logger.error("Failed to update user", { error: String(err) });
     return NextResponse.json({ error: "Failed to update user" }, { status: 500 });

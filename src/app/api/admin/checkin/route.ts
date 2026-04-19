@@ -14,7 +14,7 @@ import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 import { checkinSchema } from "@/lib/schemas";
-import { apiValidationError } from "@/lib/api-helpers";
+import { parseJsonBody } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
@@ -153,22 +153,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let raw: unknown;
-  try {
-    raw = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  const parsed = checkinSchema.safeParse(raw);
-  if (!parsed.success) {
-    const fieldErrors: Record<string, string> = {};
-    for (const issue of parsed.error.issues) {
-      const key = issue.path.join(".") || "_root";
-      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
-    }
-    return apiValidationError(fieldErrors);
-  }
+  const parsed = await parseJsonBody(request, checkinSchema);
+  if (!parsed.ok) return parsed.response;
 
   // Idempotency — a front-desk tablet with flaky wifi can otherwise
   // double-check-in the same player.

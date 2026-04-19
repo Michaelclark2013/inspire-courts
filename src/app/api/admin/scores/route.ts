@@ -12,7 +12,7 @@ import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 import { withTiming } from "@/lib/timing";
 import { gameCreateSchema } from "@/lib/schemas";
-import { apiValidationError } from "@/lib/api-helpers";
+import { parseJsonBody } from "@/lib/api-helpers";
 
 // Pagination cap — no single page can be larger than this regardless of
 // ?limit, so a misbehaving client can't dump the entire games table.
@@ -194,23 +194,11 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  const parsed = await parseJsonBody(request, gameCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { homeTeam, awayTeam, division, court, eventName, scheduledTime } = parsed.data;
+
   try {
-    let raw: unknown;
-    try {
-      raw = await request.json();
-    } catch {
-      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-    }
-    const parsed = gameCreateSchema.safeParse(raw);
-    if (!parsed.success) {
-      const fieldErrors: Record<string, string> = {};
-      for (const issue of parsed.error.issues) {
-        const key = issue.path.join(".") || "_root";
-        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
-      }
-      return apiValidationError(fieldErrors);
-    }
-    const { homeTeam, awayTeam, division, court, eventName, scheduledTime } = parsed.data;
 
     const [game] = await db
       .insert(games)

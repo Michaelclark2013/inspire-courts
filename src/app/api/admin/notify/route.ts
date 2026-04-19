@@ -10,7 +10,7 @@ import { recordAudit } from "@/lib/audit";
 import { sendBroadcastEmail } from "@/lib/notify";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { notifySchema } from "@/lib/schemas";
-import { apiValidationError } from "@/lib/api-helpers";
+import { parseJsonBody } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 
 // POST /api/admin/notify — admin-triggered email broadcast.
@@ -41,22 +41,8 @@ export const POST = withTiming("admin.notify", async (request: NextRequest) => {
     );
   }
 
-  let raw: unknown;
-  try {
-    raw = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  const parsed = notifySchema.safeParse(raw);
-  if (!parsed.success) {
-    const fieldErrors: Record<string, string> = {};
-    for (const issue of parsed.error.issues) {
-      const key = issue.path.join(".") || "_root";
-      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
-    }
-    return apiValidationError(fieldErrors);
-  }
+  const parsed = await parseJsonBody(request, notifySchema);
+  if (!parsed.ok) return parsed.response;
 
   const { subject: rawSubject, message: rawMessage, audience, tournamentId: tournamentIdRaw } = parsed.data;
   const subject = rawSubject.trim().slice(0, 200);

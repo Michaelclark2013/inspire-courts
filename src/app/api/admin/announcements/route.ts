@@ -11,7 +11,7 @@ import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 import { announcementSchema } from "@/lib/schemas";
-import { apiValidationError } from "@/lib/api-helpers";
+import { parseJsonBody } from "@/lib/api-helpers";
 
 // Public surfaces that read announcements — any create/update/delete
 // should bust these so admins see their change reflected immediately.
@@ -88,19 +88,12 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  const parsed = await parseJsonBody(request, announcementSchema);
+  if (!parsed.ok) return parsed.response;
+  const { title, body: content, audience, expiresAt } = parsed.data;
+  const safeAudience = audience ?? "all";
+
   try {
-    const raw = await request.json();
-    const parsed = announcementSchema.safeParse(raw);
-    if (!parsed.success) {
-      const fieldErrors: Record<string, string> = {};
-      for (const issue of parsed.error.issues) {
-        const key = issue.path.join(".") || "_root";
-        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
-      }
-      return apiValidationError(fieldErrors);
-    }
-    const { title, body: content, audience, expiresAt } = parsed.data;
-    const safeAudience = audience ?? "all";
 
     const userId = session.user.id ? Number(session.user.id) : null;
 

@@ -6,6 +6,7 @@ import { users } from "@/lib/db/schema";
 import { desc, eq, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { withTiming } from "@/lib/timing";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -21,7 +22,7 @@ async function requireAdmin() {
 // Response shape: { users, total, page, limit, totalPages }
 // The legacy `users` key is preserved so the admin approvals page
 // continues to work during migration.
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.approvals.list", async (request: NextRequest) => {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -69,10 +70,10 @@ export async function GET(request: NextRequest) {
     logger.error("Failed to fetch pending approvals", { error: String(error) });
     return NextResponse.json({ error: "Failed to fetch approvals" }, { status: 500 });
   }
-}
+});
 
 // PATCH — approve or reject a user
-export async function PATCH(request: NextRequest) {
+export const PATCH = withTiming("admin.approvals.patch", async (request: NextRequest) => {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -183,4 +184,4 @@ export async function PATCH(request: NextRequest) {
     logger.error("Approval action failed", { error: String(error) });
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
-}
+});

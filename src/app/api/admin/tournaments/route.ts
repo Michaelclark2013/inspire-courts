@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 import { tournamentCreateSchema } from "@/lib/schemas";
-import { apiValidationError } from "@/lib/api-helpers";
+import { parseJsonBody } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 
 // Safe sortable columns — prevents ORDER BY injection via ?sort=.
@@ -129,22 +129,8 @@ export const POST = withTiming("admin.tournaments.create", async (request: NextR
     });
   }
 
-  let raw: unknown;
-  try {
-    raw = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
-
-  const parsed = tournamentCreateSchema.safeParse(raw);
-  if (!parsed.success) {
-    const fieldErrors: Record<string, string> = {};
-    for (const issue of parsed.error.issues) {
-      const key = issue.path.join(".") || "_root";
-      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
-    }
-    return apiValidationError(fieldErrors);
-  }
+  const parsed = await parseJsonBody(request, tournamentCreateSchema);
+  if (!parsed.ok) return parsed.response;
 
   const {
     name,

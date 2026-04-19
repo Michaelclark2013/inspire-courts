@@ -5,7 +5,16 @@ import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { announcements } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
+
+// Public surfaces that read announcements — any create/update/delete
+// should bust these so admins see their change reflected immediately.
+function revalidateAnnouncementSurfaces() {
+  revalidatePath("/");
+  revalidatePath("/portal");
+  revalidatePath("/admin/announcements");
+}
 
 // GET /api/admin/announcements — list all
 export async function GET() {
@@ -71,6 +80,7 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
+    revalidateAnnouncementSurfaces();
     return NextResponse.json(announcement, { status: 201 });
   } catch (err) {
     logger.error("Failed to create announcement", { error: String(err) });
@@ -126,6 +136,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Announcement not found" }, { status: 404 });
     }
 
+    revalidateAnnouncementSurfaces();
     return NextResponse.json(updated);
   } catch (err) {
     logger.error("Failed to update announcement", { error: String(err) });
@@ -155,6 +166,7 @@ export async function DELETE(request: NextRequest) {
     if (deleted.length === 0) {
       return NextResponse.json({ error: "Announcement not found" }, { status: 404 });
     }
+    revalidateAnnouncementSurfaces();
     return NextResponse.json({ success: true, id: deleted[0].id });
   } catch (err) {
     logger.error("Failed to delete announcement", { error: String(err) });

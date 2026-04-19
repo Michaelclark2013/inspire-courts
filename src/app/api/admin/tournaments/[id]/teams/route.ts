@@ -54,9 +54,25 @@ export async function POST(request: NextRequest, { params }: Params) {
   try {
     const body = await request.json();
     const { teamName, teamId, division, seed, poolGroup } = body;
-    if (!teamName) {
+    if (!teamName || typeof teamName !== "string" || !teamName.trim()) {
       return NextResponse.json({ error: "Team name is required" }, { status: 400 });
     }
+
+    // Sanitize + cap lengths — teamName propagates into every games row
+    // via the bracket generator, so unbounded input is a real risk.
+    const safeTeamName = teamName.trim().slice(0, 100);
+    const safeDivision =
+      typeof division === "string" && division ? division.trim().slice(0, 50) : null;
+    const safePoolGroup =
+      typeof poolGroup === "string" && poolGroup ? poolGroup.trim().slice(0, 20) : null;
+    const safeTeamId =
+      teamId != null && Number.isInteger(Number(teamId)) && Number(teamId) > 0
+        ? Number(teamId)
+        : null;
+    const safeSeed =
+      seed != null && Number.isInteger(Number(seed)) && Number(seed) > 0
+        ? Number(seed)
+        : undefined;
 
     // Get current team count for auto-seeding
     const existing = await db
@@ -68,11 +84,11 @@ export async function POST(request: NextRequest, { params }: Params) {
       .insert(tournamentTeams)
       .values({
         tournamentId,
-        teamId: teamId || null,
-        teamName,
-        division: division || null,
-        seed: seed ?? existing.length + 1,
-        poolGroup: poolGroup || null,
+        teamId: safeTeamId,
+        teamName: safeTeamName,
+        division: safeDivision,
+        seed: safeSeed ?? existing.length + 1,
+        poolGroup: safePoolGroup,
       })
       .returning();
 

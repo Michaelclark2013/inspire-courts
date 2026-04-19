@@ -15,9 +15,11 @@ const SCORES_MAX_LIMIT = 200;
 const SCORES_DEFAULT_LIMIT = 50;
 
 // GET /api/admin/scores — list games with latest scores (paginated).
-//   ?page=   1-indexed page (default 1)
-//   ?limit=  page size (default 50, max 200)
-// Response: { data: Game[], total, page, limit, totalPages }
+//   ?page=                 1-indexed page (default 1)
+//   ?limit=                page size (default 50, max 200)
+//   ?include=tournaments   bundle distinct tournament names into response
+// Response:
+//   { data: Game[], total, page, limit, totalPages, tournaments? }
 // Backwards note: was returning a bare array. Now returns the wrapped shape
 // above so clients can reliably paginate. Legacy clients that consumed the
 // array should migrate to reading `.data`.
@@ -87,16 +89,30 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json(
-      {
-        data: gamesWithScores,
-        total: totalCount,
-        page,
-        limit,
-        totalPages: Math.max(1, Math.ceil(totalCount / limit)),
-      },
-      { headers: { "Cache-Control": "private, max-age=5, stale-while-revalidate=10" } }
-    );
+    const response: Record<string, unknown> = {
+      data: gamesWithScores,
+      total: totalCount,
+      page,
+      limit,
+      totalPages: Math.max(1, Math.ceil(totalCount / limit)),
+    };
+
+    // Optional bundle: distinct tournament/event names so the score-entry
+    // page doesn't have to fire a separate /api/admin/tournaments request
+    // on mount just to populate a filter dropdown.
+    if (sp.get("include") === "tournaments") {
+      const tournamentRows = await db
+        .selectDistinct({ eventName: games.eventName })
+        .from(games);
+      response.tournaments = tournamentRows
+        .map((r) => r.eventName)
+        .filter((n): n is string => typeof n === "string" && n.length > 0)
+        .sort();
+    }
+
+    return NextResponse.json(response, {
+      headers: { "Cache-Control": "private, max-age=5, stale-while-revalidate=10" },
+    });
   } catch (err) {
     logger.error("Failed to fetch admin scores", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });

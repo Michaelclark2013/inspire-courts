@@ -112,7 +112,10 @@ export default function UsersPage() {
     try {
       const res = await fetch("/api/admin/users");
       if (res.ok) {
-        setUserList(await res.json());
+        const body = await res.json();
+        // API now returns { data, total } — legacy callers may still see an
+        // array in dev; support both shapes so this migration is safe.
+        setUserList(Array.isArray(body) ? body : body.data || []);
       } else {
         setFetchError(true);
       }

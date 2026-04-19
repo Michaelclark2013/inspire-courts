@@ -19,7 +19,11 @@ import { recordAudit } from "@/lib/audit";
 type Params = { params: Promise<{ id: string }> };
 
 // POST /api/admin/tournaments/[id]/generate — generate bracket + schedule
-export async function POST(_request: NextRequest, { params }: Params) {
+// POST /api/admin/tournaments/[id]/generate
+//   ?dryRun=1   Run the bracket generator and return the computed slots
+//               WITHOUT writing anything to the DB. Lets admins preview
+//               byes and seedings before committing.
+export async function POST(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -30,6 +34,8 @@ export async function POST(_request: NextRequest, { params }: Params) {
   if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
   }
+
+  const dryRun = request.nextUrl.searchParams.get("dryRun") === "1";
 
   try {
     // Get tournament
@@ -120,6 +126,28 @@ export async function POST(_request: NextRequest, { params }: Params) {
         !realGames.includes(s) &&
         (s.homeTeam === "TBD" || s.awayTeam === "TBD")
     );
+
+    // Dry-run: return the computed bracket shape without persisting. Lets
+    // admins preview seedings/byes/matchups before committing. No DB writes
+    // and no audit entry because nothing actually changed.
+    if (dryRun) {
+      return NextResponse.json({
+        ok: true,
+        dryRun: true,
+        format: tournament.format,
+        teamCount: teamEntries.length,
+        gameCount: realGames.length + tbdGames.length,
+        slots: [...realGames, ...tbdGames].map((s) => ({
+          round: s.round,
+          bracketPosition: s.bracketPosition,
+          homeTeam: s.homeTeam,
+          awayTeam: s.awayTeam,
+          court: s.court,
+          scheduledTime: s.scheduledTime,
+          poolGroup: s.poolGroup ?? null,
+        })),
+      });
+    }
 
     // All-or-nothing bracket write. Previously: dozens of separate writes
     // with no rollback — a mid-loop timeout would leave the tournament

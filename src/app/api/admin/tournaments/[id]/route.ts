@@ -164,10 +164,13 @@ export async function PUT(request: NextRequest, { params }: Params) {
   if (body.breakLength !== undefined && typeof body.breakLength === "number" && body.breakLength >= 0) updates.breakLength = body.breakLength;
   if (body.status && typeof body.status === "string" && VALID_STATUSES.includes(body.status)) updates.status = body.status;
 
-  await db
+  // Return the full updated row via .returning() so the caller can sync
+  // state without a round-trip refetch.
+  const [updated] = await db
     .update(tournaments)
     .set(updates)
-    .where(eq(tournaments.id, tournamentId));
+    .where(eq(tournaments.id, tournamentId))
+    .returning();
 
   // Audit if any material field changed. Distinguish status transitions
   // (e.g. draft→published) from other edits so the audit stream is easy
@@ -191,7 +194,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   revalidatePath(`/admin/tournaments/${id}`);
   revalidatePath(`/tournaments/${id}`);
   revalidatePath("/tournaments");
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, tournament: updated });
 }
 
 // DELETE /api/admin/tournaments/[id] — delete draft tournament

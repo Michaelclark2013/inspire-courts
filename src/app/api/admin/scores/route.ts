@@ -150,6 +150,22 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
+    await recordAudit({
+      session,
+      action: "game.created",
+      entityType: "game",
+      entityId: game.id,
+      before: null,
+      after: {
+        homeTeam: game.homeTeam,
+        awayTeam: game.awayTeam,
+        division: game.division,
+        court: game.court,
+        eventName: game.eventName,
+        scheduledTime: game.scheduledTime,
+      },
+    });
+
     revalidatePath("/scores");
     return NextResponse.json(game, { status: 201 });
   } catch (err) {

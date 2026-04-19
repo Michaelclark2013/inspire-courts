@@ -98,3 +98,37 @@ export async function sendLeadEmail(lead: LeadData): Promise<void> {
     logger.error("Failed to send lead notification email", { error: String(error) });
   }
 }
+
+/**
+ * Send a broadcast email via Gmail BCC. Admin-facing utility.
+ * Returns the number of recipients attempted so callers can surface it.
+ * Silently returns 0 when the transporter is unconfigured.
+ */
+export async function sendBroadcastEmail(opts: {
+  recipients: string[];
+  subject: string;
+  html: string;
+  text?: string;
+}): Promise<{ sent: number; attempted: number }> {
+  const recipients = [...new Set(opts.recipients.filter((r) => typeof r === "string" && r.includes("@")))];
+  if (!transporter || recipients.length === 0) {
+    if (!transporter) logger.warn("Gmail not configured, skipping broadcast email");
+    return { sent: 0, attempted: recipients.length };
+  }
+  try {
+    // Use BCC so recipients don't see each other's addresses. The primary
+    // `to` is the sender account itself — Gmail requires a To field.
+    await transporter.sendMail({
+      from: `"Inspire Courts AZ" <${process.env.GMAIL_USER}>`,
+      to: process.env.GMAIL_USER,
+      bcc: recipients.join(","),
+      subject: opts.subject,
+      html: opts.html,
+      text: opts.text,
+    });
+    return { sent: recipients.length, attempted: recipients.length };
+  } catch (error) {
+    logger.error("Failed to send broadcast email", { error: String(error) });
+    return { sent: 0, attempted: recipients.length };
+  }
+}

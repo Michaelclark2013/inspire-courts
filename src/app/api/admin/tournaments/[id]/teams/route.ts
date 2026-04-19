@@ -108,21 +108,48 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 
   const { id } = await params;
+  const tournamentId = Number(id);
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
+  }
 
   try {
     const body = await request.json();
     const { teamEntryId, seed, poolGroup, eliminated, players } = body;
 
-    if (!teamEntryId) {
-      return NextResponse.json({ error: "teamEntryId required" }, { status: 400 });
+    if (!teamEntryId || !Number.isInteger(teamEntryId) || teamEntryId <= 0) {
+      return NextResponse.json({ error: "Valid teamEntryId required" }, { status: 400 });
+    }
+
+    // Pre-flight: return actionable errors instead of a generic 500.
+    const [existing] = await db
+      .select({ id: tournamentTeams.id, tournamentId: tournamentTeams.tournamentId })
+      .from(tournamentTeams)
+      .where(eq(tournamentTeams.id, teamEntryId))
+      .limit(1);
+    if (!existing) {
+      return NextResponse.json({ error: "Team entry not found" }, { status: 404 });
+    }
+    if (existing.tournamentId !== tournamentId) {
+      return NextResponse.json(
+        { error: "Team entry does not belong to this tournament" },
+        { status: 403 }
+      );
     }
 
     const updates: Record<string, unknown> = {};
-    if (seed !== undefined) updates.seed = seed;
-    if (poolGroup !== undefined) updates.poolGroup = poolGroup;
-    if (eliminated !== undefined) updates.eliminated = eliminated;
+    if (seed !== undefined) {
+      if (!Number.isInteger(seed) || seed <= 0) {
+        return NextResponse.json({ error: "seed must be a positive integer" }, { status: 400 });
+      }
+      updates.seed = seed;
+    }
+    if (poolGroup !== undefined) {
+      updates.poolGroup =
+        typeof poolGroup === "string" && poolGroup ? poolGroup.trim().slice(0, 20) : null;
+    }
+    if (eliminated !== undefined) updates.eliminated = Boolean(eliminated);
     if (players !== undefined) {
-      // players is an array of {name, jersey} — validate and sanitize
       if (!Array.isArray(players)) {
         return NextResponse.json({ error: "players must be an array" }, { status: 400 });
       }
@@ -135,13 +162,17 @@ export async function PUT(request: NextRequest, { params }: Params) {
       updates.players = JSON.stringify(sanitized);
     }
 
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+    }
+
     await db
       .update(tournamentTeams)
       .set(updates)
       .where(eq(tournamentTeams.id, teamEntryId));
 
     revalidatePath(`/admin/tournaments/${id}`);
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, id: teamEntryId });
   } catch (err) {
     logger.error("Failed to update tournament team", { error: String(err) });
     return NextResponse.json({ error: "Failed to update team" }, { status: 500 });

@@ -191,6 +191,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     const rosterChanged = updates.players !== undefined;
     await recordAudit({
       session,
+      request,
       action: rosterChanged ? "tournament_team.roster_updated" : "tournament_team.updated",
       entityType: "tournament_team",
       entityId: teamEntryId,
@@ -294,6 +295,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
     await recordAudit({
       session,
+      request,
       action: "tournament_team.deleted",
       entityType: "tournament_team",
       entityId: teamEntryId,

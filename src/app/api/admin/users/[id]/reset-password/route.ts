@@ -20,7 +20,7 @@ type Params = { params: Promise<{ id: string }> };
 //
 // Always returns 200 with { success: true }; never leaks whether the
 // target id exists. Emits user.password_reset_triggered audit entry.
-export async function POST(_request: NextRequest, { params }: Params) {
+export async function POST(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -101,6 +101,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
 
     await recordAudit({
       session,
+      request,
       action: "user.password_reset_triggered",
       entityType: "user",
       entityId: userId,

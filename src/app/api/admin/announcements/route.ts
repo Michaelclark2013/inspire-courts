@@ -123,6 +123,7 @@ export async function POST(request: NextRequest) {
 
     await recordAudit({
       session,
+      request,
       action: "announcement.created",
       entityType: "announcement",
       entityId: announcement.id,
@@ -199,6 +200,7 @@ export async function PUT(request: NextRequest) {
 
     await recordAudit({
       session,
+      request,
       action: "announcement.updated",
       entityType: "announcement",
       entityId: before.id,
@@ -238,6 +240,7 @@ export async function DELETE(request: NextRequest) {
     }
     await recordAudit({
       session,
+      request,
       action: "announcement.deleted",
       entityType: "announcement",
       entityId: deleted[0].id,

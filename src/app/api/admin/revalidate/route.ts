@@ -96,6 +96,7 @@ export async function POST(request: NextRequest) {
     revalidatePath(path);
     await recordAudit({
       session,
+      request,
       action: "admin.revalidate",
       entityType: "cache",
       entityId: path,

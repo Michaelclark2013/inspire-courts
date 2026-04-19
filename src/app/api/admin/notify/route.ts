@@ -107,6 +107,7 @@ export async function POST(request: NextRequest) {
 
     await recordAudit({
       session,
+      request,
       action: "notify.broadcast",
       entityType: "broadcast",
       entityId: tournamentId ?? null,

@@ -203,6 +203,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
     await recordAudit({
       session,
+      request,
       action: "tournament.bracket_generated",
       entityType: "tournament",
       entityId: tournamentId,

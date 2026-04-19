@@ -233,6 +233,7 @@ export async function POST(request: NextRequest) {
 
     await recordAudit({
       session,
+      request,
       action: "game.created",
       entityType: "game",
       entityId: game.id,
@@ -306,6 +307,7 @@ async function updateGameScore(request: NextRequest) {
         await db.update(games).set({ status }).where(eq(games.id, gameId));
         await recordAudit({
           session,
+          request,
           action: "game.status_changed",
           entityType: "game",
           entityId: gameId,
@@ -334,6 +336,7 @@ async function updateGameScore(request: NextRequest) {
       });
       await recordAudit({
         session,
+        request,
         action: "game.score_entered",
         entityType: "game",
         entityId: gameId,
@@ -406,6 +409,7 @@ export async function DELETE(request: NextRequest) {
 
     await recordAudit({
       session,
+      request,
       action: "game.deleted",
       entityType: "game",
       entityId: gameId,

@@ -200,6 +200,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   const statusChanged = updates.status && updates.status !== existing.status;
   await recordAudit({
     session,
+    request,
     action: statusChanged ? "tournament.status_changed" : "tournament.updated",
     entityType: "tournament",
     entityId: tournamentId,
@@ -220,7 +221,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 // DELETE /api/admin/tournaments/[id] — delete draft tournament
-export async function DELETE(_request: NextRequest, { params }: Params) {
+export async function DELETE(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -263,6 +264,7 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
 
   await recordAudit({
     session,
+    request,
     action: "tournament.deleted",
     entityType: "tournament",
     entityId: tournamentId,

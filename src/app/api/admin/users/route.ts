@@ -159,6 +159,7 @@ export async function POST(request: NextRequest) {
     // were previously unlogged. Now every create lands in the audit trail.
     await recordAudit({
       session,
+      request,
       action: "user.created",
       entityType: "user",
       entityId: newUser.id,
@@ -262,6 +263,7 @@ export async function PUT(request: NextRequest) {
     if (changed) {
       await recordAudit({
         session,
+        request,
         action: role && role !== before.role ? "user.role_changed" : "user.updated",
         entityType: "user",
         entityId: numericId,
@@ -334,6 +336,7 @@ export async function DELETE(request: NextRequest) {
 
     await recordAudit({
       session,
+      request,
       action: "user.deleted",
       entityType: "user",
       entityId: numId,

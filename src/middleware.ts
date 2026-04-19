@@ -7,10 +7,19 @@ const ADMIN_ROLES = ["admin", "staff", "ref", "front_desk"];
 // Roles that can access /portal routes
 const PORTAL_ROLES = ["admin", "coach", "parent"];
 
+// Minimal CSP for middleware-originated responses (errors, redirects, and
+// the final NextResponse.next passthrough). Tight on script-src because
+// JSON errors never run inline script. next.config.ts can override with a
+// broader per-page policy where needed.
+const CSP_HEADER =
+  "default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'";
+
 // Apply the standard security header set to any middleware response.
-// Keeps 401/redirect responses from missing headers the final NextResponse.next
-// path already sets.
-function applySecurityHeaders(response: NextResponse): NextResponse {
+// Keeps 401/redirect responses from missing headers the final
+// NextResponse.next path already sets. Also stamps a per-request
+// X-Request-Id so client errors, server logs, and audit rows can be
+// correlated by a single token.
+function applySecurityHeaders(response: NextResponse, requestId?: string): NextResponse {
   response.headers.set("X-Frame-Options", "SAMEORIGIN");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -19,11 +28,19 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
     "Strict-Transport-Security",
     "max-age=31536000; includeSubDomains"
   );
+  response.headers.set("Content-Security-Policy", CSP_HEADER);
+  if (requestId) response.headers.set("X-Request-Id", requestId);
   return response;
 }
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Use an existing upstream X-Request-Id if present (e.g. from a
+  // load balancer), otherwise generate a fresh UUID. This token is
+  // echoed in the response so clients can quote it when reporting
+  // errors, and server logs + audit rows can be grep'd for it.
+  const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID();
 
   // Short-circuit CORS preflight on /api/admin and /api/portal before
   // touching the session store. Without this, every OPTIONS preflight
@@ -35,12 +52,12 @@ export async function middleware(request: NextRequest) {
         "Access-Control-Allow-Origin": request.headers.get("origin") ?? "*",
         "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
         "Access-Control-Allow-Headers":
-          "Content-Type, Authorization, If-Match, If-None-Match, Idempotency-Key, X-Cron-Secret",
+          "Content-Type, Authorization, If-Match, If-None-Match, Idempotency-Key, X-Cron-Secret, X-Request-Id",
         "Access-Control-Max-Age": "600",
         Vary: "Origin",
       },
     });
-    return applySecurityHeaders(res);
+    return applySecurityHeaders(res, requestId);
   }
 
   const token = await getToken({ req: request });
@@ -49,7 +66,8 @@ export async function middleware(request: NextRequest) {
     applySecurityHeaders(
       isApiRoute
         ? NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-        : NextResponse.redirect(new URL("/login", request.url))
+        : NextResponse.redirect(new URL("/login", request.url)),
+      requestId
     );
 
   // Offline pages — always public
@@ -66,7 +84,7 @@ export async function middleware(request: NextRequest) {
     if (!token) return unauthorizedResponse();
     if (!ADMIN_ROLES.includes(token.role as string)) {
       if (!isApiRoute && PORTAL_ROLES.includes(token.role as string)) {
-        return applySecurityHeaders(NextResponse.redirect(new URL("/portal", request.url)));
+        return applySecurityHeaders(NextResponse.redirect(new URL("/portal", request.url)), requestId);
       }
       return unauthorizedResponse();
     }
@@ -90,13 +108,13 @@ export async function middleware(request: NextRequest) {
     if (!token) return unauthorizedResponse();
     if (!PORTAL_ROLES.includes(token.role as string)) {
       if (!isApiRoute && ADMIN_ROLES.includes(token.role as string)) {
-        return applySecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)));
+        return applySecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)), requestId);
       }
       return unauthorizedResponse();
     }
   }
 
-  return applySecurityHeaders(NextResponse.next());
+  return applySecurityHeaders(NextResponse.next(), requestId);
 }
 
 export const config = {

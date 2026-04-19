@@ -131,21 +131,30 @@ export async function PATCH(request: NextRequest) {
 
     const affectedIds = pendingUsers.map((u) => u.id);
 
-    if (action === "approve") {
-      await db
-        .update(users)
-        .set({ approved: true, updatedAt: new Date().toISOString() })
-        .where(inArray(users.id, affectedIds));
-    } else {
-      // Reject = delete the user
-      await db.delete(users).where(inArray(users.id, affectedIds));
-    }
+    // All-or-nothing: the approve/reject mutation AND the per-user audit
+    // entries must either all commit or all roll back. Previously the
+    // update ran outside the audit loop — a mid-loop crash would leave
+    // some users flipped with no audit entry and others with partial
+    // history.
+    await db.transaction(async (tx) => {
+      if (action === "approve") {
+        await tx
+          .update(users)
+          .set({ approved: true, updatedAt: new Date().toISOString() })
+          .where(inArray(users.id, affectedIds));
+      } else {
+        await tx.delete(users).where(inArray(users.id, affectedIds));
+      }
+    });
 
     // Audit every affected user individually so the log answers
     // "who approved/rejected user X" directly without parsing a list.
+    // Still fire-and-forget — a rare audit failure shouldn't 500 the
+    // already-committed mutation.
     for (const u of pendingUsers) {
       await recordAudit({
         session,
+        request,
         action: action === "approve" ? "user.approved" : "user.rejected",
         entityType: "user",
         entityId: u.id,

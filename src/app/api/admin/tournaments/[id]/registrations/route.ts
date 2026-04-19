@@ -371,6 +371,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (targetIds.length === 1) {
       await recordAudit({
         session,
+        request,
         action: "registration.updated",
         entityType: "tournament_registration",
         entityId: targetIds[0],
@@ -380,6 +381,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     } else if (targetIds.length > 1) {
       await recordAudit({
         session,
+        request,
         action: "registration.bulk_update",
         entityType: "tournament_registration",
         entityId: targetIds.join(","),
@@ -466,27 +468,32 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "No matching registrations" }, { status: 404 });
     }
 
-    // Cascade: remove every matching tournament_teams row in one query.
+    // Cascade atomically: tournament_teams cleanup + registration delete
+    // must either both succeed or both fail. Previously a crash between
+    // the two would leave registrations whose team rows had been removed,
+    // silently corrupting bracket seedings.
     const teamNames = Array.from(new Set(existing.map((r) => r.teamName)));
-    if (teamNames.length > 0) {
-      await db
-        .delete(tournamentTeams)
-        .where(
-          and(
-            eq(tournamentTeams.tournamentId, existing[0].tournamentId),
-            inArray(tournamentTeams.teamName, teamNames)
-          )
-        );
-    }
-
-    await db
-      .delete(tournamentRegistrations)
-      .where(inArray(tournamentRegistrations.id, targetIds));
+    await db.transaction(async (tx) => {
+      if (teamNames.length > 0) {
+        await tx
+          .delete(tournamentTeams)
+          .where(
+            and(
+              eq(tournamentTeams.tournamentId, existing[0].tournamentId),
+              inArray(tournamentTeams.teamName, teamNames)
+            )
+          );
+      }
+      await tx
+        .delete(tournamentRegistrations)
+        .where(inArray(tournamentRegistrations.id, targetIds));
+    });
 
     // Audit each deletion individually so the log stays useful for lookups.
     for (const row of existing) {
       await recordAudit({
         session,
+        request,
         action: "registration.deleted",
         entityType: "tournament_registration",
         entityId: row.id,

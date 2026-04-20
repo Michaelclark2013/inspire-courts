@@ -346,3 +346,24 @@ export const auditLog = sqliteTable("audit_log", {
   index("audit_log_entity_idx").on(table.entityType, table.entityId),
   index("audit_log_created_idx").on(table.createdAt),
 ]);
+
+// Site content — one row per page. `content_json` holds the full
+// PageContent blob (sections + fields + list items) so the
+// /admin/content editor can round-trip a page in one update.
+//
+// Why not the filesystem? The previous content.ts persisted to a
+// local content.json via fs.writeFileSync, which silently no-ops on
+// Vercel's read-only serverless filesystem — every save in production
+// was being dropped. Moving to the DB makes admin edits actually stick
+// across requests + deploys.
+export const siteContent = sqliteTable("site_content", {
+  pageId: text("page_id").primaryKey(),
+  contentJson: text("content_json").notNull(),
+  label: text("label").notNull(),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedBy: integer("updated_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+});

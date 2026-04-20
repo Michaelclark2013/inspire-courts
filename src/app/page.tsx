@@ -162,8 +162,8 @@ const FOCUS_RING =
 const FOCUS_RING_ON_DARK =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy";
 
-export default function Home() {
-  const page = getPageContent("home");
+export default async function Home() {
+  const page = await getPageContent("home");
 
   return (
     <>

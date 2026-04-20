@@ -117,8 +117,8 @@ const SKILLS = [
   { icon: Clock, title: "Game Situations", desc: "Late-game scenarios, pressure free throws, and decision-making under fatigue." },
 ];
 
-export default function TrainingPage() {
-  const page = getPageContent("training");
+export default async function TrainingPage() {
+  const page = await getPageContent("training");
 
   const cmsTrainingOptions = page ? getList(page, "Training Options") : [];
 

@@ -70,8 +70,8 @@ const sportsOrgSchema = {
   sport: ["Basketball", "Volleyball", "Futsal", "Jiu-Jitsu"],
 };
 
-export default function AboutPage() {
-  const page = getPageContent("about");
+export default async function AboutPage() {
+  const page = await getPageContent("about");
 
   return (
     <>

@@ -156,8 +156,8 @@ const INFO_SECTIONS = [
   },
 ];
 
-export default function GameDayPage() {
-  const page = getPageContent("gameday");
+export default async function GameDayPage() {
+  const page = await getPageContent("gameday");
 
   return (
     <>

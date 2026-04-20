@@ -1,9 +1,8 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import path from "path";
 import { FACILITY_EMAIL } from "@/lib/constants";
 import { logger } from "@/lib/logger";
-
-const CONTENT_FILE = path.join(process.cwd(), "content.json");
+import { db } from "@/lib/db";
+import { siteContent } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 // Each page section can have text fields, images, and list items
 export interface ContentField {
@@ -415,32 +414,93 @@ const DEFAULT_CONTENT: SiteContent = {
   },
 };
 
-export function getContent(): SiteContent {
-  try {
-    if (existsSync(CONTENT_FILE)) {
-      const raw = readFileSync(CONTENT_FILE, "utf-8");
-      const saved = JSON.parse(raw);
-      // Merge saved content with defaults to pick up new pages/sections
-      if (saved.pages) {
-        return saved as SiteContent;
-      }
-      // Legacy format — return defaults
-      return DEFAULT_CONTENT;
-    }
-  } catch (e) {
-    logger.error("Failed to read content file", { error: String(e) });
-  }
+/**
+ * Re-export the defaults so tests / seeds can reference the canonical
+ * page shape without having to import the file path directly.
+ */
+export function getDefaultContent(): SiteContent {
   return DEFAULT_CONTENT;
 }
 
-export function saveContent(content: SiteContent): void {
-  writeFileSync(CONTENT_FILE, JSON.stringify(content, null, 2), "utf-8");
+/**
+ * Load the site content from the database. Falls back to the
+ * hard-coded DEFAULT_CONTENT on read failure or when a page has no
+ * row yet — so first-time deploys render with the defaults until an
+ * admin edits a page.
+ *
+ * Why DB-backed? The previous implementation persisted to a
+ * local content.json via fs.writeFileSync. That silently no-ops on
+ * Vercel's read-only serverless filesystem, meaning every admin save
+ * in production was dropped on the floor. Storing per-page blobs in
+ * SQLite (Turso) makes saves durable across requests + deploys.
+ */
+export async function getContent(): Promise<SiteContent> {
+  try {
+    const rows = await db
+      .select({ pageId: siteContent.pageId, contentJson: siteContent.contentJson })
+      .from(siteContent);
+    if (rows.length === 0) {
+      return DEFAULT_CONTENT;
+    }
+    // Start from defaults so pages the admin hasn't touched still
+    // render; overlay DB rows on top.
+    const merged: SiteContent = {
+      pages: { ...DEFAULT_CONTENT.pages },
+    };
+    for (const row of rows) {
+      try {
+        const parsed = JSON.parse(row.contentJson) as PageContent;
+        merged.pages[row.pageId] = parsed;
+      } catch (err) {
+        logger.warn("site_content row has invalid JSON, falling back to default", {
+          pageId: row.pageId,
+          error: String(err),
+        });
+      }
+    }
+    return merged;
+  } catch (err) {
+    logger.error("Failed to read site_content", { error: String(err) });
+    return DEFAULT_CONTENT;
+  }
+}
+
+/**
+ * Persist the site content blob. Upserts one row per page so the
+ * editor can save a single page without racing the others. `updatedBy`
+ * is optional (non-request call sites like migrations may omit it).
+ */
+export async function saveContent(
+  content: SiteContent,
+  updatedBy?: number | null
+): Promise<void> {
+  const nowIso = new Date().toISOString();
+  for (const [pageId, page] of Object.entries(content.pages)) {
+    await db
+      .insert(siteContent)
+      .values({
+        pageId,
+        contentJson: JSON.stringify(page),
+        label: page.label,
+        updatedAt: nowIso,
+        updatedBy: updatedBy ?? null,
+      })
+      .onConflictDoUpdate({
+        target: siteContent.pageId,
+        set: {
+          contentJson: JSON.stringify(page),
+          label: page.label,
+          updatedAt: nowIso,
+          updatedBy: updatedBy ?? null,
+        },
+      });
+  }
 }
 
 // ── Helper functions for page content access ──
 
-export function getPageContent(pageId: string): PageContent | undefined {
-  const content = getContent();
+export async function getPageContent(pageId: string): Promise<PageContent | undefined> {
+  const content = await getContent();
   return content.pages[pageId];
 }
 

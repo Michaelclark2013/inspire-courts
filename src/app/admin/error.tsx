@@ -13,7 +13,6 @@ export default function AdminError({
 }) {
   useEffect(() => {
     // Best-effort log for observability
-    // eslint-disable-next-line no-console
     console.error("Admin dashboard error", error);
   }, [error]);
 

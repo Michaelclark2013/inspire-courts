@@ -14,7 +14,9 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronsUpDown,
-  Image,
+  // Alias to avoid the jsx-a11y/alt-text rule confusing this Lucide
+  // icon with the HTML <img> element (it's decorative, aria-hidden).
+  Image as ImageIcon,
   Type,
   AlignLeft,
   List,
@@ -552,7 +554,7 @@ export default function ContentEditorPage() {
                     <div key={key}>
                       <div className="flex items-center gap-2 mb-2">
                         {field.type === "image" ? (
-                          <Image className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" aria-hidden="true" />
+                          <ImageIcon className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" aria-hidden="true" />
                         ) : field.type === "textarea" ? (
                           <AlignLeft className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" aria-hidden="true" />
                         ) : (
@@ -635,7 +637,7 @@ export default function ContentEditorPage() {
                       onClick={() => addField(activePage, sIdx, "image")}
                       className="flex items-center gap-1.5 text-navy/40 hover:text-navy text-xs font-bold uppercase tracking-wide bg-off-white hover:bg-light-gray px-3 py-2 rounded-lg transition-colors"
                     >
-                      <Image className="w-3 h-3" aria-hidden="true" /> Image
+                      <ImageIcon className="w-3 h-3" aria-hidden="true" /> Image
                     </button>
                   </div>
 

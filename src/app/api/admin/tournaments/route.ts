@@ -9,6 +9,9 @@ import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
+import { tournamentCreateSchema } from "@/lib/schemas";
+import { parseJsonBody } from "@/lib/api-helpers";
+import { withTiming } from "@/lib/timing";
 
 // Safe sortable columns — prevents ORDER BY injection via ?sort=.
 const TOURNAMENT_SORT_COLUMNS = {
@@ -26,7 +29,7 @@ const VALID_STATUS = ["draft", "published", "active", "completed"] as const;
 //   ?dir=asc|desc                               default desc for date columns
 // Response: { data: Tournament[], total }
 // Previously returned a bare array with no total/filter/sort.
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.tournaments.list", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -95,10 +98,10 @@ export async function GET(request: NextRequest) {
     { data: enriched, total: Number(total) || 0 },
     { headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=30" } }
   );
-}
+});
 
 // POST /api/admin/tournaments — create a tournament
-export async function POST(request: NextRequest) {
+export const POST = withTiming("admin.tournaments.create", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -126,12 +129,8 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  let body: Record<string, unknown>;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
+  const parsed = await parseJsonBody(request, tournamentCreateSchema);
+  if (!parsed.ok) return parsed.response;
 
   const {
     name,
@@ -148,23 +147,7 @@ export async function POST(request: NextRequest) {
     registrationDeadline,
     registrationOpen,
     description,
-  } = body as Record<string, unknown>;
-
-  if (!name || !startDate) {
-    return NextResponse.json(
-      { error: "Name and start date are required" },
-      { status: 400 }
-    );
-  }
-
-  if (typeof name !== "string" || name.trim().length === 0 || name.length > 200) {
-    return NextResponse.json({ error: "Tournament name must be 1–200 characters" }, { status: 400 });
-  }
-
-  const validFormats = ["single_elim", "double_elim", "round_robin", "pool_play"];
-  if (format && !validFormats.includes(format as string)) {
-    return NextResponse.json({ error: "Invalid format" }, { status: 400 });
-  }
+  } = parsed.data;
 
   const userId = session.user.id ? Number(session.user.id) : null;
 
@@ -172,20 +155,20 @@ export async function POST(request: NextRequest) {
     const [tournament] = await db
       .insert(tournaments)
       .values({
-        name: String(name).trim().slice(0, 200),
-        startDate: String(startDate),
-        endDate: endDate ? String(endDate) : null,
-        location: location ? String(location).slice(0, 500) : null,
-        format: (validFormats.includes(format as string) ? format : "single_elim") as "single_elim" | "double_elim" | "round_robin" | "pool_play",
-        divisions: Array.isArray(divisions) ? JSON.stringify(divisions) : null,
-        courts: Array.isArray(courts) ? JSON.stringify(courts) : null,
-        gameLength: typeof gameLength === "number" ? gameLength : 40,
-        breakLength: typeof breakLength === "number" ? breakLength : 10,
-        entryFee: typeof entryFee === "number" ? entryFee : null,
-        maxTeamsPerDivision: typeof maxTeamsPerDivision === "number" ? maxTeamsPerDivision : null,
-        registrationDeadline: registrationDeadline ? String(registrationDeadline) : null,
+        name: name.trim().slice(0, 200),
+        startDate,
+        endDate: endDate || null,
+        location: location ? location.slice(0, 500) : null,
+        format: format ?? "single_elim",
+        divisions: divisions ? JSON.stringify(divisions) : null,
+        courts: courts ? JSON.stringify(courts) : null,
+        gameLength: gameLength ?? 40,
+        breakLength: breakLength ?? 10,
+        entryFee: entryFee ?? null,
+        maxTeamsPerDivision: maxTeamsPerDivision ?? null,
+        registrationDeadline: registrationDeadline || null,
         registrationOpen: Boolean(registrationOpen),
-        description: description ? String(description).slice(0, 5000) : null,
+        description: description ? description.slice(0, 5000) : null,
         status: "draft",
         createdBy: userId && !isNaN(userId) ? userId : null,
       })
@@ -199,4 +182,4 @@ export async function POST(request: NextRequest) {
     logger.error("Failed to create tournament", { error: String(err) });
     return NextResponse.json({ error: "Failed to create tournament" }, { status: 500 });
   }
-}
+});

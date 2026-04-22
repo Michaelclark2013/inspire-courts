@@ -11,6 +11,9 @@ import { asc, desc, eq, and, inArray, sql, type SQL } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { withTiming } from "@/lib/timing";
+import { registrationCreateSchema, registrationUpdateSchema } from "@/lib/schemas";
+import { parseJsonBody } from "@/lib/api-helpers";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -47,7 +50,7 @@ const REG_SORT_COLUMNS = {
 //   ?page=             1-indexed page (default 1)
 //   ?limit=            rows per page (default 50, max 200)
 // JSON response: { data, total, page, limit, totalPages }
-export async function GET(request: NextRequest, { params }: Params) {
+export const GET = withTiming("admin.registrations.list", async (request: NextRequest, { params }: Params) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -87,10 +90,33 @@ export async function GET(request: NextRequest, { params }: Params) {
       : asc(sortCol);
 
   try {
+    // Scoped selector shared by CSV + paginated JSON paths — excludes
+    // Square payment tokens (squarePaymentId, squareOrderId, squareCheckoutUrl)
+    // that the admin UI never needs and that shouldn't ride on every
+    // list-view response.
+    const regSelectColumns = {
+      id: tournamentRegistrations.id,
+      tournamentId: tournamentRegistrations.tournamentId,
+      teamName: tournamentRegistrations.teamName,
+      coachName: tournamentRegistrations.coachName,
+      coachEmail: tournamentRegistrations.coachEmail,
+      coachPhone: tournamentRegistrations.coachPhone,
+      division: tournamentRegistrations.division,
+      playerCount: tournamentRegistrations.playerCount,
+      entryFee: tournamentRegistrations.entryFee,
+      paymentStatus: tournamentRegistrations.paymentStatus,
+      status: tournamentRegistrations.status,
+      rosterSubmitted: tournamentRegistrations.rosterSubmitted,
+      waiversSigned: tournamentRegistrations.waiversSigned,
+      notes: tournamentRegistrations.notes,
+      createdAt: tournamentRegistrations.createdAt,
+      updatedAt: tournamentRegistrations.updatedAt,
+    };
+
     if (format === "csv") {
       // CSV: no pagination — admin wants the full filtered set.
       const regs = await db
-        .select()
+        .select(regSelectColumns)
         .from(tournamentRegistrations)
         .where(whereClause)
         .orderBy(orderBy);
@@ -132,6 +158,7 @@ export async function GET(request: NextRequest, { params }: Params) {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="tournament-${tournamentId}-registrations.csv"`,
           "Cache-Control": "no-store",
+          Vary: "Accept-Encoding",
         },
       });
     }
@@ -144,7 +171,7 @@ export async function GET(request: NextRequest, { params }: Params) {
 
     const [pagedRegs, [{ total }]] = await Promise.all([
       db
-        .select()
+        .select(regSelectColumns)
         .from(tournamentRegistrations)
         .where(whereClause)
         .orderBy(orderBy)
@@ -167,7 +194,7 @@ export async function GET(request: NextRequest, { params }: Params) {
     logger.error("Failed to fetch registrations", { tournamentId, error: String(err) });
     return NextResponse.json({ error: "Failed to fetch registrations" }, { status: 500 });
   }
-}
+});
 
 // POST /api/admin/tournaments/[id]/registrations — admin-create (walk-in / comp)
 export async function POST(request: NextRequest, { params }: Params) {
@@ -182,43 +209,23 @@ export async function POST(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
   }
 
+  const parsed = await parseJsonBody(request, registrationCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { teamName, coachName, coachEmail, division, paymentStatus, notes } = parsed.data;
+  const safePaymentStatus = paymentStatus ?? "waived";
+
   try {
-    const body = await request.json();
-
-    const { teamName, coachName, coachEmail, division, paymentStatus, notes } =
-      body as {
-        teamName: string;
-        coachName: string;
-        coachEmail?: string;
-        division?: string;
-        paymentStatus?: string;
-        notes?: string;
-      };
-
-    if (!teamName || !coachName) {
-      return NextResponse.json(
-        { error: "Team name and coach name required" },
-        { status: 400 }
-      );
-    }
-
-    // Length caps + sanitization — previously raw strings went straight
-    // to the DB. notes in particular was unbounded.
-    if (notes !== undefined && notes !== null && (typeof notes !== "string" || notes.length > 2000)) {
-      return NextResponse.json({ error: "notes must be ≤2000 characters" }, { status: 400 });
-    }
-
     const [reg] = await db
       .insert(tournamentRegistrations)
       .values({
         tournamentId,
-        teamName: String(teamName).trim().slice(0, 200),
-        coachName: String(coachName).trim().slice(0, 200),
-        coachEmail: coachEmail ? String(coachEmail).trim().toLowerCase().slice(0, 255) : "",
-        division: division ? String(division).trim().slice(0, 50) : null,
-        paymentStatus: (paymentStatus as "pending" | "paid" | "waived") || "waived",
+        teamName: teamName.trim().slice(0, 200),
+        coachName: coachName.trim().slice(0, 200),
+        coachEmail: coachEmail ? coachEmail.trim().toLowerCase().slice(0, 255) : "",
+        division: division ? division.trim().slice(0, 50) : null,
+        paymentStatus: safePaymentStatus,
         status: "approved",
-        notes: notes ? String(notes).trim().slice(0, 2000) : null,
+        notes: notes ? notes.trim().slice(0, 2000) : null,
       })
       .returning();
 
@@ -235,9 +242,29 @@ export async function POST(request: NextRequest, { params }: Params) {
       seed: existingTeams.length + 1,
     });
 
+    // Walk-in registrations created by an admin skip the public
+     // payment/approval flow and go straight to approved+waived, so they're
+    // a high-consequence audit target (free entry granted by an admin).
+    await recordAudit({
+      session,
+      request,
+      action: "registration.created",
+      entityType: "tournament_registration",
+      entityId: reg.id,
+      before: null,
+      after: {
+        tournamentId: reg.tournamentId,
+        teamName: reg.teamName,
+        coachName: reg.coachName,
+        coachEmail: reg.coachEmail,
+        paymentStatus: reg.paymentStatus,
+        status: reg.status,
+      },
+    });
+
     revalidatePath(`/admin/tournaments/${id}`);
     revalidatePath(`/tournaments/${id}`);
-    return NextResponse.json(reg);
+    return NextResponse.json(reg, { status: 201 });
   } catch (err) {
     logger.error("Failed to create registration", { tournamentId, error: String(err) });
     return NextResponse.json({ error: "Failed to create registration" }, { status: 500 });
@@ -253,38 +280,26 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
   const { id } = await params;
 
+  const parsed = await parseJsonBody(request, registrationUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { registrationId, ids, status, paymentStatus, notes } = parsed.data;
+
+  const targetIds: number[] = Array.isArray(ids) && ids.length > 0
+    ? ids
+    : registrationId
+      ? [registrationId]
+      : [];
+
+  const updates: Record<string, unknown> = {
+    updatedAt: new Date().toISOString(),
+  };
+  if (status) updates.status = status;
+  if (paymentStatus) updates.paymentStatus = paymentStatus;
+  if (notes !== undefined) {
+    updates.notes = notes === null ? null : notes.trim().slice(0, 2000);
+  }
+
   try {
-    const body = await request.json();
-    const { registrationId, ids, status, paymentStatus, notes } = body as {
-      registrationId?: number;
-      ids?: number[];
-      status?: string;
-      paymentStatus?: string;
-      notes?: string;
-    };
-
-    // Accept either a single id (legacy) or a bulk `ids` array.
-    const targetIds: number[] = Array.isArray(ids) && ids.length > 0
-      ? ids.filter((n) => Number.isInteger(n) && n > 0)
-      : registrationId && Number.isInteger(registrationId) && registrationId > 0
-        ? [registrationId]
-        : [];
-
-    if (targetIds.length === 0) {
-      return NextResponse.json({ error: "registrationId or ids[] required" }, { status: 400 });
-    }
-
-    const updates: Record<string, unknown> = {
-      updatedAt: new Date().toISOString(),
-    };
-    if (status) updates.status = status;
-    if (paymentStatus) updates.paymentStatus = paymentStatus;
-    if (notes !== undefined) {
-      if (notes !== null && (typeof notes !== "string" || notes.length > 2000)) {
-        return NextResponse.json({ error: "notes must be ≤2000 characters" }, { status: 400 });
-      }
-      updates.notes = notes === null ? null : String(notes).trim().slice(0, 2000);
-    }
 
     // Snapshot BEFORE the write so the audit log can answer "what was the
     // status/payment before this approval?". Previously `before: null`.
@@ -348,6 +363,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (targetIds.length === 1) {
       await recordAudit({
         session,
+        request,
         action: "registration.updated",
         entityType: "tournament_registration",
         entityId: targetIds[0],
@@ -357,6 +373,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     } else if (targetIds.length > 1) {
       await recordAudit({
         session,
+        request,
         action: "registration.bulk_update",
         entityType: "tournament_registration",
         entityId: targetIds.join(","),
@@ -409,6 +426,13 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       // Ignore body parse errors; fall back to query param.
     }
 
+    const DELETE_BULK_CAP = 200;
+    if (bodyIds.length > DELETE_BULK_CAP) {
+      return NextResponse.json(
+        { error: `ids[] cannot exceed ${DELETE_BULK_CAP} entries; chunk the request` },
+        { status: 400 }
+      );
+    }
     const targetIds: number[] = bodyIds.length > 0
       ? bodyIds
       : (() => {
@@ -436,27 +460,32 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "No matching registrations" }, { status: 404 });
     }
 
-    // Cascade: remove every matching tournament_teams row in one query.
+    // Cascade atomically: tournament_teams cleanup + registration delete
+    // must either both succeed or both fail. Previously a crash between
+    // the two would leave registrations whose team rows had been removed,
+    // silently corrupting bracket seedings.
     const teamNames = Array.from(new Set(existing.map((r) => r.teamName)));
-    if (teamNames.length > 0) {
-      await db
-        .delete(tournamentTeams)
-        .where(
-          and(
-            eq(tournamentTeams.tournamentId, existing[0].tournamentId),
-            inArray(tournamentTeams.teamName, teamNames)
-          )
-        );
-    }
-
-    await db
-      .delete(tournamentRegistrations)
-      .where(inArray(tournamentRegistrations.id, targetIds));
+    await db.transaction(async (tx) => {
+      if (teamNames.length > 0) {
+        await tx
+          .delete(tournamentTeams)
+          .where(
+            and(
+              eq(tournamentTeams.tournamentId, existing[0].tournamentId),
+              inArray(tournamentTeams.teamName, teamNames)
+            )
+          );
+      }
+      await tx
+        .delete(tournamentRegistrations)
+        .where(inArray(tournamentRegistrations.id, targetIds));
+    });
 
     // Audit each deletion individually so the log stays useful for lookups.
     for (const row of existing) {
       await recordAudit({
         session,
+        request,
         action: "registration.deleted",
         entityType: "tournament_registration",
         entityId: row.id,

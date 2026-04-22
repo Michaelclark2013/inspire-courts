@@ -8,35 +8,44 @@ import { eq, and, or, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { teamAddSchema, teamUpdateSchema, teamDeleteSchema } from "@/lib/schemas";
+import { parseJsonBody, apiError, apiNotFound } from "@/lib/api-helpers";
+import { withTiming } from "@/lib/timing";
 
 type Params = { params: Promise<{ id: string }> };
 
 // GET /api/admin/tournaments/[id]/teams
-export async function GET(_request: NextRequest, { params }: Params) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export const GET = withTiming(
+  "admin.tournament.teams.list",
+  async (_request: NextRequest, { params }: Params) => {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+      return apiError("Unauthorized", 401);
+    }
 
-  const { id } = await params;
-  const tournamentId = Number(id);
-  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
-    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
-  }
+    const { id } = await params;
+    const tournamentId = Number(id);
+    if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+      return apiError("Invalid tournament id", 400);
+    }
 
-  try {
-    const teams = await db
-      .select()
-      .from(tournamentTeams)
-      .where(eq(tournamentTeams.tournamentId, tournamentId))
-      .orderBy(tournamentTeams.seed);
+    try {
+      const teams = await db
+        .select()
+        .from(tournamentTeams)
+        .where(eq(tournamentTeams.tournamentId, tournamentId))
+        .orderBy(tournamentTeams.seed);
 
-    return NextResponse.json(teams);
-  } catch (err) {
-    logger.error("Failed to fetch tournament teams", { tournamentId, error: String(err) });
-    return NextResponse.json({ error: "Failed to fetch teams" }, { status: 500 });
+      return NextResponse.json(teams);
+    } catch (err) {
+      logger.error("Failed to fetch tournament teams", {
+        tournamentId,
+        error: String(err),
+      });
+      return apiError("Failed to fetch teams", 500);
+    }
   }
-}
+);
 
 // POST /api/admin/tournaments/[id]/teams — add a team
 export async function POST(request: NextRequest, { params }: Params) {
@@ -51,28 +60,18 @@ export async function POST(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
   }
 
-  try {
-    const body = await request.json();
-    const { teamName, teamId, division, seed, poolGroup } = body;
-    if (!teamName || typeof teamName !== "string" || !teamName.trim()) {
-      return NextResponse.json({ error: "Team name is required" }, { status: 400 });
-    }
+  const parsed = await parseJsonBody(request, teamAddSchema);
+  if (!parsed.ok) return parsed.response;
+  const { teamName, teamId, division, seed, poolGroup } = parsed.data;
 
+  try {
     // Sanitize + cap lengths — teamName propagates into every games row
     // via the bracket generator, so unbounded input is a real risk.
     const safeTeamName = teamName.trim().slice(0, 100);
-    const safeDivision =
-      typeof division === "string" && division ? division.trim().slice(0, 50) : null;
-    const safePoolGroup =
-      typeof poolGroup === "string" && poolGroup ? poolGroup.trim().slice(0, 20) : null;
-    const safeTeamId =
-      teamId != null && Number.isInteger(Number(teamId)) && Number(teamId) > 0
-        ? Number(teamId)
-        : null;
-    const safeSeed =
-      seed != null && Number.isInteger(Number(seed)) && Number(seed) > 0
-        ? Number(seed)
-        : undefined;
+    const safeDivision = division ? division.trim().slice(0, 50) : null;
+    const safePoolGroup = poolGroup ? poolGroup.trim().slice(0, 20) : null;
+    const safeTeamId = teamId ?? null;
+    const safeSeed = seed;
 
     // Get current team count for auto-seeding
     const existing = await db
@@ -113,14 +112,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
   }
 
+  const parsed = await parseJsonBody(request, teamUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { teamEntryId, seed, poolGroup, eliminated, players } = parsed.data;
+
   try {
-    const body = await request.json();
-    const { teamEntryId, seed, poolGroup, eliminated, players } = body;
-
-    if (!teamEntryId || !Number.isInteger(teamEntryId) || teamEntryId <= 0) {
-      return NextResponse.json({ error: "Valid teamEntryId required" }, { status: 400 });
-    }
-
     // Pre-flight: return actionable errors instead of a generic 500.
     const [existing] = await db
       .select({ id: tournamentTeams.id, tournamentId: tournamentTeams.tournamentId })
@@ -128,42 +124,28 @@ export async function PUT(request: NextRequest, { params }: Params) {
       .where(eq(tournamentTeams.id, teamEntryId))
       .limit(1);
     if (!existing) {
-      return NextResponse.json({ error: "Team entry not found" }, { status: 404 });
+      return apiNotFound("Team entry not found");
     }
     if (existing.tournamentId !== tournamentId) {
-      return NextResponse.json(
-        { error: "Team entry does not belong to this tournament" },
-        { status: 403 }
-      );
+      return apiError("Team entry does not belong to this tournament", 403);
     }
 
     const updates: Record<string, unknown> = {};
-    if (seed !== undefined) {
-      if (!Number.isInteger(seed) || seed <= 0) {
-        return NextResponse.json({ error: "seed must be a positive integer" }, { status: 400 });
-      }
-      updates.seed = seed;
-    }
+    if (seed !== undefined) updates.seed = seed;
     if (poolGroup !== undefined) {
-      updates.poolGroup =
-        typeof poolGroup === "string" && poolGroup ? poolGroup.trim().slice(0, 20) : null;
+      updates.poolGroup = poolGroup ? poolGroup.trim().slice(0, 20) : null;
     }
-    if (eliminated !== undefined) updates.eliminated = Boolean(eliminated);
+    if (eliminated !== undefined) updates.eliminated = eliminated;
     if (players !== undefined) {
-      if (!Array.isArray(players)) {
-        return NextResponse.json({ error: "players must be an array" }, { status: 400 });
-      }
-      const sanitized = players
-        .filter((p) => p && typeof p.name === "string" && p.name.trim())
-        .map((p) => ({
-          name: String(p.name).trim().slice(0, 100),
-          jersey: p.jersey ? String(p.jersey).trim().slice(0, 10) : "",
-        }));
+      const sanitized = players.map((p) => ({
+        name: p.name.trim().slice(0, 100),
+        jersey: p.jersey ? p.jersey.trim().slice(0, 10) : "",
+      }));
       updates.players = JSON.stringify(sanitized);
     }
 
     if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+      return apiError("No fields to update", 400);
     }
 
     // Snapshot BEFORE the write so the audit log captures what changed.
@@ -191,6 +173,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     const rosterChanged = updates.players !== undefined;
     await recordAudit({
       session,
+      request,
       action: rosterChanged ? "tournament_team.roster_updated" : "tournament_team.updated",
       entityType: "tournament_team",
       entityId: teamEntryId,
@@ -233,12 +216,9 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       );
     }
 
-    const body = await request.json();
-    const { teamEntryId } = body;
-
-    if (!teamEntryId || !Number.isInteger(teamEntryId) || teamEntryId <= 0) {
-      return NextResponse.json({ error: "Valid teamEntryId required" }, { status: 400 });
-    }
+    const parsed = await parseJsonBody(request, teamDeleteSchema);
+    if (!parsed.ok) return parsed.response;
+    const { teamEntryId } = parsed.data;
 
     // Fetch the team row so we can (a) audit the deletion with a
     // snapshot and (b) clean up any placeholder bracket games that
@@ -294,6 +274,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
     await recordAudit({
       session,
+      request,
       action: "tournament_team.deleted",
       entityType: "tournament_team",
       entityId: teamEntryId,

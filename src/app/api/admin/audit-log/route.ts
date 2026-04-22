@@ -6,6 +6,7 @@ import { auditLog } from "@/lib/db/schema";
 import { and, desc, eq, lt, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";
+import { withTiming } from "@/lib/timing";
 
 // Cap how many rows a single request can pull regardless of ?limit — keeps
 // a malicious or buggy client from dumping the entire log in one hit.
@@ -25,7 +26,7 @@ const DEFAULT_LIMIT = 50;
 //                             CSV — bypasses the pagination cap for
 //                             compliance / export workflows. Ignores
 //                             ?limit and ?before.
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.audit_log", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   // Audit log is admin-only by design — it may contain PII in before/after
   // snapshots and is the source of truth for compliance questions.
@@ -116,6 +117,9 @@ export async function GET(request: NextRequest) {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="audit-log-${new Date().toISOString().slice(0, 10)}.csv"`,
           "Cache-Control": "no-store",
+          // Let edge compressors vary their response correctly and hint
+          // that gzip is welcome. 10k-row audit dumps are multiple MB.
+          Vary: "Accept-Encoding",
           ...(csvRows.length === CSV_MAX ? { "X-Row-Cap-Reached": "true" } : {}),
         },
       });
@@ -156,4 +160,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

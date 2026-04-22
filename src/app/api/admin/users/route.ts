@@ -8,6 +8,9 @@ import bcrypt from "bcryptjs";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { withTiming } from "@/lib/timing";
+import { userCreateSchema, userUpdateSchema } from "@/lib/schemas";
+import { parseJsonBody, apiNotFound } from "@/lib/api-helpers";
 
 // Whitelist of safe sortable columns. Never let clients inject arbitrary
 // column names into an ORDER BY clause.
@@ -24,7 +27,7 @@ const USER_SORT_COLUMNS = {
 // Response: { data: User[], total }
 // Note: non-paginated today (user counts are small) but the response shape
 // is pagination-ready so adding ?page+?limit later is non-breaking.
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.users.list", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -63,7 +66,7 @@ export async function GET(request: NextRequest) {
     logger.error("Failed to fetch users", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
   }
-}
+});
 
 // POST /api/admin/users — create a user
 export async function POST(request: NextRequest) {
@@ -83,44 +86,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const parsed = await parseJsonBody(request, userCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { email, name, password, role, phone, memberSince } = parsed.data;
+  const safeEmail = email.trim().toLowerCase().slice(0, 255);
+  const safeName = name.trim().slice(0, 200);
+  const safePhone = phone ? phone.trim().slice(0, 30) : null;
+
   try {
-    const body = await request.json();
-    const { email, name, password, role, phone, memberSince } = body;
-
-    if (!email || !name || !password || !role) {
-      return NextResponse.json(
-        { error: "Missing required fields: email, name, password, role" },
-        { status: 400 }
-      );
-    }
-
-    // Type + length validation. Bcrypt silently truncates passwords at
-    // 72 bytes so two different long passwords can collide — reject
-    // anything over 72 chars outright rather than accept a silent
-    // truncation that the user doesn't know about.
-    if (typeof email !== "string" || email.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: "Invalid email (max 255 chars)" }, { status: 400 });
-    }
-    if (typeof name !== "string" || name.length === 0 || name.length > 200) {
-      return NextResponse.json({ error: "Name must be 1–200 characters" }, { status: 400 });
-    }
-    if (typeof password !== "string" || password.length < 8 || password.length > 72) {
-      return NextResponse.json(
-        { error: "Password must be 8–72 characters (bcrypt truncates at 72 bytes)" },
-        { status: 400 }
-      );
-    }
-    if (phone !== undefined && phone !== null && (typeof phone !== "string" || phone.length > 30)) {
-      return NextResponse.json({ error: "Phone must be 30 characters or less" }, { status: 400 });
-    }
-
-    if (!["admin", "staff", "ref", "front_desk", "coach", "parent"].includes(role)) {
-      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
-    }
-
-    const safeEmail = email.trim().toLowerCase().slice(0, 255);
-    const safeName = name.trim().slice(0, 200);
-    const safePhone = phone ? String(phone).trim().slice(0, 30) : null;
 
     // Check if email already exists
     const [existing] = await db
@@ -155,6 +128,22 @@ export async function POST(request: NextRequest) {
         role: users.role,
       });
 
+    // Admin-created users — including ones granted the `admin` role —
+    // were previously unlogged. Now every create lands in the audit trail.
+    await recordAudit({
+      session,
+      request,
+      action: "user.created",
+      entityType: "user",
+      entityId: newUser.id,
+      before: null,
+      after: {
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role,
+      },
+    });
+
     return NextResponse.json(newUser, { status: 201 });
   } catch (err) {
     logger.error("Failed to create user", { error: String(err) });
@@ -169,32 +158,12 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const parsed = await parseJsonBody(request, userUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { id, role, name, phone, approved } = parsed.data;
+  const numericId = id;
+
   try {
-    const body = await request.json();
-    const { id, role, name, phone } = body;
-
-    const numericId = Number(id);
-    if (!id || !Number.isFinite(numericId) || numericId <= 0) {
-      return NextResponse.json({ error: "Missing or invalid user id" }, { status: 400 });
-    }
-
-    const validRoles = ["admin", "staff", "ref", "front_desk", "coach", "parent"];
-    if (role && !validRoles.includes(role)) {
-      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
-    }
-
-    // Mirror POST's type/length validation — previously name/phone were
-    // inserted unchecked on PUT, so an admin session could store an
-    // arbitrarily long or non-string value via PUT that POST would reject.
-    if (name !== undefined) {
-      if (typeof name !== "string" || name.trim().length === 0 || name.length > 200) {
-        return NextResponse.json({ error: "Name must be 1–200 characters" }, { status: 400 });
-      }
-    }
-    if (phone !== undefined && phone !== null && (typeof phone !== "string" || phone.length > 30)) {
-      return NextResponse.json({ error: "Phone must be a string ≤30 chars" }, { status: 400 });
-    }
-
     // Fetch the before-snapshot so the audit log can capture the change.
     const [before] = await db
       .select({
@@ -210,7 +179,7 @@ export async function PUT(request: NextRequest) {
       .limit(1);
 
     if (!before) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return apiNotFound("User not found");
     }
 
     const updates: Record<string, unknown> = {
@@ -218,8 +187,8 @@ export async function PUT(request: NextRequest) {
     };
     if (role) updates.role = role;
     if (name) updates.name = name.trim().slice(0, 200);
-    if (phone !== undefined) updates.phone = phone ? String(phone).trim().slice(0, 30) : null;
-    if (body.approved !== undefined) updates.approved = body.approved;
+    if (phone !== undefined) updates.phone = phone ? phone.trim().slice(0, 30) : null;
+    if (approved !== undefined) updates.approved = approved;
 
     // .returning() the safe fields so the client can sync state without
     // an additional GET /api/admin/users call.
@@ -243,10 +212,11 @@ export async function PUT(request: NextRequest) {
       (role && role !== before.role) ||
       (name && name !== before.name) ||
       (phone !== undefined && (phone || null) !== before.phone) ||
-      (body.approved !== undefined && body.approved !== before.approved);
+      (approved !== undefined && approved !== before.approved);
     if (changed) {
       await recordAudit({
         session,
+        request,
         action: role && role !== before.role ? "user.role_changed" : "user.updated",
         entityType: "user",
         entityId: numericId,
@@ -319,6 +289,7 @@ export async function DELETE(request: NextRequest) {
 
     await recordAudit({
       session,
+      request,
       action: "user.deleted",
       entityType: "user",
       entityId: numId,

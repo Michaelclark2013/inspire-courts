@@ -10,6 +10,9 @@ import { revalidatePath } from "next/cache";
 import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
+import { withTiming } from "@/lib/timing";
+import { gameCreateSchema, scoreUpdateSchema } from "@/lib/schemas";
+import { parseJsonBody, apiNotFound, apiError } from "@/lib/api-helpers";
 
 // Pagination cap — no single page can be larger than this regardless of
 // ?limit, so a misbehaving client can't dump the entire games table.
@@ -68,7 +71,7 @@ async function revalidateTournamentForEvent(eventName: string | null): Promise<s
 // Backwards note: was returning a bare array. Now returns the wrapped shape
 // above so clients can reliably paginate. Legacy clients that consumed the
 // array should migrate to reading `.data`.
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.scores.list", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -162,7 +165,7 @@ export async function GET(request: NextRequest) {
     logger.error("Failed to fetch admin scores", { error: String(err) });
     return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });
   }
-}
+});
 
 // POST /api/admin/scores — create a game
 export async function POST(request: NextRequest) {
@@ -191,48 +194,28 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  try {
-    const body = await request.json();
-    const { homeTeam, awayTeam, division, court, eventName, scheduledTime } = body;
+  const parsed = await parseJsonBody(request, gameCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { homeTeam, awayTeam, division, court, eventName, scheduledTime } = parsed.data;
 
-    // Strict type + length validation — previously these strings went
-    // straight into the DB with no guards, so a non-string value would
-    // coerce to "[object Object]" and an unbounded string could bloat the
-    // games table. Mirror the announcements POST pattern.
-    if (typeof homeTeam !== "string" || !homeTeam.trim() || homeTeam.length > 200) {
-      return NextResponse.json({ error: "homeTeam must be 1–200 characters" }, { status: 400 });
-    }
-    if (typeof awayTeam !== "string" || !awayTeam.trim() || awayTeam.length > 200) {
-      return NextResponse.json({ error: "awayTeam must be 1–200 characters" }, { status: 400 });
-    }
-    if (division !== undefined && division !== null && (typeof division !== "string" || division.length > 50)) {
-      return NextResponse.json({ error: "division must be a string ≤50 chars" }, { status: 400 });
-    }
-    if (court !== undefined && court !== null && (typeof court !== "string" || court.length > 50)) {
-      return NextResponse.json({ error: "court must be a string ≤50 chars" }, { status: 400 });
-    }
-    if (eventName !== undefined && eventName !== null && (typeof eventName !== "string" || eventName.length > 200)) {
-      return NextResponse.json({ error: "eventName must be a string ≤200 chars" }, { status: 400 });
-    }
-    if (scheduledTime !== undefined && scheduledTime !== null && (typeof scheduledTime !== "string" || scheduledTime.length > 40)) {
-      return NextResponse.json({ error: "scheduledTime must be an ISO-like string" }, { status: 400 });
-    }
+  try {
 
     const [game] = await db
       .insert(games)
       .values({
         homeTeam: homeTeam.trim().slice(0, 200),
         awayTeam: awayTeam.trim().slice(0, 200),
-        division: division ? String(division).trim().slice(0, 50) : null,
-        court: court ? String(court).trim().slice(0, 50) : null,
-        eventName: eventName ? String(eventName).trim().slice(0, 200) : null,
-        scheduledTime: scheduledTime ? String(scheduledTime).slice(0, 40) : null,
+        division: division ? division.trim().slice(0, 50) : null,
+        court: court ? court.trim().slice(0, 50) : null,
+        eventName: eventName ? eventName.trim().slice(0, 200) : null,
+        scheduledTime: scheduledTime ? scheduledTime.slice(0, 40) : null,
         status: "scheduled",
       })
       .returning();
 
     await recordAudit({
       session,
+      request,
       action: "game.created",
       entityType: "game",
       entityId: game.id,
@@ -273,17 +256,14 @@ export async function PATCH(request: NextRequest) {
 async function updateGameScore(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "score_entry")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return apiError("Unauthorized", 401);
   }
 
+  const parsed = await parseJsonBody(request, scoreUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { gameId, homeScore, awayScore, quarter, status } = parsed.data;
+
   try {
-    const body = await request.json();
-    const { gameId, homeScore, awayScore, quarter, status } = body;
-
-    if (!gameId) {
-      return NextResponse.json({ error: "gameId is required" }, { status: 400 });
-    }
-
     // Snapshot the game row before any changes so the audit log can
     // capture before/after state for disputes.
     const [beforeGame] = await db
@@ -293,19 +273,16 @@ async function updateGameScore(request: NextRequest) {
       .limit(1);
 
     if (!beforeGame) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+      return apiNotFound("Game not found");
     }
 
     // Update game status (with audit if it actually changed)
     if (status) {
-      const validStatuses = ["scheduled", "live", "final"];
-      if (!validStatuses.includes(status)) {
-        return NextResponse.json({ error: "Invalid status" }, { status: 400 });
-      }
       if (status !== beforeGame.status) {
         await db.update(games).set({ status }).where(eq(games.id, gameId));
         await recordAudit({
           session,
+          request,
           action: "game.status_changed",
           entityType: "game",
           entityId: gameId,
@@ -321,9 +298,6 @@ async function updateGameScore(request: NextRequest) {
 
     // Insert new score entry (with audit of the new entry)
     if (homeScore !== undefined && awayScore !== undefined) {
-      if (typeof homeScore !== "number" || typeof awayScore !== "number" || homeScore < 0 || awayScore < 0) {
-        return NextResponse.json({ error: "Scores must be non-negative numbers" }, { status: 400 });
-      }
       const userId = session.user.id ? Number(session.user.id) : null;
       await db.insert(gameScores).values({
         gameId,
@@ -334,6 +308,7 @@ async function updateGameScore(request: NextRequest) {
       });
       await recordAudit({
         session,
+        request,
         action: "game.score_entered",
         entityType: "game",
         entityId: gameId,
@@ -406,6 +381,7 @@ export async function DELETE(request: NextRequest) {
 
     await recordAudit({
       session,
+      request,
       action: "game.deleted",
       entityType: "game",
       entityId: gameId,

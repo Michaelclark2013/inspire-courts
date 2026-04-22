@@ -10,6 +10,8 @@ import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
+import { announcementSchema, announcementUpdateSchema } from "@/lib/schemas";
+import { parseJsonBody, apiNotFound, apiError } from "@/lib/api-helpers";
 
 // Public surfaces that read announcements — any create/update/delete
 // should bust these so admins see their change reflected immediately.
@@ -86,27 +88,12 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  const parsed = await parseJsonBody(request, announcementSchema);
+  if (!parsed.ok) return parsed.response;
+  const { title, body: content, audience, expiresAt } = parsed.data;
+  const safeAudience = audience ?? "all";
+
   try {
-    const body = await request.json();
-    const { title, body: content, audience, expiresAt } = body;
-
-    if (!title || !content) {
-      return NextResponse.json(
-        { error: "Title and body are required" },
-        { status: 400 }
-      );
-    }
-
-    if (typeof title !== "string" || title.length > 255) {
-      return NextResponse.json({ error: "Title must be 255 characters or less" }, { status: 400 });
-    }
-
-    if (typeof content !== "string" || content.length > 10000) {
-      return NextResponse.json({ error: "Body must be 10,000 characters or less" }, { status: 400 });
-    }
-
-    const validAudiences = ["all", "coaches", "parents"];
-    const safeAudience = validAudiences.includes(audience) ? audience : "all";
 
     const userId = session.user.id ? Number(session.user.id) : null;
 
@@ -123,6 +110,7 @@ export async function POST(request: NextRequest) {
 
     await recordAudit({
       session,
+      request,
       action: "announcement.created",
       entityType: "announcement",
       entityId: announcement.id,
@@ -149,56 +137,41 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const parsed = await parseJsonBody(request, announcementUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const { id, title, body: content, audience, expiresAt } = parsed.data;
+
+  const updates: Record<string, unknown> = {};
+  if (title !== undefined) updates.title = title.trim();
+  if (content !== undefined) updates.body = content.trim();
+  if (audience !== undefined) updates.audience = audience;
+  if (expiresAt !== undefined) updates.expiresAt = expiresAt || null;
+
+  if (Object.keys(updates).length === 0) {
+    return apiError("No fields to update", 400);
+  }
+
   try {
-    const body = await request.json();
-    const { id, title, body: content, audience, expiresAt } = body;
-
-    if (!id || isNaN(Number(id))) {
-      return NextResponse.json({ error: "Valid id required" }, { status: 400 });
-    }
-
-    if (title !== undefined) {
-      if (typeof title !== "string" || title.length === 0 || title.length > 255) {
-        return NextResponse.json({ error: "Title must be between 1 and 255 characters" }, { status: 400 });
-      }
-    }
-
-    if (content !== undefined) {
-      if (typeof content !== "string" || content.length === 0 || content.length > 10000) {
-        return NextResponse.json({ error: "Body must be between 1 and 10,000 characters" }, { status: 400 });
-      }
-    }
-
-    const validAudiences = ["all", "coaches", "parents"];
-    const updates: Record<string, unknown> = {};
-    if (title !== undefined) updates.title = title.trim();
-    if (content !== undefined) updates.body = content.trim();
-    if (audience !== undefined) updates.audience = validAudiences.includes(audience) ? audience : "all";
-    if (expiresAt !== undefined) updates.expiresAt = expiresAt || null;
-
-    if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
-    }
-
     // Snapshot BEFORE update so audit captures the previous values.
     const [before] = await db
       .select()
       .from(announcements)
-      .where(eq(announcements.id, Number(id)))
+      .where(eq(announcements.id, id))
       .limit(1);
 
     if (!before) {
-      return NextResponse.json({ error: "Announcement not found" }, { status: 404 });
+      return apiNotFound("Announcement not found");
     }
 
     const [updated] = await db
       .update(announcements)
       .set(updates)
-      .where(eq(announcements.id, Number(id)))
+      .where(eq(announcements.id, id))
       .returning();
 
     await recordAudit({
       session,
+      request,
       action: "announcement.updated",
       entityType: "announcement",
       entityId: before.id,
@@ -238,6 +211,7 @@ export async function DELETE(request: NextRequest) {
     }
     await recordAudit({
       session,
+      request,
       action: "announcement.deleted",
       entityType: "announcement",
       entityId: deleted[0].id,

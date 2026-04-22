@@ -95,6 +95,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
     await recordAudit({
       session,
+      request,
       action: "tournament.duplicated",
       entityType: "tournament",
       entityId: copy.id,

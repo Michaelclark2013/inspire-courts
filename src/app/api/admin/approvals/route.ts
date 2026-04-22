@@ -6,6 +6,9 @@ import { users } from "@/lib/db/schema";
 import { desc, eq, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { withTiming } from "@/lib/timing";
+import { approvalsPatchSchema } from "@/lib/schemas";
+import { parseJsonBody } from "@/lib/api-helpers";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -21,7 +24,7 @@ async function requireAdmin() {
 // Response shape: { users, total, page, limit, totalPages }
 // The legacy `users` key is preserved so the admin approvals page
 // continues to work during migration.
-export async function GET(request: NextRequest) {
+export const GET = withTiming("admin.approvals.list", async (request: NextRequest) => {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -69,36 +72,22 @@ export async function GET(request: NextRequest) {
     logger.error("Failed to fetch pending approvals", { error: String(error) });
     return NextResponse.json({ error: "Failed to fetch approvals" }, { status: 500 });
   }
-}
+});
 
 // PATCH — approve or reject a user
-export async function PATCH(request: NextRequest) {
+export const PATCH = withTiming("admin.approvals.patch", async (request: NextRequest) => {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const parsed = await parseJsonBody(request, approvalsPatchSchema);
+  if (!parsed.ok) return parsed.response;
+  const { userId, userIds, action } = parsed.data;
+  const ids: number[] =
+    Array.isArray(userIds) && userIds.length > 0 ? userIds : userId ? [userId] : [];
+
   try {
-    const body = await request.json();
-    const { userId, userIds, action } = body as {
-      userId?: number;
-      userIds?: number[];
-      action?: string;
-    };
-
-    // Accept either a single userId (legacy) or a bulk userIds array (new).
-    const ids: number[] = Array.isArray(userIds) && userIds.length > 0
-      ? userIds.filter((n) => typeof n === "number" && Number.isInteger(n) && n > 0)
-      : typeof userId === "number" && Number.isInteger(userId) && userId > 0
-        ? [userId]
-        : [];
-
-    if (ids.length === 0 || !action || !["approve", "reject"].includes(action)) {
-      return NextResponse.json(
-        { error: "userId/userIds[] and action (approve|reject) are required" },
-        { status: 400 }
-      );
-    }
 
     // Fetch all target users up front so we can verify existence, skip
     // already-approved ones, and capture before-snapshots for the audit log.
@@ -124,21 +113,30 @@ export async function PATCH(request: NextRequest) {
 
     const affectedIds = pendingUsers.map((u) => u.id);
 
-    if (action === "approve") {
-      await db
-        .update(users)
-        .set({ approved: true, updatedAt: new Date().toISOString() })
-        .where(inArray(users.id, affectedIds));
-    } else {
-      // Reject = delete the user
-      await db.delete(users).where(inArray(users.id, affectedIds));
-    }
+    // All-or-nothing: the approve/reject mutation AND the per-user audit
+    // entries must either all commit or all roll back. Previously the
+    // update ran outside the audit loop — a mid-loop crash would leave
+    // some users flipped with no audit entry and others with partial
+    // history.
+    await db.transaction(async (tx) => {
+      if (action === "approve") {
+        await tx
+          .update(users)
+          .set({ approved: true, updatedAt: new Date().toISOString() })
+          .where(inArray(users.id, affectedIds));
+      } else {
+        await tx.delete(users).where(inArray(users.id, affectedIds));
+      }
+    });
 
     // Audit every affected user individually so the log answers
     // "who approved/rejected user X" directly without parsing a list.
+    // Still fire-and-forget — a rare audit failure shouldn't 500 the
+    // already-committed mutation.
     for (const u of pendingUsers) {
       await recordAudit({
         session,
+        request,
         action: action === "approve" ? "user.approved" : "user.rejected",
         entityType: "user",
         entityId: u.id,
@@ -167,4 +165,4 @@ export async function PATCH(request: NextRequest) {
     logger.error("Approval action failed", { error: String(error) });
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
-}
+});

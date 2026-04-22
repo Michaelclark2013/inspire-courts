@@ -31,8 +31,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SchedulePage() {
-  const page = getPageContent("schedule");
+export default async function SchedulePage() {
+  const page = await getPageContent("schedule");
 
   return (
     <>

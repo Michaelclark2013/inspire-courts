@@ -12,29 +12,37 @@ import { eq, desc, inArray } from "drizzle-orm";
 import { computeAdvancement, type BracketGame } from "@/lib/tournament-engine";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
+import { recordAudit } from "@/lib/audit";
+import { parseJsonBody, apiError } from "@/lib/api-helpers";
+import { withTiming } from "@/lib/timing";
+import { z } from "zod";
+
+const advanceSchema = z.object({
+  gameId: z.number().int().positive(),
+});
 
 type Params = { params: Promise<{ id: string }> };
 
 // POST /api/admin/tournaments/[id]/advance — advance winner after game final
-export async function POST(request: NextRequest, { params }: Params) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { id } = await params;
-  const tournamentId = Number(id);
-  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
-    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
-  }
-
-  try {
-    const body = await request.json();
-    const { gameId } = body;
-
-    if (!gameId) {
-      return NextResponse.json({ error: "gameId required" }, { status: 400 });
+export const POST = withTiming(
+  "admin.tournament.advance",
+  async (request: NextRequest, { params }: Params) => {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+      return apiError("Unauthorized", 401);
     }
+
+    const { id } = await params;
+    const tournamentId = Number(id);
+    if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+      return apiError("Invalid tournament id", 400);
+    }
+
+    const parsed = await parseJsonBody(request, advanceSchema);
+    if (!parsed.ok) return parsed.response;
+    const { gameId } = parsed.data;
+
+    try {
 
     // Get all bracket games for this tournament
     const bracketEntries = await db
@@ -85,10 +93,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     const result = computeAdvancement(allBracketGames, gameId);
 
     if (!result) {
-      return NextResponse.json(
-        { error: "No advancement possible (game not final or no next slot)" },
-        { status: 400 }
-      );
+      return apiError("No advancement possible (game not final or no next slot)", 400);
     }
 
     // Find the next game's actual game ID from bracket position
@@ -127,6 +132,28 @@ export async function POST(request: NextRequest, { params }: Params) {
       }
     }
 
+    // Bracket advancement is a high-consequence write — it overwrites
+    // downstream games' home/away team names, and a buggy client could
+    // silently promote the wrong winner. Audit every advance call with
+    // the computed transition so the state can be reconstructed / rolled
+    // back from the log.
+    await recordAudit({
+      session,
+      request,
+      action: "tournament.advanced",
+      entityType: "tournament",
+      entityId: tournamentId,
+      before: null,
+      after: {
+        sourceGameId: gameId,
+        winnerTeam: result.winnerTeam,
+        advancedTo: result.nextBracketPosition,
+        side: result.side,
+        loserTeam: result.loserTeam ?? null,
+        loserAdvancedTo: result.loserBracketPosition ?? null,
+      },
+    });
+
     revalidatePath(`/admin/tournaments/${id}`);
     revalidatePath(`/tournaments/${id}`);
 
@@ -136,8 +163,9 @@ export async function POST(request: NextRequest, { params }: Params) {
       advancedTo: result.nextBracketPosition,
       side: result.side,
     });
-  } catch (err) {
-    logger.error("Failed to advance bracket", { tournamentId, error: String(err) });
-    return NextResponse.json({ error: "Failed to advance bracket" }, { status: 500 });
+    } catch (err) {
+      logger.error("Failed to advance bracket", { tournamentId, error: String(err) });
+      return apiError("Failed to advance bracket", 500);
+    }
   }
-}
+);

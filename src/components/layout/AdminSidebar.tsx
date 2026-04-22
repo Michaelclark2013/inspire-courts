@@ -30,6 +30,11 @@ import {
   MoreHorizontal,
   PanelLeftClose,
   PanelLeftOpen,
+  Clock,
+  CalendarDays,
+  Truck,
+  Wallet,
+  IdCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { canAccess, ROLE_LABELS } from "@/lib/permissions";
@@ -55,7 +60,18 @@ const GAME_DAY: NavItem[] = [
   { href: "/admin/scores/enter", label: "Score Entry", icon: PenLine, page: "score_entry" },
   { href: "/admin/scores", label: "Game Scores", icon: ClipboardList, page: "scores" },
   { href: "/admin/checkin", label: "Check-In", icon: UserCheck, page: "checkin" },
-  { href: "/admin/staff", label: "Staff & Refs", icon: UserCheck, page: "staff_refs" },
+];
+
+// Everything that runs the "people + machines" side of the gym.
+// Separated from game-day ops because these are the workflows that
+// keep the facility running year-round, not just on tournament days.
+const STAFF_OPS: NavItem[] = [
+  { href: "/admin/roster", label: "Staff Roster", icon: IdCard, page: "roster" },
+  { href: "/admin/timeclock", label: "Time Clock", icon: Clock, page: "timeclock" },
+  { href: "/admin/shifts", label: "Shifts", icon: CalendarDays, page: "shifts" },
+  { href: "/admin/payroll", label: "Payroll", icon: Wallet, page: "payroll" },
+  { href: "/admin/resources", label: "Resources / Van", icon: Truck, page: "resources" },
+  { href: "/admin/staff", label: "Staff (Legacy Sheet)", icon: UserCheck, page: "staff_refs" },
 ];
 
 const FINANCE: NavItem[] = [
@@ -123,6 +139,7 @@ export default function AdminSidebar() {
 
   const visibleEventSetup = EVENT_SETUP.filter((item) => canAccess(role, item.page));
   const visibleGameDay = GAME_DAY.filter((item) => canAccess(role, item.page));
+  const visibleStaffOps = STAFF_OPS.filter((item) => canAccess(role, item.page));
   const visibleFinance = FINANCE.filter((item) => canAccess(role, item.page));
   const visibleAdmin = ADMIN_SECTION.filter((item) => canAccess(role, item.page));
   const visiblePersonal = PERSONAL.filter((item) => canAccess(role, item.page));
@@ -270,6 +287,21 @@ export default function AdminSidebar() {
               )}
               <div className="space-y-0.5">
                 {visibleGameDay.map((item) => (
+                  <SidebarLink key={item.href} item={item} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {visibleStaffOps.length > 0 && (
+            <div>
+              {!collapsed && (
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                  Staff Ops
+                </p>
+              )}
+              <div className="space-y-0.5">
+                {visibleStaffOps.map((item) => (
                   <SidebarLink key={item.href} item={item} />
                 ))}
               </div>

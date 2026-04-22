@@ -14,30 +14,35 @@ import { eq, desc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { withTiming } from "@/lib/timing";
+import { apiNotFound, apiError, parseJsonBody } from "@/lib/api-helpers";
+import { tournamentUpdateSchema } from "@/lib/schemas";
 
 type Params = { params: Promise<{ id: string }> };
 
 // GET /api/admin/tournaments/[id] — full tournament detail
-export async function GET(_request: NextRequest, { params }: Params) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export const GET = withTiming(
+  "admin.tournament.detail",
+  async (_request: NextRequest, { params }: Params) => {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+      return apiError("Unauthorized", 401);
+    }
 
-  const { id } = await params;
-  const tournamentId = Number(id);
-  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
-    return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
-  }
+    const { id } = await params;
+    const tournamentId = Number(id);
+    if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
+      return apiError("Invalid tournament id", 400);
+    }
 
-  const [tournament] = await db
-    .select()
-    .from(tournaments)
-    .where(eq(tournaments.id, tournamentId));
+    const [tournament] = await db
+      .select()
+      .from(tournaments)
+      .where(eq(tournaments.id, tournamentId));
 
-  if (!tournament) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
+    if (!tournament) {
+      return apiNotFound("Tournament not found");
+    }
 
   // Get teams
   const teams = await db
@@ -103,21 +108,22 @@ export async function GET(_request: NextRequest, { params }: Params) {
     };
   });
 
-  return NextResponse.json(
-    {
-      ...tournament,
-      divisions: tournament.divisions ? JSON.parse(tournament.divisions) : [],
-      courts: tournament.courts ? JSON.parse(tournament.courts) : [],
-      teams,
-      bracket: bracketWithScores,
-    },
-    {
-      // Expose the row's updatedAt as an ETag so clients can send it back
-      // in If-Match on PUT for optimistic concurrency.
-      headers: { ETag: `"${tournament.updatedAt}"` },
-    }
-  );
-}
+    return NextResponse.json(
+      {
+        ...tournament,
+        divisions: tournament.divisions ? JSON.parse(tournament.divisions) : [],
+        courts: tournament.courts ? JSON.parse(tournament.courts) : [],
+        teams,
+        bracket: bracketWithScores,
+      },
+      {
+        // Expose the row's updatedAt as an ETag so clients can send it back
+        // in If-Match on PUT for optimistic concurrency.
+        headers: { ETag: `"${tournament.updatedAt}"` },
+      }
+    );
+  }
+);
 
 // PUT /api/admin/tournaments/[id] — update tournament settings
 export async function PUT(request: NextRequest, { params }: Params) {
@@ -163,28 +169,22 @@ export async function PUT(request: NextRequest, { params }: Params) {
     );
   }
 
-  let body: Record<string, unknown>;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+  const parsed = await parseJsonBody(request, tournamentUpdateSchema);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.data;
 
   const updates: Record<string, unknown> = { updatedAt: new Date().toISOString() };
-
-  const VALID_STATUSES = ["draft", "published", "active", "completed"];
-  const VALID_FORMATS = ["single_elimination", "double_elimination", "round_robin", "pool_play", "pool_to_bracket"];
-
-  if (body.name && typeof body.name === "string") updates.name = body.name.slice(0, 200);
-  if (body.startDate && typeof body.startDate === "string") updates.startDate = body.startDate;
+  if (body.name) updates.name = body.name.slice(0, 200);
+  if (body.startDate) updates.startDate = body.startDate;
   if (body.endDate !== undefined) updates.endDate = body.endDate || null;
-  if (body.location !== undefined) updates.location = typeof body.location === "string" ? body.location.slice(0, 200) : null;
-  if (body.format && typeof body.format === "string" && VALID_FORMATS.includes(body.format)) updates.format = body.format;
+  if (body.location !== undefined)
+    updates.location = body.location ? body.location.slice(0, 200) : null;
+  if (body.format) updates.format = body.format;
   if (body.divisions) updates.divisions = JSON.stringify(body.divisions);
   if (body.courts) updates.courts = JSON.stringify(body.courts);
-  if (body.gameLength && typeof body.gameLength === "number" && body.gameLength > 0) updates.gameLength = body.gameLength;
-  if (body.breakLength !== undefined && typeof body.breakLength === "number" && body.breakLength >= 0) updates.breakLength = body.breakLength;
-  if (body.status && typeof body.status === "string" && VALID_STATUSES.includes(body.status)) updates.status = body.status;
+  if (body.gameLength) updates.gameLength = body.gameLength;
+  if (body.breakLength !== undefined) updates.breakLength = body.breakLength;
+  if (body.status) updates.status = body.status;
 
   // Return the full updated row via .returning() so the caller can sync
   // state without a round-trip refetch.
@@ -200,6 +200,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   const statusChanged = updates.status && updates.status !== existing.status;
   await recordAudit({
     session,
+    request,
     action: statusChanged ? "tournament.status_changed" : "tournament.updated",
     entityType: "tournament",
     entityId: tournamentId,
@@ -220,7 +221,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 // DELETE /api/admin/tournaments/[id] — delete draft tournament
-export async function DELETE(_request: NextRequest, { params }: Params) {
+export async function DELETE(request: NextRequest, { params }: Params) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -263,6 +264,7 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
 
   await recordAudit({
     session,
+    request,
     action: "tournament.deleted",
     entityType: "tournament",
     entityId: tournamentId,

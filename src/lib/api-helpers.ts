@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { ZodSchema } from "zod";
 
 /**
  * Standard error response helper.
@@ -45,4 +46,63 @@ export function apiValidationError(
     { error: summary, errors: fieldErrors },
     { status: 422 }
   );
+}
+
+/**
+ * Standard 404 helper. Every admin route was hand-rolling its own
+ * not-found message ("Not found", "Registration not found", "Game not
+ * found", etc.) which made client-side detection string-brittle. The
+ * canonical shape is:
+ *
+ *     { error: "Not found", detail?: "Registration not found" }
+ *
+ * Clients can match on `error === "Not found"` for generic handling
+ * while the optional `detail` preserves the specific entity name for
+ * human-readable UI.
+ */
+export function apiNotFound(detail?: string) {
+  return NextResponse.json(
+    { error: "Not found", ...(detail ? { detail } : {}) },
+    { status: 404 }
+  );
+}
+
+/**
+ * Parse a request body as JSON + validate against a Zod schema.
+ *
+ * Returns a discriminated union:
+ *   - { ok: true, data }   — validation passed; `data` is the narrowed
+ *                            Zod-inferred type.
+ *   - { ok: false, response } — a NextResponse the handler should return
+ *                            directly (either 400 for malformed JSON or
+ *                            422 with per-field errors).
+ *
+ * Usage:
+ *     const parsed = await parseJsonBody(request, announcementSchema);
+ *     if (!parsed.ok) return parsed.response;
+ *     const { title } = parsed.data;
+ *
+ * Collapses the 10-line JSON.parse + safeParse + fieldErrors boilerplate
+ * every admin POST handler was duplicating.
+ */
+export async function parseJsonBody<T>(
+  request: Request,
+  schema: ZodSchema<T>
+): Promise<{ ok: true; data: T } | { ok: false; response: NextResponse }> {
+  let raw: unknown;
+  try {
+    raw = await request.json();
+  } catch {
+    return { ok: false, response: apiError("Invalid JSON body", 400) };
+  }
+  const result = schema.safeParse(raw);
+  if (!result.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of result.error.issues) {
+      const key = issue.path.join(".") || "_root";
+      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+    }
+    return { ok: false, response: apiValidationError(fieldErrors) };
+  }
+  return { ok: true, data: result.data };
 }

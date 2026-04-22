@@ -2,6 +2,11 @@
 
 # dependencies
 /node_modules
+**/node_modules
+
+# remotion side-project (not part of the Next.js app)
+/remotion-promo
+
 /.pnp
 .pnp.*
 .yarn/*

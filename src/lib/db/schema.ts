@@ -329,6 +329,15 @@ export const auditLog = sqliteTable("audit_log", {
   // Before/after snapshot as JSON — enough to revert if needed.
   beforeJson: text("before_json"),
   afterJson: text("after_json"),
+  // Request fingerprint — captured for security investigations (e.g.
+  // "was this admin action taken from an unusual IP after a credential
+  // theft?"). All nullable because non-request call sites may exist.
+  actorIp: text("actor_ip"),
+  actorUserAgent: text("actor_user_agent"),
+  // Per-request correlation id from middleware (X-Request-Id). Joins
+  // audit entries to the server logs + client error reports for the
+  // same request.
+  requestId: text("request_id"),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
@@ -336,4 +345,386 @@ export const auditLog = sqliteTable("audit_log", {
   index("audit_log_actor_idx").on(table.actorUserId),
   index("audit_log_entity_idx").on(table.entityType, table.entityId),
   index("audit_log_created_idx").on(table.createdAt),
+]);
+
+// Site content — one row per page. `content_json` holds the full
+// PageContent blob (sections + fields + list items) so the
+// /admin/content editor can round-trip a page in one update.
+//
+// Why not the filesystem? The previous content.ts persisted to a
+// local content.json via fs.writeFileSync, which silently no-ops on
+// Vercel's read-only serverless filesystem — every save in production
+// was being dropped. Moving to the DB makes admin edits actually stick
+// across requests + deploys.
+export const siteContent = sqliteTable("site_content", {
+  pageId: text("page_id").primaryKey(),
+  contentJson: text("content_json").notNull(),
+  label: text("label").notNull(),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedBy: integer("updated_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+});
+
+// ── Phase 1: Staff + Time Clock ──────────────────────────────────────
+// Replaces the Google Sheets check-out flow. Every time entry links to
+// a user (FK), which gives real join-able reporting instead of name
+// string-matching. `staff_profiles` extends `users` with employment
+// metadata so a single person can be a coach AND get paid as a ref
+// without duplicating rows.
+
+// Employment classification — drives tax-form logic without dictating
+// payment method. "cash_no_1099" is an explicit bucket for under-$600
+// informal pay that doesn't trigger a 1099-NEC. The YTD aggregate is
+// surfaced in the admin list so a worker approaching $600 is visible
+// before they cross the threshold.
+export const EMPLOYMENT_CLASSIFICATIONS = [
+  "w2",
+  "1099",
+  "cash_no_1099",
+  "volunteer",
+  "stipend",
+] as const;
+
+// Payment method is orthogonal to classification — a W2 employee can
+// get paid via direct deposit while a cash_no_1099 ref gets Venmo.
+export const PAYMENT_METHODS = [
+  "direct_deposit",
+  "check",
+  "cash",
+  "venmo",
+  "zelle",
+  "paypal",
+  "other",
+] as const;
+
+// Pay rate type — hourly (default), per_shift (flat rate for a game-day
+// shift regardless of length), per_game (refs paid per whistled game),
+// salary (biweekly fixed), stipend (flat one-off).
+export const PAY_RATE_TYPES = [
+  "hourly",
+  "per_shift",
+  "per_game",
+  "salary",
+  "stipend",
+] as const;
+
+export const staffProfiles = sqliteTable("staff_profiles", {
+  // 1:1 with users so session-based auth Just Works. Any user_id
+  // without a staff_profiles row is "not on the staff roster" —
+  // parents/coaches/players never get one.
+  userId: integer("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  employmentClassification: text("employment_classification", {
+    enum: EMPLOYMENT_CLASSIFICATIONS,
+  })
+    .notNull()
+    .default("cash_no_1099"),
+  paymentMethod: text("payment_method", { enum: PAYMENT_METHODS })
+    .notNull()
+    .default("venmo"),
+  payRateCents: integer("pay_rate_cents").notNull().default(0),
+  payRateType: text("pay_rate_type", { enum: PAY_RATE_TYPES })
+    .notNull()
+    .default("hourly"),
+  // Role tags as a comma-separated list — lets one person be a
+  // ref + scorekeeper + front desk without three rows. Intentionally
+  // not a JSON array so SQLite LIKE-searches stay cheap.
+  roleTags: text("role_tags").notNull().default(""),
+  // Payout handle (Venmo @, Zelle email/phone, check-payable-to, etc.)
+  // kept in a single field since it mirrors paymentMethod.
+  payoutHandle: text("payout_handle"),
+  hireDate: text("hire_date"),
+  emergencyContactJson: text("emergency_contact_json"),
+  notes: text("notes"),
+  status: text("status", { enum: ["active", "on_leave", "terminated"] })
+    .notNull()
+    .default("active"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("staff_profiles_status_idx").on(table.status),
+  index("staff_profiles_classification_idx").on(table.employmentClassification),
+]);
+
+// Clock-in source — kiosk runs at the facility front-desk tablet,
+// mobile is the PWA from a worker's phone (geo-fenced), manual is an
+// admin-keyed retroactive entry (e.g. tablet was offline).
+export const TIME_ENTRY_SOURCES = ["kiosk", "mobile", "manual"] as const;
+
+export const timeEntries = sqliteTable("time_entries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  // Nullable: an open entry (user clocked in, hasn't clocked out).
+  // Queries for "who is on the clock now?" = clockOutAt IS NULL.
+  clockInAt: text("clock_in_at").notNull(),
+  clockOutAt: text("clock_out_at"),
+  source: text("source", { enum: TIME_ENTRY_SOURCES })
+    .notNull()
+    .default("kiosk"),
+  // Geo stamps — stored as text (ISO-style) so we don't pay the
+  // double-precision real overhead; precision to ~5 decimals is
+  // enough for a 1m-radius facility fence.
+  clockInLat: text("clock_in_lat"),
+  clockInLng: text("clock_in_lng"),
+  clockOutLat: text("clock_out_lat"),
+  clockOutLng: text("clock_out_lng"),
+  // Unpaid break in minutes. Default 0; admin can edit during
+  // approval if the worker forgot to log their break.
+  breakMinutes: integer("break_minutes").notNull().default(0),
+  // Optional shift context — a tournament day with multiple refs
+  // on one tournament benefits from grouping entries by event.
+  tournamentId: integer("tournament_id").references(() => tournaments.id, {
+    onDelete: "set null",
+  }),
+  role: text("role"), // "ref" / "front_desk" / etc — snapshot of which hat they were wearing
+  // Rate snapshot at clock-in. If the staff_profiles rate changes
+  // later, already-logged entries stay priced at their original
+  // rate (this is how you prevent accidental retroactive re-pricing).
+  payRateCents: integer("pay_rate_cents").notNull().default(0),
+  payRateType: text("pay_rate_type", { enum: PAY_RATE_TYPES })
+    .notNull()
+    .default("hourly"),
+  // Optional per-entry bonus (tournament referee bonus, late-night
+  // differential). Admin sets at approval time.
+  bonusCents: integer("bonus_cents").notNull().default(0),
+  notes: text("notes"),
+  // Approval flow: open → pending → approved. Payroll roll-ups in
+  // Phase 3 will only count approved entries.
+  status: text("status", { enum: ["open", "pending", "approved", "rejected"] })
+    .notNull()
+    .default("open"),
+  approvedBy: integer("approved_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  approvedAt: text("approved_at"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("time_entries_user_idx").on(table.userId),
+  index("time_entries_status_idx").on(table.status),
+  index("time_entries_clock_in_idx").on(table.clockInAt),
+  // "Who is on the clock right now" query hits this index.
+  index("time_entries_open_idx").on(table.clockOutAt),
+  index("time_entries_tournament_idx").on(table.tournamentId),
+]);
+
+// ── Phase 2: Shift Scheduling ────────────────────────────────────────
+// Shifts are the planned version of what eventually shows up in
+// time_entries. One shift can be assigned to multiple workers
+// (required_headcount > 1) via shift_assignments. Leaving shifts
+// unassigned lets admins publish an "open shift" that staff can claim.
+
+export const SHIFT_STATUS = ["draft", "published", "cancelled", "completed"] as const;
+
+export const shifts = sqliteTable("shifts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // Optional: link a shift to a tournament so the schedule page can
+  // show "Memorial Day Classic: 6 shifts, 4 filled". Nullable because
+  // non-tournament shifts (front-desk weekday coverage) exist too.
+  tournamentId: integer("tournament_id").references(() => tournaments.id, {
+    onDelete: "set null",
+  }),
+  title: text("title").notNull(),
+  // Primary role the shift covers (ref, scorekeeper, front_desk, etc.).
+  // Staff with this role tag get priority in the open-shift board.
+  role: text("role"),
+  startAt: text("start_at").notNull(),
+  endAt: text("end_at").notNull(),
+  // Comma-sep court ids / labels where applicable. Kept as text for
+  // the same reason role_tags is — LIKE queries stay cheap.
+  courts: text("courts"),
+  requiredHeadcount: integer("required_headcount").notNull().default(1),
+  notes: text("notes"),
+  status: text("status", { enum: SHIFT_STATUS }).notNull().default("draft"),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("shifts_start_at_idx").on(table.startAt),
+  index("shifts_status_idx").on(table.status),
+  index("shifts_tournament_idx").on(table.tournamentId),
+]);
+
+export const SHIFT_ASSIGNMENT_STATUS = [
+  "assigned",
+  "confirmed",
+  "declined",
+  "no_show",
+  "completed",
+] as const;
+
+export const shiftAssignments = sqliteTable("shift_assignments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  shiftId: integer("shift_id")
+    .notNull()
+    .references(() => shifts.id, { onDelete: "cascade" }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  status: text("status", { enum: SHIFT_ASSIGNMENT_STATUS })
+    .notNull()
+    .default("assigned"),
+  // Optional per-shift rate override (e.g. tournament bonus pay for
+  // a specific day). Null means "use the worker's staff_profile rate".
+  payRateCentsOverride: integer("pay_rate_cents_override"),
+  bonusCents: integer("bonus_cents").notNull().default(0),
+  assignedBy: integer("assigned_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  assignedAt: text("assigned_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  respondedAt: text("responded_at"),
+  notes: text("notes"),
+}, (table) => [
+  index("shift_assignments_shift_idx").on(table.shiftId),
+  index("shift_assignments_user_idx").on(table.userId),
+  index("shift_assignments_status_idx").on(table.status),
+  // Prevent the same worker from being double-booked on one shift.
+  index("shift_assignments_unique_idx").on(table.shiftId, table.userId),
+]);
+
+// ── Resources & Bookings (admin-only) ────────────────────────────────
+// Generalized so the team van is the first resource but equipment
+// (projectors, scoreboards) and court blocks for external rental
+// can share the same table.
+
+export const RESOURCE_KINDS = [
+  "vehicle",
+  "equipment",
+  "court",
+  "room",
+  "other",
+] as const;
+
+export const resources = sqliteTable("resources", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  kind: text("kind", { enum: RESOURCE_KINDS }).notNull().default("vehicle"),
+  description: text("description"),
+  // Both rates optional; a resource might only charge hourly or only
+  // daily. Stored in cents — same reason as pay rates.
+  dailyRateCents: integer("daily_rate_cents"),
+  hourlyRateCents: integer("hourly_rate_cents"),
+  // Vehicle-specific fields that would otherwise need their own table.
+  // Nullable for non-vehicle rows.
+  licensePlate: text("license_plate"),
+  capacity: integer("capacity"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("resources_kind_idx").on(table.kind),
+  index("resources_active_idx").on(table.active),
+]);
+
+export const RESOURCE_BOOKING_STATUS = [
+  "tentative",
+  "confirmed",
+  "in_use",
+  "returned",
+  "cancelled",
+  "no_show",
+] as const;
+
+export const resourceBookings = sqliteTable("resource_bookings", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  resourceId: integer("resource_id")
+    .notNull()
+    .references(() => resources.id, { onDelete: "cascade" }),
+  // Renter can be either an existing user (internal — a coach booking
+  // the van for a team trip) or an external party (name/email/phone
+  // without a user record). Both fields are present; at least one must
+  // be populated (handler enforces).
+  renterUserId: integer("renter_user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  renterName: text("renter_name"),
+  renterEmail: text("renter_email"),
+  renterPhone: text("renter_phone"),
+  startAt: text("start_at").notNull(),
+  endAt: text("end_at").notNull(),
+  status: text("status", { enum: RESOURCE_BOOKING_STATUS })
+    .notNull()
+    .default("tentative"),
+  // Computed at create-time from the resource's rate + duration, but
+  // stored so an admin can override without fighting recompute logic.
+  amountCents: integer("amount_cents").notNull().default(0),
+  paid: integer("paid", { mode: "boolean" }).notNull().default(false),
+  paymentMethod: text("payment_method"),
+  // Vehicle-specific snapshots. Null for non-vehicle resources.
+  odometerStart: integer("odometer_start"),
+  odometerEnd: integer("odometer_end"),
+  fuelStart: text("fuel_start"),
+  fuelEnd: text("fuel_end"),
+  purpose: text("purpose"),
+  notes: text("notes"),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("resource_bookings_resource_idx").on(table.resourceId),
+  index("resource_bookings_start_idx").on(table.startAt),
+  index("resource_bookings_status_idx").on(table.status),
+  index("resource_bookings_renter_user_idx").on(table.renterUserId),
+]);
+
+// ── Phase 3: Payroll ────────────────────────────────────────────────
+// pay_periods defines the window; rollups are computed on the fly
+// from approved time_entries inside that window. Once a period is
+// locked, time entries that fall inside it can no longer be edited
+// (enforced by the timeclock PATCH handler) — this is the "sign-off"
+// gesture that prevents retroactive tampering after payroll runs.
+
+export const PAY_PERIOD_STATUS = ["open", "locked", "paid"] as const;
+
+export const payPeriods = sqliteTable("pay_periods", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  label: text("label").notNull(),            // "2026-04-01 → 2026-04-14"
+  startsAt: text("starts_at").notNull(),     // inclusive
+  endsAt: text("ends_at").notNull(),         // exclusive
+  status: text("status", { enum: PAY_PERIOD_STATUS }).notNull().default("open"),
+  lockedBy: integer("locked_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  lockedAt: text("locked_at"),
+  paidAt: text("paid_at"),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("pay_periods_starts_idx").on(table.startsAt),
+  index("pay_periods_status_idx").on(table.status),
 ]);

@@ -71,7 +71,9 @@ export type AdminPage =
   | "payroll"
   | "members"
   | "certifications"
-  | "maintenance";
+  | "maintenance"
+  | "programs"
+  | "time_off";
 
 const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
@@ -118,6 +120,12 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   certifications: ["admin"],
   // Maintenance tickets — front desk files them, admin triages.
   maintenance: ["admin", "front_desk", "staff"],
+  // Programs (camps, clinics, classes, open gym, private training).
+  // Front desk registers participants at the counter.
+  programs: ["admin", "front_desk"],
+  // Time-off requests — admin approves; staff file their own from
+  // the portal (handled by a separate portal endpoint).
+  time_off: ["admin"],
 };
 
 export function canAccess(role: UserRole | undefined, page: AdminPage): boolean {

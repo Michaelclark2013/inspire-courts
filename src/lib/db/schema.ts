@@ -966,3 +966,186 @@ export const maintenanceTickets = sqliteTable("maintenance_tickets", {
   index("maintenance_tickets_priority_idx").on(table.priority),
   index("maintenance_tickets_assigned_idx").on(table.assignedTo),
 ]);
+
+// ── Programs / Classes / Camps ──────────────────────────────────────
+// The umbrella for everything with sessions + enrollment: camps,
+// clinics, leagues, open gym, private training, classes. A program
+// is the template (e.g. "Summer Basketball Camp Week 1"); sessions
+// are the individual slots; registrations are the enrolled players.
+
+export const PROGRAM_TYPES = [
+  "camp",
+  "clinic",
+  "league",
+  "open_gym",
+  "private_training",
+  "class",
+  "other",
+] as const;
+
+export const programs = sqliteTable("programs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  type: text("type", { enum: PROGRAM_TYPES }).notNull().default("camp"),
+  description: text("description"),
+  minAge: integer("min_age"),
+  maxAge: integer("max_age"),
+  // Default capacity per session — individual sessions can override.
+  capacityPerSession: integer("capacity_per_session"),
+  priceCents: integer("price_cents"),
+  // Comma-sep tags — beginner, intermediate, advanced, shooting, etc.
+  tags: text("tags").notNull().default(""),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("programs_type_idx").on(table.type),
+  index("programs_active_idx").on(table.active),
+]);
+
+export const PROGRAM_SESSION_STATUS = [
+  "scheduled",
+  "live",
+  "completed",
+  "cancelled",
+] as const;
+
+export const programSessions = sqliteTable("program_sessions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  programId: integer("program_id")
+    .notNull()
+    .references(() => programs.id, { onDelete: "cascade" }),
+  startsAt: text("starts_at").notNull(),
+  endsAt: text("ends_at").notNull(),
+  instructorUserId: integer("instructor_user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  // Location — free-form ("Court 3", "Turf", "Studio A") because we
+  // don't have a locations table yet.
+  location: text("location"),
+  capacityOverride: integer("capacity_override"),
+  status: text("status", { enum: PROGRAM_SESSION_STATUS })
+    .notNull()
+    .default("scheduled"),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("program_sessions_program_idx").on(table.programId),
+  index("program_sessions_starts_idx").on(table.startsAt),
+  index("program_sessions_status_idx").on(table.status),
+  index("program_sessions_instructor_idx").on(table.instructorUserId),
+]);
+
+export const PROGRAM_REGISTRATION_STATUS = [
+  "registered",
+  "waitlist",
+  "attended",
+  "no_show",
+  "cancelled",
+] as const;
+
+export const programRegistrations = sqliteTable("program_registrations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  sessionId: integer("session_id")
+    .notNull()
+    .references(() => programSessions.id, { onDelete: "cascade" }),
+  // Flexible: can link to an existing member, an existing user, or
+  // just be a free-form participant (walk-in camp registration by
+  // phone, no account needed).
+  memberId: integer("member_id").references(() => members.id, {
+    onDelete: "set null",
+  }),
+  userId: integer("user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  participantName: text("participant_name").notNull(),
+  participantEmail: text("participant_email"),
+  participantPhone: text("participant_phone"),
+  guardianName: text("guardian_name"), // for minors
+  guardianPhone: text("guardian_phone"),
+  waiverSignedAt: text("waiver_signed_at"),
+  status: text("status", { enum: PROGRAM_REGISTRATION_STATUS })
+    .notNull()
+    .default("registered"),
+  paid: integer("paid", { mode: "boolean" }).notNull().default(false),
+  amountCents: integer("amount_cents"),
+  paymentMethod: text("payment_method"),
+  notes: text("notes"),
+  registeredBy: integer("registered_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  registeredAt: text("registered_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("program_registrations_session_idx").on(table.sessionId),
+  index("program_registrations_member_idx").on(table.memberId),
+  index("program_registrations_status_idx").on(table.status),
+]);
+
+// ── Staff Availability + Time Off (Phase 2 layer-2) ─────────────────
+
+export const staffAvailability = sqliteTable("staff_availability", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  // 0 = Sunday, 6 = Saturday. Matches JS Date.getDay().
+  weekday: integer("weekday").notNull(),
+  // HH:MM in 24h local time.
+  startTime: text("start_time").notNull(),
+  endTime: text("end_time").notNull(),
+  effectiveFrom: text("effective_from"),
+  effectiveTo: text("effective_to"),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("staff_availability_user_idx").on(table.userId),
+  index("staff_availability_weekday_idx").on(table.weekday),
+]);
+
+export const TIME_OFF_TYPES = ["pto", "unpaid", "sick", "other"] as const;
+export const TIME_OFF_STATUS = ["pending", "approved", "denied", "cancelled"] as const;
+
+export const timeOffRequests = sqliteTable("time_off_requests", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  startDate: text("start_date").notNull(),
+  endDate: text("end_date").notNull(),
+  type: text("type", { enum: TIME_OFF_TYPES }).notNull().default("pto"),
+  status: text("status", { enum: TIME_OFF_STATUS })
+    .notNull()
+    .default("pending"),
+  reason: text("reason"),
+  approvedBy: integer("approved_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  approvedAt: text("approved_at"),
+  denialReason: text("denial_reason"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("time_off_requests_user_idx").on(table.userId),
+  index("time_off_requests_status_idx").on(table.status),
+  index("time_off_requests_start_idx").on(table.startDate),
+]);

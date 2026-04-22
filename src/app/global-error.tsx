@@ -109,6 +109,11 @@ export default function GlobalError({
           >
             Try Again
           </button>
+          {/* global-error is the outermost error boundary; next/link
+              can't be relied on here because the failed render may
+              live inside the Link provider itself. Plain <a> is the
+              correct escape hatch. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
             href="/"
             style={{

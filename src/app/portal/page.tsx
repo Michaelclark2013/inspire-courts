@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -273,11 +274,11 @@ export default function PortalDashboard() {
                   <FileCheck className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
                 </a>
               )}
-              <a href="/tournaments" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
+              <Link href="/tournaments" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
                 <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">{role === "parent" || role === "coach" ? "3" : "2"}</span>
                 <span className="text-navy text-sm font-medium">Browse upcoming tournaments</span>
                 <Trophy className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
-              </a>
+              </Link>
             </div>
           </div>
         ) : (

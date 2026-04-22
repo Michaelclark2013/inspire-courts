@@ -45,7 +45,11 @@ function GameCardImpl({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const targetRef = useRef<{ home: number; away: number } | null>(null);
 
-  // Sync when server prop changes and we have no pending mutation
+  // Sync when server prop changes and we have no pending mutation.
+  // Legitimate prop→state sync — React 19's cascading-renders lint
+  // is strict on this known pattern; the conditional guards
+  // (pending + targetRef) already prevent the cascade.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!pending && !targetRef.current) {
       setOptHome(game.homeScore);

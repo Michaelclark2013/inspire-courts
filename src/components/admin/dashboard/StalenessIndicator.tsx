@@ -14,16 +14,22 @@ function StalenessIndicator({
   onRefresh: () => void;
   refreshing: boolean;
 }) {
-  const [secondsAgo, setSecondsAgo] = useState(0);
-
+  // Derive secondsAgo from a shared "now" tick instead of resetting
+  // a stored counter on lastFetched changes. Lazy-init seeds `now`
+  // at mount so there's no setState-in-effect bounce; the interval
+  // effect only writes when the timer fires, which is user-
+  // observable clock motion and not a render-phase cascade.
+  const [now, setNow] = useState<number>(() =>
+    typeof window === "undefined" ? 0 : Date.now()
+  );
   useEffect(() => {
-    if (!lastFetched) return;
-    setSecondsAgo(0);
-    const id = setInterval(() => {
-      setSecondsAgo(Math.round((Date.now() - lastFetched.getTime()) / 1000));
-    }, 1000);
+    const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, [lastFetched]);
+  }, []);
+  const secondsAgo =
+    lastFetched && now
+      ? Math.max(0, Math.round((now - lastFetched.getTime()) / 1000))
+      : 0;
 
   const color =
     secondsAgo >= 120

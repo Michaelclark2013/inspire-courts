@@ -1,3 +1,10 @@
+// The Notion API returns a deeply-nested discriminated union
+// (25+ property types, each with their own shape). Defining the
+// full union locally would either (a) drift out of sync with the
+// @notionhq/client package or (b) be a massive type-export
+// surface. `any` is intentional here because the `getProperty`
+// helper only narrows via `prop.type` at runtime.
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Client } from "@notionhq/client";
 import { logger } from "@/lib/logger";
 

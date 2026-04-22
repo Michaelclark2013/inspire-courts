@@ -68,7 +68,10 @@ export type AdminPage =
   | "timeclock"
   | "shifts"
   | "resources"
-  | "payroll";
+  | "payroll"
+  | "members"
+  | "certifications"
+  | "maintenance";
 
 const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
@@ -106,6 +109,15 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   shifts: ["admin"],
   resources: ["admin"],
   payroll: ["admin"],
+  // Member mgmt — front desk needs create/edit to check people in at
+  // the counter; plan pricing + billing info is admin-only at the
+  // API layer (list returns trimmed fields for non-admin roles).
+  members: ["admin", "front_desk"],
+  // Certifications track expirations for compliance. Admin-only
+  // because cert docs may contain PII.
+  certifications: ["admin"],
+  // Maintenance tickets — front desk files them, admin triages.
+  maintenance: ["admin", "front_desk", "staff"],
 };
 
 export function canAccess(role: UserRole | undefined, page: AdminPage): boolean {

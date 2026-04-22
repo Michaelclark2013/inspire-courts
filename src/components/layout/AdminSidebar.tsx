@@ -35,6 +35,9 @@ import {
   Truck,
   Wallet,
   IdCard,
+  UserPlus,
+  Wrench,
+  BadgeCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { canAccess, ROLE_LABELS } from "@/lib/permissions";
@@ -118,8 +121,17 @@ const STAFF_OPS: NavItem[] = [
   { href: "/admin/timeclock", label: "Time Clock", icon: Clock, page: "timeclock" },
   { href: "/admin/shifts", label: "Shifts", icon: CalendarDays, page: "shifts" },
   { href: "/admin/payroll", label: "Payroll", icon: Wallet, page: "payroll" },
+  { href: "/admin/certifications", label: "Certifications", icon: BadgeCheck, page: "certifications" },
   { href: "/admin/resources", label: "Resources / Van", icon: Truck, page: "resources" },
+  { href: "/admin/maintenance", label: "Maintenance", icon: Wrench, page: "maintenance" },
   { href: "/admin/staff", label: "Staff (Legacy Sheet)", icon: UserCheck, page: "staff_refs" },
+];
+
+// Members / customers side of the gym — recurring members, visits,
+// plan management. Front desk uses /admin/members to check people in;
+// admin uses it to run reports + see churn risk.
+const MEMBER_OPS: NavItem[] = [
+  { href: "/admin/members", label: "Members", icon: UserPlus, page: "members" },
 ];
 
 const FINANCE: NavItem[] = [
@@ -187,6 +199,7 @@ export default function AdminSidebar() {
   const visibleEventSetup = EVENT_SETUP.filter((item) => canAccess(role, item.page));
   const visibleGameDay = GAME_DAY.filter((item) => canAccess(role, item.page));
   const visibleStaffOps = STAFF_OPS.filter((item) => canAccess(role, item.page));
+  const visibleMemberOps = MEMBER_OPS.filter((item) => canAccess(role, item.page));
   const visibleFinance = FINANCE.filter((item) => canAccess(role, item.page));
   const visibleAdmin = ADMIN_SECTION.filter((item) => canAccess(role, item.page));
   const visiblePersonal = PERSONAL.filter((item) => canAccess(role, item.page));
@@ -319,6 +332,21 @@ export default function AdminSidebar() {
               )}
               <div className="space-y-0.5">
                 {visibleStaffOps.map((item) => (
+                  <SidebarLink key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {visibleMemberOps.length > 0 && (
+            <div>
+              {!collapsed && (
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                  Members
+                </p>
+              )}
+              <div className="space-y-0.5">
+                {visibleMemberOps.map((item) => (
                   <SidebarLink key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} />
                 ))}
               </div>

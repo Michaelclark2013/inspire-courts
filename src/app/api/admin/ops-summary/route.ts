@@ -13,8 +13,12 @@ import {
   tournaments,
   tournamentRegistrations,
   payPeriods,
+  staffCertifications,
+  maintenanceTickets,
+  members,
+  membershipPlans,
 } from "@/lib/db/schema";
-import { and, desc, eq, gt, gte, isNull, lt, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, gt, gte, isNotNull, isNull, lt, or, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";
 import { withTiming } from "@/lib/timing";
@@ -52,6 +56,13 @@ export const GET = withTiming("admin.ops_summary", async () => {
       upcomingBookings,
       openPayPeriods,
       staffActiveCount,
+      expiringCerts,
+      urgentTickets,
+      activeMembers,
+      trialMembers,
+      pastDueMembers,
+      renewingThisWeek,
+      visitsToday,
     ] = await Promise.all([
       // Live clock-ins with the person's name for a glanceable list
       db
@@ -214,6 +225,76 @@ export const GET = withTiming("admin.ops_summary", async () => {
         .select({ c: sql<number>`count(*)` })
         .from(staffProfiles)
         .where(eq(staffProfiles.status, "active")),
+
+      // Certifications expiring in the next 30 days
+      db
+        .select({
+          id: staffCertifications.id,
+          userId: staffCertifications.userId,
+          name: users.name,
+          type: staffCertifications.type,
+          expiresAt: staffCertifications.expiresAt,
+        })
+        .from(staffCertifications)
+        .leftJoin(users, eq(users.id, staffCertifications.userId))
+        .where(
+          and(
+            isNotNull(staffCertifications.expiresAt),
+            lt(
+              staffCertifications.expiresAt,
+              new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            )
+          )
+        )
+        .orderBy(staffCertifications.expiresAt)
+        .limit(10),
+
+      // Active maintenance tickets — urgent + high only for the dash alert
+      db
+        .select({
+          id: maintenanceTickets.id,
+          title: maintenanceTickets.title,
+          location: maintenanceTickets.location,
+          priority: maintenanceTickets.priority,
+          status: maintenanceTickets.status,
+          createdAt: maintenanceTickets.createdAt,
+        })
+        .from(maintenanceTickets)
+        .where(
+          and(
+            or(
+              eq(maintenanceTickets.status, "open"),
+              eq(maintenanceTickets.status, "in_progress"),
+              eq(maintenanceTickets.status, "waiting_vendor")
+            )!,
+            or(
+              eq(maintenanceTickets.priority, "urgent"),
+              eq(maintenanceTickets.priority, "high")
+            )!
+          )
+        )
+        .orderBy(
+          sql`CASE ${maintenanceTickets.priority} WHEN 'urgent' THEN 0 ELSE 1 END`,
+          desc(maintenanceTickets.createdAt)
+        )
+        .limit(10),
+
+      // Member KPIs
+      db.select({ c: sql<number>`count(*)` }).from(members).where(eq(members.status, "active")),
+      db.select({ c: sql<number>`count(*)` }).from(members).where(eq(members.status, "trial")),
+      db.select({ c: sql<number>`count(*)` }).from(members).where(eq(members.status, "past_due")),
+      db
+        .select({ c: sql<number>`count(*)` })
+        .from(members)
+        .where(
+          and(
+            gte(members.nextRenewalAt, nowIso),
+            lt(members.nextRenewalAt, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString())
+          )
+        ),
+      db
+        .select({ c: sql<number>`count(*)` })
+        .from(sql`(SELECT DISTINCT member_id FROM member_visits WHERE visited_at >= ${todayIso})`),
     ]);
 
     // 1099 threshold watch — any active non-W2/non-volunteer worker
@@ -250,6 +331,18 @@ export const GET = withTiming("admin.ops_summary", async () => {
           pendingApprovals: Number(pendingApprovals[0]?.c) || 0,
           thresholdAlerts,
           thresholdWarnAtCents: FORM_1099_WARNING_CENTS,
+          expiringCerts,
+        },
+        maintenance: {
+          activeCount: urgentTickets.length,
+          urgentTickets,
+        },
+        members: {
+          activeCount: Number(activeMembers[0]?.c) || 0,
+          trialCount: Number(trialMembers[0]?.c) || 0,
+          pastDueCount: Number(pastDueMembers[0]?.c) || 0,
+          renewingThisWeek: Number(renewingThisWeek[0]?.c) || 0,
+          visitsTodayUniqueMembers: Number(visitsToday[0]?.c) || 0,
         },
         shifts: {
           upcoming48h: upcomingShifts48h,

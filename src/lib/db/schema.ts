@@ -728,3 +728,241 @@ export const payPeriods = sqliteTable("pay_periods", {
   index("pay_periods_starts_idx").on(table.startsAt),
   index("pay_periods_status_idx").on(table.status),
 ]);
+
+// ── Members & Memberships ───────────────────────────────────────────
+// The customer side of the gym — recurring members on monthly/annual
+// plans. Separate from `users` (which is the auth/portal table) because
+// many members never create an account; the front desk tracks them by
+// name + phone + membership card. When a member DOES create an account,
+// users.id is linked via the optional userId column.
+
+export const MEMBERSHIP_PLAN_TYPES = [
+  "unlimited",
+  "single_sport",
+  "family",
+  "day_pass",
+  "class_pack",
+  "other",
+] as const;
+
+export const membershipPlans = sqliteTable("membership_plans", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  type: text("type", { enum: MEMBERSHIP_PLAN_TYPES })
+    .notNull()
+    .default("unlimited"),
+  description: text("description"),
+  priceMonthlyCents: integer("price_monthly_cents"),
+  priceAnnualCents: integer("price_annual_cents"),
+  priceOnceCents: integer("price_once_cents"), // day pass / class pack
+  // Included perks as a comma-separated tag list — matches the
+  // role_tags pattern on staff_profiles for LIKE-search cheapness.
+  includes: text("includes").notNull().default(""),
+  // Visit caps; null = unlimited.
+  maxVisitsPerMonth: integer("max_visits_per_month"),
+  maxVisitsPerWeek: integer("max_visits_per_week"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("membership_plans_active_idx").on(table.active),
+]);
+
+export const MEMBER_STATUS = [
+  "active",
+  "paused",
+  "past_due",
+  "cancelled",
+  "trial",
+] as const;
+
+export const MEMBER_SOURCES = [
+  "website",
+  "walk_in",
+  "referral",
+  "tournament",
+  "instagram",
+  "google",
+  "other",
+] as const;
+
+export const members = sqliteTable("members", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // Optional user link — populated when the member creates a portal
+  // account. Most members are front-desk-only and have no user row.
+  userId: integer("user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  birthDate: text("birth_date"),
+  membershipPlanId: integer("membership_plan_id").references(
+    () => membershipPlans.id,
+    { onDelete: "set null" }
+  ),
+  status: text("status", { enum: MEMBER_STATUS })
+    .notNull()
+    .default("active"),
+  source: text("source", { enum: MEMBER_SOURCES }).notNull().default("walk_in"),
+  joinedAt: text("joined_at").notNull(),
+  // Next renewal date — front-desk surfaces "renewing this week" so
+  // the card-on-file can be updated proactively before a failed charge.
+  nextRenewalAt: text("next_renewal_at"),
+  autoRenew: integer("auto_renew", { mode: "boolean" }).notNull().default(true),
+  paymentMethod: text("payment_method"),
+  emergencyContactJson: text("emergency_contact_json"),
+  // Family plan linkage — primary member owns the plan, dependents
+  // inherit. Null = standalone member.
+  primaryMemberId: integer("primary_member_id"),
+  notes: text("notes"),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("members_status_idx").on(table.status),
+  index("members_plan_idx").on(table.membershipPlanId),
+  index("members_next_renewal_idx").on(table.nextRenewalAt),
+  index("members_email_idx").on(table.email),
+  index("members_phone_idx").on(table.phone),
+  index("members_primary_idx").on(table.primaryMemberId),
+]);
+
+export const MEMBER_VISIT_TYPES = [
+  "open_gym",
+  "class",
+  "tournament",
+  "private_training",
+  "guest_pass",
+  "other",
+] as const;
+
+export const memberVisits = sqliteTable("member_visits", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  memberId: integer("member_id")
+    .notNull()
+    .references(() => members.id, { onDelete: "cascade" }),
+  visitedAt: text("visited_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  type: text("type", { enum: MEMBER_VISIT_TYPES }).notNull().default("open_gym"),
+  checkedInBy: integer("checked_in_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  notes: text("notes"),
+}, (table) => [
+  index("member_visits_member_idx").on(table.memberId),
+  index("member_visits_visited_idx").on(table.visitedAt),
+]);
+
+// ── Staff Certifications (Phase 4) ──────────────────────────────────
+// Expiring-cert alerts on the ops dashboard. Types kept as a loose
+// enum so rare/one-off credentials (e.g. "AED renewal 2026") slot in.
+
+export const CERTIFICATION_TYPES = [
+  "cpr",
+  "first_aid",
+  "aed",
+  "background_check",
+  "ref_level_1",
+  "ref_level_2",
+  "ref_level_3",
+  "coaching_license",
+  "drivers_license",
+  "w4",
+  "i9",
+  "other",
+] as const;
+
+export const staffCertifications = sqliteTable("staff_certifications", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  type: text("type", { enum: CERTIFICATION_TYPES })
+    .notNull()
+    .default("other"),
+  label: text("label"), // optional human name ("Red Cross CPR — 2026")
+  issuedAt: text("issued_at"),
+  expiresAt: text("expires_at"),
+  documentUrl: text("document_url"), // Drive / S3 link to the PDF
+  verifiedBy: integer("verified_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  verifiedAt: text("verified_at"),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("staff_certifications_user_idx").on(table.userId),
+  index("staff_certifications_expires_idx").on(table.expiresAt),
+  index("staff_certifications_type_idx").on(table.type),
+]);
+
+// ── Maintenance Tickets (Phase 4) ───────────────────────────────────
+// Facility upkeep — broken hoops, leaking water fountains, HVAC
+// calls, etc. Priority drives the ops-dashboard alert surface.
+
+export const MAINTENANCE_PRIORITY = ["low", "medium", "high", "urgent"] as const;
+export const MAINTENANCE_STATUS = [
+  "open",
+  "in_progress",
+  "waiting_vendor",
+  "resolved",
+  "closed",
+] as const;
+
+export const maintenanceTickets = sqliteTable("maintenance_tickets", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  description: text("description"),
+  location: text("location"), // "Court 3" / "Lobby" / "Men's locker room"
+  priority: text("priority", { enum: MAINTENANCE_PRIORITY })
+    .notNull()
+    .default("medium"),
+  status: text("status", { enum: MAINTENANCE_STATUS })
+    .notNull()
+    .default("open"),
+  reportedBy: integer("reported_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  assignedTo: integer("assigned_to").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  // Optional link to the specific resource if the ticket is about
+  // the team van, a specific scoreboard, etc.
+  resourceId: integer("resource_id").references(() => resources.id, {
+    onDelete: "set null",
+  }),
+  photoUrls: text("photo_urls"), // JSON array of uploaded photo URLs
+  vendorName: text("vendor_name"),
+  costCents: integer("cost_cents"),
+  resolvedAt: text("resolved_at"),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("maintenance_tickets_status_idx").on(table.status),
+  index("maintenance_tickets_priority_idx").on(table.priority),
+  index("maintenance_tickets_assigned_idx").on(table.assignedTo),
+]);

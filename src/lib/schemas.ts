@@ -579,3 +579,111 @@ export const announcementSchema = z.object({
   audience: z.enum(["all", "coaches", "parents"]).optional(),
   expiresAt: z.string().datetime().optional().nullable(),
 });
+
+// ── Members & Memberships ───────────────────────────────────────────
+const MEMBERSHIP_PLAN_TYPE_ENUM = z.enum([
+  "unlimited", "single_sport", "family", "day_pass", "class_pack", "other",
+]);
+const MEMBER_STATUS_ENUM = z.enum([
+  "active", "paused", "past_due", "cancelled", "trial",
+]);
+const MEMBER_SOURCE_ENUM = z.enum([
+  "website", "walk_in", "referral", "tournament", "instagram", "google", "other",
+]);
+const MEMBER_VISIT_TYPE_ENUM = z.enum([
+  "open_gym", "class", "tournament", "private_training", "guest_pass", "other",
+]);
+
+export const membershipPlanCreateSchema = z.object({
+  name: z.string().min(1).max(200),
+  type: MEMBERSHIP_PLAN_TYPE_ENUM.optional(),
+  description: z.string().max(2000).optional().nullable(),
+  priceMonthlyCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
+  priceAnnualCents: z.number().int().nonnegative().max(100_000_000).optional().nullable(),
+  priceOnceCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
+  includes: z.string().max(500).optional(),
+  maxVisitsPerMonth: z.number().int().positive().max(1000).optional().nullable(),
+  maxVisitsPerWeek: z.number().int().positive().max(100).optional().nullable(),
+  active: z.boolean().optional(),
+  notes: z.string().max(2000).optional().nullable(),
+});
+
+export const membershipPlanUpdateSchema = membershipPlanCreateSchema.extend({
+  id: z.number().int().positive(),
+  name: z.string().min(1).max(200).optional(),
+});
+
+export const memberCreateSchema = z.object({
+  userId: z.number().int().positive().optional().nullable(),
+  firstName: z.string().min(1).max(100),
+  lastName: z.string().min(1).max(100),
+  email: z.string().email().max(255).optional().nullable(),
+  phone: z.string().max(30).optional().nullable(),
+  birthDate: z.string().max(20).optional().nullable(),
+  membershipPlanId: z.number().int().positive().optional().nullable(),
+  status: MEMBER_STATUS_ENUM.optional(),
+  source: MEMBER_SOURCE_ENUM.optional(),
+  joinedAt: z.string().min(1).max(40),
+  nextRenewalAt: z.string().max(40).optional().nullable(),
+  autoRenew: z.boolean().optional(),
+  paymentMethod: z.string().max(30).optional().nullable(),
+  emergencyContactJson: z.string().max(2000).optional().nullable(),
+  primaryMemberId: z.number().int().positive().optional().nullable(),
+  notes: z.string().max(2000).optional().nullable(),
+});
+
+export const memberUpdateSchema = memberCreateSchema.partial().extend({
+  id: z.number().int().positive(),
+});
+
+export const memberVisitCreateSchema = z.object({
+  memberId: z.number().int().positive(),
+  type: MEMBER_VISIT_TYPE_ENUM.optional(),
+  notes: z.string().max(500).optional().nullable(),
+  visitedAt: z.string().max(40).optional(),
+});
+
+// ── Certifications ─────────────────────────────────────────────────
+const CERTIFICATION_TYPE_ENUM = z.enum([
+  "cpr", "first_aid", "aed", "background_check",
+  "ref_level_1", "ref_level_2", "ref_level_3",
+  "coaching_license", "drivers_license", "w4", "i9", "other",
+]);
+
+export const certificationCreateSchema = z.object({
+  userId: z.number().int().positive(),
+  type: CERTIFICATION_TYPE_ENUM,
+  label: z.string().max(200).optional().nullable(),
+  issuedAt: z.string().max(40).optional().nullable(),
+  expiresAt: z.string().max(40).optional().nullable(),
+  documentUrl: z.string().url().max(500).optional().nullable(),
+  notes: z.string().max(2000).optional().nullable(),
+});
+
+export const certificationUpdateSchema = certificationCreateSchema.partial().extend({
+  id: z.number().int().positive(),
+});
+
+// ── Maintenance Tickets ────────────────────────────────────────────
+const MAINTENANCE_PRIORITY_ENUM = z.enum(["low", "medium", "high", "urgent"]);
+const MAINTENANCE_STATUS_ENUM = z.enum([
+  "open", "in_progress", "waiting_vendor", "resolved", "closed",
+]);
+
+export const maintenanceTicketCreateSchema = z.object({
+  title: z.string().min(1).max(200),
+  description: z.string().max(5000).optional().nullable(),
+  location: z.string().max(100).optional().nullable(),
+  priority: MAINTENANCE_PRIORITY_ENUM.optional(),
+  status: MAINTENANCE_STATUS_ENUM.optional(),
+  assignedTo: z.number().int().positive().optional().nullable(),
+  resourceId: z.number().int().positive().optional().nullable(),
+  photoUrls: z.array(z.string().url()).max(20).optional(),
+  vendorName: z.string().max(200).optional().nullable(),
+  costCents: z.number().int().nonnegative().max(100_000_000).optional().nullable(),
+  notes: z.string().max(5000).optional().nullable(),
+});
+
+export const maintenanceTicketUpdateSchema = maintenanceTicketCreateSchema.partial().extend({
+  id: z.number().int().positive(),
+});

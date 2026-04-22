@@ -1,0 +1,388 @@
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause } from "lucide-react";
+
+type Member = {
+  id: number;
+  userId: number | null;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  phone: string | null;
+  status: "active" | "paused" | "past_due" | "cancelled" | "trial";
+  source: string;
+  joinedAt: string;
+  nextRenewalAt: string | null;
+  autoRenew: boolean;
+  planId: number | null;
+  planName: string | null;
+  planType: string | null;
+  lastVisitAt: string | null;
+};
+
+type Plan = {
+  id: number;
+  name: string;
+  type: string;
+  priceMonthlyCents: number | null;
+  priceAnnualCents: number | null;
+  active: boolean;
+  activeMemberCount: number;
+};
+
+const STATUS_STYLES: Record<string, string> = {
+  active: "bg-emerald-50 text-emerald-700",
+  trial: "bg-cyan-50 text-cyan-700",
+  paused: "bg-amber-50 text-amber-700",
+  past_due: "bg-red/10 text-red",
+  cancelled: "bg-navy/10 text-navy/70",
+};
+
+function fmtDate(iso: string | null): string {
+  if (!iso) return "—";
+  try {
+    return new Date(iso).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+  } catch {
+    return iso;
+  }
+}
+
+function fmtCents(c: number | null): string {
+  if (c == null) return "—";
+  return `$${(c / 100).toFixed(2)}`;
+}
+
+export default function MembersPage() {
+  const { data: session, status } = useSession();
+  const [members, setMembers] = useState<Member[]>([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("active");
+  const [planFilter, setPlanFilter] = useState("");
+  const [renewingSoon, setRenewingSoon] = useState(false);
+  const [q, setQ] = useState("");
+  const [showCreate, setShowCreate] = useState(false);
+  const [editing, setEditing] = useState<Member | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const load = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (statusFilter) params.set("status", statusFilter);
+      if (planFilter) params.set("planId", planFilter);
+      if (renewingSoon) params.set("renewingSoon", "true");
+      if (q.trim().length >= 2) params.set("q", q.trim());
+      const [mRes, pRes] = await Promise.all([
+        fetch(`/api/admin/members?${params}`, { signal: controller.signal }),
+        fetch("/api/admin/membership-plans", { signal: controller.signal }),
+      ]);
+      if (mRes.ok) {
+        const json = await mRes.json();
+        setMembers(json.data || []);
+        setTotal(json.total || 0);
+      }
+      if (pRes.ok) setPlans((await pRes.json()).data || []);
+    } catch (e) {
+      if ((e as Error)?.name !== "AbortError") throw e;
+    } finally {
+      if (!controller.signal.aborted) setLoading(false);
+    }
+  }, [statusFilter, planFilter, renewingSoon, q]);
+
+  useEffect(() => {
+    if (status === "authenticated") load();
+  }, [status, load]);
+
+  useEffect(() => {
+    const currentAbort = abortRef;
+    return () => currentAbort.current?.abort();
+  }, []);
+
+  if (status === "loading") return null;
+  if (status === "unauthenticated" || !session?.user?.role) redirect("/admin/login");
+
+  return (
+    <div className="p-3 sm:p-6 lg:p-8">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
+            Members
+          </h1>
+          <p className="text-text-secondary text-sm mt-1">
+            {total} total · {members.filter((m) => m.status === "active").length} active
+          </p>
+        </div>
+        <button
+          onClick={() => setShowCreate(true)}
+          className="inline-flex items-center gap-1 bg-navy text-white rounded-md px-3 py-1.5 text-sm hover:bg-navy/90"
+        >
+          <Plus className="w-4 h-4" /> New Member
+        </button>
+      </div>
+
+      {/* FILTERS */}
+      <div className="flex flex-wrap gap-2 mb-4 items-center">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="w-3.5 h-3.5 text-text-secondary absolute left-2.5 top-1/2 -translate-y-1/2" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search name, email, phone…"
+            className="w-full bg-off-white border border-border rounded-md pl-8 pr-3 py-1.5 text-sm"
+          />
+        </div>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm">
+          <option value="">All statuses</option>
+          <option value="active">Active</option>
+          <option value="trial">Trial</option>
+          <option value="paused">Paused</option>
+          <option value="past_due">Past Due</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <select value={planFilter} onChange={(e) => setPlanFilter(e.target.value)} className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm">
+          <option value="">All plans</option>
+          {plans.map((p) => (
+            <option key={p.id} value={p.id}>{p.name}</option>
+          ))}
+        </select>
+        <label className="inline-flex items-center gap-1.5 text-sm text-navy">
+          <input type="checkbox" checked={renewingSoon} onChange={(e) => setRenewingSoon(e.target.checked)} />
+          Renewing this week
+        </label>
+      </div>
+
+      {loading ? (
+        <div className="text-text-secondary text-sm">Loading…</div>
+      ) : members.length === 0 ? (
+        <div className="bg-off-white border border-border rounded-xl p-8 text-center">
+          <Users className="w-10 h-10 text-text-secondary mx-auto mb-3" />
+          <p className="text-navy font-semibold mb-1">No members match</p>
+          <p className="text-text-secondary text-sm">Try clearing filters, or add a new member.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto bg-white border border-border rounded-xl">
+          <table className="w-full text-sm">
+            <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
+              <tr>
+                <th className="px-4 py-3">Name</th>
+                <th className="px-4 py-3">Plan</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Joined</th>
+                <th className="px-4 py-3">Next Renewal</th>
+                <th className="px-4 py-3">Last Visit</th>
+                <th className="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {members.map((m) => (
+                <tr key={m.id} className="border-b border-border last:border-0 hover:bg-off-white/50">
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-navy">{m.firstName} {m.lastName}</div>
+                    <div className="text-xs text-text-secondary">{m.email || m.phone || "—"}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    {m.planName ? (
+                      <>
+                        <div className="text-navy">{m.planName}</div>
+                        <div className="text-xs text-text-secondary">{m.planType}</div>
+                      </>
+                    ) : (
+                      <span className="text-text-secondary italic text-xs">no plan</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[m.status]}`}>
+                      {m.status === "active" && <CheckCircle2 className="w-3 h-3 mr-1" />}
+                      {m.status === "past_due" && <AlertTriangle className="w-3 h-3 mr-1" />}
+                      {m.status === "paused" && <Pause className="w-3 h-3 mr-1" />}
+                      {m.status.replace("_", " ")}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-text-secondary">{fmtDate(m.joinedAt)}</td>
+                  <td className="px-4 py-3 text-xs text-text-secondary">
+                    {m.nextRenewalAt ? fmtDate(m.nextRenewalAt) : "—"}
+                    {!m.autoRenew && m.nextRenewalAt && (
+                      <div className="text-[10px] text-amber-600">manual</div>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-text-secondary">{fmtDate(m.lastVisitAt)}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => setEditing(m)}
+                      className="text-xs text-navy hover:text-red"
+                    >
+                      Edit
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {(showCreate || editing) && (
+        <MemberModal
+          member={editing}
+          plans={plans}
+          onClose={() => { setShowCreate(false); setEditing(null); }}
+          onSaved={() => { setShowCreate(false); setEditing(null); load(); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function MemberModal({
+  member, plans, onClose, onSaved,
+}: {
+  member: Member | null;
+  plans: Plan[];
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const isEdit = !!member;
+  const [form, setForm] = useState({
+    firstName: member?.firstName ?? "",
+    lastName: member?.lastName ?? "",
+    email: member?.email ?? "",
+    phone: member?.phone ?? "",
+    membershipPlanId: member?.planId ? String(member.planId) : "",
+    status: member?.status ?? ("active" as const),
+    source: member?.source ?? "walk_in",
+    joinedAt: member?.joinedAt?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
+    nextRenewalAt: member?.nextRenewalAt?.slice(0, 10) ?? "",
+    autoRenew: member?.autoRenew ?? true,
+    notes: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+
+  async function save() {
+    setSaving(true);
+    setErr("");
+    try {
+      const body: Record<string, unknown> = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email || null,
+        phone: form.phone || null,
+        membershipPlanId: form.membershipPlanId ? Number(form.membershipPlanId) : null,
+        status: form.status,
+        source: form.source,
+        joinedAt: new Date(form.joinedAt + "T00:00:00").toISOString(),
+        nextRenewalAt: form.nextRenewalAt ? new Date(form.nextRenewalAt + "T00:00:00").toISOString() : null,
+        autoRenew: form.autoRenew,
+        notes: form.notes || null,
+      };
+      const res = isEdit
+        ? await fetch("/api/admin/members", {
+            method: "PUT", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: member!.id, ...body }),
+          })
+        : await fetch("/api/admin/members", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.errors ? Object.entries(j.errors).map(([k, v]) => `${k}: ${v}`).join("; ") : j.error || "Save failed");
+      }
+      onSaved();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-navy/30 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl border border-border shadow-sm w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+        <h2 className="text-lg font-bold text-navy mb-4">{isEdit ? "Edit Member" : "New Member"}</h2>
+        <div className="space-y-3 text-sm">
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="block text-xs text-text-secondary mb-1">First Name</span>
+              <input value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
+            </label>
+            <label className="block">
+              <span className="block text-xs text-text-secondary mb-1">Last Name</span>
+              <input value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
+            </label>
+            <label className="block">
+              <span className="block text-xs text-text-secondary mb-1">Email</span>
+              <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
+            </label>
+            <label className="block">
+              <span className="block text-xs text-text-secondary mb-1">Phone</span>
+              <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
+            </label>
+            <label className="block">
+              <span className="block text-xs text-text-secondary mb-1">Plan</span>
+              <select value={form.membershipPlanId} onChange={(e) => setForm({ ...form, membershipPlanId: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5">
+                <option value="">— No plan —</option>
+                {plans.filter((p) => p.active).map((p) => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="block text-xs text-text-secondary mb-1">Status</span>
+              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as Member["status"] })} className="w-full bg-off-white border border-border rounded px-2 py-1.5">
+                <option value="active">Active</option>
+                <option value="trial">Trial</option>
+                <option value="paused">Paused</option>
+                <option value="past_due">Past Due</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </label>
+            <label className="block">
+              <span className="block text-xs text-text-secondary mb-1">Source</span>
+              <select value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5">
+                <option value="walk_in">Walk-in</option>
+                <option value="website">Website</option>
+                <option value="referral">Referral</option>
+                <option value="tournament">Tournament</option>
+                <option value="instagram">Instagram</option>
+                <option value="google">Google</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label className="block">
+              <span className="block text-xs text-text-secondary mb-1">Joined</span>
+              <input type="date" value={form.joinedAt} onChange={(e) => setForm({ ...form, joinedAt: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
+            </label>
+            <label className="block">
+              <span className="block text-xs text-text-secondary mb-1">Next Renewal</span>
+              <input type="date" value={form.nextRenewalAt} onChange={(e) => setForm({ ...form, nextRenewalAt: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
+            </label>
+            <label className="inline-flex items-center gap-2 col-span-2">
+              <input type="checkbox" checked={form.autoRenew} onChange={(e) => setForm({ ...form, autoRenew: e.target.checked })} />
+              <span className="text-xs text-text-secondary">Auto-renew</span>
+            </label>
+          </div>
+          <label className="block">
+            <span className="block text-xs text-text-secondary mb-1">Notes</span>
+            <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
+          </label>
+          {err && <div className="text-red text-xs">{err}</div>}
+        </div>
+        <div className="mt-5 flex justify-end gap-2">
+          <button onClick={onClose} className="px-3 py-1.5 text-sm text-text-secondary hover:text-navy">Cancel</button>
+          <button onClick={save} disabled={saving} className="px-4 py-1.5 bg-navy text-white rounded-md text-sm hover:bg-navy/90 disabled:opacity-50">
+            {saving ? "Saving…" : "Save"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

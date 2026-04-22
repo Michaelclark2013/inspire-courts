@@ -48,6 +48,50 @@ type NavItem = {
   page: AdminPage;
 };
 
+// Pages that show a notification dot (pending items likely exist).
+const BADGE_PAGES = new Set<AdminPage>(["approvals", "announcements"]);
+
+// Lifted out of AdminSidebar so React doesn't treat it as a new
+// component identity on every parent render (the React 19 checker
+// errored with "Cannot create components during render" when this
+// was declared inline).
+function SidebarLink({
+  item,
+  active,
+  collapsed,
+}: {
+  item: NavItem;
+  active: boolean;
+  collapsed: boolean;
+}) {
+  const showBadge = BADGE_PAGES.has(item.page) && !active;
+  return (
+    <Link
+      href={item.href}
+      title={collapsed ? item.label : undefined}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative",
+        collapsed && "justify-center px-2",
+        active
+          ? "bg-red/10 text-red font-semibold before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[3px] before:bg-red before:rounded-full"
+          : "text-text-muted hover:text-navy hover:bg-off-white"
+      )}
+    >
+      <span className="relative flex-shrink-0">
+        <item.icon className="w-4 h-4" aria-hidden="true" />
+        {showBadge && (
+          <span
+            className="absolute -top-1 -right-1 w-2 h-2 bg-red rounded-full ring-2 ring-white"
+            aria-label="Has pending items"
+          />
+        )}
+      </span>
+      {!collapsed && item.label}
+    </Link>
+  );
+}
+
 const OVERVIEW_ITEM: NavItem = { href: "/admin", label: "Overview", icon: LayoutDashboard, page: "overview" };
 
 const EVENT_SETUP: NavItem[] = [
@@ -108,20 +152,19 @@ const BOTTOM_TABS: NavItem[] = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [showMore, setShowMore] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  // Lazy-init reads localStorage once at mount time and seeds state
+  // directly, skipping the useEffect → setState bounce that trips
+  // React 19's cascading-renders check. SSR-safe via the window check.
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem("sidebar-collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
   const { data: session } = useSession();
   const role = (session?.user?.role || "admin") as UserRole;
-
-  // Persist collapsed state in localStorage
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const saved = window.localStorage.getItem("sidebar-collapsed");
-      if (saved === "true") setCollapsed(true);
-    } catch {
-      // localStorage may be unavailable (private browsing, quota, etc.)
-    }
-  }, []);
 
   function toggleCollapsed() {
     setCollapsed((prev) => {
@@ -160,36 +203,6 @@ export default function AdminSidebar() {
 
   function isActive(href: string) {
     return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
-  }
-
-  // Pages that show a notification dot (pending items likely exist)
-  const BADGE_PAGES = new Set(["approvals", "announcements"]);
-
-  function SidebarLink({ item }: { item: NavItem }) {
-    const active = isActive(item.href);
-    const showBadge = BADGE_PAGES.has(item.page) && !active;
-    return (
-      <Link
-        href={item.href}
-        title={collapsed ? item.label : undefined}
-        aria-current={active ? "page" : undefined}
-        className={cn(
-          "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative",
-          collapsed && "justify-center px-2",
-          active
-            ? "bg-red/10 text-red font-semibold before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[3px] before:bg-red before:rounded-full"
-            : "text-text-muted hover:text-navy hover:bg-off-white"
-        )}
-      >
-        <span className="relative flex-shrink-0">
-          <item.icon className="w-4 h-4" aria-hidden="true" />
-          {showBadge && (
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-red rounded-full ring-2 ring-white" aria-label="Has pending items" />
-          )}
-        </span>
-        {!collapsed && item.label}
-      </Link>
-    );
   }
 
   return (
@@ -260,7 +273,7 @@ export default function AdminSidebar() {
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5" aria-label="Admin pages">
           <div>
-            <SidebarLink item={OVERVIEW_ITEM} />
+            <SidebarLink item={OVERVIEW_ITEM} active={isActive(OVERVIEW_ITEM.href)} collapsed={collapsed} />
           </div>
 
           {visibleEventSetup.length > 0 && (
@@ -272,7 +285,7 @@ export default function AdminSidebar() {
               )}
               <div className="space-y-0.5">
                 {visibleEventSetup.map((item) => (
-                  <SidebarLink key={item.href} item={item} />
+                  <SidebarLink key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} />
                 ))}
               </div>
             </div>
@@ -287,7 +300,7 @@ export default function AdminSidebar() {
               )}
               <div className="space-y-0.5">
                 {visibleGameDay.map((item) => (
-                  <SidebarLink key={item.href} item={item} />
+                  <SidebarLink key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} />
                 ))}
               </div>
             </div>
@@ -302,7 +315,7 @@ export default function AdminSidebar() {
               )}
               <div className="space-y-0.5">
                 {visibleStaffOps.map((item) => (
-                  <SidebarLink key={item.href} item={item} />
+                  <SidebarLink key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} />
                 ))}
               </div>
             </div>
@@ -317,7 +330,7 @@ export default function AdminSidebar() {
               )}
               <div className="space-y-0.5">
                 {visibleFinance.map((item) => (
-                  <SidebarLink key={item.href} item={item} />
+                  <SidebarLink key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} />
                 ))}
               </div>
             </div>
@@ -332,7 +345,7 @@ export default function AdminSidebar() {
               )}
               <div className="space-y-0.5">
                 {visibleAdmin.map((item) => (
-                  <SidebarLink key={item.href} item={item} />
+                  <SidebarLink key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} />
                 ))}
               </div>
             </div>
@@ -347,7 +360,7 @@ export default function AdminSidebar() {
               )}
               <div className="space-y-0.5">
                 {visiblePersonal.map((item) => (
-                  <SidebarLink key={item.href} item={item} />
+                  <SidebarLink key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} />
                 ))}
               </div>
             </div>

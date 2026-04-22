@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 interface RecentItem {
   id: string;
@@ -17,17 +17,18 @@ const MAX_ITEMS = 5;
  * Stores in localStorage with a max of 5 items.
  */
 export function useRecentlyViewed() {
-  const [items, setItems] = useState<RecentItem[]>([]);
-
-  // Load on mount
-  useEffect(() => {
+  // Lazy init from localStorage — seeds the first render with the
+  // stored list so there's no useEffect → setItems bounce (which
+  // triggered React 19's cascading-renders warning).
+  const [items, setItems] = useState<RecentItem[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw));
+      return raw ? JSON.parse(raw) : [];
     } catch {
-      // Corrupted — ignore
+      return [];
     }
-  }, []);
+  });
 
   const addItem = useCallback((item: Omit<RecentItem, "viewedAt">) => {
     setItems((prev) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import Link from "next/link";
 import { Clock, ClipboardList, Megaphone } from "lucide-react";
 import type { AdminUpcomingGame } from "@/types/admin-dashboard";
@@ -12,6 +12,16 @@ function UpcomingGames({
   games: AdminUpcomingGame[];
   activeAnnouncements: number;
 }) {
+  // Date.now() during render is impure and breaks React 19's
+  // strict-render checks. Capture "now" on mount, then refresh it
+  // on a 30s tick so the "In X min" labels stay roughly live
+  // without recomputing on every render.
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+    const iv = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(iv);
+  }, []);
   return (
     <section
       className="bg-white border border-light-gray shadow-sm rounded-sm overflow-hidden"
@@ -69,11 +79,12 @@ function UpcomingGames({
             </thead>
             <tbody>
               {games.map((g) => {
-                const minutesUntil = g.scheduledTime
-                  ? Math.round(
-                      (new Date(g.scheduledTime).getTime() - Date.now()) / 60000
-                    )
-                  : null;
+                const minutesUntil =
+                  g.scheduledTime && now !== null
+                    ? Math.round(
+                        (new Date(g.scheduledTime).getTime() - now) / 60000
+                      )
+                    : null;
                 const isSoon =
                   minutesUntil !== null && minutesUntil > 0 && minutesUntil <= 30;
                 return (

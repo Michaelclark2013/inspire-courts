@@ -7,21 +7,30 @@ import { useEffect, useState } from "react";
  * Returns true for both Android (display-mode: standalone) and iOS (navigator.standalone).
  */
 export function useStandalone(): boolean {
-  const [isStandalone, setIsStandalone] = useState(false);
+  // Lazy init so the first render already reflects the installed
+  // state — avoids React 19's setState-in-effect warning from the
+  // old "useEffect → setIsStandalone(...)" pattern.
+  const [isStandalone, setIsStandalone] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    const ios =
+      "standalone" in navigator &&
+      (navigator as { standalone?: boolean }).standalone === true;
+    try {
+      return ios || window.matchMedia("(display-mode: standalone)").matches;
+    } catch {
+      return ios;
+    }
+  });
 
   useEffect(() => {
-    // iOS Safari
+    if (typeof window === "undefined") return;
     const iosStandalone =
-      "standalone" in navigator && (navigator as { standalone?: boolean }).standalone === true;
-
-    // Android / desktop PWA
-    const mediaStandalone = window.matchMedia("(display-mode: standalone)").matches;
-
-    setIsStandalone(iosStandalone || mediaStandalone);
-
-    // Listen for changes (e.g. if user installs while browsing)
+      "standalone" in navigator &&
+      (navigator as { standalone?: boolean }).standalone === true;
+    // Listen for changes (e.g. user installs while browsing).
     const mq = window.matchMedia("(display-mode: standalone)");
-    const handler = (e: MediaQueryListEvent) => setIsStandalone(e.matches || iosStandalone);
+    const handler = (e: MediaQueryListEvent) =>
+      setIsStandalone(e.matches || iosStandalone);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);

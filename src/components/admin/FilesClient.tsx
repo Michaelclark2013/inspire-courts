@@ -5,7 +5,7 @@ import {
   FolderOpen,
   FileSpreadsheet,
   FileText,
-  Image,
+  Image as ImageIcon,
   File,
   Folder,
   ExternalLink,
@@ -36,7 +36,7 @@ function FileIcon({ mimeType }: { mimeType: string }) {
   if (mimeType === "application/vnd.google-apps.document")
     return <FileText className="w-4 h-4 text-sky-600" aria-hidden="true" />;
   if (mimeType.startsWith("image/"))
-    return <Image className="w-4 h-4 text-violet-600" aria-hidden="true" />;
+    return <ImageIcon className="w-4 h-4 text-violet-600" aria-hidden="true" />;
   return <File className="w-4 h-4 text-text-secondary" aria-hidden="true" />;
 }
 

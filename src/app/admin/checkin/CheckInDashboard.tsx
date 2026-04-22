@@ -96,10 +96,14 @@ export default function CheckInDashboard({
     window.location.reload();
   }, [isRefreshing]);
 
-  // Cleanup timer on unmount
+  // Cleanup timer on unmount. Copy the ref value into the effect
+  // scope so the cleanup sees the value that was current when the
+  // effect ran, not a later value — React's exhaustive-deps lint
+  // rule flags the naked ref access for exactly this reason.
   useEffect(() => {
+    const timerRef = refreshTimerRef;
     return () => {
-      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
 

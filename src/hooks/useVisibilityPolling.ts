@@ -20,8 +20,11 @@ export function useVisibilityPolling(
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const callbackRef = useRef(callback);
 
-  // Keep callback ref stable to avoid re-registering intervals
-  callbackRef.current = callback;
+  // Keep the callback ref fresh from inside an effect — touching
+  // .current during render fails React 19's render-safety checker.
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
 
   const start = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);

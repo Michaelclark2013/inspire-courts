@@ -145,22 +145,41 @@ export default function MySchedulePage() {
 }
 
 function GameRow({ game }: { game: Game }) {
+  // Date.now() during render is impure. Capture once on mount and
+  // refresh every 30s so "in N min" labels stay accurate.
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+    const iv = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(iv);
+  }, []);
+
+  // Build the label outside a try/catch JSX block — lint flags JSX
+  // construction inside try/catch as a code smell because errors
+  // thrown during rendering the JSX can mask real bugs.
   const timeLabel = (() => {
     if (!game.scheduledTime) return null;
+    let d: Date;
     try {
-      const d = new Date(game.scheduledTime);
-      const minutesUntil = Math.round((d.getTime() - Date.now()) / 60000);
-      if (game.status === "scheduled" && minutesUntil > 0 && minutesUntil <= 60) {
-        return <span className="text-amber-600 font-bold">in {minutesUntil}m</span>;
-      }
-      return (
-        <span>
-          {d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
-        </span>
-      );
+      d = new Date(game.scheduledTime);
+      if (isNaN(d.getTime())) return null;
     } catch {
       return null;
     }
+    const minutesUntil = now !== null ? Math.round((d.getTime() - now) / 60000) : null;
+    if (
+      game.status === "scheduled" &&
+      minutesUntil !== null &&
+      minutesUntil > 0 &&
+      minutesUntil <= 60
+    ) {
+      return <span className="text-amber-600 font-bold">in {minutesUntil}m</span>;
+    }
+    return (
+      <span>
+        {d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+      </span>
+    );
   })();
 
   return (

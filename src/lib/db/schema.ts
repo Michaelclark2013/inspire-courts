@@ -273,9 +273,40 @@ export const waivers = sqliteTable("waivers", {
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
   driveDocId: text("drive_doc_id"),
+  // ── Waiver 2.0 fields (all nullable for backwards compat) ──
+  // E-signature capture: base64 PNG data URL of the drawn
+  // signature. Small (~5-20KB typical), stored inline so liability
+  // evidence is always with the record. Typed name kept as a
+  // fallback / legal reinforcement.
+  signatureDataUrl: text("signature_data_url"),
+  signedByName: text("signed_by_name"),
+  // Expiration: most gym waivers expire annually. Cron flags anyone
+  // whose waiver lapses so front desk re-prompts on next check-in.
+  expiresAt: text("expires_at"),
+  // Kind helps separate general gym waivers from program-specific
+  // (Jiu Jitsu combat waiver) and tournament-specific ones.
+  waiverType: text("waiver_type", {
+    enum: ["general", "program", "tournament", "rental", "other"],
+  })
+    .notNull()
+    .default("general"),
+  // Optional link to a program (if waiverType=program) so the
+  // program registration flow can check waiver coverage.
+  programId: integer("program_id"),
+  // Optional link to a member for fast per-member lookup.
+  memberId: integer("member_id"),
+  // Document version — bump when waiver text changes so we can
+  // see which rev each person signed.
+  waiverVersion: text("waiver_version"),
+  // User-agent + IP at sign time = liability evidence.
+  signedUserAgent: text("signed_user_agent"),
+  signedIp: text("signed_ip"),
 }, (table) => [
   index("waivers_email_idx").on(table.email),
   index("waivers_team_idx").on(table.teamName),
+  index("waivers_expires_idx").on(table.expiresAt),
+  index("waivers_member_idx").on(table.memberId),
+  index("waivers_program_idx").on(table.programId),
 ]);
 
 // ── Announcements ───────────────────────────────────────────────────────────

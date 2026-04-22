@@ -4,8 +4,13 @@ import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { waivers } from "@/lib/db/schema";
-import { desc, eq, and, gte, lte, type SQL } from "drizzle-orm";
+import { desc, eq, and, gte, isNotNull, lt, lte, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { recordAudit } from "@/lib/audit";
+import { waiverSignSchema } from "@/lib/schemas";
+import { parseJsonBody, apiError } from "@/lib/api-helpers";
+import { withTiming } from "@/lib/timing";
+import { getClientIp } from "@/lib/rate-limit";
 
 // Escape a value for RFC-4180 CSV (always quoted).
 function csvCell(v: unknown): string {
@@ -40,6 +45,30 @@ export async function GET(request: NextRequest) {
   if (email) filters.push(eq(waivers.email, email.toLowerCase()));
   if (since) filters.push(gte(waivers.signedAt, since));
   if (until) filters.push(lte(waivers.signedAt, until));
+  // Waivers 2.0 filters — expiration-aware lookups.
+  const memberIdRaw = sp.get("memberId");
+  const memberId = Number(memberIdRaw);
+  if (memberIdRaw && Number.isInteger(memberId) && memberId > 0) {
+    filters.push(eq(waivers.memberId, memberId));
+  }
+  const programIdRaw = sp.get("programId");
+  const programId = Number(programIdRaw);
+  if (programIdRaw && Number.isInteger(programId) && programId > 0) {
+    filters.push(eq(waivers.programId, programId));
+  }
+  const nowIso = new Date().toISOString();
+  if (sp.get("expired") === "true") {
+    filters.push(isNotNull(waivers.expiresAt));
+    filters.push(lt(waivers.expiresAt, nowIso));
+  }
+  const expiringInDaysRaw = sp.get("expiringInDays");
+  if (expiringInDaysRaw) {
+    const days = Math.max(1, Math.min(365, Number(expiringInDaysRaw) || 30));
+    const cutoff = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+    filters.push(isNotNull(waivers.expiresAt));
+    filters.push(gte(waivers.expiresAt, nowIso));
+    filters.push(lt(waivers.expiresAt, cutoff));
+  }
 
   try {
     const rows = await db
@@ -89,3 +118,68 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Failed to fetch waivers" }, { status: 500 });
   }
 }
+
+// POST /api/admin/waivers — admin-assisted waiver signing. Parent or
+// player signs on a front-desk tablet; this captures:
+//   - the typed name (legal reinforcement)
+//   - the drawn signature as a base64 PNG data URL
+//   - IP + User-Agent at sign time
+//   - version string so future waiver text changes are auditable
+// Default 1-year expiration if none supplied.
+export const POST = withTiming("admin.waivers.sign", async (request: NextRequest) => {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+    return apiError("Unauthorized", 401);
+  }
+  const parsed = await parseJsonBody(request, waiverSignSchema);
+  if (!parsed.ok) return parsed.response;
+  const b = parsed.data;
+  try {
+    const ip = getClientIp(request);
+    const ua = request.headers.get("user-agent")?.slice(0, 500) ?? null;
+    const expiresAt =
+      b.expiresAt ?? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+    const [created] = await db
+      .insert(waivers)
+      .values({
+        playerName: b.playerName,
+        parentName: b.parentName ?? null,
+        teamName: b.teamName ?? null,
+        email: b.email ? b.email.toLowerCase() : null,
+        phone: b.phone ?? null,
+        signatureDataUrl: b.signatureDataUrl,
+        signedByName: b.signedByName,
+        waiverType: b.waiverType ?? "general",
+        programId: b.programId ?? null,
+        memberId: b.memberId ?? null,
+        waiverVersion: b.waiverVersion ?? "v1",
+        expiresAt,
+        signedUserAgent: ua,
+        signedIp: ip,
+      })
+      .returning({
+        id: waivers.id,
+        playerName: waivers.playerName,
+        signedAt: waivers.signedAt,
+        expiresAt: waivers.expiresAt,
+      });
+    await recordAudit({
+      session,
+      request,
+      action: "waiver.signed",
+      entityType: "waiver",
+      entityId: created.id,
+      before: null,
+      after: {
+        player: b.playerName,
+        signer: b.signedByName,
+        waiverType: b.waiverType ?? "general",
+        expiresAt,
+      },
+    });
+    return NextResponse.json(created, { status: 201 });
+  } catch (err) {
+    logger.error("Failed to sign waiver", { error: String(err) });
+    return apiError("Failed to sign waiver", 500);
+  }
+});

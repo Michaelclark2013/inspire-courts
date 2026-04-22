@@ -822,6 +822,14 @@ export const members = sqliteTable("members", {
   // inherit. Null = standalone member.
   primaryMemberId: integer("primary_member_id"),
   notes: text("notes"),
+  // Stamped by the renewal-reminder cron so we don't re-email the
+  // same person more than once per renewal cycle. Cleared when the
+  // member's next_renewal_at is moved forward (handled in the PUT).
+  renewalReminderSentAt: text("renewal_reminder_sent_at"),
+  // Membership pause window — when set, member.status should be
+  // "paused" and the cron auto-flips back to "active" on/after this
+  // date. Clean separation from next_renewal_at.
+  pausedUntil: text("paused_until"),
   createdBy: integer("created_by").references(() => users.id, {
     onDelete: "set null",
   }),
@@ -838,6 +846,7 @@ export const members = sqliteTable("members", {
   index("members_email_idx").on(table.email),
   index("members_phone_idx").on(table.phone),
   index("members_primary_idx").on(table.primaryMemberId),
+  index("members_paused_until_idx").on(table.pausedUntil),
 ]);
 
 export const MEMBER_VISIT_TYPES = [
@@ -1226,3 +1235,4 @@ export const equipmentStockMovements = sqliteTable("equipment_stock_movements", 
   index("equipment_stock_movements_eq_idx").on(table.equipmentId),
   index("equipment_stock_movements_occ_idx").on(table.occurredAt),
 ]);
+

@@ -518,3 +518,181 @@ export const timeEntries = sqliteTable("time_entries", {
   index("time_entries_open_idx").on(table.clockOutAt),
   index("time_entries_tournament_idx").on(table.tournamentId),
 ]);
+
+// ── Phase 2: Shift Scheduling ────────────────────────────────────────
+// Shifts are the planned version of what eventually shows up in
+// time_entries. One shift can be assigned to multiple workers
+// (required_headcount > 1) via shift_assignments. Leaving shifts
+// unassigned lets admins publish an "open shift" that staff can claim.
+
+export const SHIFT_STATUS = ["draft", "published", "cancelled", "completed"] as const;
+
+export const shifts = sqliteTable("shifts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // Optional: link a shift to a tournament so the schedule page can
+  // show "Memorial Day Classic: 6 shifts, 4 filled". Nullable because
+  // non-tournament shifts (front-desk weekday coverage) exist too.
+  tournamentId: integer("tournament_id").references(() => tournaments.id, {
+    onDelete: "set null",
+  }),
+  title: text("title").notNull(),
+  // Primary role the shift covers (ref, scorekeeper, front_desk, etc.).
+  // Staff with this role tag get priority in the open-shift board.
+  role: text("role"),
+  startAt: text("start_at").notNull(),
+  endAt: text("end_at").notNull(),
+  // Comma-sep court ids / labels where applicable. Kept as text for
+  // the same reason role_tags is — LIKE queries stay cheap.
+  courts: text("courts"),
+  requiredHeadcount: integer("required_headcount").notNull().default(1),
+  notes: text("notes"),
+  status: text("status", { enum: SHIFT_STATUS }).notNull().default("draft"),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("shifts_start_at_idx").on(table.startAt),
+  index("shifts_status_idx").on(table.status),
+  index("shifts_tournament_idx").on(table.tournamentId),
+]);
+
+export const SHIFT_ASSIGNMENT_STATUS = [
+  "assigned",
+  "confirmed",
+  "declined",
+  "no_show",
+  "completed",
+] as const;
+
+export const shiftAssignments = sqliteTable("shift_assignments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  shiftId: integer("shift_id")
+    .notNull()
+    .references(() => shifts.id, { onDelete: "cascade" }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  status: text("status", { enum: SHIFT_ASSIGNMENT_STATUS })
+    .notNull()
+    .default("assigned"),
+  // Optional per-shift rate override (e.g. tournament bonus pay for
+  // a specific day). Null means "use the worker's staff_profile rate".
+  payRateCentsOverride: integer("pay_rate_cents_override"),
+  bonusCents: integer("bonus_cents").notNull().default(0),
+  assignedBy: integer("assigned_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  assignedAt: text("assigned_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  respondedAt: text("responded_at"),
+  notes: text("notes"),
+}, (table) => [
+  index("shift_assignments_shift_idx").on(table.shiftId),
+  index("shift_assignments_user_idx").on(table.userId),
+  index("shift_assignments_status_idx").on(table.status),
+  // Prevent the same worker from being double-booked on one shift.
+  index("shift_assignments_unique_idx").on(table.shiftId, table.userId),
+]);
+
+// ── Resources & Bookings (admin-only) ────────────────────────────────
+// Generalized so the team van is the first resource but equipment
+// (projectors, scoreboards) and court blocks for external rental
+// can share the same table.
+
+export const RESOURCE_KINDS = [
+  "vehicle",
+  "equipment",
+  "court",
+  "room",
+  "other",
+] as const;
+
+export const resources = sqliteTable("resources", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  kind: text("kind", { enum: RESOURCE_KINDS }).notNull().default("vehicle"),
+  description: text("description"),
+  // Both rates optional; a resource might only charge hourly or only
+  // daily. Stored in cents — same reason as pay rates.
+  dailyRateCents: integer("daily_rate_cents"),
+  hourlyRateCents: integer("hourly_rate_cents"),
+  // Vehicle-specific fields that would otherwise need their own table.
+  // Nullable for non-vehicle rows.
+  licensePlate: text("license_plate"),
+  capacity: integer("capacity"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("resources_kind_idx").on(table.kind),
+  index("resources_active_idx").on(table.active),
+]);
+
+export const RESOURCE_BOOKING_STATUS = [
+  "tentative",
+  "confirmed",
+  "in_use",
+  "returned",
+  "cancelled",
+  "no_show",
+] as const;
+
+export const resourceBookings = sqliteTable("resource_bookings", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  resourceId: integer("resource_id")
+    .notNull()
+    .references(() => resources.id, { onDelete: "cascade" }),
+  // Renter can be either an existing user (internal — a coach booking
+  // the van for a team trip) or an external party (name/email/phone
+  // without a user record). Both fields are present; at least one must
+  // be populated (handler enforces).
+  renterUserId: integer("renter_user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  renterName: text("renter_name"),
+  renterEmail: text("renter_email"),
+  renterPhone: text("renter_phone"),
+  startAt: text("start_at").notNull(),
+  endAt: text("end_at").notNull(),
+  status: text("status", { enum: RESOURCE_BOOKING_STATUS })
+    .notNull()
+    .default("tentative"),
+  // Computed at create-time from the resource's rate + duration, but
+  // stored so an admin can override without fighting recompute logic.
+  amountCents: integer("amount_cents").notNull().default(0),
+  paid: integer("paid", { mode: "boolean" }).notNull().default(false),
+  paymentMethod: text("payment_method"),
+  // Vehicle-specific snapshots. Null for non-vehicle resources.
+  odometerStart: integer("odometer_start"),
+  odometerEnd: integer("odometer_end"),
+  fuelStart: text("fuel_start"),
+  fuelEnd: text("fuel_end"),
+  purpose: text("purpose"),
+  notes: text("notes"),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("resource_bookings_resource_idx").on(table.resourceId),
+  index("resource_bookings_start_idx").on(table.startAt),
+  index("resource_bookings_status_idx").on(table.status),
+  index("resource_bookings_renter_user_idx").on(table.renterUserId),
+]);

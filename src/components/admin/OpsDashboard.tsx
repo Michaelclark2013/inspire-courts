@@ -95,6 +95,14 @@ type OpsSummary = {
       status: string;
     }>;
   };
+  compliance?: {
+    expiringWaivers?: Array<{
+      id: number;
+      playerName: string;
+      expiresAt: string | null;
+      waiverType: string;
+    }>;
+  };
 };
 
 function fmtCents(c: number): string {
@@ -532,6 +540,45 @@ export default function OpsDashboard({ userName }: { userName: string | null }) 
             </ul>
           )}
         </Panel>
+
+        {/* EXPIRING WAIVERS */}
+        {s.compliance?.expiringWaivers && s.compliance.expiringWaivers.length > 0 && (
+          <Panel
+            title="Waivers Expiring"
+            icon={AlertTriangle}
+            href="/admin/waivers?filter=expiring"
+            cta="Manage →"
+            tone="amber"
+          >
+            <ul className="divide-y divide-border">
+              {s.compliance.expiringWaivers.slice(0, 6).map((w) => {
+                const days = w.expiresAt
+                  ? Math.ceil((Date.parse(w.expiresAt) - Date.now()) / 86_400_000)
+                  : null;
+                const expired = days !== null && days < 0;
+                return (
+                  <li key={w.id} className="py-2 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-navy truncate">
+                        {w.playerName}
+                      </div>
+                      <div className="text-xs text-text-secondary capitalize">
+                        {w.waiverType}
+                      </div>
+                    </div>
+                    <span
+                      className={`text-xs font-mono font-semibold ${
+                        expired ? "text-red" : "text-amber-700"
+                      }`}
+                    >
+                      {days === null ? "—" : expired ? `${-days}d overdue` : `${days}d left`}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </Panel>
+        )}
 
         {/* NEXT TOURNAMENTS + PAYROLL */}
         <Panel title="Next Up" icon={Trophy}>

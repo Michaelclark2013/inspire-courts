@@ -11,11 +11,22 @@ import { useState, useEffect } from "react";
  * const prefersReducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
  */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
+  // Lazy init: the first render already has the correct value
+  // (SSR-safe — falls back to false on the server). Avoids the
+  // React 19 setState-in-effect cascading-render warning from the
+  // old "useEffect → setMatches(mql.matches)" pattern.
+  const [matches, setMatches] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.matchMedia(query).matches;
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const mql = window.matchMedia(query);
-    setMatches(mql.matches);
 
     function onChange(e: MediaQueryListEvent) {
       setMatches(e.matches);

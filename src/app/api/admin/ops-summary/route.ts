@@ -17,6 +17,7 @@ import {
   maintenanceTickets,
   members,
   membershipPlans,
+  waivers,
 } from "@/lib/db/schema";
 import { and, desc, eq, gt, gte, isNotNull, isNull, lt, or, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
@@ -63,6 +64,7 @@ export const GET = withTiming("admin.ops_summary", async () => {
       pastDueMembers,
       renewingThisWeek,
       visitsToday,
+      expiringWaivers,
     ] = await Promise.all([
       // Live clock-ins with the person's name for a glanceable list
       db
@@ -295,6 +297,33 @@ export const GET = withTiming("admin.ops_summary", async () => {
       db
         .select({ c: sql<number>`count(*)` })
         .from(sql`(SELECT DISTINCT member_id FROM member_visits WHERE visited_at >= ${todayIso})`),
+
+      // Waivers expiring in next 30 days (or already expired within
+      // the last 30d — lapsed but still showing). Helps front desk
+      // re-prompt at next check-in.
+      db
+        .select({
+          id: waivers.id,
+          playerName: waivers.playerName,
+          expiresAt: waivers.expiresAt,
+          waiverType: waivers.waiverType,
+        })
+        .from(waivers)
+        .where(
+          and(
+            isNotNull(waivers.expiresAt),
+            lt(
+              waivers.expiresAt,
+              new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            ),
+            gte(
+              waivers.expiresAt,
+              new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+            )
+          )
+        )
+        .orderBy(waivers.expiresAt)
+        .limit(10),
     ]);
 
     // 1099 threshold watch — any active non-W2/non-volunteer worker
@@ -343,6 +372,9 @@ export const GET = withTiming("admin.ops_summary", async () => {
           pastDueCount: Number(pastDueMembers[0]?.c) || 0,
           renewingThisWeek: Number(renewingThisWeek[0]?.c) || 0,
           visitsTodayUniqueMembers: Number(visitsToday[0]?.c) || 0,
+        },
+        compliance: {
+          expiringWaivers,
         },
         shifts: {
           upcoming48h: upcomingShifts48h,

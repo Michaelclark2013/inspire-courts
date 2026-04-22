@@ -159,6 +159,7 @@ const ADMIN_SECTION: NavItem[] = [
   { href: "/admin/files", label: "Files & Drive", icon: FolderOpen, page: "files" },
   { href: "/admin/reports", label: "Reports", icon: BarChart3, page: "analytics" },
   { href: "/admin/analytics", label: "GA Analytics", icon: BarChart3, page: "analytics" },
+  { href: "/admin/audit-log", label: "Audit Log", icon: History, page: "audit_log" },
 ];
 
 const PERSONAL: NavItem[] = [

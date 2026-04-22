@@ -6,7 +6,7 @@ import { redirect, useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, User, Phone, Mail, Calendar, CheckCircle2,
-  AlertTriangle, Pause, Users as UsersIcon, LogIn,
+  AlertTriangle, Pause, Users as UsersIcon, LogIn, Plus,
 } from "lucide-react";
 
 type Detail = {
@@ -57,6 +57,7 @@ export default function MemberDetailPage() {
   const [loading, setLoading] = useState(true);
   const [checkInBusy, setCheckInBusy] = useState(false);
   const [checkInMsg, setCheckInMsg] = useState("");
+  const [showAddDependent, setShowAddDependent] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -188,11 +189,21 @@ export default function MemberDetailPage() {
       </div>
 
       {/* Family */}
-      {detail.dependents.length > 0 && (
-        <section className="bg-white border border-border rounded-xl p-5">
-          <h2 className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-navy mb-3">
+      <section className="bg-white border border-border rounded-xl p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-navy">
             <UsersIcon className="w-4 h-4 text-navy/60" /> Family dependents ({detail.dependents.length})
           </h2>
+          <button onClick={() => setShowAddDependent(true)}
+            className="inline-flex items-center gap-1 text-xs bg-navy text-white rounded-md px-2 py-1 hover:bg-navy/90">
+            <Plus className="w-3 h-3" /> Add
+          </button>
+        </div>
+        {detail.dependents.length === 0 ? (
+          <p className="text-xs text-text-secondary italic">
+            No dependents linked. Click "Add" to create a family-plan member under this account.
+          </p>
+        ) : (
           <div className="flex flex-wrap gap-2">
             {detail.dependents.map((d) => (
               <Link key={d.id} href={`/admin/members/${d.id}`}
@@ -203,7 +214,15 @@ export default function MemberDetailPage() {
               </Link>
             ))}
           </div>
-        </section>
+        )}
+      </section>
+
+      {showAddDependent && (
+        <AddDependentModal
+          primaryId={m.id}
+          onClose={() => setShowAddDependent(false)}
+          onSaved={() => { setShowAddDependent(false); load(); }}
+        />
       )}
 
       {/* Recent visits */}
@@ -235,6 +254,64 @@ export default function MemberDetailPage() {
           <p className="text-sm text-amber-900 whitespace-pre-wrap">{m.notes}</p>
         </section>
       )}
+    </div>
+  );
+}
+
+function AddDependentModal({
+  primaryId, onClose, onSaved,
+}: { primaryId: number; onClose: () => void; onSaved: () => void }) {
+  const [form, setForm] = useState({ firstName: "", lastName: "", birthDate: "" });
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+  async function save() {
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      setErr("First and last name required"); return;
+    }
+    setSaving(true); setErr("");
+    try {
+      const res = await fetch("/api/admin/members", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
+          birthDate: form.birthDate ? new Date(form.birthDate + "T00:00:00").toISOString() : null,
+          primaryMemberId: primaryId,
+          status: "active",
+          source: "referral",
+          joinedAt: new Date().toISOString(),
+        }),
+      });
+      if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || "Save failed"); }
+      onSaved();
+    } catch (e) { setErr(e instanceof Error ? e.message : "Save failed"); }
+    finally { setSaving(false); }
+  }
+  return (
+    <div className="fixed inset-0 z-50 bg-navy/30 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl border border-border shadow-sm w-full max-w-sm p-6">
+        <h2 className="text-lg font-bold text-navy mb-1">Add Family Dependent</h2>
+        <p className="text-xs text-text-secondary mb-4">
+          Creates a new member linked to this account. Billing stays with the primary.
+        </p>
+        <div className="space-y-3 text-sm">
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block"><span className="block text-xs text-text-secondary mb-1">First</span>
+              <input value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" /></label>
+            <label className="block"><span className="block text-xs text-text-secondary mb-1">Last</span>
+              <input value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" /></label>
+          </div>
+          <label className="block"><span className="block text-xs text-text-secondary mb-1">Birthdate (optional)</span>
+            <input type="date" value={form.birthDate} onChange={(e) => setForm({ ...form, birthDate: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" /></label>
+          {err && <div className="text-red text-xs">{err}</div>}
+        </div>
+        <div className="mt-5 flex justify-end gap-2">
+          <button onClick={onClose} className="px-3 py-1.5 text-sm text-text-secondary hover:text-navy">Cancel</button>
+          <button onClick={save} disabled={saving} className="px-4 py-1.5 bg-navy text-white rounded-md text-sm hover:bg-navy/90 disabled:opacity-50">
+            {saving ? "Saving…" : "Add"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

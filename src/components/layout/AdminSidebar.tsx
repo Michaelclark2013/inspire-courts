@@ -141,6 +141,7 @@ const MEMBER_OPS: NavItem[] = [
   { href: "/admin/members", label: "Members", icon: UserPlus, page: "members" },
   { href: "/admin/membership-plans", label: "Plans", icon: Wallet, page: "members" },
   { href: "/admin/programs", label: "Programs & Camps", icon: GraduationCapIcon, page: "programs" },
+  { href: "/admin/waivers", label: "Waivers", icon: FileEdit, page: "members" },
 ];
 
 const FINANCE: NavItem[] = [

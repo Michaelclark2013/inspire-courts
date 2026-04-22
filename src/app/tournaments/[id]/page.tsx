@@ -66,7 +66,10 @@ export default function PublicTournamentPage() {
       }
     }
     setLoading(false);
-  }, [id]);
+    // trackView is a stable setter from useRecentlyViewed but the
+    // React Compiler needs it listed to keep the manual memoization
+    // boundary it inferred.
+  }, [id, trackView]);
 
   // Adaptive polling for live score updates, pauses when tab hidden or offline
   useEffect(() => {

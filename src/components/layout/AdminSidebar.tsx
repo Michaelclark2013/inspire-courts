@@ -152,20 +152,19 @@ const BOTTOM_TABS: NavItem[] = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [showMore, setShowMore] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  // Lazy-init reads localStorage once at mount time and seeds state
+  // directly, skipping the useEffect → setState bounce that trips
+  // React 19's cascading-renders check. SSR-safe via the window check.
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem("sidebar-collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
   const { data: session } = useSession();
   const role = (session?.user?.role || "admin") as UserRole;
-
-  // Persist collapsed state in localStorage
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const saved = window.localStorage.getItem("sidebar-collapsed");
-      if (saved === "true") setCollapsed(true);
-    } catch {
-      // localStorage may be unavailable (private browsing, quota, etc.)
-    }
-  }, []);
 
   function toggleCollapsed() {
     setCollapsed((prev) => {

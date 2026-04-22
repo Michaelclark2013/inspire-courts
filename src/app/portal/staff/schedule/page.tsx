@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { Calendar, Check, X, Clock, CheckCircle2, Users } from "lucide-react";
+import { Check, X, Clock, CheckCircle2, Users } from "lucide-react";
 
 type ShiftLite = {
   id: number;
@@ -195,7 +195,7 @@ export default function MyStaffSchedulePage() {
                       {a.status === "confirmed" && (
                         <div className="mt-3 inline-flex items-center gap-1 text-xs text-emerald-700">
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          You're confirmed
+                          You&apos;re confirmed
                         </div>
                       )}
                     </div>

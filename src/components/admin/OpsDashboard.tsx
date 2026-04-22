@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
   Clock,
@@ -133,18 +133,26 @@ export default function OpsDashboard({ userName }: { userName: string | null }) 
   const [summary, setSummary] = useState<OpsSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+  // One AbortController per in-flight fetch — the next call aborts
+  // its predecessor so a slow response can't stomp on a fresher
+  // state update after the user navigates away.
+  const abortRef = useRef<AbortController | null>(null);
 
   const load = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     setLoading(true);
     setErr("");
     try {
-      const res = await fetch("/api/admin/ops-summary");
+      const res = await fetch("/api/admin/ops-summary", { signal: controller.signal });
       if (!res.ok) throw new Error(`fetch ${res.status}`);
       setSummary(await res.json());
     } catch (e) {
+      if ((e as Error)?.name === "AbortError") return;
       setErr(e instanceof Error ? e.message : "Load failed");
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) setLoading(false);
     }
   }, []);
 
@@ -160,6 +168,14 @@ export default function OpsDashboard({ userName }: { userName: string | null }) 
     }, 60_000);
     return () => clearInterval(iv);
   }, [load]);
+
+  // Abort any in-flight fetch on unmount. Without this, a slow
+  // /api/admin/ops-summary response completing after the admin
+  // navigates to a sub-page would call setSummary on a dead tree.
+  useEffect(() => {
+    const currentAbort = abortRef;
+    return () => currentAbort.current?.abort();
+  }, []);
 
   if (loading && !summary) {
     return <div className="p-6 text-text-secondary text-sm">Loading ops dashboard…</div>;

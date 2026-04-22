@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Clock, CheckCircle, XCircle, RefreshCw } from "lucide-react";
@@ -56,19 +56,28 @@ export default function TimeclockPage() {
   const [recent, setRecent] = useState<RecentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<number | null>(null);
+  // Abort the previous in-flight fetch when a new one starts so a
+  // slow response can't overwrite fresher state after the user
+  // approves an entry or the poll tick fires.
+  const abortRef = useRef<AbortController | null>(null);
 
   const load = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/timeclock");
+      const res = await fetch("/api/admin/timeclock", { signal: controller.signal });
       if (res.ok) {
         const json = await res.json();
         setOnTheClock(json.onTheClock || []);
         setPending(json.pending || []);
         setRecent(json.recent || []);
       }
+    } catch (e) {
+      if ((e as Error)?.name !== "AbortError") throw e;
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) setLoading(false);
     }
   }, []);
 
@@ -85,6 +94,13 @@ export default function TimeclockPage() {
     }, 30_000);
     return () => clearInterval(iv);
   }, [status, load]);
+
+  // Abort any in-flight fetch on unmount so a slow response can't
+  // update state after the component is gone.
+  useEffect(() => {
+    const currentAbort = abortRef;
+    return () => currentAbort.current?.abort();
+  }, []);
 
   async function patch(entryId: number, body: Record<string, unknown>) {
     setBusy(entryId);

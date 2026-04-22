@@ -110,6 +110,10 @@ const GAME_DAY: NavItem[] = [
 // Separated from game-day ops because these are the workflows that
 // keep the facility running year-round, not just on tournament days.
 const STAFF_OPS: NavItem[] = [
+  // Ops Dashboard — live staff/shifts/payroll/rentals board. The
+  // root /admin page shows the Sheets-backed dashboard admins are
+  // used to; /admin/ops is the new at-a-glance board.
+  { href: "/admin/ops", label: "Ops Dashboard", icon: LayoutDashboard, page: "overview" },
   { href: "/admin/roster", label: "Staff Roster", icon: IdCard, page: "roster" },
   { href: "/admin/timeclock", label: "Time Clock", icon: Clock, page: "timeclock" },
   { href: "/admin/shifts", label: "Shifts", icon: CalendarDays, page: "shifts" },

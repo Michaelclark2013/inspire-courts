@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { timeEntries, users, staffProfiles } from "@/lib/db/schema";
-import { and, desc, eq, gte, isNotNull, isNull, lt, sql, type SQL } from "drizzle-orm";
+import { timeEntries, users, staffProfiles, payPeriods } from "@/lib/db/schema";
+import { and, desc, eq, gt, gte, isNotNull, isNull, lt, ne, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { canAccess } from "@/lib/permissions";
@@ -291,6 +291,29 @@ export const PATCH = withTiming("admin.timeclock.patch", async (request: NextReq
       .where(eq(timeEntries.id, body.entryId))
       .limit(1);
     if (!before) return apiNotFound("Time entry not found");
+
+    // Reject edits that fall inside a locked or paid pay period.
+    // Locking is the gesture that freezes the payroll math; if an
+    // admin needs to amend an entry in a locked period, they must
+    // unlock it first (not currently exposed — deliberate friction).
+    const [lockingPeriod] = await db
+      .select({ id: payPeriods.id, label: payPeriods.label, status: payPeriods.status })
+      .from(payPeriods)
+      .where(
+        and(
+          ne(payPeriods.status, "open"),
+          lt(payPeriods.startsAt, before.clockInAt),
+          gt(payPeriods.endsAt, before.clockInAt)
+        )
+      )
+      .limit(1);
+    if (lockingPeriod) {
+      return apiError(
+        `Entry falls inside locked pay period "${lockingPeriod.label}" — cannot edit.`,
+        409,
+        { extras: { payPeriodId: lockingPeriod.id, status: lockingPeriod.status } }
+      );
+    }
 
     const updates: Record<string, unknown> = {};
     if (body.clockInAt !== undefined) updates.clockInAt = body.clockInAt;

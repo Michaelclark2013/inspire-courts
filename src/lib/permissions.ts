@@ -63,7 +63,12 @@ export type AdminPage =
   | "approvals"
   | "audit_log"
   | "search"
-  | "health";
+  | "health"
+  | "roster"
+  | "timeclock"
+  | "shifts"
+  | "resources"
+  | "payroll";
 
 const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
@@ -94,6 +99,13 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   audit_log: ["admin"],
   search: ["admin"],
   health: ["admin"],
+  // Staff management + payroll are admin-only by design — pay rates
+  // and 1099 YTD totals are sensitive.
+  roster: ["admin"],
+  timeclock: ["admin", "front_desk"],
+  shifts: ["admin"],
+  resources: ["admin"],
+  payroll: ["admin"],
 };
 
 export function canAccess(role: UserRole | undefined, page: AdminPage): boolean {

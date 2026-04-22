@@ -696,3 +696,35 @@ export const resourceBookings = sqliteTable("resource_bookings", {
   index("resource_bookings_status_idx").on(table.status),
   index("resource_bookings_renter_user_idx").on(table.renterUserId),
 ]);
+
+// ── Phase 3: Payroll ────────────────────────────────────────────────
+// pay_periods defines the window; rollups are computed on the fly
+// from approved time_entries inside that window. Once a period is
+// locked, time entries that fall inside it can no longer be edited
+// (enforced by the timeclock PATCH handler) — this is the "sign-off"
+// gesture that prevents retroactive tampering after payroll runs.
+
+export const PAY_PERIOD_STATUS = ["open", "locked", "paid"] as const;
+
+export const payPeriods = sqliteTable("pay_periods", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  label: text("label").notNull(),            // "2026-04-01 → 2026-04-14"
+  startsAt: text("starts_at").notNull(),     // inclusive
+  endsAt: text("ends_at").notNull(),         // exclusive
+  status: text("status", { enum: PAY_PERIOD_STATUS }).notNull().default("open"),
+  lockedBy: integer("locked_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  lockedAt: text("locked_at"),
+  paidAt: text("paid_at"),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("pay_periods_starts_idx").on(table.startsAt),
+  index("pay_periods_status_idx").on(table.status),
+]);

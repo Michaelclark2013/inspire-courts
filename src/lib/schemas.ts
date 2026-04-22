@@ -465,6 +465,30 @@ export const resourceBookingUpdateSchema = z
     { message: "startAt must precede endAt", path: ["endAt"] }
   );
 
+// ── Phase 3: Payroll ─────────────────────────────────────────────────
+const PAY_PERIOD_STATUS_ENUM = z.enum(["open", "locked", "paid"]);
+
+export const payPeriodCreateSchema = z
+  .object({
+    label: z.string().min(1, "Label is required").max(100),
+    startsAt: z.string().min(1).max(40),
+    endsAt: z.string().min(1).max(40),
+    notes: z.string().max(2000).optional().nullable(),
+  })
+  .refine(
+    (v) => Date.parse(v.startsAt) < Date.parse(v.endsAt),
+    { message: "startsAt must precede endsAt", path: ["endsAt"] }
+  );
+
+export const payPeriodUpdateSchema = z.object({
+  id: z.number().int().positive(),
+  label: z.string().min(1).max(100).optional(),
+  startsAt: z.string().max(40).optional(),
+  endsAt: z.string().max(40).optional(),
+  status: PAY_PERIOD_STATUS_ENUM.optional(),
+  notes: z.string().max(2000).optional().nullable(),
+});
+
 // Admin walk-in registration — admin-created regs skip the public
 // payment/approval flow and go straight to approved+waived. Every
 // field length-capped to match the DB sanitization the handler does

@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause } from "lucide-react";
+import Link from "next/link";
+import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload } from "lucide-react";
 
 type Member = {
   id: number;
@@ -120,12 +121,20 @@ export default function MembersPage() {
             {total} total · {members.filter((m) => m.status === "active").length} active
           </p>
         </div>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="inline-flex items-center gap-1 bg-navy text-white rounded-md px-3 py-1.5 text-sm hover:bg-navy/90"
-        >
-          <Plus className="w-4 h-4" /> New Member
-        </button>
+        <div className="flex gap-2">
+          <Link
+            href="/admin/members/import"
+            className="inline-flex items-center gap-1 bg-white border border-border text-navy rounded-md px-3 py-1.5 text-sm hover:bg-off-white"
+          >
+            <Upload className="w-4 h-4" /> Import CSV
+          </Link>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="inline-flex items-center gap-1 bg-navy text-white rounded-md px-3 py-1.5 text-sm hover:bg-navy/90"
+          >
+            <Plus className="w-4 h-4" /> New Member
+          </button>
+        </div>
       </div>
 
       {/* FILTERS */}

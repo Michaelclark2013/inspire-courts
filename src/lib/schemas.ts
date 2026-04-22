@@ -837,3 +837,28 @@ export const sessionGeneratorSchema = z.object({
   instructorUserId: z.number().int().positive().optional().nullable(),
   location: z.string().max(100).optional().nullable(),
 });
+
+// ── Member CSV import ──────────────────────────────────────────────
+// One row at a time. Handler loops over the array inside a DB
+// transaction so the whole import is atomic (all-or-nothing on
+// validation failure).
+export const memberImportRowSchema = z.object({
+  firstName: z.string().min(1).max(100),
+  lastName: z.string().min(1).max(100),
+  email: z.string().email().max(255).optional().nullable(),
+  phone: z.string().max(30).optional().nullable(),
+  birthDate: z.string().max(20).optional().nullable(),
+  membershipPlanId: z.number().int().positive().optional().nullable(),
+  planName: z.string().max(200).optional().nullable(), // resolved to id server-side
+  status: z.enum(["active", "paused", "past_due", "cancelled", "trial"]).optional(),
+  source: z.enum(["website", "walk_in", "referral", "tournament", "instagram", "google", "other"]).optional(),
+  joinedAt: z.string().min(1).max(40),
+  nextRenewalAt: z.string().max(40).optional().nullable(),
+  autoRenew: z.boolean().optional(),
+  notes: z.string().max(2000).optional().nullable(),
+});
+
+export const memberImportSchema = z.object({
+  rows: z.array(memberImportRowSchema).min(1).max(1000),
+  dryRun: z.boolean().optional(),
+});

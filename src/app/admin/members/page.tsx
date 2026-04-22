@@ -270,6 +270,7 @@ function MemberModal({
     joinedAt: member?.joinedAt?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
     nextRenewalAt: member?.nextRenewalAt?.slice(0, 10) ?? "",
     autoRenew: member?.autoRenew ?? true,
+    pausedUntil: "", // only shown when status=paused
     notes: "",
   });
   const [saving, setSaving] = useState(false);
@@ -290,6 +291,10 @@ function MemberModal({
         joinedAt: new Date(form.joinedAt + "T00:00:00").toISOString(),
         nextRenewalAt: form.nextRenewalAt ? new Date(form.nextRenewalAt + "T00:00:00").toISOString() : null,
         autoRenew: form.autoRenew,
+        pausedUntil:
+          form.status === "paused" && form.pausedUntil
+            ? new Date(form.pausedUntil + "T00:00:00").toISOString()
+            : null,
         notes: form.notes || null,
       };
       const res = isEdit
@@ -378,6 +383,22 @@ function MemberModal({
               <input type="checkbox" checked={form.autoRenew} onChange={(e) => setForm({ ...form, autoRenew: e.target.checked })} />
               <span className="text-xs text-text-secondary">Auto-renew</span>
             </label>
+            {form.status === "paused" && (
+              <label className="block col-span-2">
+                <span className="block text-xs text-text-secondary mb-1">
+                  Pause until (auto-reactivates)
+                </span>
+                <input
+                  type="date"
+                  value={form.pausedUntil}
+                  onChange={(e) => setForm({ ...form, pausedUntil: e.target.value })}
+                  className="w-full bg-off-white border border-border rounded px-2 py-1.5"
+                />
+                <span className="block text-[10px] text-text-secondary mt-1">
+                  Daily cron flips the member back to active on/after this date.
+                </span>
+              </label>
+            )}
           </div>
           <label className="block">
             <span className="block text-xs text-text-secondary mb-1">Notes</span>

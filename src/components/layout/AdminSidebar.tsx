@@ -124,6 +124,7 @@ const STAFF_OPS: NavItem[] = [
   { href: "/admin/timeclock", label: "Time Clock", icon: Clock, page: "timeclock" },
   { href: "/admin/shifts", label: "Shifts", icon: CalendarDays, page: "shifts" },
   { href: "/admin/payroll", label: "Payroll", icon: Wallet, page: "payroll" },
+  { href: "/admin/availability", label: "Availability", icon: Calendar, page: "roster" },
   { href: "/admin/certifications", label: "Certifications", icon: BadgeCheck, page: "certifications" },
   { href: "/admin/time-off", label: "Time-Off Requests", icon: Plane, page: "time_off" },
   { href: "/admin/resources", label: "Resources / Van", icon: Truck, page: "resources" },
@@ -137,6 +138,7 @@ const STAFF_OPS: NavItem[] = [
 // admin uses it to run reports + see churn risk.
 const MEMBER_OPS: NavItem[] = [
   { href: "/admin/members", label: "Members", icon: UserPlus, page: "members" },
+  { href: "/admin/membership-plans", label: "Plans", icon: Wallet, page: "members" },
   { href: "/admin/programs", label: "Programs & Camps", icon: GraduationCapIcon, page: "programs" },
 ];
 

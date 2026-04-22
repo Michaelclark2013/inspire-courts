@@ -629,6 +629,9 @@ export const memberCreateSchema = z.object({
   paymentMethod: z.string().max(30).optional().nullable(),
   emergencyContactJson: z.string().max(2000).optional().nullable(),
   primaryMemberId: z.number().int().positive().optional().nullable(),
+  // Pause window — daily cron auto-reactivates when this passes.
+  // Null = not paused.
+  pausedUntil: z.string().max(40).optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),
 });
 

@@ -137,6 +137,7 @@ const STAFF_OPS: NavItem[] = [
 // plan management. Front desk uses /admin/members to check people in;
 // admin uses it to run reports + see churn risk.
 const MEMBER_OPS: NavItem[] = [
+  { href: "/admin/kiosk", label: "Check-In Kiosk", icon: UserCheck, page: "members" },
   { href: "/admin/members", label: "Members", icon: UserPlus, page: "members" },
   { href: "/admin/membership-plans", label: "Plans", icon: Wallet, page: "members" },
   { href: "/admin/programs", label: "Programs & Camps", icon: GraduationCapIcon, page: "programs" },

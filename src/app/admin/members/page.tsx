@@ -194,7 +194,9 @@ export default function MembersPage() {
               {members.map((m) => (
                 <tr key={m.id} className="border-b border-border last:border-0 hover:bg-off-white/50">
                   <td className="px-4 py-3">
-                    <div className="font-medium text-navy">{m.firstName} {m.lastName}</div>
+                    <Link href={`/admin/members/${m.id}`} className="font-medium text-navy hover:text-red">
+                      {m.firstName} {m.lastName}
+                    </Link>
                     <div className="text-xs text-text-secondary">{m.email || m.phone || "—"}</div>
                   </td>
                   <td className="px-4 py-3">

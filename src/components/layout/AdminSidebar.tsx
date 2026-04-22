@@ -38,6 +38,8 @@ import {
   UserPlus,
   Wrench,
   BadgeCheck,
+  GraduationCap as GraduationCapIcon,
+  Plane,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { canAccess, ROLE_LABELS } from "@/lib/permissions";
@@ -122,6 +124,7 @@ const STAFF_OPS: NavItem[] = [
   { href: "/admin/shifts", label: "Shifts", icon: CalendarDays, page: "shifts" },
   { href: "/admin/payroll", label: "Payroll", icon: Wallet, page: "payroll" },
   { href: "/admin/certifications", label: "Certifications", icon: BadgeCheck, page: "certifications" },
+  { href: "/admin/time-off", label: "Time-Off Requests", icon: Plane, page: "time_off" },
   { href: "/admin/resources", label: "Resources / Van", icon: Truck, page: "resources" },
   { href: "/admin/maintenance", label: "Maintenance", icon: Wrench, page: "maintenance" },
   { href: "/admin/staff", label: "Staff (Legacy Sheet)", icon: UserCheck, page: "staff_refs" },
@@ -132,6 +135,7 @@ const STAFF_OPS: NavItem[] = [
 // admin uses it to run reports + see churn risk.
 const MEMBER_OPS: NavItem[] = [
   { href: "/admin/members", label: "Members", icon: UserPlus, page: "members" },
+  { href: "/admin/programs", label: "Programs & Camps", icon: GraduationCapIcon, page: "programs" },
 ];
 
 const FINANCE: NavItem[] = [

@@ -152,7 +152,8 @@ const ADMIN_SECTION: NavItem[] = [
   { href: "/admin/schools", label: "Schools", icon: GraduationCap, page: "schools" },
   { href: "/admin/content", label: "Content Editor", icon: FileEdit, page: "content" },
   { href: "/admin/files", label: "Files & Drive", icon: FolderOpen, page: "files" },
-  { href: "/admin/analytics", label: "Analytics", icon: BarChart3, page: "analytics" },
+  { href: "/admin/reports", label: "Reports", icon: BarChart3, page: "analytics" },
+  { href: "/admin/analytics", label: "GA Analytics", icon: BarChart3, page: "analytics" },
 ];
 
 const PERSONAL: NavItem[] = [

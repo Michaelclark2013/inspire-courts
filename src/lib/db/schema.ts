@@ -367,3 +367,154 @@ export const siteContent = sqliteTable("site_content", {
     onDelete: "set null",
   }),
 });
+
+// ── Phase 1: Staff + Time Clock ──────────────────────────────────────
+// Replaces the Google Sheets check-out flow. Every time entry links to
+// a user (FK), which gives real join-able reporting instead of name
+// string-matching. `staff_profiles` extends `users` with employment
+// metadata so a single person can be a coach AND get paid as a ref
+// without duplicating rows.
+
+// Employment classification — drives tax-form logic without dictating
+// payment method. "cash_no_1099" is an explicit bucket for under-$600
+// informal pay that doesn't trigger a 1099-NEC. The YTD aggregate is
+// surfaced in the admin list so a worker approaching $600 is visible
+// before they cross the threshold.
+export const EMPLOYMENT_CLASSIFICATIONS = [
+  "w2",
+  "1099",
+  "cash_no_1099",
+  "volunteer",
+  "stipend",
+] as const;
+
+// Payment method is orthogonal to classification — a W2 employee can
+// get paid via direct deposit while a cash_no_1099 ref gets Venmo.
+export const PAYMENT_METHODS = [
+  "direct_deposit",
+  "check",
+  "cash",
+  "venmo",
+  "zelle",
+  "paypal",
+  "other",
+] as const;
+
+// Pay rate type — hourly (default), per_shift (flat rate for a game-day
+// shift regardless of length), per_game (refs paid per whistled game),
+// salary (biweekly fixed), stipend (flat one-off).
+export const PAY_RATE_TYPES = [
+  "hourly",
+  "per_shift",
+  "per_game",
+  "salary",
+  "stipend",
+] as const;
+
+export const staffProfiles = sqliteTable("staff_profiles", {
+  // 1:1 with users so session-based auth Just Works. Any user_id
+  // without a staff_profiles row is "not on the staff roster" —
+  // parents/coaches/players never get one.
+  userId: integer("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  employmentClassification: text("employment_classification", {
+    enum: EMPLOYMENT_CLASSIFICATIONS,
+  })
+    .notNull()
+    .default("cash_no_1099"),
+  paymentMethod: text("payment_method", { enum: PAYMENT_METHODS })
+    .notNull()
+    .default("venmo"),
+  payRateCents: integer("pay_rate_cents").notNull().default(0),
+  payRateType: text("pay_rate_type", { enum: PAY_RATE_TYPES })
+    .notNull()
+    .default("hourly"),
+  // Role tags as a comma-separated list — lets one person be a
+  // ref + scorekeeper + front desk without three rows. Intentionally
+  // not a JSON array so SQLite LIKE-searches stay cheap.
+  roleTags: text("role_tags").notNull().default(""),
+  // Payout handle (Venmo @, Zelle email/phone, check-payable-to, etc.)
+  // kept in a single field since it mirrors paymentMethod.
+  payoutHandle: text("payout_handle"),
+  hireDate: text("hire_date"),
+  emergencyContactJson: text("emergency_contact_json"),
+  notes: text("notes"),
+  status: text("status", { enum: ["active", "on_leave", "terminated"] })
+    .notNull()
+    .default("active"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("staff_profiles_status_idx").on(table.status),
+  index("staff_profiles_classification_idx").on(table.employmentClassification),
+]);
+
+// Clock-in source — kiosk runs at the facility front-desk tablet,
+// mobile is the PWA from a worker's phone (geo-fenced), manual is an
+// admin-keyed retroactive entry (e.g. tablet was offline).
+export const TIME_ENTRY_SOURCES = ["kiosk", "mobile", "manual"] as const;
+
+export const timeEntries = sqliteTable("time_entries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  // Nullable: an open entry (user clocked in, hasn't clocked out).
+  // Queries for "who is on the clock now?" = clockOutAt IS NULL.
+  clockInAt: text("clock_in_at").notNull(),
+  clockOutAt: text("clock_out_at"),
+  source: text("source", { enum: TIME_ENTRY_SOURCES })
+    .notNull()
+    .default("kiosk"),
+  // Geo stamps — stored as text (ISO-style) so we don't pay the
+  // double-precision real overhead; precision to ~5 decimals is
+  // enough for a 1m-radius facility fence.
+  clockInLat: text("clock_in_lat"),
+  clockInLng: text("clock_in_lng"),
+  clockOutLat: text("clock_out_lat"),
+  clockOutLng: text("clock_out_lng"),
+  // Unpaid break in minutes. Default 0; admin can edit during
+  // approval if the worker forgot to log their break.
+  breakMinutes: integer("break_minutes").notNull().default(0),
+  // Optional shift context — a tournament day with multiple refs
+  // on one tournament benefits from grouping entries by event.
+  tournamentId: integer("tournament_id").references(() => tournaments.id, {
+    onDelete: "set null",
+  }),
+  role: text("role"), // "ref" / "front_desk" / etc — snapshot of which hat they were wearing
+  // Rate snapshot at clock-in. If the staff_profiles rate changes
+  // later, already-logged entries stay priced at their original
+  // rate (this is how you prevent accidental retroactive re-pricing).
+  payRateCents: integer("pay_rate_cents").notNull().default(0),
+  payRateType: text("pay_rate_type", { enum: PAY_RATE_TYPES })
+    .notNull()
+    .default("hourly"),
+  // Optional per-entry bonus (tournament referee bonus, late-night
+  // differential). Admin sets at approval time.
+  bonusCents: integer("bonus_cents").notNull().default(0),
+  notes: text("notes"),
+  // Approval flow: open → pending → approved. Payroll roll-ups in
+  // Phase 3 will only count approved entries.
+  status: text("status", { enum: ["open", "pending", "approved", "rejected"] })
+    .notNull()
+    .default("open"),
+  approvedBy: integer("approved_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  approvedAt: text("approved_at"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("time_entries_user_idx").on(table.userId),
+  index("time_entries_status_idx").on(table.status),
+  index("time_entries_clock_in_idx").on(table.clockInAt),
+  // "Who is on the clock right now" query hits this index.
+  index("time_entries_open_idx").on(table.clockOutAt),
+  index("time_entries_tournament_idx").on(table.tournamentId),
+]);

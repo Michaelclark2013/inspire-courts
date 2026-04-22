@@ -40,6 +40,7 @@ import {
   BadgeCheck,
   GraduationCap as GraduationCapIcon,
   Plane,
+  Package,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { canAccess, ROLE_LABELS } from "@/lib/permissions";
@@ -127,6 +128,7 @@ const STAFF_OPS: NavItem[] = [
   { href: "/admin/time-off", label: "Time-Off Requests", icon: Plane, page: "time_off" },
   { href: "/admin/resources", label: "Resources / Van", icon: Truck, page: "resources" },
   { href: "/admin/maintenance", label: "Maintenance", icon: Wrench, page: "maintenance" },
+  { href: "/admin/equipment", label: "Equipment", icon: Package, page: "equipment" },
   { href: "/admin/staff", label: "Staff (Legacy Sheet)", icon: UserCheck, page: "staff_refs" },
 ];
 

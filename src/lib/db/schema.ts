@@ -1149,3 +1149,80 @@ export const timeOffRequests = sqliteTable("time_off_requests", {
   index("time_off_requests_status_idx").on(table.status),
   index("time_off_requests_start_idx").on(table.startDate),
 ]);
+
+// ── Equipment Inventory (Phase 4) ───────────────────────────────────
+// Physical inventory separate from `resources` (which covers rentable
+// items). Equipment here is stuff the gym owns + uses: scoreboards,
+// basketballs, cones, first-aid kits, snack-bar stock. Tracks on-hand
+// count + min threshold for reorder alerts.
+
+export const EQUIPMENT_CATEGORIES = [
+  "sports",           // balls, cones, pinnies, clocks
+  "av",               // scoreboards, camera gear, mics
+  "safety",           // first aid, AED pads, ice
+  "janitorial",       // cleaning supplies
+  "concessions",      // snack bar stock
+  "office",           // front-desk supplies
+  "other",
+] as const;
+
+export const equipment = sqliteTable("equipment", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  sku: text("sku"),
+  category: text("category", { enum: EQUIPMENT_CATEGORIES })
+    .notNull()
+    .default("other"),
+  location: text("location"), // "Storage room A", "Court 3 cabinet"
+  // Current count + reorder threshold. When on_hand <= min_quantity
+  // the item shows up in the reorder-alert widget on /admin/reports.
+  onHand: integer("on_hand").notNull().default(0),
+  minQuantity: integer("min_quantity").notNull().default(0),
+  unitCostCents: integer("unit_cost_cents"),
+  supplier: text("supplier"),
+  supplierSku: text("supplier_sku"),
+  lastRestockedAt: text("last_restocked_at"),
+  notes: text("notes"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("equipment_category_idx").on(table.category),
+  index("equipment_active_idx").on(table.active),
+]);
+
+// Stock movements — audit trail for every in/out. Reports can answer
+// "who took 10 basketballs out of storage" via the recorded_by FK.
+export const STOCK_MOVEMENT_TYPES = [
+  "restock",     // +N from supplier delivery
+  "usage",       // -N consumed / given out
+  "adjustment",  // +/-N count correction after physical audit
+  "transfer",    // -N from one location, +N to another (future)
+  "damage",      // -N written off
+] as const;
+
+export const equipmentStockMovements = sqliteTable("equipment_stock_movements", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  equipmentId: integer("equipment_id")
+    .notNull()
+    .references(() => equipment.id, { onDelete: "cascade" }),
+  type: text("type", { enum: STOCK_MOVEMENT_TYPES }).notNull(),
+  // Signed delta — positive for restock/adjustment-up, negative for
+  // usage/damage/adjustment-down.
+  delta: integer("delta").notNull(),
+  balanceAfter: integer("balance_after").notNull(),
+  notes: text("notes"),
+  recordedBy: integer("recorded_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  occurredAt: text("occurred_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("equipment_stock_movements_eq_idx").on(table.equipmentId),
+  index("equipment_stock_movements_occ_idx").on(table.occurredAt),
+]);

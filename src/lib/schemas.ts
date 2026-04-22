@@ -796,3 +796,44 @@ export const timeOffRequestPatchSchema = z.object({
   status: z.enum(["pending", "approved", "denied", "cancelled"]),
   denialReason: z.string().max(500).optional().nullable(),
 });
+
+// ── Equipment Inventory ────────────────────────────────────────────
+const EQUIPMENT_CATEGORY_ENUM = z.enum([
+  "sports", "av", "safety", "janitorial", "concessions", "office", "other",
+]);
+
+export const equipmentCreateSchema = z.object({
+  name: z.string().min(1).max(200),
+  sku: z.string().max(100).optional().nullable(),
+  category: EQUIPMENT_CATEGORY_ENUM.optional(),
+  location: z.string().max(100).optional().nullable(),
+  onHand: z.number().int().nonnegative().max(1_000_000).optional(),
+  minQuantity: z.number().int().nonnegative().max(1_000_000).optional(),
+  unitCostCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
+  supplier: z.string().max(200).optional().nullable(),
+  supplierSku: z.string().max(100).optional().nullable(),
+  notes: z.string().max(2000).optional().nullable(),
+  active: z.boolean().optional(),
+});
+
+export const equipmentUpdateSchema = equipmentCreateSchema.partial().extend({
+  id: z.number().int().positive(),
+});
+
+export const stockMovementCreateSchema = z.object({
+  equipmentId: z.number().int().positive(),
+  type: z.enum(["restock", "usage", "adjustment", "transfer", "damage"]),
+  delta: z.number().int(),
+  notes: z.string().max(500).optional().nullable(),
+});
+
+// ── Program session generator — recurring sessions ─────────────────
+export const sessionGeneratorSchema = z.object({
+  programId: z.number().int().positive(),
+  firstStartsAt: z.string().min(1).max(40),
+  durationMinutes: z.number().int().positive().max(1440), // 1 day max
+  weekdays: z.array(z.number().int().min(0).max(6)).min(1).max(7),
+  untilDate: z.string().min(1).max(20), // YYYY-MM-DD
+  instructorUserId: z.number().int().positive().optional().nullable(),
+  location: z.string().max(100).optional().nullable(),
+});

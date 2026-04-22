@@ -73,7 +73,8 @@ export type AdminPage =
   | "certifications"
   | "maintenance"
   | "programs"
-  | "time_off";
+  | "time_off"
+  | "equipment";
 
 const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
@@ -126,6 +127,9 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   // Time-off requests — admin approves; staff file their own from
   // the portal (handled by a separate portal endpoint).
   time_off: ["admin"],
+  // Equipment inventory — everyone with admin-surface access can
+  // record usage (took 2 basketballs out) + file reorder alerts.
+  equipment: ["admin", "front_desk", "staff"],
 };
 
 export function canAccess(role: UserRole | undefined, page: AdminPage): boolean {

@@ -32,25 +32,28 @@ export default function ApprovalsPage() {
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [message, setMessage] = useState("");
 
-  const fetchPending = useCallback(async () => {
+  const fetchPending = useCallback(async (signal?: AbortSignal) => {
     setFetchError(false);
     try {
-      const res = await fetch("/api/admin/approvals");
+      const res = await fetch("/api/admin/approvals", { signal });
+      if (signal?.aborted) return;
       if (res.ok) {
         const data = await res.json();
         setPending(data.users || []);
       } else {
         setFetchError(true);
       }
-    } catch {
-      setFetchError(true);
+    } catch (e) {
+      if ((e as Error)?.name !== "AbortError") setFetchError(true);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchPending();
+    const controller = new AbortController();
+    fetchPending(controller.signal);
+    return () => controller.abort();
   }, [fetchPending]);
 
   async function handleAction(userId: number, action: "approve" | "reject") {
@@ -125,7 +128,7 @@ export default function ApprovalsPage() {
             Something went wrong. Please try again.
           </p>
           <button
-            onClick={fetchPending}
+            onClick={() => fetchPending()}
             className="text-sm font-semibold text-red hover:text-red/80 transition-colors"
           >
             Retry

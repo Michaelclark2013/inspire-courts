@@ -51,7 +51,7 @@ export default function AuditLogPage() {
   });
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -59,15 +59,26 @@ export default function AuditLogPage() {
       for (const [k, v] of Object.entries(filters)) {
         if (v) params.set(k, v);
       }
-      const res = await fetch(`/api/admin/audit-log?${params}`);
+      const res = await fetch(`/api/admin/audit-log?${params}`, { signal });
+      if (signal?.aborted) return;
       if (res.ok) {
         const json = await res.json();
         setRows(json.data || []);
         setTotal(json.total || 0);
       }
-    } finally { setLoading(false); }
+    } catch (e) {
+      if ((e as Error)?.name === "AbortError") return;
+      throw e;
+    } finally {
+      if (!signal?.aborted) setLoading(false);
+    }
   }, [filters]);
-  useEffect(() => { if (status === "authenticated") load(); }, [status, load]);
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    const controller = new AbortController();
+    load(controller.signal);
+    return () => controller.abort();
+  }, [status, load]);
 
   function toggleExpand(id: number) {
     setExpanded((prev) => {

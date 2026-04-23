@@ -17,7 +17,7 @@ import {
   maintenanceTickets,
   members,
   waivers} from "@/lib/db/schema";
-import { and, desc, eq, gt, gte, isNotNull, isNull, lt, or, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, gt, gte, isNotNull, isNull, lt, or, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";
 import { withTiming } from "@/lib/timing";

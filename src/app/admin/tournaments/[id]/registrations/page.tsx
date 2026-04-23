@@ -119,7 +119,6 @@ export default function RegistrationsPage() {
     fetchRegs();
   }
 
-  const paid = regs.filter((r) => r.paymentStatus === "paid" || r.paymentStatus === "waived").length;
   const pending = regs.filter((r) => r.paymentStatus === "pending").length;
   const approved = regs.filter((r) => r.status === "approved").length;
   const totalRevenue = regs

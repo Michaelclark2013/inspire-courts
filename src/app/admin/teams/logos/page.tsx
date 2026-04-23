@@ -13,21 +13,26 @@ export default function LogoManagementPage() {
   const [deletingKey, setDeletingKey] = useState<string | null>(null);
   const [customTeam, setCustomTeam] = useState("");
 
-  const fetchLogos = useCallback(async () => {
+  const fetchLogos = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     setFetchError(false);
     try {
-      const res = await fetch("/api/teams/logo");
+      const res = await fetch("/api/teams/logo", { signal });
+      if (signal?.aborted) return;
       if (res.ok) setLogos(await res.json());
       else setFetchError(true);
-    } catch {
-      setFetchError(true);
+    } catch (e) {
+      if ((e as Error)?.name !== "AbortError") setFetchError(true);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, []);
 
-  useEffect(() => { fetchLogos(); }, [fetchLogos]);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchLogos(controller.signal);
+    return () => controller.abort();
+  }, [fetchLogos]);
 
   async function handleDelete(teamName: string) {
     if (!confirm(`Remove logo for "${teamName}"?`)) return;
@@ -66,7 +71,7 @@ export default function LogoManagementPage() {
           </p>
         </div>
         <button
-          onClick={fetchLogos}
+          onClick={() => fetchLogos()}
           className="flex items-center gap-2 text-text-secondary hover:text-navy transition-colors text-xs border border-border rounded-xl px-3 py-2"
         >
           <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
@@ -112,7 +117,7 @@ export default function LogoManagementPage() {
           <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-semibold mb-1">Failed to load logos</p>
           <p className="text-text-secondary text-sm mb-4">Something went wrong. Please try again.</p>
-          <button onClick={fetchLogos} className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
+          <button onClick={() => fetchLogos()} className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
             <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Retry
           </button>
         </div>

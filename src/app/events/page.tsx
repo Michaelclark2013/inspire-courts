@@ -34,8 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-const REGISTER_URL = "/tournaments";
-
 /* ─── Loading Skeleton ─── */
 function EventsListSkeleton() {
   return (

@@ -33,7 +33,7 @@ type CoachCheckedIn = { name: string; time: string };
 const MAX_COACH_BANDS = 2;
 
 export default function CoachCheckInPage() {
-  const { data: session } = useSession();
+  useSession(); // trigger auth state hydration — session data itself not read here
   const [roster, setRoster] = useState<Player[]>([]);
   const [teamName, setTeamName] = useState("");
   const [loading, setLoading] = useState(true);

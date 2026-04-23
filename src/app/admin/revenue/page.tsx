@@ -41,7 +41,7 @@ export default async function RevenuePage() {
     );
   }
 
-  const { headers, rows } = await fetchSheetWithHeaders(SHEETS.momMoney);
+  const { rows } = await fetchSheetWithHeaders(SHEETS.momMoney);
 
   const DATE_COLS = ["Timestamp", "Date", "Date/Time", "Event Date"];
   const DESC_COLS = [

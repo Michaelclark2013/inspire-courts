@@ -46,26 +46,29 @@ export default function LeadsPage() {
   const [expandedLead, setExpandedLead] = useState<number | null>(null);
   const [fetchError, setFetchError] = useState(false);
 
-  const fetchLeads = useCallback(async () => {
+  const fetchLeads = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     setFetchError(false);
     try {
-      const res = await fetch("/api/admin/leads");
+      const res = await fetch("/api/admin/leads", { signal });
+      if (signal?.aborted) return;
       if (res.ok) {
         const data = await res.json();
         setLeads(data);
       } else {
         setFetchError(true);
       }
-    } catch {
-      setFetchError(true);
+    } catch (e) {
+      if ((e as Error)?.name !== "AbortError") setFetchError(true);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchLeads();
+    const controller = new AbortController();
+    fetchLeads(controller.signal);
+    return () => controller.abort();
   }, [fetchLeads]);
 
   const sources = [...new Set(leads.map((l) => l.source).filter(Boolean))];
@@ -105,7 +108,7 @@ export default function LeadsPage() {
           </button>
           <button
             type="button"
-            onClick={fetchLeads}
+            onClick={() => fetchLeads()}
             className="flex items-center gap-2 text-navy/50 hover:text-navy text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-border rounded-lg hover:border-navy/30 transition-colors"
           >
             <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
@@ -189,7 +192,7 @@ export default function LeadsPage() {
           <p className="text-text-secondary text-sm mb-4">Could not fetch lead data. Check your connection or try again.</p>
           <button
             type="button"
-            onClick={fetchLeads}
+            onClick={() => fetchLeads()}
             className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
           >
             <RefreshCw className="w-4 h-4" aria-hidden="true" /> Retry

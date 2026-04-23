@@ -43,8 +43,8 @@ const STATUS_DOT: Record<string, string> = {
 
 export default function BracketView({
   bracket,
-  format,
-  tournamentId,
+  format: _format,
+  tournamentId: _tournamentId,
   isAdmin = false,
   onAdvance,
   onRefresh,

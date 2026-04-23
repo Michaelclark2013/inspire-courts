@@ -31,14 +31,6 @@ const PRIORITY_STYLES: Record<string, string> = {
   low: "bg-navy/10 text-navy/70",
 };
 
-const STATUS_STYLES: Record<string, string> = {
-  open: "bg-amber-50 text-amber-700",
-  in_progress: "bg-cyan-50 text-cyan-700",
-  waiting_vendor: "bg-violet-50 text-violet-700",
-  resolved: "bg-emerald-50 text-emerald-700",
-  closed: "bg-navy/10 text-navy/70",
-};
-
 function fmtDate(iso: string | null): string {
   if (!iso) return "—";
   try { return new Date(iso).toLocaleDateString([], { month: "short", day: "numeric" }); }
@@ -49,7 +41,7 @@ export default function MaintenancePage() {
   const { data: session, status } = useSession();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [staff, setStaff] = useState<StaffLite[]>([]);
-  const [filter, setFilter] = useState<string>("");
+  const [filter, _setFilter] = useState<string>("");
   const [priority, setPriority] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);

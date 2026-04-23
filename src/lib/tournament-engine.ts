@@ -105,7 +105,9 @@ export function generateSingleElimBracket(
 
   const bracketSize = nextPowerOf2(n);
   const totalRounds = Math.log2(bracketSize);
-  const byeCount = bracketSize - n;
+  // NOTE: byeCount = bracketSize - n is implicit in `sorted.slice()` + the
+  // `null` fill used by seededPairings when a slot has no team.
+  // If you ever need it explicitly, compute as `bracketSize - n`.
 
   // Sort by seed
   const sorted = [...teams].sort((a, b) => a.seed - b.seed);
@@ -158,7 +160,9 @@ export function generateSingleElimBracket(
 
   // Flatten and assign advancement links
   const allGames = rounds.flat();
-  const gamesByPos = new Map(allGames.map((g) => [g.pos, g]));
+  // gamesByPos index omitted — advancement lookups below use position math
+  // directly. Restore `new Map(allGames.map(g => [g.pos, g]))` if you need
+  // to resolve by pos in future edits.
 
   // Build advancement: each game's winner goes to the next round
   const advancementMap = new Map<number, number>(); // pos → next pos

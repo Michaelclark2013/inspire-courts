@@ -38,7 +38,6 @@ export const POST = withTiming("admin.members.import", async (request: NextReque
 
     const created: typeof members.$inferSelect[] = [];
     const errors: Array<{ rowIndex: number; error: string }> = [];
-    const preview: Array<Record<string, unknown>> = [];
     const createdBy = session.user.id ? Number(session.user.id) : null;
 
     // Validate all rows first so we can bail before writing anything.

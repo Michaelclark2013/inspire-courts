@@ -178,7 +178,7 @@ export async function computePayrollRollup(
   // Import here instead of top-of-file to keep the module load cheap
   // for non-payroll callers (computeEntryCents + ytdGrossByUser don't
   // need schema imports).
-  const { and, eq, gte, inArray, isNotNull, lt, sql } = await import("drizzle-orm");
+  const { and, eq, gte, isNotNull, lt } = await import("drizzle-orm");
   const { db } = await import("@/lib/db");
   const { timeEntries, users, staffProfiles } = await import("@/lib/db/schema");
 

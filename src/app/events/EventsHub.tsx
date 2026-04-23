@@ -208,7 +208,7 @@ export default function EventsHub({
   facilityEmail,
   facilityAddress,
   instagramHandle,
-  youtubeUrl,
+  youtubeUrl: _youtubeUrl,
   quickScoresUrl,
 }: EventsHubProps) {
   const [activeTab, setActiveTab] = useState<TabId>("events");

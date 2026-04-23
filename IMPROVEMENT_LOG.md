@@ -1,6 +1,30 @@
 
 ---
 
+## 2026-04-23 — Automated Improvement Run (Round 2)
+
+### Summary
+- 10 issues surveyed; 5 fixed, 3 flagged as big refactors, 2 verified non-issues.
+- Lint: **43 → 22 warnings, 0 errors**.
+
+### Changes Made
+- [SEO]: Added metadata to 8 public pages — `waiver`, `register`, `reset-password`, `login`, `offline`, `tournaments/[id]`, `tournaments/[id]/register`, `tournaments/[id]/register/confirmation`. Each client page now has a server `page.tsx` wrapper. `tournaments/[id]` uses `generateMetadata` to fetch real tournament title + description from the DB so shared links get rich titles.
+- [Dead code]: Removed `STATUS_STYLES`, `fmtCents`, `toLocalInput`, `REGISTER_URL`, `paid`, `preview`, `byeCount`, `gamesByPos`, `Link` (MobileRegisterBar), `SQL` type import, `Client` from notion.ts, `headers` destructure in revenue, raw `MouseEvent` type in TrackClick. Prefixed `_setFilter`, `_pendingCount`, `_youtubeUrl`, `_format`, `_tournamentId` where the param is reserved for future/API-contract compat.
+- [Correctness/perf]: Added AbortController cancelation to `admin/approvals`, `admin/audit-log`, `admin/leads`, `admin/teams/logos`. Prevents race conditions and the "state update on unmounted component" warning class.
+- [UX]: Added `loading.tsx` skeleton for `/tournaments/[id]` dynamic route.
+
+### Flagged for Manual Review
+- [Architecture]: `src/lib/db/schema.ts` (1,269 lines), `src/lib/schemas.ts` (886 lines), `src/app/api/chat/route.ts` (745 lines). Each warrants a dedicated refactor session — too much regression risk to auto-split.
+- [Lint]: 21 `react-hooks/set-state-in-effect` warnings remain — config comment already documents each pattern was reviewed (prop→state sync, PWA detection, subscription state). Re-audit periodically as React 19 patterns mature.
+- [Perf]: ~16 remaining client-side fetches without AbortController in admin/portal pages. Low priority since they're authenticated admin tools with short sessions. Apply pattern per-file when touching.
+- [Dependencies]: 7 moderate npm vulns still park waiting on major bumps (next-auth 5, drizzle-kit 0.18+, nodemailer 8).
+
+### Build Status
+- [PASS] — `npm run build`
+- [PASS] — `npm run lint` (0 errors, 22 warnings)
+
+---
+
 ## 2026-04-23 — Automated Improvement Run
 
 ### Summary

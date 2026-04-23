@@ -34,7 +34,7 @@ export default function ScoreEntryPage() {
   const [tournamentOptions, setTournamentOptions] = useState<TournamentOption[]>([]);
 
   // Offline sync
-  const { isOnline, queueMutation, pendingCount } = useOfflineSync();
+  const { isOnline, queueMutation, pendingCount: _pendingCount } = useOfflineSync();
 
   // Per-endpoint error tracking
   const [errors, setErrors] = useState<{ games: boolean; tournaments: boolean }>({

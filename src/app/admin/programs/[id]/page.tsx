@@ -50,7 +50,6 @@ function fmtDate(iso: string): string {
   catch { return iso; }
 }
 function fmtCents(c: number | null): string { if (c == null) return "—"; return `$${(c / 100).toFixed(2)}`; }
-function toLocalInput(iso: string): string { const d = new Date(iso); if (!isFinite(d.getTime())) return ""; const pad = (n: number) => String(n).padStart(2, "0"); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; }
 
 export default function ProgramDetailPage() {
   const { data: session, status } = useSession();

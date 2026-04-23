@@ -51,10 +51,6 @@ function fmtDate(iso: string | null): string {
   }
 }
 
-function fmtCents(c: number | null): string {
-  if (c == null) return "—";
-  return `$${(c / 100).toFixed(2)}`;
-}
 
 export default function MembersPage() {
   const { data: session, status } = useSession();

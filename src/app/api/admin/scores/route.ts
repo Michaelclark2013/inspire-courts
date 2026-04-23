@@ -276,36 +276,54 @@ async function updateGameScore(request: NextRequest) {
       return apiNotFound("Game not found");
     }
 
-    // Update game status (with audit if it actually changed)
-    if (status) {
-      if (status !== beforeGame.status) {
-        await db.update(games).set({ status }).where(eq(games.id, gameId));
-        await recordAudit({
-          session,
-          request,
-          action: "game.status_changed",
-          entityType: "game",
-          entityId: gameId,
-          before: {
-            status: beforeGame.status,
-            homeTeam: beforeGame.homeTeam,
-            awayTeam: beforeGame.awayTeam,
-          },
-          after: { status },
-        });
-      }
+    // A "go final" submission typically sets BOTH status=final AND the
+    // final homeScore/awayScore in one call. Previously those two writes
+    // happened outside a transaction, so a failure between them could
+    // leave a game marked `final` with no final-score row recorded.
+    const statusChanged = status && status !== beforeGame.status;
+    const hasScore = homeScore !== undefined && awayScore !== undefined;
+    const rawUserId = session.user.id ? Number(session.user.id) : null;
+    const scorerUserId =
+      rawUserId !== null && Number.isInteger(rawUserId) && rawUserId > 0
+        ? rawUserId
+        : null;
+
+    if (statusChanged || hasScore) {
+      await db.transaction(async (tx) => {
+        if (statusChanged) {
+          await tx.update(games).set({ status }).where(eq(games.id, gameId));
+        }
+        if (hasScore) {
+          await tx.insert(gameScores).values({
+            gameId,
+            homeScore,
+            awayScore,
+            quarter: quarter || null,
+            updatedBy: scorerUserId,
+          });
+        }
+      });
     }
 
-    // Insert new score entry (with audit of the new entry)
-    if (homeScore !== undefined && awayScore !== undefined) {
-      const userId = session.user.id ? Number(session.user.id) : null;
-      await db.insert(gameScores).values({
-        gameId,
-        homeScore,
-        awayScore,
-        quarter: quarter || null,
-        updatedBy: userId && !isNaN(userId) ? userId : null,
+    // Audit entries outside the transaction — audit writes are append-only
+    // and a failure here shouldn't roll back the score. If audit fails,
+    // the game/score rows are still the source of truth.
+    if (statusChanged) {
+      await recordAudit({
+        session,
+        request,
+        action: "game.status_changed",
+        entityType: "game",
+        entityId: gameId,
+        before: {
+          status: beforeGame.status,
+          homeTeam: beforeGame.homeTeam,
+          awayTeam: beforeGame.awayTeam,
+        },
+        after: { status },
       });
+    }
+    if (hasScore) {
       await recordAudit({
         session,
         request,

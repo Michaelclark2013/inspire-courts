@@ -101,36 +101,37 @@ export const POST = withTiming(
       (bg) => bg.bracketPosition === result.nextBracketPosition
     );
 
-    if (nextBracket) {
-      // Update the game row with the winner's team name
-      const updateField =
-        result.side === "home"
-          ? { homeTeam: result.winnerTeam }
-          : { awayTeam: result.winnerTeam };
+    // Winner + loser bracket writes need to be atomic — otherwise a
+    // failure between them (network hiccup, constraint glitch) leaves
+    // the double-elim bracket inconsistent: winner moved forward but
+    // loser orphaned from the losers bracket.
+    const loserBracket = result.loserBracketPosition && result.loserTeam
+      ? bracketEntries.find((bg) => bg.bracketPosition === result.loserBracketPosition)
+      : null;
 
-      await db
-        .update(games)
-        .set(updateField)
-        .where(eq(games.id, nextBracket.gameId));
-    }
+    await db.transaction(async (tx) => {
+      if (nextBracket) {
+        const updateField =
+          result.side === "home"
+            ? { homeTeam: result.winnerTeam }
+            : { awayTeam: result.winnerTeam };
+        await tx
+          .update(games)
+          .set(updateField)
+          .where(eq(games.id, nextBracket.gameId));
+      }
 
-    // Handle loser advancement (double-elim)
-    if (result.loserBracketPosition && result.loserTeam) {
-      const loserBracket = bracketEntries.find(
-        (bg) => bg.bracketPosition === result.loserBracketPosition
-      );
-      if (loserBracket) {
+      if (loserBracket && result.loserTeam) {
         const updateField =
           result.loserSide === "home"
             ? { homeTeam: result.loserTeam }
             : { awayTeam: result.loserTeam };
-
-        await db
+        await tx
           .update(games)
           .set(updateField)
           .where(eq(games.id, loserBracket.gameId));
       }
-    }
+    });
 
     // Bracket advancement is a high-consequence write — it overwrites
     // downstream games' home/away team names, and a buggy client could

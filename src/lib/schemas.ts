@@ -533,71 +533,16 @@ export const announcementSchema = z.object({
   expiresAt: z.string().datetime().optional().nullable(),
 });
 
-// ── Members & Memberships ───────────────────────────────────────────
-const MEMBERSHIP_PLAN_TYPE_ENUM = z.enum([
-  "unlimited", "single_sport", "family", "day_pass", "class_pack", "other",
-]);
-const MEMBER_STATUS_ENUM = z.enum([
-  "active", "paused", "past_due", "cancelled", "trial",
-]);
-const MEMBER_SOURCE_ENUM = z.enum([
-  "website", "walk_in", "referral", "tournament", "instagram", "google", "other",
-]);
-const MEMBER_VISIT_TYPE_ENUM = z.enum([
-  "open_gym", "class", "tournament", "private_training", "guest_pass", "other",
-]);
-
-export const membershipPlanCreateSchema = z.object({
-  name: z.string().min(1).max(200),
-  type: MEMBERSHIP_PLAN_TYPE_ENUM.optional(),
-  description: z.string().max(2000).optional().nullable(),
-  priceMonthlyCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-  priceAnnualCents: z.number().int().nonnegative().max(100_000_000).optional().nullable(),
-  priceOnceCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-  includes: z.string().max(500).optional(),
-  maxVisitsPerMonth: z.number().int().positive().max(1000).optional().nullable(),
-  maxVisitsPerWeek: z.number().int().positive().max(100).optional().nullable(),
-  active: z.boolean().optional(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-export const membershipPlanUpdateSchema = membershipPlanCreateSchema.extend({
-  id: z.number().int().positive(),
-  name: z.string().min(1).max(200).optional(),
-});
-
-export const memberCreateSchema = z.object({
-  userId: z.number().int().positive().optional().nullable(),
-  firstName: z.string().min(1).max(100),
-  lastName: z.string().min(1).max(100),
-  email: z.string().email().max(255).optional().nullable(),
-  phone: z.string().max(30).optional().nullable(),
-  birthDate: z.string().max(20).optional().nullable(),
-  membershipPlanId: z.number().int().positive().optional().nullable(),
-  status: MEMBER_STATUS_ENUM.optional(),
-  source: MEMBER_SOURCE_ENUM.optional(),
-  joinedAt: z.string().min(1).max(40),
-  nextRenewalAt: z.string().max(40).optional().nullable(),
-  autoRenew: z.boolean().optional(),
-  paymentMethod: z.string().max(30).optional().nullable(),
-  emergencyContactJson: z.string().max(2000).optional().nullable(),
-  primaryMemberId: z.number().int().positive().optional().nullable(),
-  // Pause window — daily cron auto-reactivates when this passes.
-  // Null = not paused.
-  pausedUntil: z.string().max(40).optional().nullable(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-export const memberUpdateSchema = memberCreateSchema.partial().extend({
-  id: z.number().int().positive(),
-});
-
-export const memberVisitCreateSchema = z.object({
-  memberId: z.number().int().positive(),
-  type: MEMBER_VISIT_TYPE_ENUM.optional(),
-  notes: z.string().max(500).optional().nullable(),
-  visitedAt: z.string().max(40).optional(),
-});
+// Members + plans + visits + CSV import live in ./schemas/members.ts.
+export {
+  membershipPlanCreateSchema,
+  membershipPlanUpdateSchema,
+  memberCreateSchema,
+  memberUpdateSchema,
+  memberVisitCreateSchema,
+  memberImportRowSchema,
+  memberImportSchema,
+} from "./schemas/members";
 
 // ── Certifications ─────────────────────────────────────────────────
 const CERTIFICATION_TYPE_ENUM = z.enum([
@@ -644,79 +589,17 @@ export const maintenanceTicketUpdateSchema = maintenanceTicketCreateSchema.parti
   id: z.number().int().positive(),
 });
 
-// ── Programs / Sessions / Registrations ────────────────────────────
-const PROGRAM_TYPE_ENUM = z.enum([
-  "camp", "clinic", "league", "open_gym", "private_training", "class", "other",
-]);
-const PROGRAM_SESSION_STATUS_ENUM = z.enum([
-  "scheduled", "live", "completed", "cancelled",
-]);
-const PROGRAM_REGISTRATION_STATUS_ENUM = z.enum([
-  "registered", "waitlist", "attended", "no_show", "cancelled",
-]);
-
-export const programCreateSchema = z.object({
-  name: z.string().min(1).max(200),
-  type: PROGRAM_TYPE_ENUM.optional(),
-  description: z.string().max(5000).optional().nullable(),
-  minAge: z.number().int().min(0).max(120).optional().nullable(),
-  maxAge: z.number().int().min(0).max(120).optional().nullable(),
-  capacityPerSession: z.number().int().positive().max(500).optional().nullable(),
-  priceCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-  tags: z.string().max(500).optional(),
-  active: z.boolean().optional(),
-});
-
-export const programUpdateSchema = programCreateSchema.partial().extend({
-  id: z.number().int().positive(),
-});
-
-export const programSessionCreateSchema = z
-  .object({
-    programId: z.number().int().positive(),
-    startsAt: z.string().min(1).max(40),
-    endsAt: z.string().min(1).max(40),
-    instructorUserId: z.number().int().positive().optional().nullable(),
-    location: z.string().max(100).optional().nullable(),
-    capacityOverride: z.number().int().positive().max(500).optional().nullable(),
-    status: PROGRAM_SESSION_STATUS_ENUM.optional(),
-    notes: z.string().max(2000).optional().nullable(),
-  })
-  .refine((v) => Date.parse(v.startsAt) < Date.parse(v.endsAt), {
-    message: "startsAt must precede endsAt",
-    path: ["endsAt"],
-  });
-
-export const programSessionUpdateSchema = z.object({
-  id: z.number().int().positive(),
-  startsAt: z.string().max(40).optional(),
-  endsAt: z.string().max(40).optional(),
-  instructorUserId: z.number().int().positive().optional().nullable(),
-  location: z.string().max(100).optional().nullable(),
-  capacityOverride: z.number().int().positive().max(500).optional().nullable(),
-  status: PROGRAM_SESSION_STATUS_ENUM.optional(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-export const programRegistrationCreateSchema = z.object({
-  sessionId: z.number().int().positive(),
-  memberId: z.number().int().positive().optional().nullable(),
-  userId: z.number().int().positive().optional().nullable(),
-  participantName: z.string().min(1).max(200),
-  participantEmail: z.string().email().max(255).optional().nullable(),
-  participantPhone: z.string().max(30).optional().nullable(),
-  guardianName: z.string().max(200).optional().nullable(),
-  guardianPhone: z.string().max(30).optional().nullable(),
-  status: PROGRAM_REGISTRATION_STATUS_ENUM.optional(),
-  paid: z.boolean().optional(),
-  amountCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-  paymentMethod: z.string().max(30).optional().nullable(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-export const programRegistrationUpdateSchema = programRegistrationCreateSchema.partial().extend({
-  id: z.number().int().positive(),
-});
+// Programs + sessions + registrations + session generator live in
+// ./schemas/programs.ts.
+export {
+  programCreateSchema,
+  programUpdateSchema,
+  programSessionCreateSchema,
+  programSessionUpdateSchema,
+  programRegistrationCreateSchema,
+  programRegistrationUpdateSchema,
+  sessionGeneratorSchema,
+} from "./schemas/programs";
 
 // ── Staff Availability + Time Off ──────────────────────────────────
 export const staffAvailabilityCreateSchema = z
@@ -759,42 +642,6 @@ export {
   equipmentUpdateSchema,
   stockMovementCreateSchema,
 } from "./schemas/equipment";
-
-// ── Program session generator — recurring sessions ─────────────────
-export const sessionGeneratorSchema = z.object({
-  programId: z.number().int().positive(),
-  firstStartsAt: z.string().min(1).max(40),
-  durationMinutes: z.number().int().positive().max(1440), // 1 day max
-  weekdays: z.array(z.number().int().min(0).max(6)).min(1).max(7),
-  untilDate: z.string().min(1).max(20), // YYYY-MM-DD
-  instructorUserId: z.number().int().positive().optional().nullable(),
-  location: z.string().max(100).optional().nullable(),
-});
-
-// ── Member CSV import ──────────────────────────────────────────────
-// One row at a time. Handler loops over the array inside a DB
-// transaction so the whole import is atomic (all-or-nothing on
-// validation failure).
-export const memberImportRowSchema = z.object({
-  firstName: z.string().min(1).max(100),
-  lastName: z.string().min(1).max(100),
-  email: z.string().email().max(255).optional().nullable(),
-  phone: z.string().max(30).optional().nullable(),
-  birthDate: z.string().max(20).optional().nullable(),
-  membershipPlanId: z.number().int().positive().optional().nullable(),
-  planName: z.string().max(200).optional().nullable(), // resolved to id server-side
-  status: z.enum(["active", "paused", "past_due", "cancelled", "trial"]).optional(),
-  source: z.enum(["website", "walk_in", "referral", "tournament", "instagram", "google", "other"]).optional(),
-  joinedAt: z.string().min(1).max(40),
-  nextRenewalAt: z.string().max(40).optional().nullable(),
-  autoRenew: z.boolean().optional(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-export const memberImportSchema = z.object({
-  rows: z.array(memberImportRowSchema).min(1).max(1000),
-  dryRun: z.boolean().optional(),
-});
 
 // Waivers schema lives in ./schemas/waivers.ts for legal-audit isolation.
 export { waiverSignSchema } from "./schemas/waivers";

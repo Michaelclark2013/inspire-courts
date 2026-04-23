@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { redirect, useSearchParams } from "next/navigation";
 import {
@@ -67,7 +67,7 @@ function fmtDate(iso: string): string {
   }
 }
 
-export default function PayrollPage() {
+function PayrollPageInner() {
   const { data: session, status } = useSession();
   const sp = useSearchParams();
   const preselectId = Number(sp.get("id")) || null;
@@ -500,5 +500,14 @@ function PayPeriodCreateModal({
         </div>
       </div>
     </div>
+  );
+}
+
+
+export default function PayrollPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-text-secondary text-sm">Loading…</div>}>
+      <PayrollPageInner />
+    </Suspense>
   );
 }

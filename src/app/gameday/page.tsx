@@ -78,13 +78,13 @@ export const metadata: Metadata = {
     title: "Game Day Info | Inspire Courts AZ",
     description: "Location, parking, admission, check-in, schedules, food, and house rules for game day at Inspire Courts AZ.",
     url: `${SITE_URL}/gameday`,
-    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ game day" }],
+    images: [{ url: `${SITE_URL}/images/courts-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ game day" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Game Day Info | Inspire Courts AZ",
     description: "Location, parking, admission, check-in, schedules, food, and house rules for game day at Inspire Courts AZ.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 

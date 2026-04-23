@@ -33,13 +33,13 @@ export const metadata: Metadata = {
     title: "About Inspire Courts AZ",
     description: "Arizona's premier indoor basketball & volleyball facility — 7 courts, game film, and a pro-level setup in Gilbert, AZ.",
     url: `${SITE_URL}/about`,
-    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ indoor basketball facility" }],
+    images: [{ url: `${SITE_URL}/images/courts-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ indoor basketball facility" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "About Inspire Courts AZ",
     description: "Arizona's premier indoor basketball & volleyball facility — 7 courts, game film, pro-level setup in Gilbert, AZ.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 

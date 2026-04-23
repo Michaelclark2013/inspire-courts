@@ -18,13 +18,13 @@ export const metadata: Metadata = {
     title: "Book the Facility | Inspire Courts AZ",
     description: "Rent Inspire Courts in Gilbert, AZ for leagues, practices, tournaments, and private events. 7 regulation indoor courts available.",
     url: `${SITE_URL}/book`,
-    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ indoor facility for rent" }],
+    images: [{ url: `${SITE_URL}/images/courts-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ indoor facility for rent" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Book the Facility | Inspire Courts AZ",
     description: "Rent Inspire Courts in Gilbert, AZ for leagues, practices, tournaments, and private events. 7 regulation indoor courts available.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 

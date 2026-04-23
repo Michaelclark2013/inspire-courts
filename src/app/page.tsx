@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/images/hero-bg.jpg`,
+        url: `${SITE_URL}/images/courts-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ indoor basketball facility in Gilbert, Arizona",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: "Inspire Courts AZ | Indoor Basketball & Volleyball Facility",
     description:
       "Arizona's premier indoor basketball & volleyball facility in Gilbert, AZ.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 
@@ -186,7 +186,7 @@ export default async function Home() {
         aria-labelledby="hero-heading"
       >
         <Image
-          src="/images/hero-bg.jpg"
+          src="/images/courts-bg.jpg"
           alt=""
           fill
           priority
@@ -360,7 +360,7 @@ export default async function Home() {
             <AnimateIn>
               <div className="relative bg-navy rounded-3xl p-6 sm:p-10 lg:p-14 h-full flex flex-col text-white overflow-hidden group hover:shadow-2xl transition-shadow">
                 <Image
-                  src="/images/hero-bg-texture.jpg"
+                  src="/images/courts-bg-texture.jpg"
                   alt=""
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -571,7 +571,7 @@ export default async function Home() {
         aria-label="Email signup"
       >
         <Image
-          src="/images/hero-bg-texture.jpg"
+          src="/images/courts-bg-texture.jpg"
           alt=""
           fill
           sizes="100vw"

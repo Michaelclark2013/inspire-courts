@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     title: "Live Scores & Standings | Inspire Courts AZ",
     description: "Real-time game scores and league standings from Inspire Courts AZ tournaments in Gilbert, Arizona.",
     url: `${SITE_URL}/scores`,
-    images: [{ url: `${SITE_URL}/images/hero-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ Live Scores" }],
+    images: [{ url: `${SITE_URL}/images/courts-bg.jpg`, width: 1200, height: 630, alt: "Inspire Courts AZ Live Scores" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Live Scores & Standings | Inspire Courts AZ",
     description: "Real-time game scores and league standings from Inspire Courts AZ tournaments.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 

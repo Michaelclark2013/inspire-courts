@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/tournaments`,
     images: [
       {
-        url: `${SITE_URL}/images/hero-bg.jpg`,
+        url: `${SITE_URL}/images/courts-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ basketball tournaments",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     title: "Basketball Tournaments | Inspire Courts AZ",
     description:
       "Youth basketball tournaments 10U\u201317U in Gilbert, AZ. Register now at Inspire Courts AZ.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 

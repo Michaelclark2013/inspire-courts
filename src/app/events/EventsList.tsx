@@ -147,7 +147,7 @@ export default async function EventsList() {
           url: `${SITE_URL}${REGISTER_URL}`,
         },
       }),
-      image: `${SITE_URL}/images/hero-bg.jpg`,
+      image: `${SITE_URL}/images/courts-bg.jpg`,
     }));
 
   return (

@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/facility`,
     images: [
       {
-        url: `${SITE_URL}/images/hero-bg.jpg`,
+        url: `${SITE_URL}/images/courts-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ – Indoor basketball & volleyball facility in Gilbert, AZ",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Indoor Court Rental Gilbert AZ | Inspire Courts",
     description: "7 climate-controlled courts for basketball, volleyball, futsal & jiu-jitsu in Gilbert, AZ.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 

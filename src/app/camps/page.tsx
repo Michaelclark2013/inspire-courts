@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/camps`,
     images: [
       {
-        url: `${SITE_URL}/images/hero-bg.jpg`,
+        url: `${SITE_URL}/images/courts-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Basketball Camps at Inspire Courts AZ",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Basketball Camps | Inspire Courts AZ",
     description: "Youth basketball camps in Gilbert, AZ. Skill development, competitive games, expert coaching.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/contact`,
     images: [
       {
-        url: `${SITE_URL}/images/hero-bg.jpg`,
+        url: `${SITE_URL}/images/courts-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Inspire Courts AZ — Contact Us",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Contact Inspire Courts AZ",
     description: "Questions about tournaments, rentals, or training? Get in touch with Inspire Courts AZ.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 

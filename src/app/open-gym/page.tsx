@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/open-gym`,
     images: [
       {
-        url: `${SITE_URL}/images/hero-bg.jpg`,
+        url: `${SITE_URL}/images/courts-bg.jpg`,
         width: 1200,
         height: 630,
         alt: "Open Gym at Inspire Courts AZ",
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Open Gym | Inspire Courts AZ",
     description: "Drop-in open gym basketball at Inspire Courts. Regulation hardwood, climate-controlled, Gilbert AZ.",
-    images: [`${SITE_URL}/images/hero-bg.jpg`],
+    images: [`${SITE_URL}/images/courts-bg.jpg`],
   },
 };
 
@@ -124,7 +124,7 @@ export default function OpenGymPage() {
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <Image
-          src="/images/hero-bg.jpg"
+          src="/images/courts-bg.jpg"
           alt="Open gym basketball at Inspire Courts AZ"
           fill
           priority

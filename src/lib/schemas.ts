@@ -544,50 +544,15 @@ export {
   memberImportSchema,
 } from "./schemas/members";
 
-// ── Certifications ─────────────────────────────────────────────────
-const CERTIFICATION_TYPE_ENUM = z.enum([
-  "cpr", "first_aid", "aed", "background_check",
-  "ref_level_1", "ref_level_2", "ref_level_3",
-  "coaching_license", "drivers_license", "w4", "i9", "other",
-]);
-
-export const certificationCreateSchema = z.object({
-  userId: z.number().int().positive(),
-  type: CERTIFICATION_TYPE_ENUM,
-  label: z.string().max(200).optional().nullable(),
-  issuedAt: z.string().max(40).optional().nullable(),
-  expiresAt: z.string().max(40).optional().nullable(),
-  documentUrl: z.string().url().max(500).optional().nullable(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-export const certificationUpdateSchema = certificationCreateSchema.partial().extend({
-  id: z.number().int().positive(),
-});
-
-// ── Maintenance Tickets ────────────────────────────────────────────
-const MAINTENANCE_PRIORITY_ENUM = z.enum(["low", "medium", "high", "urgent"]);
-const MAINTENANCE_STATUS_ENUM = z.enum([
-  "open", "in_progress", "waiting_vendor", "resolved", "closed",
-]);
-
-export const maintenanceTicketCreateSchema = z.object({
-  title: z.string().min(1).max(200),
-  description: z.string().max(5000).optional().nullable(),
-  location: z.string().max(100).optional().nullable(),
-  priority: MAINTENANCE_PRIORITY_ENUM.optional(),
-  status: MAINTENANCE_STATUS_ENUM.optional(),
-  assignedTo: z.number().int().positive().optional().nullable(),
-  resourceId: z.number().int().positive().optional().nullable(),
-  photoUrls: z.array(z.string().url()).max(20).optional(),
-  vendorName: z.string().max(200).optional().nullable(),
-  costCents: z.number().int().nonnegative().max(100_000_000).optional().nullable(),
-  notes: z.string().max(5000).optional().nullable(),
-});
-
-export const maintenanceTicketUpdateSchema = maintenanceTicketCreateSchema.partial().extend({
-  id: z.number().int().positive(),
-});
+// Certifications + maintenance tickets live in their own files.
+export {
+  certificationCreateSchema,
+  certificationUpdateSchema,
+} from "./schemas/certifications";
+export {
+  maintenanceTicketCreateSchema,
+  maintenanceTicketUpdateSchema,
+} from "./schemas/maintenance";
 
 // Programs + sessions + registrations + session generator live in
 // ./schemas/programs.ts.
@@ -601,40 +566,12 @@ export {
   sessionGeneratorSchema,
 } from "./schemas/programs";
 
-// ── Staff Availability + Time Off ──────────────────────────────────
-export const staffAvailabilityCreateSchema = z
-  .object({
-    userId: z.number().int().positive(),
-    weekday: z.number().int().min(0).max(6),
-    startTime: z.string().regex(/^\d{2}:\d{2}$/, "HH:MM"),
-    endTime: z.string().regex(/^\d{2}:\d{2}$/, "HH:MM"),
-    effectiveFrom: z.string().max(20).optional().nullable(),
-    effectiveTo: z.string().max(20).optional().nullable(),
-    notes: z.string().max(500).optional().nullable(),
-  })
-  .refine((v) => v.startTime < v.endTime, {
-    message: "startTime must precede endTime",
-    path: ["endTime"],
-  });
-
-export const timeOffRequestCreateSchema = z
-  .object({
-    userId: z.number().int().positive().optional(),
-    startDate: z.string().min(1).max(20),
-    endDate: z.string().min(1).max(20),
-    type: z.enum(["pto", "unpaid", "sick", "other"]).optional(),
-    reason: z.string().max(500).optional().nullable(),
-  })
-  .refine((v) => v.startDate <= v.endDate, {
-    message: "startDate must be on or before endDate",
-    path: ["endDate"],
-  });
-
-export const timeOffRequestPatchSchema = z.object({
-  id: z.number().int().positive(),
-  status: z.enum(["pending", "approved", "denied", "cancelled"]),
-  denialReason: z.string().max(500).optional().nullable(),
-});
+// Staff availability + time off live in ./schemas/availability.ts.
+export {
+  staffAvailabilityCreateSchema,
+  timeOffRequestCreateSchema,
+  timeOffRequestPatchSchema,
+} from "./schemas/availability";
 
 // Equipment + stock movements live in ./schemas/equipment.ts.
 export {

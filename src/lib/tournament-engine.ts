@@ -57,31 +57,28 @@ function addMinutes(iso: string, minutes: number): string {
 /**
  * Standard seeding order for a bracket of size N (power of 2).
  * Returns pairs like [[1,8],[4,5],[2,7],[3,6]] for N=8.
+ *
+ * Classic recursive algorithm: at each level, if the current-level bracket
+ * size is `m`, a pair [a, b] expands into [a, 2m+1-a] and [2m+1-b, b].
+ * This preserves the "1-seed plays the lowest-seeded survivor" property
+ * and distributes seeds across halves of the bracket.
  */
 function seededPairings(size: number): [number, number][] {
   if (size === 1) return [[1, 1]];
   if (size === 2) return [[1, 2]];
 
-  const pairs: [number, number][] = [];
-  // Standard bracket seeding: 1vN, N/2+1 v N/2, etc.
-  function buildBracket(round: [number, number][]): [number, number][] {
-    if (round.length === size / 2) return round;
+  // Start with the 2-team bracket and expand until we reach `size`.
+  let pairs: [number, number][] = [[1, 2]];
+  let currentSize = 2;
+  while (currentSize < size) {
+    currentSize *= 2;
+    const complement = currentSize + 1;
     const next: [number, number][] = [];
-    for (const [a, b] of round) {
-      const sum = a + b;
-      next.push([a, sum - a]); // Keep a
-      next.push([sum - b, b]); // Keep b
+    for (const [a, b] of pairs) {
+      next.push([a, complement - a]);
+      next.push([complement - b, b]);
     }
-    return buildBracket(next);
-  }
-
-  // Start with 1 vs 2, expand to proper seeding
-  const initial: [number, number][] = [[1, 2]];
-  const expanded = buildBracket(initial);
-
-  // Re-pair: top half vs bottom half
-  for (let i = 0; i < expanded.length; i++) {
-    pairs.push(expanded[i]);
+    pairs = next;
   }
   return pairs;
 }

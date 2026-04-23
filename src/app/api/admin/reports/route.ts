@@ -15,6 +15,7 @@ import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";
 import { withTiming } from "@/lib/timing";
 import { computePayrollRollup } from "@/lib/payroll";
+import { azMonthStartIso } from "@/lib/api-helpers";
 
 // GET /api/admin/reports — one-shot business KPIs for the reports
 // hub. Intentionally not paginated (all counts + aggregates).
@@ -32,9 +33,9 @@ export const GET = withTiming("admin.reports", async () => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const now = new Date();
-  const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  // "This month" follows Arizona wall-clock, not UTC.
+  const monthStartIso = azMonthStartIso(now);
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  const monthStartIso = monthStart.toISOString();
   const thirtyDaysAgoIso = thirtyDaysAgo.toISOString();
   const nowIso = now.toISOString();
 

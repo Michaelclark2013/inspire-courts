@@ -108,6 +108,27 @@ export async function parseJsonBody<T>(
 }
 
 /**
+ * Returns the ISO timestamp of midnight on the first of the current
+ * Arizona month. Business lives in Phoenix (America/Phoenix, UTC−07:00,
+ * no DST). Using this everywhere we partition data by "this month"
+ * avoids the 7-hour rollover skew of UTC-anchored month boundaries.
+ *
+ * Example: on 2026-06-30 at 6 PM Arizona time, returns
+ * "2026-06-01T00:00:00-07:00" (the UTC month-start approach would have
+ * already rolled over to July because 6 PM AZ = 01:00 UTC the next day).
+ */
+export function azMonthStartIso(at: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Phoenix",
+    year: "numeric",
+    month: "2-digit",
+  }).formatToParts(at);
+  const year = parts.find((p) => p.type === "year")!.value;
+  const month = parts.find((p) => p.type === "month")!.value;
+  return new Date(`${year}-${month}-01T00:00:00-07:00`).toISOString();
+}
+
+/**
  * Safely JSON.parse a string that might be null, empty, or malformed —
  * used primarily for DB columns storing JSON-serialized arrays/objects
  * (e.g. tournament.divisions, tournament.courts). If the value doesn't

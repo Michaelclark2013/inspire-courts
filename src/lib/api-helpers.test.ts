@@ -6,6 +6,7 @@ import {
   apiNotFound,
   parseJsonBody,
   safeJsonParse,
+  azMonthStartIso,
 } from "./api-helpers";
 
 describe("api-helpers / apiError", () => {
@@ -169,5 +170,33 @@ describe("api-helpers / safeJsonParse", () => {
   it("honors the typed fallback (not just any[])", () => {
     const fallback: string[] = ["Court 1"];
     expect(safeJsonParse<string[]>(null, fallback)).toEqual(["Court 1"]);
+  });
+});
+
+describe("api-helpers / azMonthStartIso", () => {
+  it("returns midnight Arizona on the 1st of the current AZ month", () => {
+    // Mid-month UTC → same AZ month. 2026-06-15 18:00 UTC = 11 AM AZ.
+    const result = azMonthStartIso(new Date("2026-06-15T18:00:00Z"));
+    expect(result).toBe(new Date("2026-06-01T00:00:00-07:00").toISOString());
+  });
+
+  it("handles the UTC-vs-AZ rollover that motivated the helper", () => {
+    // 2026-07-01 02:00 UTC = 2026-06-30 19:00 AZ.
+    // A naive UTC-month-start would already return July 1; correct
+    // answer is June 1 because Arizona hasn't rolled over yet.
+    const result = azMonthStartIso(new Date("2026-07-01T02:00:00Z"));
+    expect(result).toBe(new Date("2026-06-01T00:00:00-07:00").toISOString());
+  });
+
+  it("rolls over to the next AZ month exactly at 07:00 UTC on the 1st", () => {
+    // 2026-07-01 07:00 UTC = 2026-07-01 00:00 AZ — new month.
+    const result = azMonthStartIso(new Date("2026-07-01T07:00:00Z"));
+    expect(result).toBe(new Date("2026-07-01T00:00:00-07:00").toISOString());
+  });
+
+  it("handles year boundary (Dec → Jan)", () => {
+    // 2027-01-01 06:59 UTC = 2026-12-31 23:59 AZ — still Dec 2026.
+    const result = azMonthStartIso(new Date("2027-01-01T06:59:00Z"));
+    expect(result).toBe(new Date("2026-12-01T00:00:00-07:00").toISOString());
   });
 });

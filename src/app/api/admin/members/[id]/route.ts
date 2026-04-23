@@ -6,7 +6,7 @@ import { members, membershipPlans, memberVisits, users } from "@/lib/db/schema";
 import { desc, eq , sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";
-import { apiError, apiNotFound } from "@/lib/api-helpers";
+import { apiError, apiNotFound, azMonthStartIso } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 
 type Params = { params: Promise<{ id: string }> };
@@ -58,8 +58,8 @@ export const GET = withTiming("admin.members.detail", async (_request: NextReque
       .limit(1);
     if (!member) return apiNotFound("Member not found");
 
-    const now = new Date();
-    const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+    // "This month" rolls over at midnight Arizona time, not UTC.
+    const monthStart = azMonthStartIso();
 
     const [visits, [{ monthTotal }], dependents] = await Promise.all([
       db

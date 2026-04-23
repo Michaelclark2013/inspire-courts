@@ -198,16 +198,21 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    // Nullify foreign key references (don't delete other records, just unlink)
-    await db.update(teams).set({ coachUserId: null }).where(eq(teams.coachUserId, userId));
-    await db.update(players).set({ parentUserId: null }).where(eq(players.parentUserId, userId));
-    await db.update(gameScores).set({ updatedBy: null }).where(eq(gameScores.updatedBy, userId));
-    await db.update(checkins).set({ checkedInBy: null }).where(eq(checkins.checkedInBy, userId));
-    await db.update(announcements).set({ createdBy: null }).where(eq(announcements.createdBy, userId));
-    await db.update(tournaments).set({ createdBy: null }).where(eq(tournaments.createdBy, userId));
-
-    // Delete the user
-    await db.delete(users).where(eq(users.id, userId));
+    // All-or-nothing account deletion. Previously this was 6 sequential
+    // updates followed by a delete, any of which could fail mid-flight
+    // and leave the user partially deleted (half their FK refs nulled,
+    // user row still present with broken links into the updated tables).
+    await db.transaction(async (tx) => {
+      // Nullify foreign-key references (unlink, don't cascade-delete)
+      await tx.update(teams).set({ coachUserId: null }).where(eq(teams.coachUserId, userId));
+      await tx.update(players).set({ parentUserId: null }).where(eq(players.parentUserId, userId));
+      await tx.update(gameScores).set({ updatedBy: null }).where(eq(gameScores.updatedBy, userId));
+      await tx.update(checkins).set({ checkedInBy: null }).where(eq(checkins.checkedInBy, userId));
+      await tx.update(announcements).set({ createdBy: null }).where(eq(announcements.createdBy, userId));
+      await tx.update(tournaments).set({ createdBy: null }).where(eq(tournaments.createdBy, userId));
+      // Delete the user row last so any partial failure above rolls back.
+      await tx.delete(users).where(eq(users.id, userId));
+    });
 
     return NextResponse.json({ success: true, deleted: true });
   } catch {

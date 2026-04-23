@@ -3,30 +3,28 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 
-interface Column {
-  key: string;
+interface Column<T extends object = Record<string, unknown>> {
+  key: keyof T & string;
   label: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  render?: (value: any, row: Record<string, any>) => React.ReactNode;
+  render?: (value: T[keyof T], row: T) => React.ReactNode;
 }
 
-interface DataTableProps {
-  columns: Column[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: Record<string, any>[];
-  searchKey?: string;
+interface DataTableProps<T extends object = Record<string, unknown>> {
+  columns: Column<T>[];
+  data: T[];
+  searchKey?: keyof T & string;
   searchPlaceholder?: string;
   /** Screen-reader-only table caption for accessibility */
   caption?: string;
 }
 
-export default function DataTable({
+export default function DataTable<T extends object = Record<string, unknown>>({
   columns,
   data,
   searchKey,
   searchPlaceholder = "Search...",
   caption,
-}: DataTableProps) {
+}: DataTableProps<T>) {
   const [search, setSearch] = useState("");
 
   const filtered = searchKey
@@ -91,8 +89,8 @@ export default function DataTable({
                   {columns.map((col) => (
                     <td key={col.key} className="px-4 py-3 text-navy">
                       {col.render
-                        ? col.render(row[col.key], row)
-                        : row[col.key] ?? "—"}
+                        ? col.render(row[col.key] as T[keyof T], row)
+                        : (row[col.key] as React.ReactNode) ?? "—"}
                     </td>
                   ))}
                 </tr>

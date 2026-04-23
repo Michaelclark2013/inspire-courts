@@ -10,7 +10,7 @@ import {
   tournamentRegistrations,
   games,
 } from "@/lib/db/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq  } from "drizzle-orm";
 import { generateBracket, type TeamEntry, type ScheduleConfig } from "@/lib/tournament-engine";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";

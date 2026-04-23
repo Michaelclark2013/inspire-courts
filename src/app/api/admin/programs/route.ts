@@ -4,10 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
   programs,
-  programSessions,
-  programRegistrations,
-} from "@/lib/db/schema";
-import { and, desc, eq, gte, inArray, sql, type SQL } from "drizzle-orm";
+  programSessions} from "@/lib/db/schema";
+import { and , eq, gte, inArray, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { canAccess } from "@/lib/permissions";

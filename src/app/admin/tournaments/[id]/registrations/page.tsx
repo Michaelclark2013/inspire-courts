@@ -7,14 +7,10 @@ import {
   ChevronLeft,
   Loader2,
   Users,
-  DollarSign,
-  Clock,
-  CheckCircle2,
   XCircle,
   Plus,
   X,
-  Download,
-} from "lucide-react";
+  Download} from "lucide-react";
 
 type Registration = {
   id: number;

@@ -18,14 +18,18 @@ function useDismissed() {
     try {
       const raw = localStorage.getItem(DISMISSED_KEY);
       if (raw) setDismissed(JSON.parse(raw));
-    } catch {}
+    } catch (e) {
+      if (process.env.NODE_ENV !== "production") console.warn("dismissed load failed", e);
+    }
   }, []);
   const dismiss = (id: string) => {
     setDismissed((prev) => {
       const next = { ...prev, [id]: Date.now() };
       try {
         localStorage.setItem(DISMISSED_KEY, JSON.stringify(next));
-      } catch {}
+      } catch (e) {
+        if (process.env.NODE_ENV !== "production") console.warn("dismissed persist failed", e);
+      }
       return next;
     });
   };

@@ -87,7 +87,7 @@ export default function AvailabilityPage() {
           <Calendar className="w-10 h-10 text-text-secondary mx-auto mb-3" />
           <p className="text-navy font-semibold">No availability set yet.</p>
           <p className="text-text-secondary text-sm mt-1">
-            Add weekly windows so the scheduler knows who's free when.
+            Add weekly windows so the scheduler knows who&apos;s free when.
           </p>
         </div>
       ) : (

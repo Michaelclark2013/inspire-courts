@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { members, membershipPlans } from "@/lib/db/schema";
-import { and, eq, gte, isNull, isNotNull, lt, lte, or, sql } from "drizzle-orm";
+import { and, eq, gte, isNull, isNotNull, lt, lte, or } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { sendBroadcastEmail } from "@/lib/notify";
 

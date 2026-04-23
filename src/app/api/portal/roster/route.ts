@@ -80,15 +80,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let body: any;
+  let body: Record<string, unknown>;
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { name, jerseyNumber, division } = body;
+  const name = typeof body.name === "string" ? body.name : "";
+  const jerseyNumber =
+    typeof body.jerseyNumber === "string" || typeof body.jerseyNumber === "number"
+      ? body.jerseyNumber
+      : null;
+  const division = typeof body.division === "string" ? body.division : null;
 
   if (!name) {
     return NextResponse.json(

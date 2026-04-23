@@ -5,12 +5,11 @@
 // surface. `any` is intentional here because the `getProperty`
 // helper only narrows via `prop.type` at runtime.
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Client } from "@notionhq/client";
 import { logger } from "@/lib/logger";
 
-const notion = new Client({
-  auth: process.env.NOTION_API_KEY,
-});
+// Note: we call the Notion API via fetch (below) rather than the @notionhq/client
+// SDK — the fetch approach works across all SDK versions and avoids a bundled
+// runtime dependency for what's a thin REST wrapper.
 
 // Database IDs (from the prompt)
 export const DB = {

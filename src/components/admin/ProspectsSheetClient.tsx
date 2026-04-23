@@ -211,7 +211,7 @@ export default function ProspectsSheetClient({ prospects, funnelData, divData }:
                 </tr>
               ) : (
                 filtered.map((p, i) => (
-                  <tr key={i} className="hover:bg-white/40 transition-colors">
+                  <tr key={i} className="hover:bg-off-white transition-colors">
                     <td className="px-4 py-3 font-semibold text-navy max-w-[160px] truncate"><SearchHighlight text={p.team} query={search} /></td>
                     <td className="px-4 py-3 text-text-secondary"><SearchHighlight text={p.coach} query={search} /></td>
                     <td className="px-4 py-3">

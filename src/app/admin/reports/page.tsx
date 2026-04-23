@@ -5,8 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import {
   DollarSign, Users, TrendingUp, TrendingDown, Trophy, Truck,
-  Wallet, Calendar, RefreshCw,
-} from "lucide-react";
+  Wallet, RefreshCw} from "lucide-react";
 
 type Report = {
   asOf: string;

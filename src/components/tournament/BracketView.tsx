@@ -3,12 +3,9 @@
 import { useState } from "react";
 import {
   Trophy,
-  ChevronRight,
-  Play,
   CheckCircle2,
   Loader2,
-  ArrowRight,
-} from "lucide-react";
+  ArrowRight} from "lucide-react";
 
 type BracketGame = {
   id: number;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, MessageSquare, Mail, Flame, ChevronDown, ChevronUp, Inbox } from "lucide-react";
+import { Search, MessageSquare, Mail , ChevronDown, ChevronUp, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Lead {
@@ -113,7 +113,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
           <div key={i} className="bg-off-white border border-border rounded-sm overflow-hidden">
             <button
               onClick={() => setExpanded(expanded === i ? null : i)}
-              className="w-full px-5 py-4 flex items-center gap-4 hover:bg-white/50 transition-colors text-left"
+              className="w-full px-5 py-4 flex items-center gap-4 hover:bg-off-white transition-colors text-left"
             >
               <div className="w-8 h-8 bg-red/10 rounded-full flex items-center justify-center flex-shrink-0">
                 {lead.source === "Contact Form" ? <Mail className="w-3.5 h-3.5 text-red" aria-hidden="true" /> : <MessageSquare className="w-3.5 h-3.5 text-red" aria-hidden="true" />}

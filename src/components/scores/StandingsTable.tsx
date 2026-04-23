@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { BarChart3 } from "lucide-react";
 import { computeStandings } from "@/lib/standings";
-import type { StandingRow } from "@/lib/standings";
 
 type GameData = {
   homeTeam: string;

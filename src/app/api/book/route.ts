@@ -5,7 +5,7 @@ import { bookSchema } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
-import { sanitizeField as sanitize } from "@/lib/sanitize";
+
 import { timestampAZ } from "@/lib/utils";
 
 export async function POST(request: Request) {

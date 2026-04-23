@@ -9,9 +9,7 @@ import {
   Lock,
   CheckCircle2,
   Download,
-  Unlock,
-  AlertCircle,
-} from "lucide-react";
+  AlertCircle} from "lucide-react";
 
 type PayPeriod = {
   id: number;

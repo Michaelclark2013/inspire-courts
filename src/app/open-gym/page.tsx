@@ -63,7 +63,7 @@ import AnimateIn from "@/components/ui/AnimateIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 import BackToTop from "@/components/ui/BackToTop";
 import QuickContactBar from "@/components/ui/QuickContactBar";
-import { FACILITY_EMAIL, FACILITY_PHONE, SITE_URL } from "@/lib/constants";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Open Gym | Inspire Courts AZ",

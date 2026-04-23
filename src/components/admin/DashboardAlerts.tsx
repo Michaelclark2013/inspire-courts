@@ -53,7 +53,9 @@ export default function DashboardAlerts() {
                 (r: { paymentStatus: string }) => r.paymentStatus === "pending"
               ).length;
             }
-          } catch {}
+          } catch (e) {
+            if (process.env.NODE_ENV !== "production") console.warn("pending registrations fetch failed", t.id, e);
+          }
           return 0;
         })
       );

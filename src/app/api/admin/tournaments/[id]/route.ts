@@ -12,7 +12,6 @@ import {
 } from "@/lib/db/schema";
 import { eq, desc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { withTiming } from "@/lib/timing";
 import { apiNotFound, apiError, parseJsonBody } from "@/lib/api-helpers";

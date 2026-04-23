@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { Search, Download, ChevronDown, ChevronRight, Filter } from "lucide-react";
+import { Download, ChevronDown, ChevronRight, Filter } from "lucide-react";
 
 type AuditRow = {
   id: number;

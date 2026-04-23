@@ -58,7 +58,7 @@ function FileGrid({ files }: { files: EnrichedFile[] }) {
           href={file.webViewLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-3 px-4 py-3 hover:bg-white/50 transition-colors group"
+          className="flex items-center gap-3 px-4 py-3 hover:bg-off-white transition-colors group"
         >
           <div className="w-8 h-8 bg-white rounded flex items-center justify-center flex-shrink-0">
             <FileIcon mimeType={file.mimeType} />

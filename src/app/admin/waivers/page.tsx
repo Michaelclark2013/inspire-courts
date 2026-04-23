@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { FileText, ExternalLink, AlertTriangle, CheckCircle2, Download } from "lucide-react";
+import { FileText, ExternalLink, AlertTriangle , Download } from "lucide-react";
 
 type Waiver = {
   id: number;
@@ -182,21 +182,8 @@ export default function WaiversPage() {
 }
 
 function WaiverDetailModal({ waiver, onClose }: { waiver: Waiver; onClose: () => void }) {
-  const [full, setFull] = useState<Waiver | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`/api/admin/waivers?email=${encodeURIComponent(waiver.email || "")}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((rows) => {
-        if (Array.isArray(rows)) {
-          const hit = rows.find((r: Waiver) => r.id === waiver.id);
-          if (hit) setFull(hit);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [waiver.id, waiver.email]);
-
+  // The list endpoint already returns the full row including signatureDataUrl,
+  // so there's no need to re-fetch here.
   return (
     <div className="fixed inset-0 z-50 bg-navy/30 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl border border-border shadow-sm w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
@@ -217,10 +204,9 @@ function WaiverDetailModal({ waiver, onClose }: { waiver: Waiver; onClose: () =>
 
         <div className="mt-4">
           <div className="text-xs uppercase tracking-wide text-text-secondary font-bold mb-2">Signature</div>
-          {loading ? (
-            <div className="text-sm text-text-secondary">Loading…</div>
-          ) : full?.signatureDataUrl ? (
-            <img src={full.signatureDataUrl} alt="Signature"
+          {waiver.signatureDataUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={waiver.signatureDataUrl} alt="Signature"
               className="w-full border border-border rounded bg-white" />
           ) : (
             <div className="text-xs text-text-secondary italic">

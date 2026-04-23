@@ -4,10 +4,8 @@ import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { Users } from "lucide-react";
 import type {
   CheckInDashboardProps,
-  TeamStatus,
   FilterStatus,
-  RecentCheckin,
-} from "@/types/checkin";
+  RecentCheckin} from "@/types/checkin";
 import CheckInHeader from "@/components/admin/checkin/CheckInHeader";
 import CheckInStats from "@/components/admin/checkin/CheckInStats";
 import SearchBar from "@/components/admin/checkin/SearchBar";

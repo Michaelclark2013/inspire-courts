@@ -13,8 +13,6 @@ import {
   Users,
   CalendarDays,
   Star,
-  Wifi,
-  Car,
   Zap,
   LayoutGrid,
   Dumbbell,
@@ -22,12 +20,11 @@ import {
   Volleyball,
   CheckCircle2,
   Goal,
-  Swords,
-} from "lucide-react";
+  Swords} from "lucide-react";
 import AnimateIn from "@/components/ui/AnimateIn";
 import BackToTop from "@/components/ui/BackToTop";
 import QuickContactBar from "@/components/ui/QuickContactBar";
-import { getPageContent, getField, getList } from "@/lib/content";
+import { getPageContent, getField } from "@/lib/content";
 import { FACILITY_ADDRESS, FACILITY_PHONE, FACILITY_EMAIL, SOCIAL_LINKS, SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {

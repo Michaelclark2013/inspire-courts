@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Pencil, LayoutDashboard, LogOut, X, Settings } from "lucide-react";
+import { Pencil, LayoutDashboard, LogOut, X } from "lucide-react";
 import Link from "next/link";
 
 const PATH_TO_CMS_PAGE: Record<string, string> = {

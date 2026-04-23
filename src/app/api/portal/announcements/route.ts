@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { announcements } from "@/lib/db/schema";
-import { desc, or, eq, sql } from "drizzle-orm";
+import { desc   } from "drizzle-orm";
 
 // GET /api/portal/announcements — get active announcements for current user's role
 export async function GET() {

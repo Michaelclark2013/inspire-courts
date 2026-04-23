@@ -178,7 +178,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
             filtered.map((team, i) => (
               <div key={i}>
                 <button
-                  className="w-full px-4 py-4 text-left hover:bg-white/40 transition-colors"
+                  className="w-full px-4 py-4 text-left hover:bg-off-white transition-colors"
                   onClick={() => setExpanded(expanded === i ? null : i)}
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
@@ -291,7 +291,7 @@ export default function TeamsSheetClient({ teams, divisionData }: Props) {
                   <>
                     <tr
                       key={i}
-                      className="hover:bg-white/40 transition-colors cursor-pointer"
+                      className="hover:bg-off-white transition-colors cursor-pointer"
                       onClick={() => setExpanded(expanded === i ? null : i)}
                     >
                       <td className="px-4 py-3">

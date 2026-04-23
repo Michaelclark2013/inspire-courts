@@ -19,15 +19,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let body: any;
+  let body: Record<string, unknown>;
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { playerName, teamName, division } = body;
+  const playerName = typeof body.playerName === "string" ? body.playerName : "";
+  const teamName = typeof body.teamName === "string" ? body.teamName : "";
+  const division = typeof body.division === "string" ? body.division : null;
 
   if (!playerName) {
     return NextResponse.json(

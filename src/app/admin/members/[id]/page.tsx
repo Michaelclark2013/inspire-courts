@@ -5,9 +5,8 @@ import { useSession } from "next-auth/react";
 import { redirect, useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft, User, Phone, Mail, Calendar, CheckCircle2,
-  AlertTriangle, Pause, Users as UsersIcon, LogIn, Plus,
-} from "lucide-react";
+  ArrowLeft, Phone, Mail, Calendar, CheckCircle2,
+  AlertTriangle, Pause, Users as UsersIcon, LogIn, Plus} from "lucide-react";
 
 type Detail = {
   member: {
@@ -201,7 +200,7 @@ export default function MemberDetailPage() {
         </div>
         {detail.dependents.length === 0 ? (
           <p className="text-xs text-text-secondary italic">
-            No dependents linked. Click "Add" to create a family-plan member under this account.
+            No dependents linked. Click &quot;Add&quot; to create a family-plan member under this account.
           </p>
         ) : (
           <div className="flex flex-wrap gap-2">

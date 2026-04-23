@@ -18,9 +18,7 @@ import {
   UserCheck,
   FileCheck,
   ChevronLeft,
-  Radio,
-  Eye,
-} from "lucide-react";
+  Eye} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePortalView } from "@/components/portal/PortalViewContext";
 

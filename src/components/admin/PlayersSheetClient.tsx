@@ -22,7 +22,7 @@ function downloadPlayersCSV(rows: Player[], filename: string) {
   a.click();
   URL.revokeObjectURL(url);
 }
-import { AdminBarChart, HorizontalBarList, CHART_COLORS, BRAND } from "@/components/dashboard/Charts";
+import { AdminBarChart, HorizontalBarList, CHART_COLORS } from "@/components/dashboard/Charts";
 import SearchHighlight from "@/components/ui/SearchHighlight";
 import Badge from "@/components/ui/Badge";
 
@@ -176,7 +176,7 @@ export default function PlayersSheetClient({ players, divData, teamData }: Props
                 </tr>
               ) : (
                 filtered.map((p, i) => (
-                  <tr key={i} className="hover:bg-white/40 transition-colors">
+                  <tr key={i} className="hover:bg-off-white transition-colors">
                     <td className="px-4 py-3 font-semibold text-navy"><SearchHighlight text={p.name} query={search} /></td>
                     <td className="px-4 py-3 text-text-secondary"><SearchHighlight text={p.parent} query={search} /></td>
                     <td className="px-4 py-3 text-text-secondary text-xs max-w-[140px] truncate" title={p.team}><SearchHighlight text={p.team} query={search} /></td>

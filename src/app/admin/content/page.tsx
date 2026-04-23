@@ -63,7 +63,9 @@ export default function ContentEditorPage() {
     try {
       const ts = localStorage.getItem(TIMESTAMPS_KEY);
       if (ts) setSectionTimestamps(JSON.parse(ts));
-    } catch {}
+    } catch (e) {
+      if (process.env.NODE_ENV !== "production") console.warn("load timestamps failed", e);
+    }
   }, []);
 
   // Fetch content from server, check for draft
@@ -87,7 +89,9 @@ export default function ContentEditorPage() {
               localStorage.removeItem(DRAFT_KEY);
             }
           }
-        } catch {}
+        } catch (e) {
+          if (process.env.NODE_ENV !== "production") console.warn("draft restore failed", e);
+        }
         setContent(serverContent);
       })
       .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; });
@@ -100,7 +104,9 @@ export default function ContentEditorPage() {
     const timer = setTimeout(() => {
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify({ content, savedAt: Date.now() }));
-      } catch {}
+      } catch (e) {
+        if (process.env.NODE_ENV !== "production") console.warn("draft autosave failed", e);
+      }
     }, 800);
     return () => clearTimeout(timer);
   }, [content, dirty]);
@@ -139,7 +145,9 @@ export default function ContentEditorPage() {
             });
             try {
               localStorage.setItem(TIMESTAMPS_KEY, JSON.stringify(next));
-            } catch {}
+            } catch (e) {
+              if (process.env.NODE_ENV !== "production") console.warn("persist timestamps failed", e);
+            }
             return next;
           });
           return new Set();

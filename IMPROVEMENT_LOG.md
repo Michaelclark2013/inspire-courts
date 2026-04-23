@@ -1,6 +1,37 @@
 
 ---
 
+## 2026-04-23 — Automated Improvement Run
+
+### Summary
+- 10 issues across high/medium/low tiers; 9 fixed, 1 flagged (oversized files, deferred to per-file refactors).
+- Lint: **125 problems → 43 warnings, 0 errors** (82 warnings cleared).
+- npm audit: **8 vulns (1 high) → 7 moderate**. High-severity xmldom resolved.
+
+### Changes Made
+- [Security]: `npm audit fix` — resolved 4 xmldom CVEs (DoS + XML injection)
+- [Error handling]: Converted 10 empty `catch {}` blocks to dev-mode `console.warn` across `src/lib/capacitor.ts`, `admin/content/page.tsx`, `DashboardAlerts.tsx`, `ChatWidget.tsx`, `DashboardAlertsBar.tsx`
+- [Correctness]: Waivers admin modal no longer re-fetches on open; uses `signatureDataUrl` from list payload. Fixes bug where waivers without email fetched ALL waivers (`admin/waivers/page.tsx`)
+- [Type safety]: `Record<string, unknown>` + narrowed extraction replacing `any` in `api/portal/roster/route.ts` + `api/portal/checkin/route.ts`. `DataTable` converted to generic `<T>` with properly typed columns; `schools` + `sponsors` call sites updated
+- [Performance/observability]: VAPID warning suppressed during build + production; only emits in dev runtime
+- [Lint]: Fixed 6 react/no-unescaped-entities errors (availability, maintenance, members/[id], members/import)
+- [Theme consistency]: Replaced 15 `hover:bg-white/40|50` → `hover:bg-off-white` in 11 admin client components (TeamsClient, TeamsSheetClient, StaffClient, StaffSheetClient, ScoresClient, ScoresSheetClient, TournamentsClient, PlayersSheetClient, ProspectsSheetClient, LeadsClient, FilesClient)
+- [Lint]: Stripped ~70 unused imports across ~40 files via automated perl pass; removed unused `notion` Client from `lib/notion.ts`; removed unused `MouseEvent` param type from `TrackClick.tsx`
+- [Lint config]: Added `_`-prefix ignore pattern for `no-unused-vars` — aligns catch(_err)/unused-arg convention with project norms
+- [SEO]: Upgraded Google Font `dns-prefetch` → `preconnect` (with crossOrigin) in root layout — faster font delivery
+
+### Flagged for Manual Review
+- [Dependencies]: 7 moderate npm vulns remain — all require breaking major bumps: `next-auth` 5.x (rewrites auth), `drizzle-kit` 0.18+ (config format change), `nodemailer` 8.x. Not auto-applied per automation rules.
+- [Architecture]: 6 files over 700 lines need splitting — `admin/resources/page.tsx` (892), `events/EventsHub.tsx` (876), `admin/content/page.tsx` (787), `layout/AdminSidebar.tsx` (768), `admin/OpsDashboard.tsx` (766), `admin/tournaments/manage/page.tsx` (749). Split when next touching each.
+- [Lint]: 21 `react-hooks/set-state-in-effect` warnings remain (suppressed to `warn`, config notes each site reviewed). Re-review when migrating to React 19 strict-mode patterns.
+- [Lint]: ~18 non-import unused vars remain — mostly local dead code (`STATUS_STYLES`, `fmtCents`, `pendingCount`, `paid`, `REGISTER_URL`, etc.) — case-by-case judgment needed; prefix with `_` if intentional.
+
+### Build Status
+- [PASS] — `npm run build`
+- [PASS] — `npm run lint` (0 errors, 43 warnings)
+
+---
+
 ## 2026-04-19 — Automated Improvement Run
 
 ### Summary

@@ -234,7 +234,7 @@ Jane,Smith,jane@example.com,555-0100,Unlimited Monthly,2025-01-15,2026-01-15,tru
                   <div className="font-semibold text-emerald-900">
                     Dry run passed · {result.previewCount} rows ready
                   </div>
-                  <div className="text-emerald-700 mt-1">No data written. Click "Import" to commit.</div>
+                  <div className="text-emerald-700 mt-1">No data written. Click &quot;Import&quot; to commit.</div>
                 </div>
               </div>
             ) : (

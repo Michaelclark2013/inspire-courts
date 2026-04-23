@@ -14,7 +14,9 @@ if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
   } catch (err) {
     logger.warn("Failed to configure VAPID keys", { error: String(err) });
   }
-} else {
+} else if (process.env.NODE_ENV !== "production" && process.env.NEXT_PHASE !== "phase-production-build") {
+  // Only warn in dev runtime — not during build (it's noisy on every build) and
+  // not in production (absence of keys is a config choice, not a bug).
   logger.warn(
     "VAPID keys not set — push notifications disabled. Set NEXT_PUBLIC_VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY in env."
   );

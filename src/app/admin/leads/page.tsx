@@ -5,14 +5,10 @@ import {
   TrendingUp,
   Loader2,
   Search,
-  Filter,
   Mail,
   Phone,
-  Calendar,
-  Tag,
   RefreshCw,
-  Download,
-} from "lucide-react";
+  Download} from "lucide-react";
 import { SELECT_CLASS } from "@/lib/form-styles";
 import { exportCSV } from "@/lib/export";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, type MouseEvent } from "react";
+import { type ReactNode } from "react";
 import { trackEvent } from "@/components/layout/Analytics";
 
 interface TrackClickProps {
@@ -18,7 +18,7 @@ export default function TrackClick({
   children,
   className,
 }: TrackClickProps) {
-  function handleClick(e: MouseEvent) {
+  function handleClick() {
     trackEvent(action, category, label);
   }
 

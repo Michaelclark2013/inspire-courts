@@ -249,7 +249,7 @@ export default function TournamentsClient({ tournaments, statusData, revenueData
                 filtered.map((t, i) => (
                   <Fragment key={i}>
                     <tr
-                      className="hover:bg-white/40 transition-colors cursor-pointer"
+                      className="hover:bg-off-white transition-colors cursor-pointer"
                       onClick={() => setExpanded(expanded === i ? null : i)}
                     >
                       <td className="px-4 py-3 font-semibold text-navy whitespace-nowrap">{t.name}</td>

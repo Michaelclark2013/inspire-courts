@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { memberVisits, members, users } from "@/lib/db/schema";
-import { and, desc, eq, gte, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, gte , type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { canAccess } from "@/lib/permissions";

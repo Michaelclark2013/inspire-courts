@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { UserCheck, Loader2, CheckCircle2, XCircle, Clock, Shield, AlertTriangle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Clock , AlertTriangle } from "lucide-react";
 import { cn, formatPhone } from "@/lib/utils";
 
 interface PendingUser {

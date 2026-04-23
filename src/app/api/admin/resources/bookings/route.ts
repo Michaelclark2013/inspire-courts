@@ -13,16 +13,13 @@ import {
   lt,
   ne,
   or,
-  sql,
-  type SQL,
-} from "drizzle-orm";
+  type SQL} from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { canAccess } from "@/lib/permissions";
 import {
   resourceBookingCreateSchema,
-  resourceBookingUpdateSchema,
-} from "@/lib/schemas";
+  resourceBookingUpdateSchema} from "@/lib/schemas";
 import { parseJsonBody, apiError, apiNotFound } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 

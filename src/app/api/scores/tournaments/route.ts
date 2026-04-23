@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { tournaments, tournamentTeams, tournamentGames, games, gameScores } from "@/lib/db/schema";
+import { tournaments, tournamentTeams, tournamentGames, games } from "@/lib/db/schema";
 import { desc, inArray } from "drizzle-orm";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";

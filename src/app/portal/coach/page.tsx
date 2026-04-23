@@ -20,9 +20,7 @@ import {
   Shield,
   Search,
   Plus,
-  ExternalLink,
-  User,
-} from "lucide-react";
+  ExternalLink} from "lucide-react";
 
 // ── Placeholder data ───────────────────────────────────────────────────────
 const DEMO_COACH = {

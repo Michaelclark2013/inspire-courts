@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { tournamentTeams, tournaments, games, tournamentGames } from "@/lib/db/schema";
-import { eq, and, or, inArray } from "drizzle-orm";
+import { eq, and , inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";

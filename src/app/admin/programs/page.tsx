@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { GraduationCap, Plus, Calendar, Users, ArrowRight } from "lucide-react";
+import { GraduationCap, Plus, Calendar , ArrowRight } from "lucide-react";
 
 type Program = {
   id: number;

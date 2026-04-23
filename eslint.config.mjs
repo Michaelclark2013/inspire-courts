@@ -31,6 +31,18 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "react-hooks/set-state-in-effect": "warn",
+      // Allow intentionally-unused identifiers prefixed with `_`
+      // (e.g. `catch (_err)` where we don't use the error, unused
+      // destructured args in callbacks, etc.).
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+        },
+      ],
     },
   },
 ]);

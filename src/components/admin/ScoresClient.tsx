@@ -139,7 +139,7 @@ export default function ScoresClient({ games }: { games: Game[] }) {
                 </thead>
                 <tbody>
                   {eventGames.map((g, i) => (
-                    <tr key={i} className="border-b border-border/50 hover:bg-white/50 transition-colors">
+                    <tr key={i} className="border-b border-border/50 hover:bg-off-white transition-colors">
                       <td className={cn("px-4 py-3", g.winner === g.home ? "text-red font-bold" : "text-navy")}>{g.home}</td>
                       <td className={cn("px-4 py-3", g.winner === g.away ? "text-red font-bold" : "text-navy")}>{g.away}</td>
                       <td className="px-4 py-3 text-navy font-medium font-mono">{g.score}</td>

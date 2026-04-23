@@ -49,7 +49,7 @@ function GameCardImpl({
   // Legitimate prop→state sync — React 19's cascading-renders lint
   // is strict on this known pattern; the conditional guards
   // (pending + targetRef) already prevent the cascade.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+   
   useEffect(() => {
     if (!pending && !targetRef.current) {
       setOptHome(game.homeScore);

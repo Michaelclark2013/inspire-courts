@@ -16,9 +16,7 @@ import {
   staffCertifications,
   maintenanceTickets,
   members,
-  membershipPlans,
-  waivers,
-} from "@/lib/db/schema";
+  waivers} from "@/lib/db/schema";
 import { and, desc, eq, gt, gte, isNotNull, isNull, lt, or, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";

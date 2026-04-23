@@ -221,7 +221,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                         game.away !== "—" &&
                         game.winner.toLowerCase().includes(game.away.toLowerCase().split(" ")[0]);
                       return (
-                        <tr key={i} className="hover:bg-white/40 transition-colors">
+                        <tr key={i} className="hover:bg-off-white transition-colors">
                           <td className="px-4 py-3 text-text-secondary text-xs">{game.date}</td>
                           <td className={`px-4 py-3 font-medium ${homeWon ? "text-navy" : "text-text-secondary"}`}>
                             {game.home}
@@ -295,7 +295,7 @@ export default function ScoresSheetClient({ games, standings }: Props) {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {standings.slice(0, 20).map((s, i) => (
-                    <tr key={i} className="hover:bg-white/40 transition-colors">
+                    <tr key={i} className="hover:bg-off-white transition-colors">
                       <td className="px-4 py-2.5 text-text-secondary text-xs">
                         {i + 1}
                       </td>

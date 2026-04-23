@@ -1,4 +1,4 @@
-import { FolderOpen, ExternalLink, FileSpreadsheet, FileText, Image, File, Folder } from "lucide-react";
+import { FolderOpen, ExternalLink, FileSpreadsheet    } from "lucide-react";
 import {
   listDriveFolder,
   isGoogleConfigured,

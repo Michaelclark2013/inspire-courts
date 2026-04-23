@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, UserCheck, Clock, DollarSign, Shield, Users, Eye, EyeOff, ChevronUp, ChevronDown } from "lucide-react";
+import { Search  , DollarSign, Shield, Users, Eye, EyeOff, ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type SortDir = "asc" | "desc";
@@ -166,7 +166,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
               </thead>
               <tbody>
                 {filteredStaff.map((s, i) => (
-                  <tr key={i} className="border-b border-border/50 hover:bg-white/50 transition-colors">
+                  <tr key={i} className="border-b border-border/50 hover:bg-off-white transition-colors">
                     <td className="px-4 py-3 text-navy font-medium">{s.name}</td>
                     <td className="px-4 py-3 text-text-secondary">{s.role}</td>
                     <td className="px-4 py-3 text-navy">{s.shifts}</td>
@@ -207,7 +207,7 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
               </thead>
               <tbody>
                 {filteredRefs.map((r, i) => (
-                  <tr key={i} className="border-b border-border/50 hover:bg-white/50 transition-colors">
+                  <tr key={i} className="border-b border-border/50 hover:bg-off-white transition-colors">
                     <td className="px-4 py-3 text-navy font-medium">{r.name}</td>
                     <td className="px-4 py-3 text-navy">{r.gamesReffed}</td>
                     <td className="px-4 py-3 text-red font-medium">{r.totalPay}</td>

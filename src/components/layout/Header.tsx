@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Menu, X, ArrowRight, Calendar, ChevronDown, LogIn, LayoutDashboard, Users } from "lucide-react";
+import { Menu, X, ArrowRight, Calendar, ChevronDown, LogIn, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackConversion } from "@/lib/analytics";
 

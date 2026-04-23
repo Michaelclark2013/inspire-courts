@@ -200,7 +200,9 @@ function loadMessages(pathname: string | null): Message[] {
       const parsed = JSON.parse(stored);
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
-  } catch {}
+  } catch (e) {
+    if (process.env.NODE_ENV !== "production") console.warn("chat session load failed", e);
+  }
   return [getInitialMessage(pathname)];
 }
 

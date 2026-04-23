@@ -215,7 +215,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
             </thead>
             <tbody>
               {filtered.map((t, i) => (
-                <tr key={i} className={`border-b border-border/50 hover:bg-white/50 transition-colors ${selectedIndices.has(i) ? "bg-red/5" : ""}`}>
+                <tr key={i} className={`border-b border-border/50 hover:bg-off-white transition-colors ${selectedIndices.has(i) ? "bg-red/5" : ""}`}>
                   <td className="px-3 py-3 w-8">
                     <input
                       type="checkbox"

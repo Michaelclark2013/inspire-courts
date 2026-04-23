@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { HorizontalBarList, BRAND, CHART_COLORS } from "@/components/dashboard/Charts";
+import { HorizontalBarList , CHART_COLORS } from "@/components/dashboard/Charts";
 
 interface StaffRow {
   name: string;
@@ -155,7 +155,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                   </tr>
                 ) : (
                   filteredStaff.map((s, i) => (
-                    <tr key={i} className="hover:bg-white/40 transition-colors">
+                    <tr key={i} className="hover:bg-off-white transition-colors">
                       <td className="px-4 py-3 font-medium text-navy">{s.name}</td>
                       <td className="px-4 py-3 text-text-secondary">{s.role}</td>
                       <td className="px-4 py-3 text-text-secondary text-xs">{s.date}</td>
@@ -256,7 +256,7 @@ export default function StaffSheetClient({ staff, refs, staffHoursData, refGames
                   </tr>
                 ) : (
                   filteredRefs.map((r, i) => (
-                    <tr key={i} className="hover:bg-white/40 transition-colors">
+                    <tr key={i} className="hover:bg-off-white transition-colors">
                       <td className="px-4 py-3 font-medium text-navy">{r.name}</td>
                       <td className="px-4 py-3 text-text-secondary text-xs">{r.date}</td>
                       <td className="px-4 py-3 font-mono font-bold text-navy">

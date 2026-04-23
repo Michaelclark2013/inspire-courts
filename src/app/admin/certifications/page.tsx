@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { IdCard, Plus, AlertTriangle, CheckCircle2, Clock, ExternalLink } from "lucide-react";
+import { IdCard, Plus , CheckCircle2 , ExternalLink } from "lucide-react";
 
 type Cert = {
   id: number;

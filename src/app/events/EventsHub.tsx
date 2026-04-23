@@ -25,8 +25,7 @@ import {
   Search,
   X,
   ClipboardList,
-  Info,
-} from "lucide-react";
+  Info} from "lucide-react";
 // RegisterLink removed — registerUrl is now internal (/tournaments)
 import QuickScoresEmbed from "@/components/ui/QuickScoresEmbed";
 

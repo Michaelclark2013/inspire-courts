@@ -2,7 +2,6 @@ import { FACILITY_EMAIL } from "@/lib/constants";
 import { logger } from "@/lib/logger";
 import { db } from "@/lib/db";
 import { siteContent } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
 
 // Each page section can have text fields, images, and list items
 export interface ContentField {

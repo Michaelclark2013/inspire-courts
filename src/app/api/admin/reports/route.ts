@@ -9,9 +9,7 @@ import {
   resourceBookings,
   programRegistrations,
   tournamentRegistrations,
-  payPeriods,
-  timeEntries,
-} from "@/lib/db/schema";
+  payPeriods} from "@/lib/db/schema";
 import { and, eq, gte, lt, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";

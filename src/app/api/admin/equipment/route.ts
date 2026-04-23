@@ -2,16 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { equipment, equipmentStockMovements } from "@/lib/db/schema";
-import { and, desc, eq, sql, type SQL } from "drizzle-orm";
+import { equipment } from "@/lib/db/schema";
+import { and , eq, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { canAccess } from "@/lib/permissions";
 import {
   equipmentCreateSchema,
-  equipmentUpdateSchema,
-  stockMovementCreateSchema,
-} from "@/lib/schemas";
+  equipmentUpdateSchema} from "@/lib/schemas";
 import { parseJsonBody, apiError, apiNotFound } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 

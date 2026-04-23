@@ -121,7 +121,7 @@ export default function MaintenancePage() {
       ) : tickets.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <Wrench className="w-10 h-10 text-text-secondary mx-auto mb-3" />
-          <p className="text-navy font-semibold">No active tickets — everything's humming.</p>
+          <p className="text-navy font-semibold">No active tickets — everything&apos;s humming.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

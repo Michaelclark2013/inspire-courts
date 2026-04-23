@@ -1,5 +1,4 @@
 import type { RevenueKPIData } from "@/types/revenue";
-import { formatCurrency } from "@/lib/utils";
 
 interface Props {
   kpis: RevenueKPIData[];

@@ -53,7 +53,7 @@ export default async function SchoolsPage() {
     programs: getProperty(s, "Programs") || "—",
   }));
 
-  const columns = [
+  const columns: { key: keyof School & string; label: string }[] = [
     { key: "school", label: "School" },
     { key: "city", label: "City" },
     { key: "state", label: "State" },

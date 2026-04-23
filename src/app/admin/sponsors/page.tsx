@@ -72,13 +72,17 @@ export default async function SponsorsPage() {
     { title: "Total Value", value: `$${totalValue.toLocaleString()}`, icon: DollarSign },
   ];
 
-  const columns = [
+  const columns: {
+    key: keyof Sponsor & string;
+    label: string;
+    render?: (val: Sponsor[keyof Sponsor], row: Sponsor) => React.ReactNode;
+  }[] = [
     { key: "company", label: "Company" },
     { key: "contact", label: "Contact" },
     {
       key: "status",
       label: "Status",
-      render: (val: string) => <StatusBadge status={val} />,
+      render: (val) => <StatusBadge status={String(val ?? "")} />,
     },
     { key: "tier", label: "Tier" },
     { key: "amountDisplay", label: "Amount" },

@@ -5,6 +5,7 @@ import {
   apiValidationError,
   apiNotFound,
   parseJsonBody,
+  safeJsonParse,
 } from "./api-helpers";
 
 describe("api-helpers / apiError", () => {
@@ -143,5 +144,30 @@ describe("api-helpers / parseJsonBody", () => {
     if (parsed.ok) throw new Error("expected validation failure");
     const body = await parsed.response.json();
     expect(body.errors).toHaveProperty("_root");
+  });
+});
+
+describe("api-helpers / safeJsonParse", () => {
+  it("returns the fallback for null / undefined / empty string", () => {
+    expect(safeJsonParse(null, [])).toEqual([]);
+    expect(safeJsonParse(undefined, [])).toEqual([]);
+    expect(safeJsonParse("", [])).toEqual([]);
+  });
+
+  it("returns the parsed value for valid JSON", () => {
+    expect(safeJsonParse<string[]>('["a","b"]', [])).toEqual(["a", "b"]);
+    expect(safeJsonParse<{ x: number }>('{"x":1}', { x: 0 })).toEqual({ x: 1 });
+  });
+
+  it("returns the fallback for malformed JSON without throwing", () => {
+    // The whole point — a single bad DB row should never crash a list view.
+    expect(safeJsonParse("not json", [])).toEqual([]);
+    expect(safeJsonParse("{unclosed", ["default"])).toEqual(["default"]);
+    expect(safeJsonParse('{"a":}', null)).toBeNull();
+  });
+
+  it("honors the typed fallback (not just any[])", () => {
+    const fallback: string[] = ["Court 1"];
+    expect(safeJsonParse<string[]>(null, fallback)).toEqual(["Court 1"]);
   });
 });

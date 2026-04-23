@@ -16,6 +16,7 @@ import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
+import { safeJsonParse } from "@/lib/api-helpers";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest, { params }: Params) {
       );
     }
 
-    const courts = tournament.courts ? JSON.parse(tournament.courts) : ["Court 1"];
+    const courts = safeJsonParse<string[]>(tournament.courts, ["Court 1"]);
     const startTime = new Date(tournament.startDate + "T09:00:00").toISOString();
 
     const teamEntries: TeamEntry[] = teams.map((t) => ({

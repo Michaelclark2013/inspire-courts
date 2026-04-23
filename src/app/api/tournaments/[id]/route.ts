@@ -8,6 +8,7 @@ import {
   gameScores,
 } from "@/lib/db/schema";
 import { eq, desc, inArray } from "drizzle-orm";
+import { safeJsonParse } from "@/lib/api-helpers";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
@@ -103,7 +104,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
         location: tournament.location,
         format: tournament.format,
         status: tournament.status,
-        divisions: tournament.divisions ? JSON.parse(tournament.divisions) : [],
+        divisions: safeJsonParse<string[]>(tournament.divisions, []),
         entryFee: tournament.entryFee,
         registrationOpen: tournament.registrationOpen,
         registrationDeadline: tournament.registrationDeadline,

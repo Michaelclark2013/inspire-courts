@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 import { tournamentCreateSchema } from "@/lib/schemas";
-import { parseJsonBody } from "@/lib/api-helpers";
+import { parseJsonBody, safeJsonParse } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 
 // Safe sortable columns — prevents ORDER BY injection via ?sort=.
@@ -88,8 +88,8 @@ export const GET = withTiming("admin.tournaments.list", async (request: NextRequ
 
   const enriched = allTournaments.map((t) => ({
     ...t,
-    divisions: t.divisions ? JSON.parse(t.divisions) : [],
-    courts: t.courts ? JSON.parse(t.courts) : [],
+    divisions: safeJsonParse<string[]>(t.divisions, []),
+    courts: safeJsonParse<string[]>(t.courts, []),
     teamCount: teamMap.get(t.id) ?? 0,
     gameCount: gameMap.get(t.id) ?? 0,
   }));

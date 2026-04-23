@@ -106,3 +106,19 @@ export async function parseJsonBody<T>(
   }
   return { ok: true, data: result.data };
 }
+
+/**
+ * Safely JSON.parse a string that might be null, empty, or malformed —
+ * used primarily for DB columns storing JSON-serialized arrays/objects
+ * (e.g. tournament.divisions, tournament.courts). If the value doesn't
+ * parse, returns the fallback instead of throwing. A single malformed
+ * row should not 500 an entire list view.
+ */
+export function safeJsonParse<T>(raw: string | null | undefined, fallback: T): T {
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}

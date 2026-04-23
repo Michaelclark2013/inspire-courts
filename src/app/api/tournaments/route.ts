@@ -8,6 +8,7 @@ import {
 import { inArray, sql } from "drizzle-orm";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import { safeJsonParse } from "@/lib/api-helpers";
 
 // GET /api/tournaments — public tournament listing
 export async function GET(request: Request) {
@@ -64,7 +65,7 @@ export async function GET(request: Request) {
       location: t.location,
       format: t.format,
       status: t.status,
-      divisions: t.divisions ? JSON.parse(t.divisions) : [],
+      divisions: safeJsonParse<string[]>(t.divisions, []),
       entryFee: t.entryFee,
       registrationOpen: t.registrationOpen,
       registrationDeadline: t.registrationDeadline,

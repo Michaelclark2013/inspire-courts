@@ -10,6 +10,7 @@ import {
   announcements,
 } from "@/lib/db/schema";
 import { eq, sql, inArray, or, isNull, gte } from "drizzle-orm";
+import { safeJsonParse } from "@/lib/api-helpers";
 import { logger } from "@/lib/logger";
 
 // DEPRECATED: this route was superseded by /api/admin/dashboard/summary
@@ -104,7 +105,7 @@ export async function GET() {
     const approvedCount = stats.approved;
 
     const tournamentStatus = allTournaments.map((t) => {
-      const divs: string[] = t.divisions ? JSON.parse(t.divisions) : [];
+      const divs = safeJsonParse<string[]>(t.divisions, []);
       const maxCapacity = t.maxTeamsPerDivision
         ? t.maxTeamsPerDivision * divs.length
         : null;

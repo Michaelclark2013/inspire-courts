@@ -57,7 +57,12 @@ export default async function UpcomingTournaments() {
         {upcoming.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {upcoming.map((t, i) => {
-              const divisions = t.divisions ? (JSON.parse(t.divisions) as string[]) : [];
+              // Defensive parse — a malformed divisions field on any
+              // single tournament row should not crash the home page.
+              let divisions: string[] = [];
+              if (t.divisions) {
+                try { divisions = JSON.parse(t.divisions) as string[]; } catch { /* ignore */ }
+              }
               const isPast = t.registrationDeadline && new Date(t.registrationDeadline + "T23:59:59") < new Date();
               const canRegister = t.registrationOpen && !isPast;
               return (

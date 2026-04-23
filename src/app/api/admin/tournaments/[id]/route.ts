@@ -14,7 +14,7 @@ import { eq, desc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { recordAudit } from "@/lib/audit";
 import { withTiming } from "@/lib/timing";
-import { apiNotFound, apiError, parseJsonBody } from "@/lib/api-helpers";
+import { apiNotFound, apiError, parseJsonBody, safeJsonParse } from "@/lib/api-helpers";
 import { tournamentUpdateSchema } from "@/lib/schemas";
 
 type Params = { params: Promise<{ id: string }> };
@@ -110,8 +110,8 @@ export const GET = withTiming(
     return NextResponse.json(
       {
         ...tournament,
-        divisions: tournament.divisions ? JSON.parse(tournament.divisions) : [],
-        courts: tournament.courts ? JSON.parse(tournament.courts) : [],
+        divisions: safeJsonParse<string[]>(tournament.divisions, []),
+        courts: safeJsonParse<string[]>(tournament.courts, []),
         teams,
         bracket: bracketWithScores,
       },

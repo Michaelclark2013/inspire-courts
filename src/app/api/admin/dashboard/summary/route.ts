@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
+import { safeJsonParse } from "@/lib/api-helpers";
 import { db } from "@/lib/db";
 import {
   tournaments,
@@ -119,7 +120,7 @@ export async function GET() {
     const approvedCount = Number(stats?.approved) || 0;
 
     const tournamentStatus = publishedOrActive.map((t) => {
-      const divs: string[] = t.divisions ? JSON.parse(t.divisions) : [];
+      const divs = safeJsonParse<string[]>(t.divisions, []);
       const maxCapacity = t.maxTeamsPerDivision
         ? t.maxTeamsPerDivision * divs.length
         : null;

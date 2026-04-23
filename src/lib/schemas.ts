@@ -141,282 +141,32 @@ export const registrationUpdateSchema = z
     "registrationId or ids[] is required"
   );
 
-// ── Phase 1: Staff + Time Clock ───────────────────────────────────────
-// Mirrors the DB enums so clients send the same strings the handler
-// inserts — no mapping layer in between.
+// Staff profile + time-clock schemas live in ./schemas/staff.ts.
+export {
+  staffProfileCreateSchema,
+  staffProfileUpdateSchema,
+  clockInSchema,
+  clockOutSchema,
+  timeEntryPatchSchema,
+  timeEntryCreateSchema,
+} from "./schemas/staff";
 
-const EMPLOYMENT_CLASSIFICATION_ENUM = z.enum([
-  "w2",
-  "1099",
-  "cash_no_1099",
-  "volunteer",
-  "stipend",
-]);
-const PAYMENT_METHOD_ENUM = z.enum([
-  "direct_deposit",
-  "check",
-  "cash",
-  "venmo",
-  "zelle",
-  "paypal",
-  "other",
-]);
-const PAY_RATE_TYPE_ENUM = z.enum([
-  "hourly",
-  "per_shift",
-  "per_game",
-  "salary",
-  "stipend",
-]);
-const STAFF_STATUS_ENUM = z.enum(["active", "on_leave", "terminated"]);
+// Shift scheduling schemas live in ./schemas/shifts.ts.
+export {
+  shiftCreateSchema,
+  shiftUpdateSchema,
+  shiftAssignSchema,
+  shiftAssignmentPatchSchema,
+  shiftResponseSchema,
+} from "./schemas/shifts";
 
-// Admin-create staff profile. `userId` is required — a staff profile
-// always extends an existing user row (no orphan staff). Pay rate
-// captured in cents to avoid float-drift over a year of payroll math.
-export const staffProfileCreateSchema = z.object({
-  userId: z.number().int().positive(),
-  employmentClassification: EMPLOYMENT_CLASSIFICATION_ENUM.optional(),
-  paymentMethod: PAYMENT_METHOD_ENUM.optional(),
-  payRateCents: z.number().int().nonnegative().max(1_000_000).optional(),
-  payRateType: PAY_RATE_TYPE_ENUM.optional(),
-  roleTags: z.string().max(200).optional(),
-  payoutHandle: z.string().max(200).optional().nullable(),
-  hireDate: z.string().max(20).optional().nullable(),
-  emergencyContactJson: z.string().max(2000).optional().nullable(),
-  notes: z.string().max(2000).optional().nullable(),
-  status: STAFF_STATUS_ENUM.optional(),
-});
-
-// Patch shape — userId is the target, every other field optional.
-export const staffProfileUpdateSchema = z.object({
-  userId: z.number().int().positive(),
-  employmentClassification: EMPLOYMENT_CLASSIFICATION_ENUM.optional(),
-  paymentMethod: PAYMENT_METHOD_ENUM.optional(),
-  payRateCents: z.number().int().nonnegative().max(1_000_000).optional(),
-  payRateType: PAY_RATE_TYPE_ENUM.optional(),
-  roleTags: z.string().max(200).optional(),
-  payoutHandle: z.string().max(200).optional().nullable(),
-  hireDate: z.string().max(20).optional().nullable(),
-  emergencyContactJson: z.string().max(2000).optional().nullable(),
-  notes: z.string().max(2000).optional().nullable(),
-  status: STAFF_STATUS_ENUM.optional(),
-});
-
-// Clock-in payload from the portal/kiosk. Lat/lng are strings so
-// browser `navigator.geolocation` values round-trip without float
-// precision fights. role is the hat-they're-wearing snapshot.
-export const clockInSchema = z.object({
-  role: z.string().max(50).optional(),
-  tournamentId: z.number().int().positive().optional().nullable(),
-  lat: z.string().max(30).optional().nullable(),
-  lng: z.string().max(30).optional().nullable(),
-  source: z.enum(["kiosk", "mobile", "manual"]).optional(),
-});
-
-export const clockOutSchema = z.object({
-  lat: z.string().max(30).optional().nullable(),
-  lng: z.string().max(30).optional().nullable(),
-  breakMinutes: z.number().int().nonnegative().max(480).optional(),
-});
-
-// Admin-side time-entry edit (retroactive fixes, manual entry,
-// approval/rejection). Any subset of fields can be patched.
-export const timeEntryPatchSchema = z.object({
-  entryId: z.number().int().positive(),
-  clockInAt: z.string().max(40).optional(),
-  clockOutAt: z.string().max(40).optional().nullable(),
-  breakMinutes: z.number().int().nonnegative().max(480).optional(),
-  role: z.string().max(50).optional().nullable(),
-  tournamentId: z.number().int().positive().optional().nullable(),
-  payRateCents: z.number().int().nonnegative().max(1_000_000).optional(),
-  payRateType: PAY_RATE_TYPE_ENUM.optional(),
-  bonusCents: z.number().int().nonnegative().max(1_000_000).optional(),
-  notes: z.string().max(2000).optional().nullable(),
-  status: z.enum(["open", "pending", "approved", "rejected"]).optional(),
-});
-
-// Admin-created manual entry (e.g. tablet was offline, admin is
-// keying a retroactive shift). clockInAt required; clockOutAt
-// optional because an admin might log only the start.
-export const timeEntryCreateSchema = z.object({
-  userId: z.number().int().positive(),
-  clockInAt: z.string().min(1).max(40),
-  clockOutAt: z.string().max(40).optional().nullable(),
-  breakMinutes: z.number().int().nonnegative().max(480).optional(),
-  role: z.string().max(50).optional().nullable(),
-  tournamentId: z.number().int().positive().optional().nullable(),
-  payRateCents: z.number().int().nonnegative().max(1_000_000).optional(),
-  payRateType: PAY_RATE_TYPE_ENUM.optional(),
-  bonusCents: z.number().int().nonnegative().max(1_000_000).optional(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-// ── Phase 2: Shift Scheduling ─────────────────────────────────────────
-const SHIFT_STATUS_ENUM = z.enum(["draft", "published", "cancelled", "completed"]);
-const SHIFT_ASSIGNMENT_STATUS_ENUM = z.enum([
-  "assigned",
-  "confirmed",
-  "declined",
-  "no_show",
-  "completed",
-]);
-
-// Shift create — admin schedules a new shift (assigned later).
-// Start must precede end; we enforce via z.refine so the handler
-// doesn't have to double-check.
-export const shiftCreateSchema = z
-  .object({
-    title: z.string().min(1, "Title is required").max(200),
-    role: z.string().max(50).optional().nullable(),
-    tournamentId: z.number().int().positive().optional().nullable(),
-    startAt: z.string().min(1, "Start required").max(40),
-    endAt: z.string().min(1, "End required").max(40),
-    courts: z.string().max(200).optional().nullable(),
-    requiredHeadcount: z.number().int().positive().max(50).optional(),
-    notes: z.string().max(2000).optional().nullable(),
-    status: SHIFT_STATUS_ENUM.optional(),
-  })
-  .refine(
-    (v) => Date.parse(v.startAt) < Date.parse(v.endAt),
-    { message: "startAt must precede endAt", path: ["endAt"] }
-  );
-
-export const shiftUpdateSchema = z
-  .object({
-    id: z.number().int().positive(),
-    title: z.string().min(1).max(200).optional(),
-    role: z.string().max(50).optional().nullable(),
-    tournamentId: z.number().int().positive().optional().nullable(),
-    startAt: z.string().max(40).optional(),
-    endAt: z.string().max(40).optional(),
-    courts: z.string().max(200).optional().nullable(),
-    requiredHeadcount: z.number().int().positive().max(50).optional(),
-    notes: z.string().max(2000).optional().nullable(),
-    status: SHIFT_STATUS_ENUM.optional(),
-  })
-  .refine(
-    (v) =>
-      !v.startAt || !v.endAt || Date.parse(v.startAt) < Date.parse(v.endAt),
-    { message: "startAt must precede endAt", path: ["endAt"] }
-  );
-
-// Admin-side assignment — assign one or many users to a shift. Bulk
-// cap 50 (a shift never has 50 workers; bigger payloads are a bug).
-export const shiftAssignSchema = z.object({
-  shiftId: z.number().int().positive(),
-  userIds: z.array(z.number().int().positive()).min(1).max(50),
-  payRateCentsOverride: z.number().int().nonnegative().max(1_000_000).optional().nullable(),
-  bonusCents: z.number().int().nonnegative().max(1_000_000).optional(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-// Admin or worker-side status transition. Worker calls confirm/decline
-// from the portal; admin calls no_show/completed from the timeclock
-// approval view.
-export const shiftAssignmentPatchSchema = z.object({
-  assignmentId: z.number().int().positive(),
-  status: SHIFT_ASSIGNMENT_STATUS_ENUM.optional(),
-  payRateCentsOverride: z.number().int().nonnegative().max(1_000_000).optional().nullable(),
-  bonusCents: z.number().int().nonnegative().max(1_000_000).optional(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-// Worker-side confirm/decline from /portal/staff/schedule. No pay-rate
-// or bonus fields — workers can't change their own pay.
-export const shiftResponseSchema = z.object({
-  assignmentId: z.number().int().positive(),
-  response: z.enum(["confirmed", "declined"]),
-  notes: z.string().max(500).optional().nullable(),
-});
-
-// ── Resources & Bookings ─────────────────────────────────────────────
-const RESOURCE_KIND_ENUM = z.enum(["vehicle", "equipment", "court", "room", "other"]);
-const RESOURCE_BOOKING_STATUS_ENUM = z.enum([
-  "tentative",
-  "confirmed",
-  "in_use",
-  "returned",
-  "cancelled",
-  "no_show",
-]);
-
-export const resourceCreateSchema = z.object({
-  name: z.string().min(1, "Name is required").max(200),
-  kind: RESOURCE_KIND_ENUM.optional(),
-  description: z.string().max(2000).optional().nullable(),
-  dailyRateCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-  hourlyRateCents: z.number().int().nonnegative().max(1_000_000).optional().nullable(),
-  licensePlate: z.string().max(20).optional().nullable(),
-  capacity: z.number().int().positive().max(100).optional().nullable(),
-  active: z.boolean().optional(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-export const resourceUpdateSchema = z.object({
-  id: z.number().int().positive(),
-  name: z.string().min(1).max(200).optional(),
-  kind: RESOURCE_KIND_ENUM.optional(),
-  description: z.string().max(2000).optional().nullable(),
-  dailyRateCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-  hourlyRateCents: z.number().int().nonnegative().max(1_000_000).optional().nullable(),
-  licensePlate: z.string().max(20).optional().nullable(),
-  capacity: z.number().int().positive().max(100).optional().nullable(),
-  active: z.boolean().optional(),
-  notes: z.string().max(2000).optional().nullable(),
-});
-
-export const resourceBookingCreateSchema = z
-  .object({
-    resourceId: z.number().int().positive(),
-    renterUserId: z.number().int().positive().optional().nullable(),
-    renterName: z.string().max(200).optional().nullable(),
-    renterEmail: z.string().email().max(255).optional().nullable(),
-    renterPhone: z.string().max(30).optional().nullable(),
-    startAt: z.string().min(1).max(40),
-    endAt: z.string().min(1).max(40),
-    status: RESOURCE_BOOKING_STATUS_ENUM.optional(),
-    amountCents: z.number().int().nonnegative().max(100_000_000).optional(),
-    paid: z.boolean().optional(),
-    paymentMethod: z.string().max(30).optional().nullable(),
-    odometerStart: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-    fuelStart: z.string().max(20).optional().nullable(),
-    purpose: z.string().max(500).optional().nullable(),
-    notes: z.string().max(2000).optional().nullable(),
-  })
-  .refine(
-    (v) => Date.parse(v.startAt) < Date.parse(v.endAt),
-    { message: "startAt must precede endAt", path: ["endAt"] }
-  )
-  .refine(
-    (v) => v.renterUserId != null || (v.renterName && v.renterName.trim().length > 0),
-    { message: "Either renterUserId or renterName is required", path: ["renterName"] }
-  );
-
-export const resourceBookingUpdateSchema = z
-  .object({
-    id: z.number().int().positive(),
-    renterUserId: z.number().int().positive().optional().nullable(),
-    renterName: z.string().max(200).optional().nullable(),
-    renterEmail: z.string().email().max(255).optional().nullable(),
-    renterPhone: z.string().max(30).optional().nullable(),
-    startAt: z.string().max(40).optional(),
-    endAt: z.string().max(40).optional(),
-    status: RESOURCE_BOOKING_STATUS_ENUM.optional(),
-    amountCents: z.number().int().nonnegative().max(100_000_000).optional(),
-    paid: z.boolean().optional(),
-    paymentMethod: z.string().max(30).optional().nullable(),
-    odometerStart: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-    odometerEnd: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-    fuelStart: z.string().max(20).optional().nullable(),
-    fuelEnd: z.string().max(20).optional().nullable(),
-    purpose: z.string().max(500).optional().nullable(),
-    notes: z.string().max(2000).optional().nullable(),
-  })
-  .refine(
-    (v) =>
-      !v.startAt || !v.endAt || Date.parse(v.startAt) < Date.parse(v.endAt),
-    { message: "startAt must precede endAt", path: ["endAt"] }
-  );
+// Resources + bookings live in ./schemas/resources.ts.
+export {
+  resourceCreateSchema,
+  resourceUpdateSchema,
+  resourceBookingCreateSchema,
+  resourceBookingUpdateSchema,
+} from "./schemas/resources";
 
 // ── Phase 3: Payroll ─────────────────────────────────────────────────
 const PAY_PERIOD_STATUS_ENUM = z.enum(["open", "locked", "paid"]);

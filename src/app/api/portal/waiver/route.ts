@@ -48,7 +48,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
   const {
     playerName,
     parentName,
@@ -59,7 +64,7 @@ export async function POST(request: NextRequest) {
     allergies,
     eventName,
     submittedBy,
-  } = body;
+  } = body as Record<string, string | undefined>;
 
   if (!playerName || !parentName || !parentEmail) {
     return NextResponse.json(

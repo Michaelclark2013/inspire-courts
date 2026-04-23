@@ -22,7 +22,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { email } = await request.json();
+    let body: { email?: unknown };
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+    const { email } = body;
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -42,12 +48,12 @@ export async function POST(request: Request) {
     const [dbUser] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email.toLowerCase()))
+      .where(eq(users.email, String(email).toLowerCase()))
       .limit(1);
 
     // Also check env-var admin
     const adminEmail = process.env.ADMIN_EMAIL;
-    const isEnvAdmin = adminEmail && email.toLowerCase() === adminEmail.toLowerCase();
+    const isEnvAdmin = adminEmail && String(email).toLowerCase() === adminEmail.toLowerCase();
 
     if (!dbUser && !isEnvAdmin) {
       return successResponse; // Don't reveal if email exists

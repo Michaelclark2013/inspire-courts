@@ -153,7 +153,12 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Invalid user" }, { status: 400 });
   }
 
-  const body = await request.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
   // Fetch user to check auth method and role
   const [user] = await db
@@ -179,13 +184,14 @@ export async function DELETE(request: NextRequest) {
   // OAuth users: skip password check (they never set one)
   // Credentials users: require and verify password
   if (!isOAuthUser) {
-    if (!body.password) {
+    const pw = typeof body.password === "string" ? body.password : "";
+    if (!pw) {
       return NextResponse.json(
         { error: "Password is required to delete your account" },
         { status: 400 }
       );
     }
-    const valid = await bcrypt.compare(body.password, user.passwordHash);
+    const valid = await bcrypt.compare(pw, user.passwordHash);
     if (!valid) {
       return NextResponse.json({ error: "Incorrect password" }, { status: 403 });
     }

@@ -7,12 +7,35 @@ const ADMIN_ROLES = ["admin", "staff", "ref", "front_desk"];
 // Roles that can access /portal routes
 const PORTAL_ROLES = ["admin", "coach", "parent"];
 
-// Minimal CSP for middleware-originated responses (errors, redirects, and
-// the final NextResponse.next passthrough). Tight on script-src because
-// JSON errors never run inline script. next.config.ts can override with a
-// broader per-page policy where needed.
-const CSP_HEADER =
-  "default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'";
+// CSP for middleware-originated responses (errors, redirects, and the
+// final NextResponse.next passthrough).
+//
+// Scoped intentionally so legit third-party embeds work:
+//   - frame-src: YouTube video embeds (hero reel, player highlights),
+//     QuickScores schedule iframe, Stripe + Google Maps (future).
+//   - script-src: 'unsafe-inline' for Next's inline bootstrap (we don't
+//     configure nonces), plus the GA/GTM/Meta Pixel hosts if those env
+//     vars are set (loaded via next/script).
+//   - connect-src: outbound XHR/fetch targets — own APIs + Vercel
+//     Analytics + GA measurement endpoints + YouTube oembed.
+//   - style-src 'unsafe-inline' stays because Tailwind emits style
+//     attributes and inline styles on SSR hydration.
+//   - img-src + media-src: permissive on https: so Drive-hosted media,
+//     YouTube thumbnails, and user-uploaded signatures all load.
+//   - frame-ancestors 'none' keeps other sites from iframing ours.
+const CSP_HEADER = [
+  "default-src 'self'",
+  "img-src 'self' data: https: blob:",
+  "media-src 'self' https: blob:",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://www.youtube.com https://s.ytimg.com https://js.stripe.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://region1.google-analytics.com https://*.facebook.com https://api.stripe.com https://vitals.vercel-insights.com https://vercel.live",
+  "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://quickscores.com https://www.google.com https://js.stripe.com https://hooks.stripe.com",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join("; ");
 
 // Apply the standard security header set to any middleware response.
 // Keeps 401/redirect responses from missing headers the final

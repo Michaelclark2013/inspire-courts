@@ -13,6 +13,7 @@ import {
   Copy,
   Check,
   ExternalLink,
+  RotateCcw,
 } from "lucide-react";
 import { triggerHaptic } from "@/lib/capacitor";
 import Tooltip from "@/components/ui/Tooltip";
@@ -27,7 +28,9 @@ import { relativeTime } from "@/lib/relative-time";
 interface Props {
   data: TournamentDetail;
   generating: boolean;
+  resettingBracket?: boolean;
   onGenerate: () => void;
+  onResetBracket?: () => void;
   onPublish: () => void;
   onComplete: () => void;
 }
@@ -35,7 +38,9 @@ interface Props {
 function TournamentHeader({
   data,
   generating,
+  resettingBracket = false,
   onGenerate,
+  onResetBracket,
   onPublish,
   onComplete,
 }: Props) {
@@ -130,12 +135,30 @@ function TournamentHeader({
             </button>
           )}
           {data.status === "published" && (
-            <button
-              onClick={onPublish}
-              className="min-h-[44px] flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
-            >
-              <Play className="w-4 h-4" aria-hidden="true" /> Start Tournament
-            </button>
+            <>
+              {onResetBracket && (
+                <Tooltip content="Delete the bracket + revert to draft so you can regenerate">
+                  <button
+                    onClick={onResetBracket}
+                    disabled={resettingBracket}
+                    className="min-h-[44px] flex items-center gap-2 bg-white border border-border hover:bg-off-white text-navy disabled:opacity-40 px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+                  >
+                    {resettingBracket ? (
+                      <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <RotateCcw className="w-4 h-4" aria-hidden="true" />
+                    )}
+                    Reset Bracket
+                  </button>
+                </Tooltip>
+              )}
+              <button
+                onClick={onPublish}
+                className="min-h-[44px] flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+              >
+                <Play className="w-4 h-4" aria-hidden="true" /> Start Tournament
+              </button>
+            </>
           )}
           {data.status === "active" && (
             <button

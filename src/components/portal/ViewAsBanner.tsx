@@ -1,5 +1,3 @@
-"use client";
-
 import { Eye } from "lucide-react";
 
 export function ViewAsBanner({ viewAsRole }: { viewAsRole: string | null }) {

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { CheckCircle2, ChevronRight, Circle, Zap } from "lucide-react";
 import type { RegistrationStep } from "@/types/portal";

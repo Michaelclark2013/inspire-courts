@@ -1,5 +1,3 @@
-"use client";
-
 import { Mail, MessageCircle, Phone } from "lucide-react";
 import Link from "next/link";
 import { FACILITY_EMAIL, FACILITY_PHONE } from "@/lib/constants";

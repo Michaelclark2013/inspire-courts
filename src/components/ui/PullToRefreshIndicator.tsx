@@ -1,5 +1,3 @@
-"use client";
-
 import { RefreshCw } from "lucide-react";
 
 interface PullToRefreshIndicatorProps {

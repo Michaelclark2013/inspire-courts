@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight, Trophy } from "lucide-react";
 import type { Registration } from "@/types/portal";

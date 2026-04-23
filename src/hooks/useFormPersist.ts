@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useMemo, useRef, useCallback } from "react";
 
 /**
  * Persist form data to localStorage so users don't lose progress
@@ -26,7 +26,9 @@ export function useFormPersist<T extends Record<string, unknown>>(
   options?: { debounceMs?: number; exclude?: string[] },
 ) {
   const debounce = options?.debounceMs ?? 500;
-  const exclude = options?.exclude ?? [];
+  // Stable reference to the exclude list — `options?.exclude ?? []` would
+  // return a fresh array every render, re-firing the save effect unnecessarily.
+  const exclude = useMemo(() => options?.exclude ?? [], [options?.exclude]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const restoredRef = useRef(false);
 

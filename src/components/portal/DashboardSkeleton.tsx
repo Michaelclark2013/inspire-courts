@@ -1,5 +1,3 @@
-"use client";
-
 // Simple skeleton shown while the portal dashboard performs its first fetch.
 export function DashboardSkeleton() {
   return (

@@ -1,5 +1,3 @@
-"use client";
-
 import { Radio } from "lucide-react";
 import type { LiveGame } from "@/types/portal";
 

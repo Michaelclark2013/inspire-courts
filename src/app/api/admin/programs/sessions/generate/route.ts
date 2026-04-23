@@ -34,7 +34,11 @@ export const POST = withTiming("admin.program_sessions.generate", async (request
   const b = parsed.data;
   try {
     const start = new Date(b.firstStartsAt);
-    const until = new Date(b.untilDate + "T23:59:59");
+    // Pin untilDate's end-of-day to Arizona time (permanent MST, UTC−07:00).
+    // Without the offset Vercel's UTC runtime treats "T23:59:59" as UTC —
+    // meaning the cursor loop would stop 7 hours before the intended
+    // end-of-day AZ and skip a batch of Fri/Sat sessions on the last day.
+    const until = new Date(b.untilDate + "T23:59:59-07:00");
     if (!isFinite(start.getTime()) || !isFinite(until.getTime())) {
       return apiError("Invalid dates", 400);
     }

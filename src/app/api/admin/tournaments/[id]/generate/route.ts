@@ -105,7 +105,10 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
 
     const courts = safeJsonParse<string[]>(tournament.courts, ["Court 1"]);
-    const startTime = new Date(tournament.startDate + "T09:00:00").toISOString();
+    // Pin to Arizona time (UTC−07:00, permanent MST, no DST). Without the
+    // offset this parses in Vercel's UTC runtime, putting game start times
+    // at 2 AM Arizona — 7 hours before sunrise.
+    const startTime = new Date(tournament.startDate + "T09:00:00-07:00").toISOString();
 
     const teamEntries: TeamEntry[] = teams.map((t) => ({
       id: t.teamId ?? undefined,

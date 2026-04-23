@@ -90,9 +90,14 @@ export async function POST(request: NextRequest, { params }: Params) {
     );
   }
 
-  // Check deadline
+  // Check deadline. registrationDeadline is stored as YYYY-MM-DD and is
+  // intended as "end of day, Arizona time". Previously we parsed it as
+  // YYYY-MM-DDT23:59:59 (implicit local timezone), which on Vercel's UTC
+  // runtime meant registrations closed at 4:59 PM Arizona time — 7 hours
+  // earlier than the admin intended. Phoenix is America/Phoenix
+  // (permanent MST, UTC−07:00, no DST), so pin the deadline explicitly.
   if (tournament.registrationDeadline) {
-    const deadline = new Date(tournament.registrationDeadline + "T23:59:59");
+    const deadline = new Date(tournament.registrationDeadline + "T23:59:59-07:00");
     if (new Date() > deadline) {
       return NextResponse.json(
         { error: "Registration deadline has passed" },

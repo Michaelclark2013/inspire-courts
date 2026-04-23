@@ -1,6 +1,35 @@
 
 ---
 
+## 2026-04-23 — Automated Improvement Run (Round 3)
+
+### Summary
+- 10 issues surveyed; 5 fixed, 3 verified as non-issues, 2 flagged.
+
+### Changes Made
+- [Cleanup]: Deleted `public/images/hero-bg-original.jpg` (1.4MB) — stale unreferenced asset bloating git+Vercel.
+- [Correctness]: Tightened `userId` validation in portal API routes. `src/app/api/portal/{roster,profile,summary}/route.ts` now use `Number.isInteger(x) && x > 0` instead of `isNaN()`. Also added missing check in roster DELETE handler. Added `src/lib/session-helpers.ts` with `getSessionUserId()` for future use.
+- [A11y]: Fixed 3 `<div onClick>` keyboard-trap issues. `KeyboardShortcutsHint` modal now closes on Escape key (listener added to existing `?`-toggle handler). `KeyboardShortcutsHint` + `DashboardAlerts` backdrop divs converted to `<button>` with `aria-label="Close overlay"`. `TrackClick` wrapper marked `role="presentation"` + `onClickCapture` to clarify it's an event observer, not an interactive element.
+- [Rate limit]: `/api/chat` now namespaces its bucket key (`chat:${ip}` instead of bare `ip`) — prevents cross-route bucket collision.
+- [Validation]: Added Zod schemas to `/api/auth/register` and `/api/auth/reset-password` (email normalization, password length, role enum, token length bounds). These previously used ad-hoc `if (!field)` checks.
+
+### Verified Non-Issues
+- `/out/` build artifacts are already in `.gitignore`; local `out/index.html` is untracked.
+- Public-facing hot columns ALL have indexes: `members.email`, `audit_log.created_at`, `tournament_registrations.tournament_id`, `checkins.team_name`, `waivers.email`. Only `waivers.signed_at` is used for `orderBy` without an index — flagged below.
+- `/api/contact`, `/api/chat`, `/api/auth/forgot-password`, `/api/waivers/sign` already have Zod validation (via `contactSchema`, `chatSchema`, inline, and `waiverSignSchema` respectively).
+
+### Flagged for Manual Review
+- [Tests]: Zero automated tests across 50K LOC. Suggest Vitest + at minimum: tournament-engine bracket generation, payroll calculations, waiver expiration logic. Needs dedicated setup session.
+- [Performance]: 86 `"use client"` components — many pure-display ones (`Badge`, `Tooltip`, `SectionHeader`, etc.) could flip to server components to cut bundle size. Needs component-by-component audit (40+ easy candidates).
+- [Performance]: 40 `next/dynamic` usages across 19 files — charts, recharts, bracket viewer, VideoShowcase likely load eagerly. Dynamic import with `ssr: false` would shave kilobytes per admin page.
+- [DB]: Missing index on `waivers.signed_at` (used for `.orderBy(desc)` in admin list view). Would need a new migration — deferred per "don't modify schema" rule.
+
+### Build Status
+- [PASS] — `npm run build`
+- [PASS] — `npm run lint` (0 errors, 22 warnings)
+
+---
+
 ## 2026-04-23 — Automated Improvement Run (Round 2)
 
 ### Summary

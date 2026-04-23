@@ -22,8 +22,11 @@ export default function TrackClick({
     trackEvent(action, category, label);
   }
 
+  // role="presentation" + onClickCapture: this wrapper is purely an event
+  // observer. Interactive children (Link, button) keep their own semantics
+  // and keyboard handling — we just listen as clicks bubble through.
   return (
-    <div onClick={handleClick} className={className}>
+    <div role="presentation" onClickCapture={handleClick} className={className}>
       {children}
     </div>
   );

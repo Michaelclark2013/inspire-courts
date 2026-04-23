@@ -14,7 +14,7 @@ export async function GET() {
   }
 
   const userId = Number(session.user.id);
-  if (isNaN(userId)) {
+  if (!Number.isInteger(userId) || userId <= 0) {
     return NextResponse.json({ team: null, players: [] });
   }
 
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = Number(session.user.id);
-  if (isNaN(userId)) {
+  if (!Number.isInteger(userId) || userId <= 0) {
     return NextResponse.json({ error: "Invalid user" }, { status: 400 });
   }
 
@@ -127,6 +127,9 @@ export async function DELETE(request: NextRequest) {
   }
 
   const userId = Number(session.user.id);
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return NextResponse.json({ error: "Invalid user" }, { status: 400 });
+  }
   const { searchParams } = new URL(request.url);
   const playerId = Number(searchParams.get("id"));
 

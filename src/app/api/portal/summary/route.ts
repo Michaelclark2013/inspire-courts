@@ -24,7 +24,7 @@ export async function GET() {
   }
 
   const role = session.user.role || "parent";
-  const userId = session.user.id ? Number(session.user.id) : NaN;
+  const userId = session.user.id ? Number(session.user.id) : null;
   const email = session.user.email;
 
   // ── Live games (same shape as /api/scores/live, simplified) ───────────────
@@ -166,7 +166,7 @@ export async function GET() {
 
   // ── Roster count (coaches only) ───────────────────────────────────────────
   let rosterCount: number | null = null;
-  if (role === "coach" && !isNaN(userId)) {
+  if (role === "coach" && userId !== null && Number.isInteger(userId) && userId > 0) {
     try {
       // Single query: get team + player count via COUNT subquery.
       const [row] = await db

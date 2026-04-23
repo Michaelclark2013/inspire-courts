@@ -499,7 +499,7 @@ ACCURACY:
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
-  if (isRateLimited(ip, 10, 60 * 1000)) {
+  if (isRateLimited(`chat:${ip}`, 10, 60 * 1000)) {
     return NextResponse.json(
       { success: false, reply: "Too many messages. Please slow down." },
       { status: 429 }

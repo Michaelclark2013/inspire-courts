@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -7,6 +8,16 @@ import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } fro
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
+
+// Validate incoming registration payload. Kept inline (not in lib/schemas.ts)
+// because it's route-local and small.
+const registerSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(200),
+  email: z.string().trim().toLowerCase().email("Invalid email").max(254),
+  password: z.string().min(8, "Password must be at least 8 characters").max(200),
+  role: z.enum(["parent", "coach", "staff", "ref", "front_desk"]),
+  phone: z.string().trim().max(30).optional().nullable(),
+});
 
 /** Strip HTML special characters to prevent XSS in stored data. */
 function sanitize(value: string): string {
@@ -30,30 +41,15 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const { name, email, password, role, phone } = body;
-
-    if (!name || !email || !password || !role) {
+    const body = await request.json().catch(() => null);
+    const parsed = registerSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Name, email, password, and role are required" },
+        { error: parsed.error.issues[0]?.message ?? "Invalid request" },
         { status: 400 }
       );
     }
-
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: "Password must be at least 8 characters" },
-        { status: 400 }
-      );
-    }
-
-    const allowedRoles = ["parent", "coach", "staff", "ref", "front_desk"];
-    if (!allowedRoles.includes(role)) {
-      return NextResponse.json(
-        { error: "Invalid role selected" },
-        { status: 400 }
-      );
-    }
+    const { name, email, password, role, phone } = parsed.data;
 
     // Check if email already exists
     const [existing] = await db

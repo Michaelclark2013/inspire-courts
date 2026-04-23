@@ -174,7 +174,12 @@ export default function DashboardAlerts() {
       {/* Keyboard shortcuts modal */}
       {showShortcuts && (
         <>
-          <div className="fixed inset-0 z-[70] bg-black/20" onClick={() => setShowShortcuts(false)} />
+          <button
+            type="button"
+            aria-label="Close shortcuts overlay"
+            className="fixed inset-0 z-[70] bg-black/20 cursor-default"
+            onClick={() => setShowShortcuts(false)}
+          />
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[71] bg-off-white border border-border rounded-xl p-6 w-full max-w-sm shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-navy font-bold text-sm uppercase tracking-wider">Keyboard Shortcuts</h3>

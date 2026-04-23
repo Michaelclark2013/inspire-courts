@@ -22,6 +22,9 @@ export default function KeyboardShortcutsHint() {
         e.preventDefault();
         setOpen((v) => !v);
       }
+      if (e.key === "Escape") {
+        setOpen(false);
+      }
     }
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -42,7 +45,12 @@ export default function KeyboardShortcutsHint() {
       {/* Overlay */}
       {open && (
         <>
-          <div className="fixed inset-0 z-[60] bg-black/40" onClick={() => setOpen(false)} />
+          <button
+            type="button"
+            aria-label="Close keyboard shortcuts overlay"
+            className="fixed inset-0 z-[60] bg-black/40 cursor-default"
+            onClick={() => setOpen(false)}
+          />
           <div
             className="fixed z-[61] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border border-border w-[340px] p-6"
             role="dialog"

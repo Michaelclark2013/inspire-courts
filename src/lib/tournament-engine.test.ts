@@ -287,6 +287,63 @@ describe("tournament-engine / computeAdvancement", () => {
   });
 });
 
+describe("tournament-engine / generateDoubleElimBracket", () => {
+  it("generates winners + losers + grand final for 4 teams", () => {
+    const slots = generateBracket("double_elim", mkTeams(4), config);
+
+    // Winners rounds: SF (×2) + F (×1). Plus some losers (L1…Ln) and GF.
+    const winners = slots.filter((s) => ["SF", "F"].includes(s.round));
+    const losers = slots.filter((s) => /^L\d+$/.test(s.round));
+    const grand = slots.filter((s) => s.round === "GF");
+
+    expect(winners.length).toBe(3);
+    expect(losers.length).toBeGreaterThan(0);
+    expect(grand.length).toBe(1);
+  });
+
+  it("wires winnersFinal.winnerAdvancesTo → grand final", () => {
+    const slots = generateBracket("double_elim", mkTeams(4), config);
+    const winnersFinal = slots.find((s) => s.round === "F")!;
+    const grandFinal = slots.find((s) => s.round === "GF")!;
+    expect(winnersFinal.winnerAdvancesTo).toBe(grandFinal.bracketPosition);
+  });
+
+  it("wires first-round winners losers via loserDropsTo", () => {
+    const slots = generateBracket("double_elim", mkTeams(4), config);
+    // At least one winners game should have a non-null loserDropsTo,
+    // pointing at an L1 game's bracketPosition.
+    const withDrop = slots.filter((s) => s.loserDropsTo != null);
+    expect(withDrop.length).toBeGreaterThan(0);
+    // Each loserDropsTo target must exist in the slot list.
+    const positions = new Set(slots.map((s) => s.bracketPosition));
+    for (const g of withDrop) {
+      expect(positions.has(g.loserDropsTo!)).toBe(true);
+    }
+  });
+
+  it("schedules losers + grand final after the last winners game", () => {
+    const slots = generateBracket("double_elim", mkTeams(4), config);
+    const lastWinnersTime = slots
+      .filter((s) => ["SF", "F"].includes(s.round))
+      .reduce((max, g) => (g.scheduledTime > max ? g.scheduledTime : max), "");
+    const losersEarliest = slots
+      .filter((s) => /^L\d+$/.test(s.round) || s.round === "GF")
+      .reduce((min, g) => (!min || g.scheduledTime < min ? g.scheduledTime : min), "");
+    // Losers bracket cannot start before winners bracket is done.
+    expect(losersEarliest >= lastWinnersTime).toBe(true);
+  });
+
+  it("handles 8 teams without crashing and produces a GF slot", () => {
+    const slots = generateBracket("double_elim", mkTeams(8), config);
+    expect(slots.find((s) => s.round === "GF")).toBeDefined();
+    // Winners bracket = 7 games (same as single-elim).
+    const winners = slots.filter((s) =>
+      ["QF", "SF", "F"].includes(s.round)
+    );
+    expect(winners.length).toBe(7);
+  });
+});
+
 describe("tournament-engine / generateBracket dispatcher", () => {
   it("routes to the right generator for each format", () => {
     const teams = mkTeams(4);

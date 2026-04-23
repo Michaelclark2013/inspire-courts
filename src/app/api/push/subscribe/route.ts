@@ -1,11 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pushSubscriptions } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
+
+// Web Push subscription shape (RFC 8030). Endpoints are URLs from
+// push services (FCM/APNs proxy); keys are base64url-encoded.
+const subscribeSchema = z.object({
+  endpoint: z.string().url().max(2048),
+  keys: z.object({
+    p256dh: z.string().min(1).max(256),
+    auth: z.string().min(1).max(256),
+  }),
+});
+
+const unsubscribeSchema = z.object({
+  endpoint: z.string().url().max(2048),
+});
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -19,15 +34,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
-    const { endpoint, keys } = body;
-
-    if (!endpoint || !keys?.p256dh || !keys?.auth) {
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+    const parsed = subscribeSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Missing subscription data" },
+        { error: parsed.error.issues[0]?.message ?? "Invalid subscription data" },
         { status: 400 }
       );
     }
+    const { endpoint, keys } = parsed.data;
 
     // Upsert: delete existing subscription for this endpoint, then insert
     await db
@@ -60,15 +80,17 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
-    const { endpoint } = body;
-
-    if (!endpoint) {
-      return NextResponse.json(
-        { error: "Missing endpoint" },
-        { status: 400 }
-      );
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
+    const parsed = unsubscribeSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Missing endpoint" }, { status: 400 });
+    }
+    const { endpoint } = parsed.data;
 
     // Only allow deleting subscriptions owned by the current user
     await db

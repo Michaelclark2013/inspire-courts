@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { Search, ExternalLink, Download } from "lucide-react";
-import { HorizontalBarList, CHART_COLORS, BRAND } from "@/components/dashboard/Charts";
+import { HorizontalBarList } from "@/components/dashboard/HorizontalBarList";
+import { CHART_COLORS, BRAND } from "@/components/dashboard/chart-colors";
 import SearchHighlight from "@/components/ui/SearchHighlight";
 import { formatPhone } from "@/lib/utils";
 

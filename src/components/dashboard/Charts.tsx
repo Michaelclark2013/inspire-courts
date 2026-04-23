@@ -17,34 +17,11 @@ import {
   LabelList,
 } from "recharts";
 
-// ── Brand colors ──────────────────────────────────────────────────────────────
-
-export const BRAND = {
-  red: "#CC0000",
-  redLight: "#E31B23",
-  navy: "#0B1D3A",
-  navyLight: "#132B52",
-  blue1: "#1e40af",
-  blue2: "#2563eb",
-  blue3: "#3b82f6",
-  blue4: "#60a5fa",
-  blue5: "#93c5fd",
-  green: "#22C55E",
-  yellow: "#EAB308",
-  orange: "#f97316",
-  purple: "#a855f7",
-};
-
-export const CHART_COLORS = [
-  BRAND.red,
-  BRAND.blue2,
-  BRAND.green,
-  BRAND.yellow,
-  BRAND.orange,
-  BRAND.purple,
-  BRAND.blue4,
-  BRAND.blue1,
-];
+// Colors live in ./chart-colors so consumers that only need constants
+// (e.g. sheet list views rendering colored badges by hand) don't pull
+// in recharts transitively. Re-exported here for backwards compatibility.
+import { BRAND, CHART_COLORS } from "./chart-colors";
+export { BRAND, CHART_COLORS };
 
 // ── Shared tooltip style ──────────────────────────────────────────────────────
 
@@ -175,56 +152,9 @@ export function AdminDonutChart({
   );
 }
 
-// ── Horizontal Bar (CSS) ──────────────────────────────────────────────────────
-
-interface HBarItem {
-  label: string;
-  value: number;
-  color?: string;
-  sublabel?: string;
-}
-
-interface HorizontalBarListProps {
-  data: HBarItem[];
-  max?: number;
-  valueFormatter?: (v: number) => string;
-}
-
-export function HorizontalBarList({
-  data,
-  max,
-  valueFormatter,
-}: HorizontalBarListProps) {
-  const maxVal = max ?? Math.max(...data.map((d) => d.value), 1);
-  const fmt = valueFormatter || ((v: number) => `${v}`);
-
-  return (
-    <div className="space-y-3">
-      {data.map((item, i) => (
-        <div key={i} className="flex items-center gap-3">
-          <div className="w-28 flex-shrink-0 text-right">
-            <span className="text-xs text-text-secondary truncate block">{item.label}</span>
-            {item.sublabel && (
-              <span className="text-[10px] text-text-secondary/60">{item.sublabel}</span>
-            )}
-          </div>
-          <div className="flex-1 h-5 bg-white rounded-lg overflow-hidden">
-            <div
-              className="h-full rounded-lg transition-all duration-500"
-              style={{
-                width: `${Math.max((item.value / maxVal) * 100, 2)}%`,
-                backgroundColor: item.color || BRAND.red,
-              }}
-            />
-          </div>
-          <span className="text-xs font-semibold text-navy w-12 flex-shrink-0">
-            {fmt(item.value)}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
+// HorizontalBarList moved to its own file — pure CSS, no recharts.
+// Re-exported here for backwards compatibility.
+export { HorizontalBarList } from "./HorizontalBarList";
 
 // ── Funnel Chart ──────────────────────────────────────────────────────────────
 

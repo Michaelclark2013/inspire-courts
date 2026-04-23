@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pushSubscriptions } from "@/lib/db/schema";
@@ -9,6 +10,15 @@ import {
   isVapidConfigured,
 } from "@/lib/push-notifications";
 import { logger } from "@/lib/logger";
+
+// Max-length caps protect against oversized payloads — web-push limits
+// the total encrypted payload to ~4KB, so keep fields well under that.
+const sendSchema = z.object({
+  title: z.string().min(1).max(100),
+  body: z.string().min(1).max(500),
+  url: z.string().max(500).optional(),
+  audience: z.enum(["all", "coaches", "parents", "admins"]).optional(),
+});
 
 const ADMIN_ROLES = ["admin", "staff"];
 
@@ -26,15 +36,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
-    const { title, body: notifBody, url, audience } = body;
-
-    if (!title || !notifBody) {
+    let raw: unknown;
+    try {
+      raw = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+    const parsed = sendSchema.safeParse(raw);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "title and body are required" },
+        { error: parsed.error.issues[0]?.message ?? "Invalid request" },
         { status: 400 }
       );
     }
+    const { title, body: notifBody, url, audience } = parsed.data;
 
     // Query subscriptions filtered by audience/role
     let subs;

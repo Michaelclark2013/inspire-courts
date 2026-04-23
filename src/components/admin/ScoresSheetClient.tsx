@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
-import { HorizontalBarList, BRAND } from "@/components/dashboard/Charts";
+import { HorizontalBarList } from "@/components/dashboard/HorizontalBarList";
+import { BRAND } from "@/components/dashboard/chart-colors";
 
 interface Game {
   home: string;

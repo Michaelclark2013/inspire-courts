@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { HorizontalBarList , CHART_COLORS } from "@/components/dashboard/Charts";
+import { HorizontalBarList } from "@/components/dashboard/HorizontalBarList";
+import { CHART_COLORS } from "@/components/dashboard/chart-colors";
 
 interface StaffRow {
   name: string;

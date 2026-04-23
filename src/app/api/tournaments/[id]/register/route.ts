@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import {
   tournaments,
@@ -9,6 +10,15 @@ import { eq, and } from "drizzle-orm";
 import { createCheckoutLink, isSquareConfigured } from "@/lib/square";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+
+const registerSchema = z.object({
+  teamName: z.string().trim().min(1, "Team name is required").max(100),
+  coachName: z.string().trim().min(1, "Coach name is required").max(100),
+  coachEmail: z.string().trim().toLowerCase().email("Invalid email").max(254),
+  coachPhone: z.string().trim().max(30).optional().nullable(),
+  division: z.string().trim().max(50).optional().nullable(),
+  playerCount: z.number().int().min(0).max(100).optional().nullable(),
+});
 
 /** Strip HTML special characters to prevent XSS in stored data. */
 function sanitize(value: string): string {
@@ -35,38 +45,32 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const { id } = await params;
   const tournamentId = Number(id);
-  if (isNaN(tournamentId)) {
+  if (!Number.isInteger(tournamentId) || tournamentId <= 0) {
     return NextResponse.json({ error: "Invalid tournament id" }, { status: 400 });
   }
 
-  const body = await request.json();
-  const rawTeamName = body.teamName;
-  const rawCoachName = body.coachName;
-  const rawCoachEmail = body.coachEmail;
-  const rawCoachPhone = body.coachPhone;
-  const rawDivision = body.division;
-  const rawPlayerCount = body.playerCount;
-
-  if (!rawTeamName || !rawCoachName || !rawCoachEmail) {
+  let raw: unknown;
+  try {
+    raw = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+  const parsed = registerSchema.safeParse(raw);
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "Team name, coach name, and email are required" },
+      { error: parsed.error.issues[0]?.message ?? "Invalid registration" },
       { status: 400 }
     );
   }
 
-  // Basic email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(String(rawCoachEmail))) {
-    return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
-  }
-
-  // Sanitize and enforce field length limits
-  const teamName = sanitize(String(rawTeamName).slice(0, 100));
-  const coachName = sanitize(String(rawCoachName).slice(0, 100));
-  const coachEmail = String(rawCoachEmail).toLowerCase().slice(0, 254);
-  const coachPhone = rawCoachPhone ? sanitize(String(rawCoachPhone).slice(0, 20)) : undefined;
-  const division = rawDivision ? sanitize(String(rawDivision).slice(0, 50)) : undefined;
-  const playerCount = rawPlayerCount !== undefined ? Math.max(0, Math.min(100, Number(rawPlayerCount))) : undefined;
+  // Zod already validated + trimmed; sanitize is belt-and-suspenders for the
+  // HTML escape (emails sent downstream, stored display fields).
+  const teamName = sanitize(parsed.data.teamName);
+  const coachName = sanitize(parsed.data.coachName);
+  const coachEmail = parsed.data.coachEmail;
+  const coachPhone = parsed.data.coachPhone ? sanitize(parsed.data.coachPhone) : undefined;
+  const division = parsed.data.division ? sanitize(parsed.data.division) : undefined;
+  const playerCount = parsed.data.playerCount ?? undefined;
 
   // Get tournament
   const [tournament] = await db

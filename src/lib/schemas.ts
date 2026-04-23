@@ -1,61 +1,14 @@
 import { z } from "zod";
 
-export const contactSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100),
-  email: z.string().email("A valid email is required").max(254),
-  phone: z.string().max(30).optional(),
-  inquiryType: z.string().max(100).optional(),
-  message: z.string().min(1, "Message is required").max(5000),
-});
-
-const VALID_EVENT_TYPES = new Set([
-  "Practice",
-  "Tournament",
-  "Party / Event",
-  "Open Gym",
-  "Other",
-]);
-
-export const bookSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100),
-  email: z.string().email("A valid email is required").max(254),
-  phone: z.string().min(1, "Phone is required").max(30),
-  sport: z.string().min(1, "Sport is required").max(50),
-  eventType: z
-    .string()
-    .min(1, "Event type is required")
-    .refine((v) => VALID_EVENT_TYPES.has(v), "Invalid event type."),
-  preferredDate: z
-    .string()
-    .min(1, "Preferred date is required")
-    .refine((val) => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return new Date(val) >= today;
-    }, "Preferred date must be today or in the future."),
-  preferredTime: z.string().min(1, "Preferred time is required").max(50),
-  courts: z.string().min(1, "Courts needed is required").max(50),
-  notes: z.string().max(2000).optional(),
-});
-
-export const chatSchema = z.object({
-  message: z.string().min(1, "Message is required").max(2000),
-  history: z
-    .array(
-      z.object({
-        role: z.enum(["user", "assistant"]),
-        content: z.string().max(4000),
-      })
-    )
-    .max(40)
-    .optional(),
-  sessionId: z.string().max(128).optional(),
-  pathname: z.string().max(256).optional(),
-});
-
-export const subscribeSchema = z.object({
-  email: z.string().email("A valid email is required"),
-});
+// Public (unauthenticated) schemas live in ./schemas/public.ts so the
+// attack-surface audit is easy. Re-exported here so existing imports
+// `import { contactSchema } from "@/lib/schemas"` keep working.
+export {
+  contactSchema,
+  bookSchema,
+  chatSchema,
+  subscribeSchema,
+} from "./schemas/public";
 
 // Admin user create — bcrypt.hash(12) is CPU-expensive so POST is
 // rate-limited upstream; this schema covers the shape only. Password
@@ -800,35 +753,12 @@ export const timeOffRequestPatchSchema = z.object({
   denialReason: z.string().max(500).optional().nullable(),
 });
 
-// ── Equipment Inventory ────────────────────────────────────────────
-const EQUIPMENT_CATEGORY_ENUM = z.enum([
-  "sports", "av", "safety", "janitorial", "concessions", "office", "other",
-]);
-
-export const equipmentCreateSchema = z.object({
-  name: z.string().min(1).max(200),
-  sku: z.string().max(100).optional().nullable(),
-  category: EQUIPMENT_CATEGORY_ENUM.optional(),
-  location: z.string().max(100).optional().nullable(),
-  onHand: z.number().int().nonnegative().max(1_000_000).optional(),
-  minQuantity: z.number().int().nonnegative().max(1_000_000).optional(),
-  unitCostCents: z.number().int().nonnegative().max(10_000_000).optional().nullable(),
-  supplier: z.string().max(200).optional().nullable(),
-  supplierSku: z.string().max(100).optional().nullable(),
-  notes: z.string().max(2000).optional().nullable(),
-  active: z.boolean().optional(),
-});
-
-export const equipmentUpdateSchema = equipmentCreateSchema.partial().extend({
-  id: z.number().int().positive(),
-});
-
-export const stockMovementCreateSchema = z.object({
-  equipmentId: z.number().int().positive(),
-  type: z.enum(["restock", "usage", "adjustment", "transfer", "damage"]),
-  delta: z.number().int(),
-  notes: z.string().max(500).optional().nullable(),
-});
+// Equipment + stock movements live in ./schemas/equipment.ts.
+export {
+  equipmentCreateSchema,
+  equipmentUpdateSchema,
+  stockMovementCreateSchema,
+} from "./schemas/equipment";
 
 // ── Program session generator — recurring sessions ─────────────────
 export const sessionGeneratorSchema = z.object({
@@ -866,21 +796,5 @@ export const memberImportSchema = z.object({
   dryRun: z.boolean().optional(),
 });
 
-// ── Waivers 2.0 ────────────────────────────────────────────────────
-export const waiverSignSchema = z.object({
-  playerName: z.string().min(1).max(200),
-  parentName: z.string().max(200).optional().nullable(),
-  teamName: z.string().max(200).optional().nullable(),
-  email: z.string().email().max(255).optional().nullable(),
-  phone: z.string().max(30).optional().nullable(),
-  // data-URL signature (PNG base64). Capped at ~500KB so a rogue
-  // client can't upload 10MB of trash inside the signature blob.
-  signatureDataUrl: z.string().startsWith("data:image/").max(500_000),
-  signedByName: z.string().min(1).max(200),
-  waiverType: z.enum(["general", "program", "tournament", "rental", "other"]).optional(),
-  programId: z.number().int().positive().optional().nullable(),
-  memberId: z.number().int().positive().optional().nullable(),
-  waiverVersion: z.string().max(40).optional(),
-  // Expiration — if not provided, admin API can fill from a default.
-  expiresAt: z.string().max(40).optional().nullable(),
-});
+// Waivers schema lives in ./schemas/waivers.ts for legal-audit isolation.
+export { waiverSignSchema } from "./schemas/waivers";

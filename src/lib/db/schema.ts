@@ -674,19 +674,52 @@ export const RESOURCE_KINDS = [
   "other",
 ] as const;
 
+export const VEHICLE_STATUS = [
+  "available",
+  "rented",
+  "maintenance",
+  "out_of_service",
+  "reserved",
+] as const;
+
 export const resources = sqliteTable("resources", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
   kind: text("kind", { enum: RESOURCE_KINDS }).notNull().default("vehicle"),
   description: text("description"),
-  // Both rates optional; a resource might only charge hourly or only
-  // daily. Stored in cents — same reason as pay rates.
+  // Full rate card — hourly, daily, weekly, monthly. All optional;
+  // stored in cents. Mileage + late fees sit alongside.
   dailyRateCents: integer("daily_rate_cents"),
   hourlyRateCents: integer("hourly_rate_cents"),
-  // Vehicle-specific fields that would otherwise need their own table.
-  // Nullable for non-vehicle rows.
+  weeklyRateCents: integer("weekly_rate_cents"),
+  monthlyRateCents: integer("monthly_rate_cents"),
+  mileageIncludedPerDay: integer("mileage_included_per_day"),
+  mileageOverageCentsPerMile: integer("mileage_overage_cents_per_mile"),
+  lateFeeCentsPerHour: integer("late_fee_cents_per_hour"),
+  securityDepositCents: integer("security_deposit_cents"),
+  // Vehicle identity + spec. Nullable for non-vehicle rows.
   licensePlate: text("license_plate"),
+  vin: text("vin"),
+  make: text("make"),
+  model: text("model"),
+  year: integer("year"),
+  color: text("color"),
+  transmission: text("transmission"),   // "automatic" | "manual"
+  fuelType: text("fuel_type"),          // "gasoline" | "diesel" | "ev" | "hybrid"
+  seats: integer("seats"),
   capacity: integer("capacity"),
+  currentMileage: integer("current_mileage"),
+  // Regulatory/legal compliance — expiries drive dashboard alerts.
+  registrationExpiry: text("registration_expiry"),
+  insuranceProvider: text("insurance_provider"),
+  insurancePolicyNumber: text("insurance_policy_number"),
+  insuranceExpiry: text("insurance_expiry"),
+  vehicleStatus: text("vehicle_status", { enum: VEHICLE_STATUS })
+    .notNull()
+    .default("available"),
+  nextOilChangeMileage: integer("next_oil_change_mileage"),
+  nextInspectionAt: text("next_inspection_at"),
+  imageUrl: text("image_url"),
   active: integer("active", { mode: "boolean" }).notNull().default(true),
   notes: text("notes"),
   createdAt: text("created_at")
@@ -734,11 +767,36 @@ export const resourceBookings = sqliteTable("resource_bookings", {
   amountCents: integer("amount_cents").notNull().default(0),
   paid: integer("paid", { mode: "boolean" }).notNull().default(false),
   paymentMethod: text("payment_method"),
-  // Vehicle-specific snapshots. Null for non-vehicle resources.
+  // Contract + driver capture. Printed contract number for paper
+  // trail; driver's license is legally required for vehicle rentals.
+  contractNumber: text("contract_number"),
+  renterLicenseNumber: text("renter_license_number"),
+  renterLicenseState: text("renter_license_state"),
+  renterLicenseExpiry: text("renter_license_expiry"),
+  // Vehicle checkout/checkin snapshots.
   odometerStart: integer("odometer_start"),
   odometerEnd: integer("odometer_end"),
   fuelStart: text("fuel_start"),
   fuelEnd: text("fuel_end"),
+  checkoutAt: text("checkout_at"),
+  checkinAt: text("checkin_at"),
+  checkoutPhotoUrls: text("checkout_photo_urls"), // JSON array
+  checkinPhotoUrls: text("checkin_photo_urls"),   // JSON array
+  signatureUrl: text("signature_url"),
+  // Computed fees — captured at checkin so a later rate change doesn't
+  // retroactively alter a past booking's total.
+  mileageDriven: integer("mileage_driven"),
+  mileageOverageCents: integer("mileage_overage_cents").default(0),
+  fuelChargeCents: integer("fuel_charge_cents").default(0),
+  lateFeeCents: integer("late_fee_cents").default(0),
+  damageChargeCents: integer("damage_charge_cents").default(0),
+  totalCents: integer("total_cents"),
+  // Security deposit hold + release.
+  securityDepositCents: integer("security_deposit_cents").default(0),
+  depositReleased: integer("deposit_released", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  depositReleasedAt: text("deposit_released_at"),
   purpose: text("purpose"),
   notes: text("notes"),
   createdBy: integer("created_by").references(() => users.id, {
@@ -1296,3 +1354,130 @@ export const equipmentStockMovements = sqliteTable("equipment_stock_movements", 
   index("equipment_stock_movements_occ_idx").on(table.occurredAt),
 ]);
 
+
+// ── Gym events ──────────────────────────────────────────────────────────────
+// Owner-managed gym calendar — private events like "Court 4 closed for
+// maintenance", "Team practice 6–8pm", "Ref clinic". Surfaced on the
+// main admin dashboard so the owner can see what's happening today at
+// a glance without hunting through tournament/shift screens.
+export const GYM_EVENT_CATEGORIES = [
+  "practice",
+  "maintenance",
+  "training",
+  "rental",
+  "meeting",
+  "closed",
+  "other",
+] as const;
+
+export const gymEvents = sqliteTable("gym_events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  category: text("category", { enum: GYM_EVENT_CATEGORIES })
+    .notNull()
+    .default("other"),
+  // Free-text location/court descriptor — admins often type "Courts 1&2"
+  // or "Back office" rather than picking from a dropdown.
+  location: text("location"),
+  startAt: text("start_at").notNull(), // ISO timestamp
+  endAt: text("end_at").notNull(),     // ISO timestamp
+  allDay: integer("all_day", { mode: "boolean" }).default(false),
+  notes: text("notes"),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("gym_events_start_at_idx").on(table.startAt),
+  index("gym_events_category_idx").on(table.category),
+]);
+
+// ── Rental car depth ─────────────────────────────────────────────────
+// The original `resources` + `resourceBookings` tables covered basic
+// van reservations. This extension turns them into a proper rental
+// operation: fleet detail (VIN, make, registration, insurance), rate
+// cards (hourly/daily/weekly/monthly + mileage overage), maintenance
+// logs, damage inspections, and renter driver's-license capture.
+//
+// New fields on `resources` and `resourceBookings` are added via
+// migration 0021 (not declared inline to keep schema.ts readable).
+// New standalone tables live here.
+
+export const MAINTENANCE_TYPES = [
+  "oil_change",
+  "tire_rotation",
+  "brake_service",
+  "inspection",
+  "repair",
+  "cleaning",
+  "other",
+] as const;
+
+export const resourceMaintenance = sqliteTable("resource_maintenance", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  resourceId: integer("resource_id")
+    .notNull()
+    .references(() => resources.id, { onDelete: "cascade" }),
+  type: text("type", { enum: MAINTENANCE_TYPES }).notNull().default("other"),
+  description: text("description").notNull(),
+  // Mileage at time of service — also the benchmark for the next
+  // service interval (currentMileage + intervalMileage).
+  mileageAt: integer("mileage_at"),
+  costCents: integer("cost_cents").default(0),
+  vendor: text("vendor"),
+  performedAt: text("performed_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  // Target odometer for the next service of this type. Lets the fleet
+  // dashboard flag "oil change due in 400 miles".
+  nextServiceMileage: integer("next_service_mileage"),
+  notes: text("notes"),
+  recordedBy: integer("recorded_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("resource_maintenance_resource_idx").on(table.resourceId),
+  index("resource_maintenance_performed_idx").on(table.performedAt),
+]);
+
+export const DAMAGE_SEVERITY = ["cosmetic", "minor", "major", "total_loss"] as const;
+
+export const resourceDamage = sqliteTable("resource_damage", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  resourceId: integer("resource_id")
+    .notNull()
+    .references(() => resources.id, { onDelete: "cascade" }),
+  // Optional link to the booking where the damage was discovered —
+  // helps allocate repair costs to a security deposit hold.
+  bookingId: integer("booking_id").references(() => resourceBookings.id, {
+    onDelete: "set null",
+  }),
+  severity: text("severity", { enum: DAMAGE_SEVERITY }).notNull().default("cosmetic"),
+  description: text("description").notNull(),
+  // Free-text area of the vehicle ("rear bumper", "driver-side door") —
+  // richer than a dropdown for actual incident reporting.
+  location: text("location"),
+  photoUrls: text("photo_urls"), // JSON array of URLs
+  repairCostCents: integer("repair_cost_cents"),
+  repaired: integer("repaired", { mode: "boolean" }).notNull().default(false),
+  repairedAt: text("repaired_at"),
+  reportedAt: text("reported_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  reportedBy: integer("reported_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  notes: text("notes"),
+}, (table) => [
+  index("resource_damage_resource_idx").on(table.resourceId),
+  index("resource_damage_booking_idx").on(table.bookingId),
+  index("resource_damage_repaired_idx").on(table.repaired),
+]);

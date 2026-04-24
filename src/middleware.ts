@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
 // Roles that can access /admin routes
 const ADMIN_ROLES = ["admin", "staff", "ref", "front_desk"];
 // Roles that can access /portal routes
-const PORTAL_ROLES = ["admin", "coach", "parent"];
+const PORTAL_ROLES = ["admin", "coach", "parent", "staff", "ref", "front_desk"];
 
 // CSP for middleware-originated responses (errors, redirects, and the
 // final NextResponse.next passthrough).
@@ -113,20 +113,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Public-facing player & coach portal pages — no auth required
-  const PUBLIC_PORTAL_PATHS = ["/portal/player", "/portal/coach"];
-  const isPublicPortalPath = PUBLIC_PORTAL_PATHS.some((p) => pathname.startsWith(p));
-
-  if (isPublicPortalPath) {
-    const response = NextResponse.next();
-    response.headers.set("x-portal-public", "1");
-    response.headers.set("X-Frame-Options", "SAMEORIGIN");
-    response.headers.set("X-Content-Type-Options", "nosniff");
-    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-    return response;
-  }
-
-  // Portal routes: require portal-level role
+  // Portal routes: require portal-level role (all portal pages now
+  // require authentication — coaches/players/staff/refs must log in).
   if (pathname.startsWith("/portal") || pathname.startsWith("/api/portal")) {
     if (!token) return unauthorizedResponse();
     if (!PORTAL_ROLES.includes(token.role as string)) {

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -39,6 +40,14 @@ import type {
 export default function PortalDashboard() {
   const { data: session } = useSession();
   const { viewAsRole } = usePortalView();
+  const router = useRouter();
+
+  // Redirect staff/ref/front_desk to their own dashboards.
+  useEffect(() => {
+    const r = session?.user?.role;
+    if (r === "staff" || r === "front_desk") router.replace("/portal/staff");
+    else if (r === "ref") router.replace("/portal/ref");
+  }, [session, router]);
 
   const [liveGames, setLiveGames] = useState<LiveGame[]>([]);
   const [rosterCount, setRosterCount] = useState<number | null>(null);

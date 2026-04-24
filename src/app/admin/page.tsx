@@ -9,6 +9,9 @@ import dynamic from "next/dynamic";
 const DashboardCharts = dynamic(() => import("@/components/admin/DashboardCharts"));
 import AdminDashboardClient from "@/components/admin/dashboard/AdminDashboardClient";
 import AdminButtonGrid from "@/components/admin/dashboard/AdminButtonGrid";
+import RecentSignupsCard from "@/components/admin/dashboard/RecentSignupsCard";
+import GymScheduleCard from "@/components/admin/dashboard/GymScheduleCard";
+import DashboardHero from "@/components/admin/dashboard/DashboardHero";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
 import {
@@ -195,69 +198,59 @@ export default async function AdminDashboard() {
     hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   const greeting = firstName ? `${timeGreeting}, ${firstName}` : timeGreeting;
 
+  const dateLine = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
   return (
     <main
-      className="p-3 sm:p-6 lg:p-8 pt-[max(env(safe-area-inset-top),0.75rem)] pb-[max(env(safe-area-inset-bottom),1rem)]"
+      className="bg-off-white min-h-screen p-3 sm:p-6 lg:p-8 pt-[max(env(safe-area-inset-top),0.75rem)] pb-[max(env(safe-area-inset-bottom),1rem)]"
       aria-labelledby="dashboard-heading"
     >
-      {/* Banner → new Ops Dashboard (staff, shifts, payroll, resources).
-          Kept distinct from this Sheets-backed dashboard so admins see
-          everything they're used to by default. */}
-      <Link
-        href="/admin/ops"
-        className="flex items-center justify-between gap-3 bg-navy text-white rounded-xl px-4 py-3 mb-4 hover:bg-navy/90 transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          <Activity className="w-5 h-5 text-white/80" aria-hidden="true" />
-          <div>
-            <div className="font-semibold text-sm">Ops Dashboard</div>
-            <div className="text-white/70 text-xs">
-              Live staff · shifts · payroll · rentals · 1099 threshold watch
-            </div>
-          </div>
-        </div>
-        <span className="text-xs bg-white/10 rounded px-2 py-1 hidden sm:inline">
-          Open →
-        </span>
-      </Link>
+      {/* Dramatic navy-gradient hero — greeting + bento KPIs */}
+      <DashboardHero
+        greeting={greeting}
+        dateLine={dateLine}
+        stats={{
+          totalTeams: data.totalTeams,
+          totalRevenue: data.totalRevenue,
+          totalPlayers: data.totalPlayers,
+          totalGames: data.totalGames,
+        }}
+      />
 
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-light-gray/60 -mx-3 sm:-mx-6 lg:-mx-8 px-3 sm:px-6 lg:px-8 py-3 lg:py-4 mb-4 lg:mb-8">
-        <div className="flex items-center justify-between gap-2">
-          <div>
-            <p className="text-text-secondary text-[10px] lg:text-xs mb-0.5">
-              {greeting}
-            </p>
-            <h1
-              id="dashboard-heading"
-              className="text-xl lg:text-2xl font-bold uppercase tracking-tight text-navy font-heading"
-            >
-              Dashboard
-            </h1>
-            <p className="text-text-secondary text-[10px] lg:text-xs mt-0.5 hidden sm:block">
-              {data.totalTeams} teams &middot; {data.totalGames} games &middot; {data.totalPlayers} players checked in
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <DashboardRefreshButton />
-            <p className="text-text-secondary text-[10px] lg:text-xs uppercase tracking-wider text-right hidden sm:block">
-              {new Date().toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-        </div>
-      </header>
+      {/* Refresh affordance — floats above the hero flow rather than
+          stealing real estate at the top. */}
+      <div className="flex items-center justify-end mb-4">
+        <DashboardRefreshButton />
+      </div>
 
       {/* Push notification opt-in */}
       <PushNotificationPrompt />
 
-      {/* Quick-jump button grid — one tile per admin section,
-          permission-gated so lower-privilege roles only see what
-          they can open. Sidebar stays around for keyboard users. */}
-      <section aria-label="Admin sections" className="mb-8">
+      {/* Today's focus — gym schedule + new signups, side by side on wide
+          screens so the owner sees what's happening + who joined at a glance. */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-8">
+        <GymScheduleCard />
+        <RecentSignupsCard />
+      </div>
+
+      {/* Quick-jump button wall — every admin section, big colored tiles,
+          permission-gated. The spine of daily navigation. */}
+      <section aria-label="Admin sections" className="mb-10">
+        <div className="flex items-end justify-between mb-6">
+          <div>
+            <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] mb-1">
+              Everything, organized
+            </p>
+            <h2 className="text-navy font-heading text-2xl sm:text-3xl font-bold tracking-tight">
+              All Tools
+            </h2>
+          </div>
+        </div>
         <AdminButtonGrid />
       </section>
 

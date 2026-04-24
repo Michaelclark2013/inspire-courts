@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import PortalSidebar from "@/components/portal/PortalSidebar";
@@ -12,29 +11,20 @@ export const metadata = {
   robots: "noindex, nofollow",
 };
 
+const PORTAL_ROLES = ["admin", "coach", "parent", "staff", "ref", "front_desk"];
+
 export default async function PortalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const headersList = await headers();
-  const isPublic = headersList.get("x-portal-public") === "1";
-
-  // Public player/coach portal pages — no auth required, no sidebar
-  if (isPublic) {
-    return (
-      <div className="min-h-screen bg-off-white">
-        {children}
-      </div>
-    );
-  }
-
-  // Authenticated portal — require session
+  // All portal pages now require auth (middleware already gates this —
+  // this is the defense-in-depth layer for role enforcement).
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/login");
   }
-  if (!["admin", "coach", "parent"].includes(session.user.role || "")) {
+  if (!PORTAL_ROLES.includes(session.user.role || "")) {
     redirect("/login");
   }
 

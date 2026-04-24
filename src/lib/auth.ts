@@ -175,12 +175,24 @@ export const authOptions: NextAuthOptions = {
       }
 
       // Hydrate permission overrides on (re)login or explicit refresh.
-      // Skips re-querying the DB on every request — the token is cached
-      // for the session lifetime.
-      if (user || trigger === "update" || !Array.isArray((token as { permissionOverrides?: unknown }).permissionOverrides)) {
-        try {
-          const uid = Number(token.userId);
-          if (Number.isInteger(uid) && uid > 0) {
+      // Also re-hydrate when the user's permissions_updated_at stamp
+      // on the DB is newer than what we cached — so admin-side
+      // changes take effect on the target user's next request without
+      // requiring them to re-login.
+      try {
+        const uid = Number(token.userId);
+        if (Number.isInteger(uid) && uid > 0) {
+          const [dbUser] = await db
+            .select({ permissionsUpdatedAt: users.permissionsUpdatedAt })
+            .from(users)
+            .where(eq(users.id, uid))
+            .limit(1);
+
+          const tokenStamp = (token as { permissionsUpdatedAt?: string | null }).permissionsUpdatedAt ?? null;
+          const dbStamp = dbUser?.permissionsUpdatedAt ?? null;
+          const stale = tokenStamp !== dbStamp;
+
+          if (user || trigger === "update" || !Array.isArray((token as { permissionOverrides?: unknown }).permissionOverrides) || stale) {
             const rows = await db
               .select({
                 page: userPermissions.page,
@@ -191,10 +203,11 @@ export const authOptions: NextAuthOptions = {
               .where(eq(userPermissions.userId, uid));
             (token as { permissionOverrides: Array<{ page: string; granted: boolean; expiresAt: string | null }> })
               .permissionOverrides = rows;
+            (token as { permissionsUpdatedAt: string | null }).permissionsUpdatedAt = dbStamp;
           }
-        } catch (err) {
-          logger.warn("Failed to hydrate permission overrides", { error: String(err) });
         }
+      } catch (err) {
+        logger.warn("Failed to hydrate permission overrides", { error: String(err) });
       }
 
       return token;

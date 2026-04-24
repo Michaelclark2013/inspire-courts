@@ -62,7 +62,9 @@ const PATH_TO_PAGE: Array<{ prefix: string; page: AdminPage }> = [
   { prefix: "/admin/contacts", page: "contacts" },
   { prefix: "/admin/launch-readiness", page: "users" },
 
-  // Personal
+  // Personal — profile always accessible (every user has their own),
+  // mapped to "overview" so the page-gate layer treats it as baseline.
+  { prefix: "/admin/profile", page: "overview" },
   { prefix: "/admin/my-schedule", page: "my_schedule" },
   { prefix: "/admin/my-history", page: "my_history" },
   { prefix: "/admin/ops", page: "overview" },

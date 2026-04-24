@@ -15,6 +15,7 @@ import {
   ClipboardList,
   ExternalLink,
   LogOut,
+  User,
   FileEdit,
   BarChart3,
   TrendingUp,
@@ -468,6 +469,17 @@ export default function AdminSidebar() {
           >
             <Trophy className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
             {!collapsed && "Live Scores"}
+          </Link>
+          <Link
+            href="/admin/profile"
+            title={collapsed ? "My Profile" : undefined}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-muted hover:text-navy hover:bg-off-white transition-all duration-200",
+              collapsed && "justify-center px-2"
+            )}
+          >
+            <User className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+            {!collapsed && "My Profile"}
           </Link>
           <button
             type="button"

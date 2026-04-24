@@ -35,6 +35,11 @@ export const users = sqliteTable("users", {
   // birthDate + emergency contact are both filled. Actions that need a
   // verified profile (waiver sign, tournament register) gate on this.
   profileComplete: integer("profile_complete", { mode: "boolean" }).default(false),
+  // Bumped whenever this user's permission overrides change. The JWT
+  // callback compares this ISO timestamp to the token's cached value
+  // and re-hydrates on mismatch, so admin-side changes take effect
+  // on the next request without forcing a re-login.
+  permissionsUpdatedAt: text("permissions_updated_at"),
   // ── Email verification (R780 port from OFF SZN) ─────────────────
   // Null = unverified; ISO timestamp = verified at that moment.
   // Sensitive actions gate on isVerified(user) from lib/email-verification.

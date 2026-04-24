@@ -171,6 +171,7 @@ const SECTIONS: Section[] = [
     blurb: "Your view",
     tint: "navy",
     tiles: [
+      { href: "/admin/profile", label: "My Profile", desc: "Account & password", icon: IdCard, page: "overview" as AdminPage },
       { href: "/admin/my-schedule", label: "My Schedule", desc: "Your shifts", icon: Calendar, page: "my_schedule" },
       { href: "/admin/my-history", label: "My History", desc: "Past pay periods", icon: History, page: "my_history" },
       { href: "/admin/ops", label: "Ops Dashboard", desc: "Live operations", icon: LayoutDashboard, page: "overview" },

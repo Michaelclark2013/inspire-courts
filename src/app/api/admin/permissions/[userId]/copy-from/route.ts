@@ -6,6 +6,7 @@ import { users, userPermissions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { bumpPermissionsUpdated } from "@/lib/permission-bump";
 
 // POST /api/admin/permissions/[userId]/copy-from
 // Body: { sourceUserId: number, replace?: boolean }
@@ -99,6 +100,7 @@ export async function POST(
       after: { sourceId, targetId, copied, replace },
     });
 
+    await bumpPermissionsUpdated(targetId);
     return NextResponse.json({ ok: true, copied });
   } catch (err) {
     logger.error("permission copy failed", { error: String(err) });

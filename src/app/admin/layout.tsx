@@ -12,6 +12,7 @@ import { isAdminRole } from "@/lib/permissions";
 import OfflineBanner from "@/components/pwa/OfflineBanner";
 import dynamic from "next/dynamic";
 const CommandPalette = dynamic(() => import("@/components/admin/CommandPalette"));
+const ViewAsUserBanner = dynamic(() => import("@/components/admin/dashboard/ViewAsUserBanner"));
 
 export const metadata = {
   title: "Admin Dashboard | Inspire Courts AZ",
@@ -57,6 +58,7 @@ export default async function AdminLayout({
           <AdminFAB />
           <KeyboardShortcutsHint />
           <CommandPalette />
+          <ViewAsUserBanner />
         </div>
       </ToastProvider>
     </SessionProvider>

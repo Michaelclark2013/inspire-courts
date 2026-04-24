@@ -15,7 +15,9 @@ import {
   Copy,
   History,
   Clock,
+  Eye,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Page list mirrors AdminPage in lib/permissions.ts
 type AdminPage = string;
@@ -152,6 +154,7 @@ const PAGE_GROUPS: Array<{ heading: string; pages: Array<{ key: AdminPage; label
 
 export default function PermissionsDetailPage() {
   const params = useParams<{ userId: string }>();
+  const router = useRouter();
   const userId = params?.userId ? Number(params.userId) : 0;
 
   const [data, setData] = useState<Dossier | null>(null);
@@ -236,6 +239,25 @@ export default function PermissionsDetailPage() {
     }
   }
 
+  async function viewAs() {
+    setSavingKey("__viewas__");
+    try {
+      const res = await fetch("/api/admin/permissions/view-as", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      if (!res.ok) throw new Error("Failed to enter preview");
+      // Send them to /admin so they can poke around as the target user.
+      router.push("/admin");
+      router.refresh();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setSavingKey(null);
+    }
+  }
+
   async function copyFrom(sourceUserId: number, replace: boolean) {
     setSavingKey("__copy__");
     try {
@@ -306,6 +328,14 @@ export default function PermissionsDetailPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2 self-start">
+              <button
+                onClick={viewAs}
+                disabled={savingKey === "__viewas__"}
+                className="bg-amber-500 hover:bg-amber-400 disabled:opacity-50 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
+                title="See /admin through this user's eyes"
+              >
+                <Eye className="w-3.5 h-3.5" /> View as
+              </button>
               <button
                 onClick={() => setCopyOpen(true)}
                 className="bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"

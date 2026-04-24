@@ -3,7 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, userPermissions } from "@/lib/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
+import { bumpPermissionsUpdated } from "@/lib/permission-bump";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import {
@@ -143,6 +144,7 @@ export async function PUT(
           before: { userId, page, granted: existing.granted },
           after: null,
         });
+        await bumpPermissionsUpdated(userId);
       }
       return NextResponse.json({ ok: true, cleared: true });
     }
@@ -193,6 +195,7 @@ export async function PUT(
       });
     }
 
+    await bumpPermissionsUpdated(userId);
     return NextResponse.json(result);
   } catch (err) {
     logger.error("permission update failed", { error: String(err) });
@@ -229,6 +232,7 @@ export async function DELETE(
       before: { count: removed.length },
       after: null,
     });
+    await bumpPermissionsUpdated(userId);
     return NextResponse.json({ ok: true, cleared: removed.length });
   } catch (err) {
     logger.error("permission bulk delete failed", { error: String(err) });

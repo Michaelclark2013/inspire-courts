@@ -6,6 +6,7 @@ import { users, userPermissions } from "@/lib/db/schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { bumpPermissionsUpdated } from "@/lib/permission-bump";
 import { ALL_ADMIN_PAGES, type AdminPage } from "@/lib/permissions";
 
 // POST /api/admin/permissions/bulk
@@ -75,6 +76,7 @@ export async function POST(request: NextRequest) {
         before: { userIds: targetIds, pages, count: removed.length },
         after: null,
       });
+      await bumpPermissionsUpdated(targetIds);
       return NextResponse.json({ ok: true, cleared: removed.length });
     }
 
@@ -122,6 +124,7 @@ export async function POST(request: NextRequest) {
       after: { userIds: filteredIds, pages, touched, reason },
     });
 
+    await bumpPermissionsUpdated(filteredIds);
     return NextResponse.json({ ok: true, touched });
   } catch (err) {
     logger.error("bulk permission failed", { error: String(err) });

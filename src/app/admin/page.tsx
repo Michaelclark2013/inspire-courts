@@ -24,6 +24,7 @@ import RecentlyVisited from "@/components/admin/dashboard/RecentlyVisited";
 import CheckinProgressCard from "@/components/admin/dashboard/CheckinProgressCard";
 import PnLCard from "@/components/admin/dashboard/PnLCard";
 import WeeklyDigestCard from "@/components/admin/dashboard/WeeklyDigestCard";
+import OpsPulseSections from "@/components/admin/dashboard/OpsPulseSections";
 import { Suspense } from "react";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
@@ -252,64 +253,54 @@ export default async function AdminDashboard() {
       {/* Recently visited admin pages — MRU for speed */}
       <RecentlyVisited />
 
-      {/* Live-now pulsing strip — only shows when a game is live */}
-      <LiveScoresStrip />
-
-      {/* 4-up mini widget strip: revenue this week, active tournament
-          progress, 7-day signup spark, pending approvals */}
+      {/* 4-up mini widget strip — quick glance KPIs */}
       <WidgetStrip />
+
+      {/* Quick-jump button wall moves up front — nav is the #1 ask on
+          mobile. Everything below is insight-side and gets tabbed on
+          mobile to avoid infinite scroll. */}
+      <section aria-label="Admin sections" className="mb-6">
+        <AdminButtonGrid />
+      </section>
 
       {/* Push notification opt-in */}
       <PushNotificationPrompt />
 
-      {/* Team check-in progress for the active tournament — auto
-          refreshes every 45s. Renders nothing when there's no active
-          tournament. */}
-      <CheckinProgressCard />
-
-      {/* Profit & Loss — month revenue vs expenses with margin. */}
-      <PnLCard />
-
-      {/* Weekly digest shortcut — view or email-me the 7-day summary. */}
-      <WeeklyDigestCard />
-
-      {/* Court-by-court status + who's clocked in right now. Auto-
-          refreshes every 30s. The core front-desk ops pair. */}
-      <FloorStatusCard />
-
-      {/* Operational alerts — expiring certs, today's birthdays, low
-          stock, recent admin audits. Hidden when everything is healthy. */}
-      <OpsAlertsCard />
-
-      {/* Today at Inspire — live auto-refreshing operational view */}
-      <TodayCard />
-
-      {/* Fleet alerts — renders only when there are expiring docs /
-          open damage, so the dashboard stays quiet on healthy days. */}
-      <FleetAlertsCard />
-
-      {/* Today's focus — gym schedule + new signups, side by side on wide
-          screens so the owner sees what's happening + who joined at a glance. */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-8">
-        <GymScheduleCard />
-        <RecentSignupsCard />
-      </div>
-
-      {/* Quick-jump button wall — every admin section, big colored tiles,
-          permission-gated. The spine of daily navigation. */}
-      <section aria-label="Admin sections" className="mb-10">
-        <div className="flex items-end justify-between mb-6">
-          <div>
-            <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] mb-1">
-              Everything, organized
-            </p>
-            <h2 className="text-navy font-heading text-2xl sm:text-3xl font-bold tracking-tight">
-              All Tools
-            </h2>
+      {/* Insight cards — stacked on desktop, tabbed on mobile so the
+          dashboard stays short. Groups:
+            · Live      — LiveScores + Check-in progress + Floor status
+            · Money     — P&L + Weekly digest + Fleet alerts
+            · Alerts    — Ops alerts + Today feed
+            · Schedule  — Gym calendar + Recent signups
+       */}
+      <OpsPulseSections
+        live={
+          <>
+            <LiveScoresStrip />
+            <CheckinProgressCard />
+            <FloorStatusCard />
+          </>
+        }
+        finance={
+          <>
+            <PnLCard />
+            <WeeklyDigestCard />
+            <FleetAlertsCard />
+          </>
+        }
+        alerts={
+          <>
+            <OpsAlertsCard />
+            <TodayCard />
+          </>
+        }
+        schedule={
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-8">
+            <GymScheduleCard />
+            <RecentSignupsCard />
           </div>
-        </div>
-        <AdminButtonGrid />
-      </section>
+        }
+      />
 
       {/* DB-powered overview (consolidated summary endpoint) */}
       <section aria-label="Overview" className="mb-8">

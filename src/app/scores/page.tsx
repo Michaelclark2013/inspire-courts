@@ -30,7 +30,7 @@ export default function ScoresPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <section className="relative py-20 sm:py-28 lg:py-36 overflow-hidden">
+      <section className="relative pt-28 pb-16 sm:py-28 lg:py-36 overflow-hidden">
         <Image
           src="/images/courts-bg.jpg"
           alt="Inspire Courts AZ live scores"

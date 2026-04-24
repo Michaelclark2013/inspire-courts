@@ -109,7 +109,7 @@ export default function RentalDetailPage() {
               <p className="text-white/50 text-[11px] uppercase tracking-[0.2em] mb-1 font-mono">
                 {booking.contractNumber || "—"}
               </p>
-              <h1 className="text-3xl font-bold font-heading flex items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-bold font-heading flex items-center gap-2">
                 <FileText className="w-6 h-6 text-red" /> Rental Contract
               </h1>
               <p className="text-white/70 text-sm mt-1">

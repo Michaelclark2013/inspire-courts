@@ -175,9 +175,9 @@ const PERSONAL: NavItem[] = [
 // Primary tabs shown in the mobile bottom bar (5 max)
 const BOTTOM_TABS: NavItem[] = [
   { href: "/admin", label: "Home", icon: LayoutDashboard, page: "overview" },
+  { href: "/admin/scores/enter", label: "Scores", icon: ClipboardList, page: "score_entry" },
+  { href: "/admin/checkin", label: "Check-In", icon: UserCheck, page: "checkin" },
   { href: "/admin/tournaments/manage", label: "Events", icon: Trophy, page: "tournaments" },
-  { href: "/admin/scores", label: "Scores", icon: ClipboardList, page: "scores" },
-  { href: "/admin/teams", label: "Teams", icon: Users, page: "teams" },
   { href: "/admin/revenue", label: "Revenue", icon: DollarSign, page: "revenue" },
 ];
 

@@ -8,6 +8,7 @@ import DashboardRefreshButton from "@/components/admin/DashboardRefreshButton";
 import dynamic from "next/dynamic";
 const DashboardCharts = dynamic(() => import("@/components/admin/DashboardCharts"));
 import AdminDashboardClient from "@/components/admin/dashboard/AdminDashboardClient";
+import AdminButtonGrid from "@/components/admin/dashboard/AdminButtonGrid";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
 import {
@@ -252,6 +253,13 @@ export default async function AdminDashboard() {
 
       {/* Push notification opt-in */}
       <PushNotificationPrompt />
+
+      {/* Quick-jump button grid — one tile per admin section,
+          permission-gated so lower-privilege roles only see what
+          they can open. Sidebar stays around for keyboard users. */}
+      <section aria-label="Admin sections" className="mb-8">
+        <AdminButtonGrid />
+      </section>
 
       {/* DB-powered overview (consolidated summary endpoint) */}
       <section aria-label="Overview" className="mb-8">

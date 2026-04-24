@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import CoachCheckinStatus from "@/components/portal/CoachCheckinStatus";
 import {
   Loader2,
   CheckCircle2,
@@ -195,6 +196,9 @@ export default function CoachDashboard() {
           </span>
         </section>
       )}
+
+      {/* Live check-in readiness for each registered team */}
+      <CoachCheckinStatus />
 
       {/* My tournament registrations */}
       {data.myRegistrations.length > 0 && (

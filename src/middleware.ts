@@ -1,6 +1,9 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { pageFromAdminPath } from "@/lib/permission-paths";
+import { canAccessWithOverrides, type AdminPage } from "@/lib/permissions";
+import type { UserRole } from "@/types/next-auth";
 
 // Roles that can access /admin routes
 const ADMIN_ROLES = ["admin", "staff", "ref", "front_desk"];
@@ -110,6 +113,33 @@ export async function middleware(request: NextRequest) {
         return applySecurityHeaders(NextResponse.redirect(new URL("/portal", request.url)), requestId);
       }
       return unauthorizedResponse();
+    }
+
+    // Page-level enforcement using per-user permission overrides.
+    // Admin role always passes (catches any new pages the override
+    // map doesn't list yet). Non-admin admin-tier roles get checked
+    // against canAccessWithOverrides, so a staff user with a specific
+    // revoke on /admin/scores is actually redirected away.
+    if (!isApiRoute && token.role !== "admin") {
+      const page = pageFromAdminPath(pathname);
+      if (page) {
+        const overrides =
+          (token as { permissionOverrides?: Array<{ page: string; granted: boolean }> })
+            .permissionOverrides;
+        const allowed = canAccessWithOverrides(
+          token.role as UserRole,
+          page as AdminPage,
+          overrides as Array<{ page: AdminPage; granted: boolean }> | undefined
+        );
+        if (!allowed) {
+          // Bounce to the dashboard rather than /login so the user
+          // sees they're authenticated but just not permitted here.
+          return applySecurityHeaders(
+            NextResponse.redirect(new URL("/admin?denied=" + encodeURIComponent(page), request.url)),
+            requestId
+          );
+        }
+      }
     }
   }
 

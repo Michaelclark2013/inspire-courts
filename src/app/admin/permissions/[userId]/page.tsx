@@ -12,6 +12,9 @@ import {
   Check,
   X,
   AlertCircle,
+  Copy,
+  History,
+  Clock,
 } from "lucide-react";
 
 // Page list mirrors AdminPage in lib/permissions.ts
@@ -39,6 +42,15 @@ type Dossier = {
   user: User;
   overrides: Override[];
   effective: Effective;
+};
+
+type AuditEntry = {
+  id: number;
+  action: string;
+  actorEmail: string | null;
+  beforeJson: string | null;
+  afterJson: string | null;
+  createdAt: string;
 };
 
 const ROLE_STYLES: Record<User["role"], string> = {
@@ -145,6 +157,9 @@ export default function PermissionsDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [history, setHistory] = useState<AuditEntry[] | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [copyOpen, setCopyOpen] = useState(false);
 
   const load = useCallback(async () => {
     if (!userId) return;
@@ -189,6 +204,36 @@ export default function PermissionsDetailPage() {
     try {
       await fetch(`/api/admin/permissions/${userId}`, { method: "DELETE" });
       await load();
+    } finally {
+      setSavingKey(null);
+    }
+  }
+
+  async function loadHistory() {
+    try {
+      const res = await fetch(`/api/admin/permissions/${userId}/history`);
+      if (res.ok) setHistory(await res.json());
+    } catch {
+      /* ignore — just don't show history */
+    }
+  }
+
+  async function copyFrom(sourceUserId: number, replace: boolean) {
+    setSavingKey("__copy__");
+    try {
+      const res = await fetch(`/api/admin/permissions/${userId}/copy-from`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sourceUserId, replace }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d?.error || "Copy failed");
+      }
+      setCopyOpen(false);
+      await load();
+    } catch (err) {
+      setError((err as Error).message);
     } finally {
       setSavingKey(null);
     }
@@ -242,14 +287,28 @@ export default function PermissionsDetailPage() {
                 </span>
               </div>
             </div>
-            {overrides.length > 0 && (
+            <div className="flex flex-wrap gap-2 self-start">
               <button
-                onClick={resetAll}
-                className="bg-white/10 hover:bg-white/20 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 self-start"
+                onClick={() => setCopyOpen(true)}
+                className="bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
               >
-                <RotateCcw className="w-3.5 h-3.5" /> Reset to role defaults
+                <Copy className="w-3.5 h-3.5" /> Copy from…
               </button>
-            )}
+              <button
+                onClick={() => { setHistoryOpen(true); loadHistory(); }}
+                className="bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
+              >
+                <History className="w-3.5 h-3.5" /> History
+              </button>
+              {overrides.length > 0 && (
+                <button
+                  onClick={resetAll}
+                  className="bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Reset
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -373,6 +432,204 @@ export default function PermissionsDetailPage() {
           </p>
         </div>
       )}
+
+      {historyOpen && (
+        <HistoryPanel entries={history} onClose={() => setHistoryOpen(false)} />
+      )}
+      {copyOpen && (
+        <CopyFromDialog
+          currentUserId={user.id}
+          onClose={() => setCopyOpen(false)}
+          onApply={copyFrom}
+          saving={savingKey === "__copy__"}
+        />
+      )}
+    </div>
+  );
+}
+
+function HistoryPanel({
+  entries,
+  onClose,
+}: {
+  entries: AuditEntry[] | null;
+  onClose: () => void;
+}) {
+  function label(action: string): string {
+    switch (action) {
+      case "permission.granted": return "Grant";
+      case "permission.revoked": return "Revoke";
+      case "permission.override_cleared": return "Inherit (cleared)";
+      case "permission.reset_user": return "Reset all";
+      case "permission.bulk_granted": return "Bulk grant";
+      case "permission.bulk_revoked": return "Bulk revoke";
+      case "permission.bulk_cleared": return "Bulk clear";
+      case "permission.copied": return "Copied from user";
+      default: return action;
+    }
+  }
+
+  function parse(j: string | null) {
+    if (!j) return null;
+    try { return JSON.parse(j); } catch { return null; }
+  }
+
+  function fmtDate(iso: string): string {
+    try {
+      return new Date(iso).toLocaleString([], {
+        month: "short", day: "numeric",
+        hour: "numeric", minute: "2-digit",
+      });
+    } catch { return iso; }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-[92vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-red" />
+            <h2 className="text-navy font-bold text-lg font-heading">Permission History</h2>
+          </div>
+          <button onClick={onClose} className="text-text-muted hover:text-navy p-1">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="p-5">
+          {entries === null ? (
+            <p className="text-text-muted text-sm text-center py-8">Loading…</p>
+          ) : entries.length === 0 ? (
+            <p className="text-text-muted text-sm text-center py-8">No permission changes yet for this user.</p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {entries.map((e) => {
+                const after = parse(e.afterJson);
+                const before = parse(e.beforeJson);
+                const page = after?.page || before?.page || (Array.isArray(after?.pages) ? after.pages.join(", ") : null);
+                return (
+                  <li key={e.id} className="py-3">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                        e.action.includes("grant") || e.action === "permission.copied"
+                          ? "bg-emerald-50 text-emerald-700"
+                          : e.action.includes("revoke")
+                          ? "bg-red/10 text-red"
+                          : "bg-off-white text-text-muted"
+                      }`}>{label(e.action)}</span>
+                      {page && (
+                        <span className="text-navy text-sm font-semibold font-mono">{page}</span>
+                      )}
+                    </div>
+                    <p className="text-text-muted text-xs">
+                      {e.actorEmail || "Admin"} · {fmtDate(e.createdAt)}
+                      {after?.reason && ` · "${after.reason}"`}
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CopyFromDialog({
+  currentUserId,
+  onClose,
+  onApply,
+  saving,
+}: {
+  currentUserId: number;
+  onClose: () => void;
+  onApply: (sourceUserId: number, replace: boolean) => void;
+  saving: boolean;
+}) {
+  const [options, setOptions] = useState<Array<{ id: number; name: string; email: string; role: string; overrides: { grants: number; revokes: number } }>>([]);
+  const [search, setSearch] = useState("");
+  const [sourceId, setSourceId] = useState<number | null>(null);
+  const [replace, setReplace] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/permissions")
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => {
+        if (d?.users) setOptions(d.users.filter((u: { id: number }) => u.id !== currentUserId));
+      });
+  }, [currentUserId]);
+
+  const filtered = options.filter((u) => {
+    const s = search.trim().toLowerCase();
+    if (!s) return true;
+    return u.name.toLowerCase().includes(s) || u.email.toLowerCase().includes(s);
+  });
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-lg max-h-[92vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
+          <h2 className="text-navy font-bold text-lg font-heading flex items-center gap-2">
+            <Copy className="w-4 h-4 text-red" /> Copy Permissions From
+          </h2>
+          <button onClick={onClose} className="text-text-muted hover:text-navy p-1">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="p-5 space-y-4">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search users…"
+            className="w-full bg-off-white border border-border rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60"
+          />
+          <label className="flex items-center gap-2 bg-off-white border border-border rounded-xl px-4 py-3 cursor-pointer">
+            <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} className="w-4 h-4" />
+            <span className="text-navy text-sm font-semibold">
+              Replace existing overrides <span className="text-text-muted font-normal">(unchecked = merge)</span>
+            </span>
+          </label>
+          <ul className="divide-y divide-border max-h-72 overflow-y-auto border border-border rounded-xl">
+            {filtered.length === 0 ? (
+              <li className="p-4 text-center text-text-muted text-sm">No users found</li>
+            ) : filtered.map((u) => (
+              <li key={u.id}>
+                <button
+                  onClick={() => setSourceId(u.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                    sourceId === u.id ? "bg-red/5" : "hover:bg-off-white"
+                  }`}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-navy font-semibold text-sm">{u.name}</p>
+                    <p className="text-text-muted text-xs">{u.email} · {u.role}</p>
+                  </div>
+                  {u.overrides.grants + u.overrides.revokes > 0 ? (
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
+                      {u.overrides.grants + u.overrides.revokes} custom
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-text-muted">defaults</span>
+                  )}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="sticky bottom-0 bg-white border-t border-border px-5 py-3 flex gap-2">
+          <button onClick={onClose} className="flex-1 text-navy font-semibold text-sm py-2.5 rounded-xl border border-border hover:bg-off-white">
+            Cancel
+          </button>
+          <button
+            onClick={() => sourceId && onApply(sourceId, replace)}
+            disabled={!sourceId || saving}
+            className="flex-1 bg-red hover:bg-red-hover disabled:opacity-50 text-white font-bold text-sm py-2.5 rounded-xl uppercase tracking-wider"
+          >
+            {saving ? "Copying…" : "Apply"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

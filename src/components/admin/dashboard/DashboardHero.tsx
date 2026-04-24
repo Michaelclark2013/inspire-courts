@@ -65,7 +65,7 @@ export default function DashboardHero({ greeting, dateLine, stats }: Props) {
           className="absolute -left-16 -bottom-16 w-72 h-72 rounded-full bg-white/5 blur-2xl pointer-events-none"
         />
 
-        <div className="relative p-5 sm:p-8 lg:p-10">
+        <div className="relative p-4 sm:p-8 lg:p-10">
           {/* Top row: greeting + ops jump */}
           <div className="flex items-start justify-between gap-4 mb-6 lg:mb-12">
             <div className="min-w-0 flex-1">

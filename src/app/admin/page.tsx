@@ -244,9 +244,10 @@ export default async function AdminDashboard() {
         }}
       />
 
-      {/* Refresh affordance — floats above the hero flow rather than
-          stealing real estate at the top. */}
-      <div className="flex items-center justify-end mb-4">
+      {/* Refresh affordance — desktop only, hidden on mobile to save
+          a full row of empty vertical space. Pull-to-refresh handles
+          the mobile case via the browser's native behavior. */}
+      <div className="hidden sm:flex items-center justify-end mb-4">
         <DashboardRefreshButton />
       </div>
 

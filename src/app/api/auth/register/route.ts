@@ -8,6 +8,12 @@ import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } fro
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
+import {
+  generateVerifyToken,
+  verifyTokenExpiryIso,
+  verifyUrlFor,
+} from "@/lib/email-verification";
+import { sendVerificationEmail } from "@/lib/notify";
 
 // Validate incoming registration payload. Kept inline (not in lib/schemas.ts)
 // because it's route-local and small.
@@ -72,6 +78,13 @@ export async function POST(request: NextRequest) {
     const passwordHash = await bcrypt.hash(password, 12);
     const needsApproval = ["staff", "ref", "front_desk"].includes(role);
 
+    // Email-verification (R780 port from OFF SZN). Token is issued at
+    // registration; user clicks the emailed link to flip
+    // emailVerifiedAt from null → ISO now. The UnverifiedEmailBanner
+    // nags them until they do.
+    const verifyToken = generateVerifyToken();
+    const verifyExpiresAt = verifyTokenExpiryIso();
+
     await db.insert(users).values({
       email: sanitizedEmail,
       name: sanitizedName,
@@ -79,7 +92,19 @@ export async function POST(request: NextRequest) {
       role,
       phone: sanitizedPhone,
       approved: !needsApproval,
+      emailVerifyToken: verifyToken,
+      emailVerifyExpiresAt: verifyExpiresAt,
     });
+
+    // Fire the verification email (non-blocking — if Gmail is down the
+    // user can still hit "Resend" from the banner later).
+    sendVerificationEmail({
+      to: sanitizedEmail,
+      name: sanitizedName,
+      verifyUrl: verifyUrlFor(verifyToken),
+    }).catch((err) =>
+      logger.warn("Failed to send verification email", { error: String(err) })
+    );
 
     // Save contact info to Google Drive and Sheets (non-blocking)
     const timestamp = timestampAZ();

@@ -14,6 +14,17 @@ export const users = sqliteTable("users", {
   phone: text("phone"),
   approved: integer("approved", { mode: "boolean" }).default(true), // staff/ref need admin approval
   memberSince: text("member_since"), // Year they started (e.g. "2022") — for loyalty badge
+  // ── Email verification (R780 port from OFF SZN) ─────────────────
+  // Null = unverified; ISO timestamp = verified at that moment.
+  // Sensitive actions gate on isVerified(user) from lib/email-verification.
+  emailVerifiedAt: text("email_verified_at"),
+  // 32-byte random hex token (64 chars). Unique so a bad RNG surfaces
+  // as a constraint violation instead of silently dupeing. Cleared on
+  // successful verify so links become one-use.
+  emailVerifyToken: text("email_verify_token").unique(),
+  // 24-hour default TTL — expired tokens return a specific error so
+  // the UI can offer a resend affordance.
+  emailVerifyExpiresAt: text("email_verify_expires_at"),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),

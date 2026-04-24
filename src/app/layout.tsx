@@ -21,6 +21,9 @@ const UpdatePrompt = dynamic(() => import("@/components/pwa/UpdatePrompt").then(
 const GoogleAnalytics = dynamic(() => import("@/components/analytics/GoogleAnalytics"));
 const MetaPixel = dynamic(() => import("@/components/analytics/MetaPixel"));
 const CookieConsent = dynamic(() => import("@/components/layout/CookieConsent"));
+const UnverifiedEmailBanner = dynamic(
+  () => import("@/components/layout/UnverifiedEmailBanner")
+);
 import { AppleSplashScreens } from "@/components/pwa/AppleSplashScreens";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/lib/constants";
 
@@ -114,6 +117,7 @@ export default function RootLayout({
           <RouteLoadingBar />
           <ScrollProgress />
           <Header />
+          <UnverifiedEmailBanner />
           <main id="main-content" tabIndex={-1} className="flex-1 page-transition focus:outline-none">{children}</main>
           <Footer />
           <MobileRegisterBar />

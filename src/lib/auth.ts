@@ -54,6 +54,10 @@ export const authOptions: NextAuthOptions = {
                   email: user.email,
                   name: user.name,
                   role: user.role as "admin" | "staff" | "ref" | "front_desk" | "coach" | "parent",
+                  // R780 — carry verification state into the JWT so
+                  // the banner + requireVerifiedEmail() can check
+                  // without an extra DB round trip.
+                  emailVerifiedAt: user.emailVerifiedAt ?? null,
                 };
               }
               // If DB user exists but password is wrong, don't fall through to env admin
@@ -79,6 +83,9 @@ export const authOptions: NextAuthOptions = {
               email: adminEmail,
               name: "Admin",
               role: "admin" as const,
+              // Env admin is always "verified" — no email flow exists
+              // for the bootstrap account.
+              emailVerifiedAt: new Date().toISOString(),
             };
           }
         }
@@ -107,8 +114,11 @@ export const authOptions: NextAuthOptions = {
             if (dbUser) {
               token.role = dbUser.role;
               token.userId = String(dbUser.id);
+              token.emailVerifiedAt = dbUser.emailVerifiedAt ?? null;
             } else {
-              // Auto-create with "parent" role (admin can change later)
+              // Google OAuth → the provider already vouched for this
+              // email address, so new OAuth users are auto-verified.
+              const nowIso = new Date().toISOString();
               const [newUser] = await db
                 .insert(users)
                 .values({
@@ -116,10 +126,16 @@ export const authOptions: NextAuthOptions = {
                   name: user.name || "User",
                   passwordHash: "google-oauth", // placeholder — not used for OAuth
                   role: "parent",
+                  emailVerifiedAt: nowIso,
                 })
-                .returning({ id: users.id, role: users.role });
+                .returning({
+                  id: users.id,
+                  role: users.role,
+                  emailVerifiedAt: users.emailVerifiedAt,
+                });
               token.role = newUser.role;
               token.userId = String(newUser.id);
+              token.emailVerifiedAt = newUser.emailVerifiedAt ?? null;
 
               // Save new OAuth registration to Drive + Sheets (non-blocking)
               const timestamp = timestampAZ();
@@ -147,6 +163,7 @@ export const authOptions: NextAuthOptions = {
           // Credentials login
           token.role = user.role || "parent";
           token.userId = user.id;
+          token.emailVerifiedAt = user.emailVerifiedAt ?? null;
         }
       }
       return token;
@@ -157,6 +174,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name as string;
         session.user.role = token.role;
         session.user.id = token.userId;
+        session.user.emailVerifiedAt = token.emailVerifiedAt ?? null;
       }
       return session;
     },

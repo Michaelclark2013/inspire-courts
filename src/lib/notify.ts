@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
+import { FACILITY_EMAIL, SITE_URL } from "@/lib/constants";
 
 export interface LeadData {
   name?: string;
@@ -130,5 +131,75 @@ export async function sendBroadcastEmail(opts: {
   } catch (error) {
     logger.error("Failed to send broadcast email", { error: String(error) });
     return { sent: 0, attempted: recipients.length };
+  }
+}
+
+// ── Email verification ────────────────────────────────────────────────
+// Sends the confirm-email link to a new user. Caller is responsible for
+// generating the token + updating users.email_verify_* columns first.
+
+interface VerificationEmailOpts {
+  to: string;
+  name: string; // used in greeting — falls back gracefully
+  verifyUrl: string;
+}
+
+export async function sendVerificationEmail(
+  opts: VerificationEmailOpts
+): Promise<{ sent: boolean }> {
+  if (!transporter) {
+    logger.warn("Gmail not configured, skipping verification email");
+    return { sent: false };
+  }
+
+  const greeting = opts.name && opts.name.trim().length > 0 ? opts.name : "there";
+  const subject = "Confirm your email — Inspire Courts AZ";
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 500px; margin: 0 auto;">
+      <div style="background: #0B1D3A; padding: 32px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+        <img src="${SITE_URL}/images/inspire-athletics-logo.png" alt="Inspire Courts" style="width: 72px; height: 72px; object-fit: contain; display: block; margin: 0 auto 12px;" />
+        <h2 style="color: white; margin: 0; font-size: 16px; letter-spacing: 2px;">INSPIRE COURTS</h2>
+      </div>
+      <div style="border: 1px solid #e0e0e0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
+        <p style="color: #333; font-size: 14px; line-height: 1.6;">
+          Hey ${greeting},
+        </p>
+        <p style="color: #333; font-size: 14px; line-height: 1.6;">
+          Thanks for signing up. Tap the button below to confirm your
+          email address and finish setting up your account.
+        </p>
+        <div style="text-align: center; margin: 24px 0;">
+          <a href="${opts.verifyUrl}" style="background: #CC0000; color: white; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">
+            Verify Email
+          </a>
+        </div>
+        <p style="color: #999; font-size: 12px; line-height: 1.5;">
+          This link expires in 24 hours. If you didn't sign up for an
+          Inspire Courts account, ignore this email.
+        </p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 16px 0;" />
+        <p style="color: #bbb; font-size: 11px; text-align: center;">
+          Inspire Courts AZ &bull; Gilbert, Arizona &bull;
+          <a href="mailto:${FACILITY_EMAIL}" style="color: #bbb;">${FACILITY_EMAIL}</a>
+        </p>
+      </div>
+    </div>
+  `;
+  const text = `Welcome to Inspire Courts. Confirm your email by opening this link within 24 hours: ${opts.verifyUrl}`;
+
+  try {
+    await transporter.sendMail({
+      from: `"Inspire Courts AZ" <${process.env.GMAIL_USER}>`,
+      to: opts.to,
+      subject,
+      html,
+      text,
+    });
+    return { sent: true };
+  } catch (error) {
+    logger.error("Failed to send verification email", {
+      error: String(error),
+    });
+    return { sent: false };
   }
 }

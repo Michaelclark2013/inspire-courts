@@ -20,7 +20,7 @@ export default function TournamentHero({
       <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-bg-primary" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.15),transparent_60%)]" />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 py-14 sm:py-20 lg:py-28 text-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 pt-20 pb-12 sm:py-20 lg:py-28 text-center">
         <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-5 font-heading">
           OFF SZN HOOPS
         </span>

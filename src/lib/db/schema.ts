@@ -1623,3 +1623,50 @@ export const permissionTemplates = sqliteTable("permission_templates", {
 }, (table) => [
   index("permission_templates_name_idx").on(table.name),
 ]);
+
+// ── Expenses ─────────────────────────────────────────────────────────
+// Counterweight to revenue. Admin enters running costs (rent, utility,
+// payroll chunks, marketing, supplies) so the dashboard can show real
+// P&L instead of just top-line revenue.
+export const EXPENSE_CATEGORIES = [
+  "rent",
+  "utilities",
+  "payroll",
+  "marketing",
+  "supplies",
+  "maintenance",
+  "insurance",
+  "vehicle",
+  "equipment",
+  "software",
+  "professional",
+  "taxes",
+  "other",
+] as const;
+
+export const expenses = sqliteTable("expenses", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  description: text("description").notNull(),
+  category: text("category", { enum: EXPENSE_CATEGORIES }).notNull().default("other"),
+  amountCents: integer("amount_cents").notNull(),
+  vendor: text("vendor"),
+  paymentMethod: text("payment_method"), // cash / card / ach / check
+  incurredAt: text("incurred_at").notNull(),
+  receiptUrl: text("receipt_url"),
+  // Tax-relevant flag surfaces on an end-of-year deductible report.
+  taxDeductible: integer("tax_deductible", { mode: "boolean" }).default(true),
+  // Optional links — e.g. vehicle maintenance ties back to a resource.
+  resourceId: integer("resource_id").references(() => resources.id, {
+    onDelete: "set null",
+  }),
+  notes: text("notes"),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("expenses_category_idx").on(table.category),
+  index("expenses_incurred_idx").on(table.incurredAt),
+  index("expenses_vendor_idx").on(table.vendor),
+]);

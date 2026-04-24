@@ -131,6 +131,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/members", label: "Members", desc: "Active memberships", icon: Users, page: "members" },
       { href: "/admin/membership-plans", label: "Plans", desc: "Tiers + pricing", icon: ClipboardList, page: "members" },
       { href: "/admin/revenue", label: "Revenue", desc: "Cash + card + Square", icon: DollarSign, page: "revenue" },
+      { href: "/admin/expenses", label: "Expenses", desc: "Running costs & P&L", icon: DollarSign, page: "revenue" },
       { href: "/admin/leads", label: "Leads", desc: "Prospects pipeline", icon: TrendingUp, page: "leads" },
       { href: "/admin/sponsors", label: "Sponsors", desc: "Partners & deals", icon: Handshake, page: "sponsors" },
     ],

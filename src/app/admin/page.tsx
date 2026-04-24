@@ -22,6 +22,7 @@ import WidgetStrip from "@/components/admin/dashboard/WidgetStrip";
 import FloorStatusCard from "@/components/admin/dashboard/FloorStatusCard";
 import OpsAlertsCard from "@/components/admin/dashboard/OpsAlertsCard";
 import RecentlyVisited from "@/components/admin/dashboard/RecentlyVisited";
+import CheckinProgressCard from "@/components/admin/dashboard/CheckinProgressCard";
 import { Suspense } from "react";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
@@ -262,6 +263,11 @@ export default async function AdminDashboard() {
 
       {/* Push notification opt-in */}
       <PushNotificationPrompt />
+
+      {/* Team check-in progress for the active tournament — auto
+          refreshes every 45s. Renders nothing when there's no active
+          tournament. */}
+      <CheckinProgressCard />
 
       {/* Court-by-court status + who's clocked in right now. Auto-
           refreshes every 30s. The core front-desk ops pair. */}

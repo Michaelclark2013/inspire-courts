@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import PlayerDashboard from "@/components/portal/PlayerDashboard";
 import {
   User,
   Users,
@@ -65,6 +67,7 @@ const HIGHLIGHTS = [
 type Step = "select" | "lookup" | "portal";
 
 export default function PlayerPortalPage() {
+  const { status } = useSession();
   const [step, setStep] = useState<Step>("select");
   const [name, setName] = useState("");
   const [team, setTeam] = useState("");
@@ -91,10 +94,13 @@ export default function PlayerPortalPage() {
         </Link>
       </header>
 
-      <div className="max-w-lg mx-auto px-4 py-6">
+      <div className="max-w-2xl mx-auto px-4 py-6">
+
+        {/* ── Authenticated player dashboard (real data) ─────────── */}
+        {status === "authenticated" && <PlayerDashboard />}
 
         {/* ── Step 1: Role Selection ───────────────────────────────── */}
-        {step === "select" && (
+        {status !== "authenticated" && step === "select" && (
           <div className="space-y-6">
             {/* Hero */}
             <div className="text-center pt-4 pb-2">
@@ -148,7 +154,7 @@ export default function PlayerPortalPage() {
         )}
 
         {/* ── Step 2: Lookup Form ──────────────────────────────────── */}
-        {step === "lookup" && (
+        {status !== "authenticated" && step === "lookup" && (
           <div className="space-y-6">
             <div className="flex items-center gap-3 pt-2">
               <button onClick={() => setStep("select")} className="text-red hover:text-red-hover transition-colors text-sm font-semibold flex items-center gap-1">
@@ -202,7 +208,7 @@ export default function PlayerPortalPage() {
         )}
 
         {/* ── Step 3: Player Portal ────────────────────────────────── */}
-        {step === "portal" && (
+        {status !== "authenticated" && step === "portal" && (
           <div className="space-y-5">
 
             {/* Player card */}

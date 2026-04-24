@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import CoachDashboard from "@/components/portal/CoachDashboard";
 import {
   Users,
   Calendar,
@@ -70,6 +72,7 @@ const GAMEDAY_RULES = [
 type Tab = "roster" | "schedule" | "results" | "gameday" | "lineup";
 
 export default function CoachPortalPage() {
+  const { status } = useSession();
   const [step, setStep] = useState<"lookup" | "portal">("lookup");
   const [name, setName] = useState("");
   const [team, setTeam] = useState("");
@@ -107,10 +110,15 @@ export default function CoachPortalPage() {
         </Link>
       </header>
 
-      <div className="max-w-lg mx-auto px-4 py-6">
+      <div className="max-w-2xl mx-auto px-4 py-6">
 
-        {/* ── Lookup Form ─────────────────────────────────────────── */}
-        {step === "lookup" && (
+        {/* ── Authenticated coach dashboard (real data) ─────────── */}
+        {status === "authenticated" && (
+          <CoachDashboard />
+        )}
+
+        {/* ── Anonymous-visitor lookup + demo portal ─────────────── */}
+        {status !== "authenticated" && step === "lookup" && (
           <div className="space-y-6">
             <div className="text-center pt-4 pb-2">
               <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -181,7 +189,7 @@ export default function CoachPortalPage() {
         )}
 
         {/* ── Coach Portal ─────────────────────────────────────────── */}
-        {step === "portal" && (
+        {status !== "authenticated" && step === "portal" && (
           <div className="space-y-5">
 
             {/* Coach card */}

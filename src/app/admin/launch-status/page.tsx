@@ -53,7 +53,7 @@ const GROUP_LABELS: Record<string, string> = {
 
 export default function LaunchStatusPage() {
   const [data, setData] = useState<Data | null>(null);
-  const [seeding, setSeeding] = useState(false);
+  const [seedingKey, setSeedingKey] = useState<string | null>(null);
   const [seedMsg, setSeedMsg] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -65,16 +65,16 @@ export default function LaunchStatusPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  async function seedTemplates() {
-    setSeeding(true);
+  async function seedPath(label: string, path: string, key: string) {
+    setSeedingKey(key);
     setSeedMsg(null);
     try {
-      const res = await fetch("/api/admin/seed/permission-templates", { method: "POST" });
+      const res = await fetch(path, { method: "POST" });
       const body = await res.json();
-      setSeedMsg(`Inserted ${body.inserted}, skipped ${body.skipped} existing.`);
+      setSeedMsg(`${label}: inserted ${body.inserted || 0}, skipped ${body.skipped || 0}.`);
       load();
-    } catch { /* ignore */ }
-    finally { setSeeding(false); }
+    } catch { setSeedMsg(`${label} failed`); }
+    finally { setSeedingKey(null); }
   }
 
   function copyMissing() {
@@ -96,10 +96,38 @@ export default function LaunchStatusPage() {
 
   const seedItems = [
     { key: "adminUsers", label: "Admin account", count: data.seed.adminUsers, ready: data.rollup.hasAdmin, href: "/admin/users" },
-    { key: "permissionTemplates", label: "Permission templates", count: data.seed.permissionTemplates, ready: data.rollup.hasTemplates, href: "/admin/permissions/templates", action: seedTemplates, actionLabel: "Seed defaults", actionBusy: seeding },
+    {
+      key: "permissionTemplates",
+      label: "Permission templates",
+      count: data.seed.permissionTemplates,
+      ready: data.rollup.hasTemplates,
+      href: "/admin/permissions/templates",
+      action: () => seedPath("Permission Templates", "/api/admin/seed/permission-templates", "pt"),
+      actionLabel: "Seed defaults",
+      actionBusy: seedingKey === "pt",
+    },
     { key: "tournaments", label: "Tournament configured", count: data.seed.tournaments, ready: data.rollup.hasTournament, href: "/admin/tournaments/manage" },
     { key: "fleetVehicles", label: "Fleet vehicles", count: data.seed.fleetVehicles, ready: data.rollup.hasVehicles, href: "/admin/resources/new" },
-    { key: "equipmentItems", label: "Inventory items", count: data.seed.equipmentItems, ready: data.rollup.hasInventory, href: "/admin/equipment" },
+    {
+      key: "equipmentItems",
+      label: "Inventory items",
+      count: data.seed.equipmentItems,
+      ready: data.rollup.hasInventory,
+      href: "/admin/equipment",
+      action: () => seedPath("Inventory", "/api/admin/seed/inventory", "inv"),
+      actionLabel: "Seed 29 starter items",
+      actionBusy: seedingKey === "inv",
+    },
+    {
+      key: "membershipPlans",
+      label: "Membership plans",
+      count: 0,
+      ready: false,
+      href: "/admin/membership-plans",
+      action: () => seedPath("Membership Plans", "/api/admin/seed/membership-plans", "mp"),
+      actionLabel: "Seed 5 default tiers",
+      actionBusy: seedingKey === "mp",
+    },
   ];
 
   const rollupItems = [

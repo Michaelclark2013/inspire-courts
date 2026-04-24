@@ -14,6 +14,8 @@ import GymScheduleCard from "@/components/admin/dashboard/GymScheduleCard";
 import DashboardHero from "@/components/admin/dashboard/DashboardHero";
 import TodayCard from "@/components/admin/dashboard/TodayCard";
 import FleetAlertsCard from "@/components/admin/dashboard/FleetAlertsCard";
+import AccessDeniedBanner from "@/components/admin/dashboard/AccessDeniedBanner";
+import { Suspense } from "react";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
 import {
@@ -212,6 +214,11 @@ export default async function AdminDashboard() {
       className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 pt-[max(env(safe-area-inset-top),0.75rem)] max-w-full"
       aria-labelledby="dashboard-heading"
     >
+      {/* Access-denied toast when a page redirect sends ?denied=<page> */}
+      <Suspense fallback={null}>
+        <AccessDeniedBanner />
+      </Suspense>
+
       {/* Dramatic navy-gradient hero — greeting + bento KPIs */}
       <DashboardHero
         greeting={greeting}

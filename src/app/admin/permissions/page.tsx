@@ -11,6 +11,9 @@ import {
   Filter,
   ArrowUpRight,
   Users as UsersIcon,
+  CheckSquare,
+  Square,
+  X,
 } from "lucide-react";
 
 type UserRow = {
@@ -47,6 +50,8 @@ export default function PermissionsIndexPage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -157,10 +162,29 @@ export default function PermissionsIndexPage() {
         <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
           <ul className="divide-y divide-border">
             {filtered.map((u) => (
-              <li key={u.id}>
+              <li key={u.id} className="flex items-center group hover:bg-off-white transition-colors">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelected((prev) => {
+                      const next = new Set(prev);
+                      if (next.has(u.id)) next.delete(u.id);
+                      else next.add(u.id);
+                      return next;
+                    });
+                  }}
+                  aria-label={selected.has(u.id) ? "Deselect" : "Select"}
+                  className="pl-4 pr-2 py-4 flex-shrink-0"
+                >
+                  {selected.has(u.id) ? (
+                    <CheckSquare className="w-5 h-5 text-red" />
+                  ) : (
+                    <Square className="w-5 h-5 text-text-muted group-hover:text-navy" />
+                  )}
+                </button>
                 <Link
                   href={`/admin/permissions/${u.id}`}
-                  className="flex items-center gap-3 px-5 py-4 hover:bg-off-white transition-colors group"
+                  className="flex-1 flex items-center gap-3 pr-5 py-4"
                 >
                   {u.photoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -208,6 +232,217 @@ export default function PermissionsIndexPage() {
           </ul>
         </div>
       )}
+
+      {/* Floating bulk action bar */}
+      {selected.size > 0 && (
+        <div className="fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 bg-navy text-white rounded-full shadow-2xl px-5 py-3 flex items-center gap-3 z-40 max-w-[95vw]">
+          <span className="text-sm font-bold">{selected.size} selected</span>
+          <button
+            onClick={() => setBulkOpen(true)}
+            className="bg-red hover:bg-red-hover rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider"
+          >
+            Bulk edit
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            aria-label="Clear selection"
+            className="text-white/70 hover:text-white p-1"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Bulk action dialog */}
+      {bulkOpen && (
+        <BulkDialog
+          userIds={Array.from(selected)}
+          onClose={() => setBulkOpen(false)}
+          onApplied={() => { setBulkOpen(false); setSelected(new Set()); load(); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function BulkDialog({
+  userIds,
+  onClose,
+  onApplied,
+}: {
+  userIds: number[];
+  onClose: () => void;
+  onApplied: () => void;
+}) {
+  const [action, setAction] = useState<"grant" | "revoke" | "clear">("grant");
+  const [pages, setPages] = useState<Set<string>>(new Set());
+  const [reason, setReason] = useState("");
+  const [preset, setPreset] = useState<string>("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Preset bundles — common permission packages so admin can apply
+  // a whole role-like slice in one click.
+  const PRESETS: Record<string, { label: string; pages: string[] }> = {
+    scorekeeper: { label: "Scorekeeper", pages: ["score_entry", "scores", "my_schedule"] },
+    front_desk_plus: { label: "Front Desk+", pages: ["checkin", "members", "programs", "scores", "players"] },
+    read_only: { label: "Read-only admin", pages: ["overview", "scores", "tournaments", "teams", "players"] },
+    tournament_director: { label: "Tournament Director", pages: ["tournaments", "teams", "players", "scores", "score_entry", "checkin", "announcements"] },
+    money_only: { label: "Revenue view", pages: ["revenue", "leads", "prospects"] },
+  };
+
+  const ALL_PAGES = [
+    "overview", "teams", "scores", "score_entry", "players", "checkin",
+    "tournaments", "programs", "roster", "timeclock", "shifts", "payroll",
+    "certifications", "time_off", "approvals", "members", "revenue",
+    "leads", "prospects", "sponsors", "resources", "equipment",
+    "maintenance", "schools", "announcements", "content", "files",
+    "users", "audit_log", "analytics", "contacts", "portal",
+    "my_schedule", "my_history", "staff_refs", "search", "health",
+  ];
+
+  function applyPreset(key: string) {
+    setPreset(key);
+    if (PRESETS[key]) setPages(new Set(PRESETS[key].pages));
+  }
+
+  async function apply() {
+    if (pages.size === 0) {
+      setError("Pick at least one page");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/permissions/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userIds,
+          pages: Array.from(pages),
+          action,
+          reason: reason.trim() || null,
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d?.error || "Failed");
+      }
+      onApplied();
+    } catch (err) {
+      setError((err as Error).message);
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-[92vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
+          <h2 className="text-navy font-bold text-lg font-heading">
+            Bulk Edit · {userIds.length} user{userIds.length === 1 ? "" : "s"}
+          </h2>
+          <button onClick={onClose} className="text-text-muted hover:text-navy p-1">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="p-5 space-y-4">
+          <div>
+            <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2">Action</label>
+            <div className="grid grid-cols-3 gap-2">
+              {([
+                ["grant", "Grant", "bg-emerald-50 text-emerald-700 border-emerald-200"],
+                ["revoke", "Revoke", "bg-red/10 text-red border-red/20"],
+                ["clear", "Clear override", "bg-off-white text-text-muted border-border"],
+              ] as const).map(([k, label, cls]) => (
+                <button
+                  key={k}
+                  onClick={() => setAction(k)}
+                  className={`border rounded-xl px-3 py-2.5 text-sm font-bold transition-colors ${
+                    action === k ? cls : "bg-white border-border text-text-muted hover:bg-off-white"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2">Presets</label>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(PRESETS).map(([k, p]) => (
+                <button
+                  key={k}
+                  onClick={() => applyPreset(k)}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
+                    preset === k ? "bg-navy text-white" : "bg-off-white text-navy hover:bg-border"
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+              <button
+                onClick={() => { setPages(new Set()); setPreset(""); }}
+                className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white border border-border text-text-muted hover:bg-off-white"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-2">
+              Pages ({pages.size} selected)
+            </label>
+            <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto bg-off-white border border-border rounded-xl p-2">
+              {ALL_PAGES.map((p) => (
+                <label key={p} className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={pages.has(p)}
+                    onChange={() => {
+                      setPages((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(p)) next.delete(p);
+                        else next.add(p);
+                        return next;
+                      });
+                      setPreset("");
+                    }}
+                    className="w-3.5 h-3.5"
+                  />
+                  <span className="text-navy text-xs font-semibold font-mono truncate">{p}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Reason (optional)</label>
+            <input
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="w-full bg-off-white border border-border rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60"
+              placeholder="Why are you making this change?"
+            />
+          </div>
+
+          {error && <div className="bg-red/10 border border-red/20 text-red rounded-xl px-4 py-2.5 text-sm">{error}</div>}
+        </div>
+        <div className="sticky bottom-0 bg-white border-t border-border px-5 py-3 flex gap-2">
+          <button onClick={onClose} className="flex-1 text-navy font-semibold text-sm py-2.5 rounded-xl border border-border hover:bg-off-white">
+            Cancel
+          </button>
+          <button
+            onClick={apply}
+            disabled={busy || pages.size === 0}
+            className="flex-1 bg-red hover:bg-red-hover disabled:opacity-50 text-white font-bold text-sm py-2.5 rounded-xl uppercase tracking-wider"
+          >
+            {busy ? "Applying…" : `Apply to ${userIds.length}`}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

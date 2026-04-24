@@ -44,8 +44,7 @@ import {
   Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { canAccess, ROLE_LABELS } from "@/lib/permissions";
-import type { AdminPage } from "@/lib/permissions";
+import { canAccessWithOverrides, ROLE_LABELS, type AdminPage } from "@/lib/permissions";
 import type { UserRole } from "@/types/next-auth";
 
 type NavItem = {
@@ -212,14 +211,19 @@ export default function AdminSidebar() {
     });
   }
 
-  const visibleEventSetup = EVENT_SETUP.filter((item) => canAccess(role, item.page));
-  const visibleGameDay = GAME_DAY.filter((item) => canAccess(role, item.page));
-  const visibleStaffOps = STAFF_OPS.filter((item) => canAccess(role, item.page));
-  const visibleMemberOps = MEMBER_OPS.filter((item) => canAccess(role, item.page));
-  const visibleFinance = FINANCE.filter((item) => canAccess(role, item.page));
-  const visibleAdmin = ADMIN_SECTION.filter((item) => canAccess(role, item.page));
-  const visiblePersonal = PERSONAL.filter((item) => canAccess(role, item.page));
-  const visibleBottomTabs = BOTTOM_TABS.filter((item) => canAccess(role, item.page));
+  // Respect per-user permission overrides too — so a revoked page
+  // disappears from the sidebar immediately (not just the tile grid).
+  const permOverrides = (session?.user as { permissionOverrides?: Array<{ page: AdminPage; granted: boolean }> } | undefined)?.permissionOverrides;
+  const allowed = (page: AdminPage) => canAccessWithOverrides(role, page, permOverrides);
+
+  const visibleEventSetup = EVENT_SETUP.filter((item) => allowed(item.page));
+  const visibleGameDay = GAME_DAY.filter((item) => allowed(item.page));
+  const visibleStaffOps = STAFF_OPS.filter((item) => allowed(item.page));
+  const visibleMemberOps = MEMBER_OPS.filter((item) => allowed(item.page));
+  const visibleFinance = FINANCE.filter((item) => allowed(item.page));
+  const visibleAdmin = ADMIN_SECTION.filter((item) => allowed(item.page));
+  const visiblePersonal = PERSONAL.filter((item) => allowed(item.page));
+  const visibleBottomTabs = BOTTOM_TABS.filter((item) => allowed(item.page));
 
   // Close more drawer on route change or Escape
   useEffect(() => {

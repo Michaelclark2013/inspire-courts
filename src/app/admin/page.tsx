@@ -24,6 +24,7 @@ import OpsAlertsCard from "@/components/admin/dashboard/OpsAlertsCard";
 import RecentlyVisited from "@/components/admin/dashboard/RecentlyVisited";
 import CheckinProgressCard from "@/components/admin/dashboard/CheckinProgressCard";
 import PnLCard from "@/components/admin/dashboard/PnLCard";
+import WeeklyDigestCard from "@/components/admin/dashboard/WeeklyDigestCard";
 import { Suspense } from "react";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
@@ -272,6 +273,9 @@ export default async function AdminDashboard() {
 
       {/* Profit & Loss — month revenue vs expenses with margin. */}
       <PnLCard />
+
+      {/* Weekly digest shortcut — view or email-me the 7-day summary. */}
+      <WeeklyDigestCard />
 
       {/* Court-by-court status + who's clocked in right now. Auto-
           refreshes every 30s. The core front-desk ops pair. */}

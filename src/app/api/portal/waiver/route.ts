@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { requireVerifiedEmail } from "@/lib/require-verified";
 import { db } from "@/lib/db";
 import { waivers } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -42,7 +43,13 @@ export async function GET() {
 // POST /api/portal/waiver — submit a player waiver
 // Waivers are saved to Google Sheets (playerCheckIn sheet) with full event + waiver data.
 // Each row is tagged with the event name so they can be filtered/exported per event.
+//
+// Requires a verified email. Waivers are legal documents; we want the
+// signer's email address to be provably theirs before we accept the
+// signature and store it under their account.
 export async function POST(request: NextRequest) {
+  const guard = await requireVerifiedEmail();
+  if (guard.error) return guard.error;
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

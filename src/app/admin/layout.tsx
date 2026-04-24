@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AdminSidebar from "@/components/layout/AdminSidebar";
+import MobileAdminHeader from "@/components/admin/MobileAdminHeader";
 import AdminFAB from "@/components/admin/AdminFAB";
 import KeyboardShortcutsHint from "@/components/admin/KeyboardShortcutsHint";
 import SessionProvider from "@/components/layout/SessionProvider";
@@ -49,6 +50,7 @@ export default async function AdminLayout({
         <div className="min-h-screen bg-off-white lg:flex">
           <AdminSidebar />
           <main id="admin-main" className="flex-1 min-w-0 pb-20 lg:pb-0 page-transition">
+            <MobileAdminHeader />
             <OfflineBanner />
             {children}
           </main>

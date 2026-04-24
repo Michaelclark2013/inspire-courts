@@ -233,40 +233,73 @@ function TeamsPageShell({
               No teams registered yet.
             </p>
           ) : (
-            <div className="overflow-x-auto -mx-1">
-              <table className="w-full text-sm">
-                <thead className="text-[11px] uppercase tracking-wider text-text-secondary border-b border-border">
-                  <tr>
-                    <th className="text-left px-2 py-2 font-semibold">Team</th>
-                    <th className="text-left px-2 py-2 font-semibold">Coach</th>
-                    <th className="text-left px-2 py-2 font-semibold">Division</th>
-                    <th className="text-left px-2 py-2 font-semibold">Status</th>
-                    <th className="text-left px-2 py-2 font-semibold">Payment</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tournamentTeamRegs.map((r) => (
-                    <tr key={r.id} className="border-b border-border/50 last:border-0">
-                      <td className="px-2 py-2 text-navy font-medium">{r.teamName}</td>
-                      <td className="px-2 py-2 text-text-secondary">
-                        <div>{r.coachName}</div>
-                        <div className="text-[11px] text-text-secondary/80">
-                          {r.coachEmail}
-                          {r.coachPhone ? ` · ${r.coachPhone}` : ""}
-                        </div>
-                      </td>
-                      <td className="px-2 py-2 text-navy">{r.division || "—"}</td>
-                      <td className="px-2 py-2">
+            <>
+              {/* Mobile: card layout — stacked, tap-friendly */}
+              <ul className="md:hidden space-y-2">
+                {tournamentTeamRegs.map((r) => (
+                  <li
+                    key={r.id}
+                    className="bg-off-white border border-border rounded-xl p-3 text-sm"
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-navy truncate">
+                          {r.teamName}
+                        </p>
+                        <p className="text-xs text-text-secondary truncate">
+                          {r.coachName}
+                          {r.division ? ` · ${r.division}` : ""}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
                         <StatusBadge status={r.status} />
-                      </td>
-                      <td className="px-2 py-2">
                         <PaymentBadge status={r.paymentStatus} />
-                      </td>
+                      </div>
+                    </div>
+                    <div className="text-[11px] text-text-secondary/80 truncate">
+                      {r.coachEmail}
+                      {r.coachPhone ? ` · ${r.coachPhone}` : ""}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Desktop: table — denser, sortable */}
+              <div className="hidden md:block overflow-x-auto -mx-1">
+                <table className="w-full text-sm">
+                  <thead className="text-[11px] uppercase tracking-wider text-text-secondary border-b border-border">
+                    <tr>
+                      <th className="text-left px-2 py-2 font-semibold">Team</th>
+                      <th className="text-left px-2 py-2 font-semibold">Coach</th>
+                      <th className="text-left px-2 py-2 font-semibold">Division</th>
+                      <th className="text-left px-2 py-2 font-semibold">Status</th>
+                      <th className="text-left px-2 py-2 font-semibold">Payment</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {tournamentTeamRegs.map((r) => (
+                      <tr key={r.id} className="border-b border-border/50 last:border-0">
+                        <td className="px-2 py-2 text-navy font-medium">{r.teamName}</td>
+                        <td className="px-2 py-2 text-text-secondary">
+                          <div>{r.coachName}</div>
+                          <div className="text-[11px] text-text-secondary/80">
+                            {r.coachEmail}
+                            {r.coachPhone ? ` · ${r.coachPhone}` : ""}
+                          </div>
+                        </td>
+                        <td className="px-2 py-2 text-navy">{r.division || "—"}</td>
+                        <td className="px-2 py-2">
+                          <StatusBadge status={r.status} />
+                        </td>
+                        <td className="px-2 py-2">
+                          <PaymentBadge status={r.paymentStatus} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )
         ) : (
           <p className="text-text-secondary text-sm text-center py-6">

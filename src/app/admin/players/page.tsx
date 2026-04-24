@@ -179,47 +179,78 @@ export default async function PlayersPage() {
           </div>
         </div>
         {activeTournament && recentCheckins.length > 0 ? (
-          <div className="overflow-x-auto -mx-1">
-            <table className="w-full text-sm">
-              <thead className="text-[11px] uppercase tracking-wider text-text-secondary border-b border-border">
-                <tr>
-                  <th className="text-left px-2 py-2 font-semibold">Player</th>
-                  <th className="text-left px-2 py-2 font-semibold">Team</th>
-                  <th className="text-left px-2 py-2 font-semibold">Division</th>
-                  <th className="text-left px-2 py-2 font-semibold">Type</th>
-                  <th className="text-left px-2 py-2 font-semibold">When</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentCheckins.slice(0, 25).map((c) => (
-                  <tr key={c.id} className="border-b border-border/50 last:border-0">
-                    <td className="px-2 py-2 text-navy font-medium">{c.playerName}</td>
-                    <td className="px-2 py-2 text-navy">{c.teamName}</td>
-                    <td className="px-2 py-2 text-text-secondary">{c.division || "—"}</td>
-                    <td className="px-2 py-2">
-                      <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold bg-off-white text-navy">
-                        {c.type}
-                      </span>
-                    </td>
-                    <td className="px-2 py-2 text-text-secondary text-xs">
-                      {(() => {
-                        try {
-                          return formatDateShort(c.timestamp);
-                        } catch {
-                          return c.timestamp.slice(0, 10);
-                        }
-                      })()}
-                    </td>
+          <>
+            {/* Mobile: stacked cards */}
+            <ul className="md:hidden space-y-2">
+              {recentCheckins.slice(0, 25).map((c) => (
+                <li
+                  key={c.id}
+                  className="bg-off-white border border-border rounded-xl p-3 text-sm"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-navy truncate">
+                        {c.playerName}
+                      </p>
+                      <p className="text-xs text-text-secondary truncate">
+                        {c.teamName}
+                        {c.division ? ` · ${c.division}` : ""}
+                      </p>
+                    </div>
+                    <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold bg-navy text-white flex-shrink-0">
+                      {c.type}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-text-secondary/80">
+                    {(() => {
+                      try { return formatDateShort(c.timestamp); }
+                      catch { return c.timestamp.slice(0, 10); }
+                    })()}
+                  </p>
+                </li>
+              ))}
+            </ul>
+
+            {/* Desktop: table */}
+            <div className="hidden md:block overflow-x-auto -mx-1">
+              <table className="w-full text-sm">
+                <thead className="text-[11px] uppercase tracking-wider text-text-secondary border-b border-border">
+                  <tr>
+                    <th className="text-left px-2 py-2 font-semibold">Player</th>
+                    <th className="text-left px-2 py-2 font-semibold">Team</th>
+                    <th className="text-left px-2 py-2 font-semibold">Division</th>
+                    <th className="text-left px-2 py-2 font-semibold">Type</th>
+                    <th className="text-left px-2 py-2 font-semibold">When</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            {recentCheckins.length > 25 && (
-              <p className="text-[11px] text-text-secondary mt-2 text-right">
-                Showing 25 of {recentCheckins.length}.
-              </p>
-            )}
-          </div>
+                </thead>
+                <tbody>
+                  {recentCheckins.slice(0, 25).map((c) => (
+                    <tr key={c.id} className="border-b border-border/50 last:border-0">
+                      <td className="px-2 py-2 text-navy font-medium">{c.playerName}</td>
+                      <td className="px-2 py-2 text-navy">{c.teamName}</td>
+                      <td className="px-2 py-2 text-text-secondary">{c.division || "—"}</td>
+                      <td className="px-2 py-2">
+                        <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold bg-off-white text-navy">
+                          {c.type}
+                        </span>
+                      </td>
+                      <td className="px-2 py-2 text-text-secondary text-xs">
+                        {(() => {
+                          try { return formatDateShort(c.timestamp); }
+                          catch { return c.timestamp.slice(0, 10); }
+                        })()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {recentCheckins.length > 25 && (
+                <p className="text-[11px] text-text-secondary mt-2 text-right">
+                  Showing 25 of {recentCheckins.length}.
+                </p>
+              )}
+            </div>
+          </>
         ) : (
           <p className="text-text-secondary text-sm text-center py-6">
             {activeTournament

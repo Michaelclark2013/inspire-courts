@@ -773,6 +773,27 @@ export const resourceBookings = sqliteTable("resource_bookings", {
   renterLicenseNumber: text("renter_license_number"),
   renterLicenseState: text("renter_license_state"),
   renterLicenseExpiry: text("renter_license_expiry"),
+  renterLicensePhotoUrl: text("renter_license_photo_url"),
+  // Renter's personal auto insurance — captured per-rental so the
+  // rental company can verify coverage before handing over a vehicle.
+  // Separate from the business's own insurance on the resources row.
+  renterInsuranceProvider: text("renter_insurance_provider"),
+  renterInsurancePolicyNumber: text("renter_insurance_policy_number"),
+  renterInsuranceExpiry: text("renter_insurance_expiry"),
+  renterInsurancePhotoUrl: text("renter_insurance_photo_url"),
+  // Renter's vehicle registration (if using their own insurance to
+  // cover this rental — some policies require it on file).
+  renterRegistrationNumber: text("renter_registration_number"),
+  renterRegistrationState: text("renter_registration_state"),
+  renterRegistrationExpiry: text("renter_registration_expiry"),
+  // Waiver: renter declined optional damage coverage offered by us.
+  declinedCollisionWaiver: integer("declined_collision_waiver", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  // Secondary/additional driver — name only; licenses of extra drivers
+  // go on a separate addendum that gets attached as a photo URL.
+  additionalDriverName: text("additional_driver_name"),
+  additionalDriverLicense: text("additional_driver_license"),
   // Vehicle checkout/checkin snapshots.
   odometerStart: integer("odometer_start"),
   odometerEnd: integer("odometer_end"),

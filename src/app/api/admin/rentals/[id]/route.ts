@@ -57,6 +57,12 @@ export async function PATCH(
       "odometerStart", "odometerEnd", "fuelStart", "fuelEnd",
       "checkoutAt", "checkinAt", "signatureUrl",
       "renterLicenseNumber", "renterLicenseState", "renterLicenseExpiry",
+      "renterLicensePhotoUrl",
+      "renterInsuranceProvider", "renterInsurancePolicyNumber",
+      "renterInsuranceExpiry", "renterInsurancePhotoUrl",
+      "renterRegistrationNumber", "renterRegistrationState", "renterRegistrationExpiry",
+      "declinedCollisionWaiver",
+      "additionalDriverName", "additionalDriverLicense",
       "depositReleased", "depositReleasedAt",
       "damageChargeCents", "fuelChargeCents", "lateFeeCents",
     ]);

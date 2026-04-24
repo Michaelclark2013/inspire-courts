@@ -128,6 +128,27 @@ export async function POST(request: NextRequest) {
           ? body.renterLicenseState.trim() || null : null,
         renterLicenseExpiry: typeof body?.renterLicenseExpiry === "string"
           ? body.renterLicenseExpiry.trim() || null : null,
+        renterLicensePhotoUrl: typeof body?.renterLicensePhotoUrl === "string"
+          ? body.renterLicensePhotoUrl.trim() || null : null,
+        renterInsuranceProvider: typeof body?.renterInsuranceProvider === "string"
+          ? body.renterInsuranceProvider.trim() || null : null,
+        renterInsurancePolicyNumber: typeof body?.renterInsurancePolicyNumber === "string"
+          ? body.renterInsurancePolicyNumber.trim() || null : null,
+        renterInsuranceExpiry: typeof body?.renterInsuranceExpiry === "string"
+          ? body.renterInsuranceExpiry.trim() || null : null,
+        renterInsurancePhotoUrl: typeof body?.renterInsurancePhotoUrl === "string"
+          ? body.renterInsurancePhotoUrl.trim() || null : null,
+        renterRegistrationNumber: typeof body?.renterRegistrationNumber === "string"
+          ? body.renterRegistrationNumber.trim() || null : null,
+        renterRegistrationState: typeof body?.renterRegistrationState === "string"
+          ? body.renterRegistrationState.trim() || null : null,
+        renterRegistrationExpiry: typeof body?.renterRegistrationExpiry === "string"
+          ? body.renterRegistrationExpiry.trim() || null : null,
+        declinedCollisionWaiver: !!body?.declinedCollisionWaiver,
+        additionalDriverName: typeof body?.additionalDriverName === "string"
+          ? body.additionalDriverName.trim() || null : null,
+        additionalDriverLicense: typeof body?.additionalDriverLicense === "string"
+          ? body.additionalDriverLicense.trim() || null : null,
         startAt,
         endAt,
         status: (RESOURCE_BOOKING_STATUS as readonly string[]).includes(body?.status)

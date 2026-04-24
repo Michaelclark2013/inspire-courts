@@ -43,6 +43,19 @@ export default function NewRentalPage() {
   const [renterLicenseNumber, setRenterLicenseNumber] = useState("");
   const [renterLicenseState, setRenterLicenseState] = useState("");
   const [renterLicenseExpiry, setRenterLicenseExpiry] = useState("");
+  const [renterLicensePhotoUrl, setRenterLicensePhotoUrl] = useState("");
+  // Renter insurance (per-rental capture)
+  const [renterInsuranceProvider, setRenterInsuranceProvider] = useState("");
+  const [renterInsurancePolicyNumber, setRenterInsurancePolicyNumber] = useState("");
+  const [renterInsuranceExpiry, setRenterInsuranceExpiry] = useState("");
+  const [renterInsurancePhotoUrl, setRenterInsurancePhotoUrl] = useState("");
+  // Renter registration (optional — used when they're bringing own coverage)
+  const [renterRegistrationNumber, setRenterRegistrationNumber] = useState("");
+  const [renterRegistrationState, setRenterRegistrationState] = useState("");
+  const [renterRegistrationExpiry, setRenterRegistrationExpiry] = useState("");
+  const [declinedCollisionWaiver, setDeclinedCollisionWaiver] = useState(false);
+  const [additionalDriverName, setAdditionalDriverName] = useState("");
+  const [additionalDriverLicense, setAdditionalDriverLicense] = useState("");
   const [purpose, setPurpose] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -80,6 +93,12 @@ export default function NewRentalPage() {
           endAt: new Date(endAt).toISOString(),
           renterName, renterEmail, renterPhone,
           renterLicenseNumber, renterLicenseState, renterLicenseExpiry,
+          renterLicensePhotoUrl,
+          renterInsuranceProvider, renterInsurancePolicyNumber,
+          renterInsuranceExpiry, renterInsurancePhotoUrl,
+          renterRegistrationNumber, renterRegistrationState, renterRegistrationExpiry,
+          declinedCollisionWaiver,
+          additionalDriverName, additionalDriverLicense,
           purpose, notes,
           status: "confirmed",
         }),
@@ -210,8 +229,88 @@ export default function NewRentalPage() {
               </div>
             </div>
             <div className="sm:col-span-2">
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Driver's License Photo URL</label>
+              <input value={renterLicensePhotoUrl} onChange={(e) => setRenterLicensePhotoUrl(e.target.value)} className={ipt} placeholder="https://... (uploaded photo of DL)" />
+            </div>
+            <div className="sm:col-span-2">
               <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Notes</label>
               <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className={`${ipt} resize-none`} />
+            </div>
+          </div>
+        </div>
+
+        {/* Renter's personal auto insurance */}
+        <div className="bg-white border border-border rounded-2xl shadow-sm p-5">
+          <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Renter Insurance</h2>
+          <p className="text-text-muted text-xs mb-4">
+            Capture the renter's personal auto insurance. Required unless they accept our collision damage waiver below.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Provider</label>
+              <input value={renterInsuranceProvider} onChange={(e) => setRenterInsuranceProvider(e.target.value)} className={ipt} placeholder="Geico, State Farm, etc." />
+            </div>
+            <div>
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Policy #</label>
+              <input value={renterInsurancePolicyNumber} onChange={(e) => setRenterInsurancePolicyNumber(e.target.value)} className={ipt} />
+            </div>
+            <div>
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Policy Expires</label>
+              <input type="date" value={renterInsuranceExpiry} onChange={(e) => setRenterInsuranceExpiry(e.target.value)} className={ipt} />
+            </div>
+            <div>
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Insurance Card Photo URL</label>
+              <input value={renterInsurancePhotoUrl} onChange={(e) => setRenterInsurancePhotoUrl(e.target.value)} className={ipt} placeholder="https://..." />
+            </div>
+            <label className="sm:col-span-2 flex items-center gap-2 bg-off-white border border-border rounded-xl px-4 py-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={declinedCollisionWaiver}
+                onChange={(e) => setDeclinedCollisionWaiver(e.target.checked)}
+                className="w-4 h-4"
+              />
+              <span className="text-navy text-sm font-semibold">Renter declined collision damage waiver</span>
+              <span className="text-text-muted text-xs ml-auto">Renter uses own coverage</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Renter's vehicle registration — optional, used when their
+            own auto policy requires it on file. */}
+        <div className="bg-white border border-border rounded-2xl shadow-sm p-5">
+          <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Renter Registration <span className="text-text-muted text-[10px] font-normal normal-case">(optional)</span></h2>
+          <p className="text-text-muted text-xs mb-4">
+            If their personal policy requires their own vehicle registration on file to cover a rental.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Registration #</label>
+              <input value={renterRegistrationNumber} onChange={(e) => setRenterRegistrationNumber(e.target.value)} className={ipt} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">State</label>
+                <input value={renterRegistrationState} onChange={(e) => setRenterRegistrationState(e.target.value)} className={ipt} maxLength={2} />
+              </div>
+              <div>
+                <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Expires</label>
+                <input type="date" value={renterRegistrationExpiry} onChange={(e) => setRenterRegistrationExpiry(e.target.value)} className={ipt} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Additional driver */}
+        <div className="bg-white border border-border rounded-2xl shadow-sm p-5">
+          <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Additional Driver <span className="text-text-muted text-[10px] font-normal normal-case">(optional)</span></h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div>
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Name</label>
+              <input value={additionalDriverName} onChange={(e) => setAdditionalDriverName(e.target.value)} className={ipt} />
+            </div>
+            <div>
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">DL Number</label>
+              <input value={additionalDriverLicense} onChange={(e) => setAdditionalDriverLicense(e.target.value)} className={ipt} />
             </div>
           </div>
         </div>

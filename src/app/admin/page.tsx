@@ -107,8 +107,8 @@ export default async function AdminDashboard() {
 
   if (!configured) {
     return (
-      <main
-        className="p-6 lg:p-8 pt-[max(env(safe-area-inset-top),1.5rem)] pb-[max(env(safe-area-inset-bottom),1.5rem)]"
+      <div
+        className="p-6 lg:p-8 pt-[max(env(safe-area-inset-top),1.5rem)] pb-28 lg:pb-8"
         aria-labelledby="dashboard-heading"
       >
         <header className="mb-8">
@@ -150,7 +150,7 @@ export default async function AdminDashboard() {
             <AdminDashboardClient />
           </div>
         </section>
-      </main>
+      </div>
     );
   }
 

@@ -49,7 +49,7 @@ export default async function AdminLayout({
         </a>
         <div className="min-h-screen bg-off-white lg:flex">
           <AdminSidebar />
-          <main id="admin-main" className="flex-1 min-w-0 pb-20 lg:pb-0 page-transition">
+          <main id="admin-main" className="flex-1 min-w-0 overflow-x-hidden pb-20 lg:pb-0 page-transition">
             <MobileAdminHeader />
             <OfflineBanner />
             {children}

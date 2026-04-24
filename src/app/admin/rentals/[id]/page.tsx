@@ -14,6 +14,7 @@ import {
   LogIn,
   LogOut,
   Printer,
+  Shield,
 } from "lucide-react";
 
 type Vehicle = {
@@ -24,7 +25,18 @@ type Vehicle = {
 type Booking = {
   id: number; resourceId: number; renterName: string | null;
   renterEmail: string | null; renterPhone: string | null;
-  renterLicenseNumber: string | null;
+  renterLicenseNumber: string | null; renterLicenseState: string | null;
+  renterLicenseExpiry: string | null; renterLicensePhotoUrl: string | null;
+  renterInsuranceProvider: string | null;
+  renterInsurancePolicyNumber: string | null;
+  renterInsuranceExpiry: string | null;
+  renterInsurancePhotoUrl: string | null;
+  renterRegistrationNumber: string | null;
+  renterRegistrationState: string | null;
+  renterRegistrationExpiry: string | null;
+  declinedCollisionWaiver: boolean;
+  additionalDriverName: string | null;
+  additionalDriverLicense: string | null;
   startAt: string; endAt: string; status: string;
   amountCents: number; totalCents: number | null; paid: boolean;
   paymentMethod: string | null;
@@ -204,7 +216,72 @@ export default function RentalDetailPage() {
           <Kv label="Name" value={booking.renterName || "—"} />
           <Kv label="Email" value={booking.renterEmail || "—"} />
           <Kv label="Phone" value={booking.renterPhone || "—"} />
-          <Kv label="License #" value={booking.renterLicenseNumber || "—"} />
+          <Kv
+            label="License"
+            value={
+              booking.renterLicenseNumber
+                ? `${booking.renterLicenseNumber}${booking.renterLicenseState ? ` (${booking.renterLicenseState})` : ""}${
+                    booking.renterLicenseExpiry ? ` · exp ${booking.renterLicenseExpiry}` : ""
+                  }`
+                : "—"
+            }
+          />
+          {booking.renterLicensePhotoUrl && (
+            <a
+              href={booking.renterLicensePhotoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-red text-xs font-semibold hover:underline"
+            >
+              View license photo →
+            </a>
+          )}
+          {booking.additionalDriverName && (
+            <>
+              <div className="border-t border-border my-2" />
+              <Kv
+                label="+ Additional"
+                value={`${booking.additionalDriverName}${booking.additionalDriverLicense ? ` · ${booking.additionalDriverLicense}` : ""}`}
+              />
+            </>
+          )}
+        </Card>
+        <Card title="Renter Insurance" icon={<Shield />}>
+          {booking.declinedCollisionWaiver && (
+            <p className="text-amber-700 bg-amber-50 rounded-lg px-3 py-2 text-xs font-semibold mb-2">
+              Renter declined collision waiver — using own coverage
+            </p>
+          )}
+          <Kv label="Provider" value={booking.renterInsuranceProvider || "—"} />
+          <Kv label="Policy #" value={booking.renterInsurancePolicyNumber || "—"} />
+          <Kv label="Expires" value={booking.renterInsuranceExpiry || "—"} />
+          {booking.renterInsurancePhotoUrl && (
+            <a
+              href={booking.renterInsurancePhotoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-red text-xs font-semibold hover:underline"
+            >
+              View insurance card →
+            </a>
+          )}
+          {(booking.renterRegistrationNumber || booking.renterRegistrationExpiry) && (
+            <>
+              <div className="border-t border-border my-2" />
+              <p className="text-text-muted text-[10px] uppercase tracking-widest mb-1">
+                Renter's Vehicle Registration
+              </p>
+              <Kv
+                label="Reg #"
+                value={
+                  booking.renterRegistrationNumber
+                    ? `${booking.renterRegistrationNumber}${booking.renterRegistrationState ? ` (${booking.renterRegistrationState})` : ""}`
+                    : "—"
+                }
+              />
+              <Kv label="Expires" value={booking.renterRegistrationExpiry || "—"} />
+            </>
+          )}
         </Card>
         <Card title="Vehicle" icon={<Truck />}>
           <Kv label="Vehicle" value={vehicle?.name || "—"} />

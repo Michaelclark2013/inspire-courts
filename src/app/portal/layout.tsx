@@ -39,7 +39,7 @@ export default async function PortalLayout({
         </a>
         <div className="min-h-screen bg-off-white flex">
           <PortalSidebar />
-          <main id="portal-main" className="flex-1 min-w-0">{children}</main>
+          <main id="portal-main" className="flex-1 min-w-0 overflow-x-hidden pb-24 lg:pb-0">{children}</main>
         </div>
       </PortalViewProvider>
     </SessionProvider>

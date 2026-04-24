@@ -13,6 +13,7 @@ import {
   Search,
   Filter,
   Send,
+  Download,
 } from "lucide-react";
 
 type Team = {
@@ -147,6 +148,14 @@ export default function CheckinProgressCard() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => exportCsv(data)}
+              disabled={data.teams.length === 0}
+              className="bg-white border border-border hover:bg-off-white disabled:opacity-40 text-navy text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5"
+              title="Download check-in progress as CSV"
+            >
+              <Download className="w-3 h-3" /> CSV
+            </button>
             <button
               onClick={nudgeIncomplete}
               disabled={nudging || (totals.teams - totals.complete) === 0}
@@ -303,6 +312,33 @@ export default function CheckinProgressCard() {
       </div>
     </section>
   );
+}
+
+function exportCsv(data: Payload) {
+  if (!data) return;
+  const header = ["Team", "Division", "Coach", "Email", "Phone", "Checked In", "Target", "Percent", "Roster", "Waivers", "Payment", "Status"];
+  const lines = data.teams.map((t) => [
+    t.teamName,
+    t.division || "",
+    t.coachName,
+    t.coachEmail,
+    t.coachPhone || "",
+    t.checkedIn,
+    t.playerCount || 0,
+    t.percent,
+    t.rosterSubmitted ? "yes" : "no",
+    t.waiversSigned ? "yes" : "no",
+    t.paymentStatus,
+    t.complete ? "complete" : t.checkedIn > 0 ? "partial" : "not started",
+  ].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
+  const csv = [header.join(","), ...lines].join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `checkin-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function Flag({ label, good }: { label: string; good: boolean }) {

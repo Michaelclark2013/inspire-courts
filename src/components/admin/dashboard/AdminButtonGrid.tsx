@@ -165,6 +165,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/analytics", label: "GA Analytics", desc: "Traffic + conversions", icon: BarChart3, page: "analytics" },
       { href: "/admin/audit-log", label: "Audit Log", desc: "Who did what", icon: History, page: "audit_log" },
       { href: "/admin/launch-readiness", label: "Launch", desc: "Pre-flight checklist", icon: Rocket, page: "users" },
+      { href: "/admin/launch-status", label: "Go-Live Status", desc: "Env + seed + rollup", icon: Rocket, page: "users" },
     ],
   },
   {

@@ -41,6 +41,7 @@ import {
   GraduationCap as GraduationCapIcon,
   Plane,
   Package,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { canAccess, ROLE_LABELS } from "@/lib/permissions";
@@ -161,6 +162,9 @@ const ADMIN_SECTION: NavItem[] = [
   { href: "/admin/reports", label: "Reports", icon: BarChart3, page: "analytics" },
   { href: "/admin/analytics", label: "GA Analytics", icon: BarChart3, page: "analytics" },
   { href: "/admin/audit-log", label: "Audit Log", icon: History, page: "audit_log" },
+  // Admin-only pre-launch diagnostics — leave in place after launch too;
+  // useful for re-checking cron + env health on every redeploy.
+  { href: "/admin/launch-readiness", label: "Launch Readiness", icon: Rocket, page: "users" },
 ];
 
 const PERSONAL: NavItem[] = [

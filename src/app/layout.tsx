@@ -20,6 +20,7 @@ const InstallPrompt = dynamic(() => import("@/components/pwa/InstallPrompt").the
 const UpdatePrompt = dynamic(() => import("@/components/pwa/UpdatePrompt").then(m => ({ default: m.UpdatePrompt })));
 const GoogleAnalytics = dynamic(() => import("@/components/analytics/GoogleAnalytics"));
 const MetaPixel = dynamic(() => import("@/components/analytics/MetaPixel"));
+const CookieConsent = dynamic(() => import("@/components/layout/CookieConsent"));
 import { AppleSplashScreens } from "@/components/pwa/AppleSplashScreens";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/lib/constants";
 
@@ -127,6 +128,7 @@ export default function RootLayout({
         <ServiceWorkerRegistrar />
         <InstallPrompt />
         <UpdatePrompt />
+        <CookieConsent />
       </body>
     </html>
   );

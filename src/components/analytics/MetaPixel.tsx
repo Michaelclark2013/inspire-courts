@@ -2,19 +2,33 @@
 
 import Script from "next/script";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { hasAnalyticsConsent } from "@/components/layout/CookieConsent";
 
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
 export default function MetaPixel() {
   const pathname = usePathname();
 
+  // Gate on the same cookie-consent banner as Google Analytics so
+  // declining blocks all third-party tracking, not just GA.
+  const [consented, setConsented] = useState(false);
   useEffect(() => {
-    if (!PIXEL_ID) return;
-    window.fbq?.("track", "PageView");
-  }, [pathname]);
+    setConsented(hasAnalyticsConsent());
+    function onChange(e: Event) {
+      const detail = (e as CustomEvent<{ value: "accepted" | "declined" }>).detail;
+      setConsented(detail?.value === "accepted");
+    }
+    window.addEventListener("inspire-consent-change", onChange);
+    return () => window.removeEventListener("inspire-consent-change", onChange);
+  }, []);
 
-  if (!PIXEL_ID) return null;
+  useEffect(() => {
+    if (!PIXEL_ID || !consented) return;
+    window.fbq?.("track", "PageView");
+  }, [pathname, consented]);
+
+  if (!PIXEL_ID || !consented) return null;
 
   return (
     <>

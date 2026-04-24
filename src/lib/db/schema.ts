@@ -112,6 +112,17 @@ export const games = sqliteTable("games", {
   status: text("status", { enum: ["scheduled", "live", "final"] })
     .notNull()
     .default("scheduled"),
+  // Scorekeeper's photo of the physical scoreboard at final — ends
+  // disputes. Base64 data URL (capped ~200KB client-side) OR an
+  // external https:// URL (e.g. Drive link).
+  finalScoreboardPhotoUrl: text("final_scoreboard_photo_url"),
+  // Who finalized + when — separate from gameScores.updated_by because
+  // status transitions and score rows happen in the same txn and this
+  // is the authoritative "game over" stamp.
+  finalizedBy: integer("finalized_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  finalizedAt: text("finalized_at"),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
@@ -1670,3 +1681,82 @@ export const expenses = sqliteTable("expenses", {
   index("expenses_incurred_idx").on(table.incurredAt),
   index("expenses_vendor_idx").on(table.vendor),
 ]);
+
+// ── Score-entry depth: play-type tracking, player stats, live
+//    collaboration, final-scoreboard photo ───────────────────────────
+
+// Every gameScores row already carries homeScore/awayScore/quarter.
+// This optional child table tracks the *play* that generated a score
+// when the scorekeeper uses the labeled play buttons (FG, 3PT, FT,
+// foul, etc) so the game record supports analytics + highlights.
+export const PLAY_TYPES = [
+  "free_throw",
+  "field_goal",
+  "three_pointer",
+  "foul",
+  "timeout",
+  "adjustment",
+] as const;
+
+export const playEvents = sqliteTable("play_events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  gameId: integer("game_id")
+    .notNull()
+    .references(() => games.id, { onDelete: "cascade" }),
+  team: text("team", { enum: ["home", "away"] }).notNull(),
+  playType: text("play_type", { enum: PLAY_TYPES }).notNull(),
+  points: integer("points").notNull().default(0),
+  // Optional link to a player row when the scorekeeper picked a name.
+  // Nullable because team-total mode doesn't require a player.
+  playerId: integer("player_id").references(() => players.id, {
+    onDelete: "set null",
+  }),
+  playerJersey: integer("player_jersey"),
+  playerName: text("player_name"), // denormalized for historical queries
+  quarter: text("quarter"),
+  // For undo — scorekeeper can void an event instead of deleting it.
+  // Voided events stay in the audit trail but don't count toward totals.
+  voided: integer("voided", { mode: "boolean" }).notNull().default(false),
+  voidedAt: text("voided_at"),
+  recordedBy: integer("recorded_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  recordedAt: text("recorded_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("play_events_game_idx").on(table.gameId),
+  index("play_events_player_idx").on(table.playerId),
+  index("play_events_recorded_idx").on(table.recordedAt),
+  index("play_events_voided_idx").on(table.voided),
+]);
+
+// Live collaboration — who's currently scoring this game? Rows are
+// upserted every 10s via heartbeat from the scorer's device, and any
+// row older than 30s is treated as stale / the person left. Lets
+// two scorekeepers see each other on opposite benches.
+export const activeScoringSessions = sqliteTable("active_scoring_sessions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  gameId: integer("game_id")
+    .notNull()
+    .references(() => games.id, { onDelete: "cascade" }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  startedAt: text("started_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  lastHeartbeatAt: text("last_heartbeat_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("active_scoring_game_idx").on(table.gameId),
+  index("active_scoring_user_idx").on(table.userId),
+  index("active_scoring_heartbeat_idx").on(table.lastHeartbeatAt),
+]);
+
+// Final-scoreboard photo per game — base64 data URL of the photo the
+// scorekeeper takes of the physical scoreboard when finalizing.
+// Ends disputes: "the parent says 58-42, here's the photo showing 58-42."
+// Stored on games (not gameScores) because it's a per-game artifact,
+// not per-score-update.

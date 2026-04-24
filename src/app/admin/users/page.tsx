@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   UserPlus,
@@ -583,14 +584,23 @@ export default function UsersPage() {
                       {formatDate(u.createdAt)}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(u.id, u.name)}
-                        className="text-navy/30 hover:text-red transition-colors"
-                        title="Delete user"
-                      >
-                        <Trash2 className="w-4 h-4" aria-hidden="true" />
-                      </button>
+                      <div className="flex items-center justify-end gap-3">
+                        <Link
+                          href={`/admin/permissions/${u.id}`}
+                          className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-navy/5 text-navy hover:bg-navy hover:text-white transition-colors"
+                          title="Edit this user's per-page permissions"
+                        >
+                          Permissions
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(u.id, u.name)}
+                          className="text-navy/30 hover:text-red transition-colors"
+                          title="Delete user"
+                        >
+                          <Trash2 className="w-4 h-4" aria-hidden="true" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -475,6 +475,14 @@ html, body {
   button, a { -webkit-tap-highlight-color: transparent; }
   /* Inertial scrolling on any overflow containers */
   .overflow-y-auto, .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+  /* iOS zooms when it focuses an input with computed font-size < 16px.
+     Bumping all form inputs to 16px on touch devices stops the
+     surprise zoom-to-focus that made every form feel broken. */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 /* Disable pull-to-refresh overscroll glow inside admin shell so

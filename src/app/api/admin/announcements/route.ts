@@ -88,10 +88,26 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  // Clone the body so we can both validate the required fields via zod
+  // AND pull the new optional fields directly. parseJsonBody consumes
+  // the request stream, so we cache the JSON first.
+  const rawBody = await request.clone().json().catch(() => ({}));
   const parsed = await parseJsonBody(request, announcementSchema);
   if (!parsed.ok) return parsed.response;
   const { title, body: content, audience, expiresAt } = parsed.data;
   const safeAudience = audience ?? "all";
+
+  const PRIO = ["normal", "important", "urgent"] as const;
+  const CAT = ["general", "tournament", "schedule", "maintenance", "safety", "weather", "celebration"] as const;
+  const priority = PRIO.includes(rawBody?.priority) ? rawBody.priority : "normal";
+  const category = CAT.includes(rawBody?.category) ? rawBody.category : "general";
+  const pinned = !!rawBody?.pinned;
+  const scheduledPublishAt = typeof rawBody?.scheduledPublishAt === "string" && rawBody.scheduledPublishAt
+    ? rawBody.scheduledPublishAt
+    : null;
+  const ctaLabel = typeof rawBody?.ctaLabel === "string" ? rawBody.ctaLabel.trim() || null : null;
+  const ctaUrl = typeof rawBody?.ctaUrl === "string" ? rawBody.ctaUrl.trim() || null : null;
+  const imageUrl = typeof rawBody?.imageUrl === "string" ? rawBody.imageUrl.trim() || null : null;
 
   try {
 
@@ -103,6 +119,13 @@ export async function POST(request: NextRequest) {
         title: title.trim(),
         body: content.trim(),
         audience: safeAudience,
+        priority,
+        category,
+        pinned,
+        scheduledPublishAt,
+        ctaLabel,
+        ctaUrl,
+        imageUrl,
         createdBy: userId && !isNaN(userId) ? userId : null,
         expiresAt: expiresAt || null,
       })
@@ -137,6 +160,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rawBody = await request.clone().json().catch(() => ({}));
   const parsed = await parseJsonBody(request, announcementUpdateSchema);
   if (!parsed.ok) return parsed.response;
   const { id, title, body: content, audience, expiresAt } = parsed.data;
@@ -146,6 +170,21 @@ export async function PUT(request: NextRequest) {
   if (content !== undefined) updates.body = content.trim();
   if (audience !== undefined) updates.audience = audience;
   if (expiresAt !== undefined) updates.expiresAt = expiresAt || null;
+
+  // New extended fields — pull straight from the raw body since the
+  // shared zod schema doesn't know about them yet.
+  const PRIO = ["normal", "important", "urgent"] as const;
+  const CAT = ["general", "tournament", "schedule", "maintenance", "safety", "weather", "celebration"] as const;
+  if (PRIO.includes(rawBody?.priority)) updates.priority = rawBody.priority;
+  if (CAT.includes(rawBody?.category)) updates.category = rawBody.category;
+  if (typeof rawBody?.pinned === "boolean") updates.pinned = rawBody.pinned;
+  if ("scheduledPublishAt" in (rawBody || {})) {
+    updates.scheduledPublishAt = rawBody.scheduledPublishAt || null;
+  }
+  if ("ctaLabel" in (rawBody || {})) updates.ctaLabel = rawBody.ctaLabel || null;
+  if ("ctaUrl" in (rawBody || {})) updates.ctaUrl = rawBody.ctaUrl || null;
+  if ("imageUrl" in (rawBody || {})) updates.imageUrl = rawBody.imageUrl || null;
+  updates.updatedAt = new Date().toISOString();
 
   if (Object.keys(updates).length === 0) {
     return apiError("No fields to update", 400);

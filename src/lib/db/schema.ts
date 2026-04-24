@@ -343,18 +343,57 @@ export const waivers = sqliteTable("waivers", {
 
 // ── Announcements ───────────────────────────────────────────────────────────
 
+export const ANNOUNCEMENT_PRIORITIES = ["normal", "important", "urgent"] as const;
+export const ANNOUNCEMENT_CATEGORIES = [
+  "general",
+  "tournament",
+  "schedule",
+  "maintenance",
+  "safety",
+  "weather",
+  "celebration",
+] as const;
+
 export const announcements = sqliteTable("announcements", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   body: text("body").notNull(),
   audience: text("audience").notNull().default("all"), // "all", "coaches", "parents", or division like "14U"
+  priority: text("priority", { enum: ANNOUNCEMENT_PRIORITIES })
+    .notNull()
+    .default("normal"),
+  category: text("category", { enum: ANNOUNCEMENT_CATEGORIES })
+    .notNull()
+    .default("general"),
+  // Pinned posts stick to the top of the portal feed regardless of date.
+  pinned: integer("pinned", { mode: "boolean" }).notNull().default(false),
+  // When null, publishes immediately. When set, surfaces as "Scheduled"
+  // in admin until that time, then becomes visible.
+  scheduledPublishAt: text("scheduled_publish_at"),
+  // Action button on the announcement card (e.g. "View schedule").
+  ctaLabel: text("cta_label"),
+  ctaUrl: text("cta_url"),
+  // Optional hero image URL (drive link or uploaded asset).
+  imageUrl: text("image_url"),
+  // Has a push notification been sent? Admin can "re-broadcast" if needed.
+  pushSent: integer("push_sent", { mode: "boolean" }).notNull().default(false),
+  pushSentAt: text("push_sent_at"),
+  // Lightweight impression counter — incremented by the portal feed
+  // endpoint when the post enters a user's list.
+  viewCount: integer("view_count").notNull().default(0),
   createdBy: integer("created_by").references(() => users.id),
   expiresAt: text("expires_at"),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
 }, (table) => [
   index("announcements_audience_idx").on(table.audience),
+  index("announcements_priority_idx").on(table.priority),
+  index("announcements_pinned_idx").on(table.pinned),
+  index("announcements_scheduled_idx").on(table.scheduledPublishAt),
 ]);
 
 // ── Push Subscriptions ─────────────────────────────────────────────────────

@@ -108,6 +108,23 @@ export async function parseJsonBody<T>(
 }
 
 /**
+ * Escape a value for RFC-4180 CSV output (always quoted) with a
+ * formula-injection guard. Excel/Sheets/Numbers evaluate any cell that
+ * starts with =, +, -, @, or a tab/CR as a formula when the CSV is
+ * opened — so an attacker who can insert their string into an exported
+ * column (team name, lead email, registration note) could phish an
+ * admin with `=HYPERLINK("https://evil.com","Click to verify")` or
+ * similar when the admin downloads + double-clicks the file.
+ * OWASP-recommended mitigation: prefix with a single quote, which
+ * spreadsheets render literally and strip on display.
+ */
+export function csvCell(v: unknown): string {
+  const raw = v == null ? "" : String(v);
+  const safe = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
+  return `"${safe.replace(/"/g, '""')}"`;
+}
+
+/**
  * Returns the ISO timestamp of midnight on the first of the current
  * Arizona month. Business lives in Phoenix (America/Phoenix, UTC−07:00,
  * no DST). Using this everywhere we partition data by "this month"

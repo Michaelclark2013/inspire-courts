@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { timeEntries } from "@/lib/db/schema";
 import { and, eq, gte, isNotNull, lt, sql } from "drizzle-orm";
+import { csvCell } from "@/lib/api-helpers";
 
 /**
  * Pay math lives in one place so the /admin/staff list, /admin/timeclock
@@ -333,11 +334,9 @@ function isoWeekKey(d: Date): string {
 
 // ── CSV formatters ──────────────────────────────────────────────────
 // RFC 4180 — every cell quoted so commas/newlines are safe.
-
-function csvCell(v: unknown): string {
-  const s = v == null ? "" : String(v);
-  return `"${s.replace(/"/g, '""')}"`;
-}
+// csvCell (imported from lib/api-helpers) also adds the formula-injection
+// guard: payroll names + notes are user-editable and export to CSVs that
+// accountants open in Excel.
 
 function csvDollars(cents: number): string {
   return (cents / 100).toFixed(2);

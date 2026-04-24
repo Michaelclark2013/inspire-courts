@@ -14,17 +14,11 @@ import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 import { checkinSchema } from "@/lib/schemas";
-import { parseJsonBody } from "@/lib/api-helpers";
+import { parseJsonBody, csvCell } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 const ALLOWED_ROLES = ["admin", "front_desk", "staff"];
-
-// Escape a value for RFC-4180 CSV (always quoted).
-function csvCell(v: unknown): string {
-  const s = v == null ? "" : String(v);
-  return `"${s.replace(/"/g, '""')}"`;
-}
 
 // GET /api/admin/checkin — list check-ins (admin/front_desk/staff).
 //   ?teamName=   filter by team (exact match)

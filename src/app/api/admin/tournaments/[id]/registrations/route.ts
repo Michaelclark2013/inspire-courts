@@ -13,16 +13,9 @@ import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { withTiming } from "@/lib/timing";
 import { registrationCreateSchema, registrationUpdateSchema } from "@/lib/schemas";
-import { parseJsonBody } from "@/lib/api-helpers";
+import { parseJsonBody, csvCell } from "@/lib/api-helpers";
 
 type Params = { params: Promise<{ id: string }> };
-
-// Escape a value for RFC-4180 CSV. Always quoted so embedded commas and
-// newlines are safe. Empty/null becomes an empty quoted field.
-function csvCell(v: unknown): string {
-  const s = v == null ? "" : String(v);
-  return `"${s.replace(/"/g, '""')}"`;
-}
 
 // Pagination cap per request (CSV export is unbounded).
 const REG_MAX_LIMIT = 200;

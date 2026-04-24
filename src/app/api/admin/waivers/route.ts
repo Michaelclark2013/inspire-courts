@@ -8,15 +8,9 @@ import { desc, eq, and, gte, isNotNull, lt, lte, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { waiverSignSchema } from "@/lib/schemas";
-import { parseJsonBody, apiError } from "@/lib/api-helpers";
+import { parseJsonBody, apiError, csvCell } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 import { getClientIp } from "@/lib/rate-limit";
-
-// Escape a value for RFC-4180 CSV (always quoted).
-function csvCell(v: unknown): string {
-  const s = v == null ? "" : String(v);
-  return `"${s.replace(/"/g, '""')}"`;
-}
 
 // GET /api/admin/waivers — read signed waivers (admin/tournaments access).
 //   ?teamName=   filter by team name (case-sensitive exact match)

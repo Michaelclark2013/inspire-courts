@@ -7,6 +7,7 @@ import {
   parseJsonBody,
   safeJsonParse,
   azMonthStartIso,
+  csvCell,
 } from "./api-helpers";
 
 describe("api-helpers / apiError", () => {
@@ -198,5 +199,42 @@ describe("api-helpers / azMonthStartIso", () => {
     // 2027-01-01 06:59 UTC = 2026-12-31 23:59 AZ — still Dec 2026.
     const result = azMonthStartIso(new Date("2027-01-01T06:59:00Z"));
     expect(result).toBe(new Date("2026-12-01T00:00:00-07:00").toISOString());
+  });
+});
+
+describe("api-helpers / csvCell — formula-injection guard", () => {
+  it("wraps benign values in quotes and escapes embedded quotes", () => {
+    expect(csvCell("Alice")).toBe('"Alice"');
+    expect(csvCell('She said "hi"')).toBe('"She said ""hi"""');
+    expect(csvCell("one, two")).toBe('"one, two"');
+  });
+
+  it("quotes null and undefined as empty strings", () => {
+    expect(csvCell(null)).toBe('""');
+    expect(csvCell(undefined)).toBe('""');
+  });
+
+  it("coerces non-strings via String()", () => {
+    expect(csvCell(42)).toBe('"42"');
+    expect(csvCell(true)).toBe('"true"');
+  });
+
+  it("prefixes a single quote on =, +, -, @, tab, CR — the formula chars", () => {
+    // Attacker team name: =HYPERLINK("evil.com","Click")
+    expect(csvCell('=HYPERLINK("https://evil.com","Click me")')).toBe(
+      '"\'=HYPERLINK(""https://evil.com"",""Click me"")"'
+    );
+    // Accounting/SUM-style injection
+    expect(csvCell("+cmd|'/c calc'")).toBe('"\'+cmd|\'/c calc\'"');
+    expect(csvCell("-2+3")).toBe('"\'-2+3"');
+    expect(csvCell("@SUM(A1:A10)")).toBe('"\'@SUM(A1:A10)"');
+    expect(csvCell("\tleading tab")).toBe('"\'\tleading tab"');
+  });
+
+  it("leaves safe starting characters alone", () => {
+    // Emails + dates + regular data should NOT get a quote prefix
+    expect(csvCell("alice@example.com")).toBe('"alice@example.com"');
+    expect(csvCell("2026-01-01")).toBe('"2026-01-01"');
+    expect(csvCell("10 wins")).toBe('"10 wins"');
   });
 });

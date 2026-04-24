@@ -2,11 +2,22 @@
  * Browser-native CSV export utility. No external dependencies.
  */
 
-function escapeCsvValue(value: string): string {
-  if (value.includes(",") || value.includes('"') || value.includes("\n")) {
-    return `"${value.replace(/"/g, '""')}"`;
-  }
+// CSV formula-injection guard: Excel/Sheets/Numbers evaluate any cell
+// starting with =, +, -, @, or a tab/CR as a formula when the CSV is
+// opened. An attacker could register a tournament team with a name like
+// `=HYPERLINK("https://evil.com",...)` and phish the admin who exports
+// the list. OWASP-recommended mitigation: prefix a single quote.
+function csvSafePrefix(value: string): string {
+  if (/^[=+\-@\t\r]/.test(value)) return `'${value}`;
   return value;
+}
+
+function escapeCsvValue(value: string): string {
+  const safe = csvSafePrefix(value);
+  if (safe.includes(",") || safe.includes('"') || safe.includes("\n")) {
+    return `"${safe.replace(/"/g, '""')}"`;
+  }
+  return safe;
 }
 
 export function exportCSV(

@@ -176,15 +176,15 @@ export default function MyProfilePage() {
   const initials = me.name.split(" ").map((s) => s[0]).join("").slice(0, 2).toUpperCase();
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-full">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-full">
       <Link href="/admin" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4">
         <ArrowLeft className="w-3.5 h-3.5" /> Admin Dashboard
       </Link>
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy via-navy to-navy/85 text-white shadow-xl mb-6">
-        <div aria-hidden="true" className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-red/20 blur-3xl" />
-        <div className="relative p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+      <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-navy via-navy to-navy/85 text-white shadow-xl mb-4 sm:mb-6">
+        <div aria-hidden="true" className="absolute -right-10 -top-10 w-60 h-60 sm:-right-20 sm:-top-20 sm:w-80 sm:h-80 rounded-full bg-red/20 blur-3xl" />
+        <div className="relative p-4 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5">
           {me.photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={me.photoUrl} alt="" className="w-20 h-20 rounded-2xl object-cover border border-white/20" />
@@ -195,7 +195,7 @@ export default function MyProfilePage() {
           )}
           <div className="flex-1 min-w-0">
             <p className="text-white/50 text-[11px] uppercase tracking-[0.2em] mb-1">My Profile</p>
-            <h1 className="text-3xl sm:text-4xl font-bold font-heading tracking-tight">{me.name}</h1>
+            <h1 className="text-2xl sm:text-4xl font-bold font-heading tracking-tight">{me.name}</h1>
             <p className="text-white/60 text-sm mt-1 flex items-center gap-2 flex-wrap">
               <Mail className="w-3.5 h-3.5" /> {me.email}
               <span className="bg-white/10 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">{me.role}</span>

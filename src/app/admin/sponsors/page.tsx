@@ -11,7 +11,7 @@ import { formatCurrency } from "@/lib/utils";
 export default async function SponsorsPage() {
   if (!isNotionConfigured()) {
     return (
-      <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Sponsorships</h1>
           <p className="text-text-secondary text-sm mt-1">Sponsorship Pipeline from Notion</p>
@@ -25,7 +25,7 @@ export default async function SponsorsPage() {
 
   if (data.length === 0) {
     return (
-      <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Sponsorships</h1>
           <p className="text-text-secondary text-sm mt-1">Sponsorship Pipeline from Notion</p>
@@ -91,7 +91,7 @@ export default async function SponsorsPage() {
   ];
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
         <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Sponsorships</h1>
         <p className="text-text-secondary text-sm mt-1">Sponsorship Pipeline from Notion</p>

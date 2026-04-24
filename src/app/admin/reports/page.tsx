@@ -63,7 +63,7 @@ export default function ReportsPage() {
   const mrrAnnualized = r.revenue.mrrCents * 12;
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 space-y-6">
+    <div className="p-3 sm:p-6 lg:p-8 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">

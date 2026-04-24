@@ -309,7 +309,7 @@ export default function ScoreEntryPage() {
   const hasPartialFailure = errors.games || errors.tournaments;
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 overscroll-none max-w-full">
+    <div className="p-3 sm:p-6 lg:p-8 overscroll-none max-w-full">
       <Breadcrumbs />
       {/* Header */}
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-4 flex-wrap">

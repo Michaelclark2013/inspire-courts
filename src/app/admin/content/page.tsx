@@ -354,7 +354,7 @@ export default function ContentEditorPage() {
   const currentPage = content.pages[activePage];
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 pb-32">
+    <div className="p-3 sm:p-6 lg:p-8 pb-32">
       {/* Toast */}
       {toast && (
         <div

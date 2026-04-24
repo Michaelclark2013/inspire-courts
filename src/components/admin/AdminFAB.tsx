@@ -39,8 +39,11 @@ export default function AdminFAB() {
         />
       )}
 
-      {/* FAB + action items */}
-      <div className="fixed bottom-[68px] right-4 md:bottom-6 md:right-6 z-[54] flex flex-col items-end gap-2.5">
+      {/* FAB + action items — sits above the bottom tab bar with safe-area awareness */}
+      <div
+        className="fixed right-4 md:bottom-6 md:right-6 z-[54] flex flex-col items-end gap-2.5"
+        style={{ bottom: "calc(56px + env(safe-area-inset-bottom) + 12px)" }}
+      >
         {open &&
           ACTIONS.map((action, i) => (
             <Link

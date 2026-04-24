@@ -1,6 +1,6 @@
 export default function UsersLoading() {
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 animate-pulse" aria-hidden="true">
+    <div className="p-3 sm:p-6 lg:p-8 animate-pulse" aria-hidden="true">
       <div className="mb-4 md:mb-8 flex items-center gap-3">
         <div className="hidden md:block w-10 h-10 bg-light-gray rounded-xl" />
         <div>

@@ -11,7 +11,7 @@ export const revalidate = 60; // refresh every 60s
 export default async function CheckInPage() {
   if (!isGoogleConfigured()) {
     return (
-      <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading mb-1">
           Game Day Check-In
         </h1>

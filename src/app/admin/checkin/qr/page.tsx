@@ -67,7 +67,7 @@ export default function CheckinQRPage() {
   });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-full">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-full">
       <Link href="/admin/checkin" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4 no-print">
         <ArrowLeft className="w-3.5 h-3.5" /> Check-In
       </Link>

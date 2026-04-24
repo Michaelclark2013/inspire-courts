@@ -54,7 +54,7 @@ export default function LogoManagementPage() {
   const entries = Object.entries(logos);
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>

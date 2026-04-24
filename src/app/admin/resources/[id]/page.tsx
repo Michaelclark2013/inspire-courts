@@ -79,15 +79,15 @@ export default function VehicleDetailPage() {
   const v = data.vehicle;
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-full">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-full">
       <Link href="/admin/resources" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4">
         <ArrowLeft className="w-3.5 h-3.5" /> Fleet
       </Link>
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy via-navy to-navy/85 text-white shadow-xl mb-6">
-        <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-red/20 blur-3xl" />
-        <div className="relative p-6 sm:p-8 flex items-start gap-4">
+      <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-navy via-navy to-navy/85 text-white shadow-xl mb-4 sm:mb-6">
+        <div className="absolute -right-10 -top-10 w-60 h-60 sm:-right-20 sm:-top-20 sm:w-80 sm:h-80 rounded-full bg-red/20 blur-3xl" />
+        <div className="relative p-4 sm:p-8 flex items-start gap-4">
           <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
             {v.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -96,7 +96,7 @@ export default function VehicleDetailPage() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white/50 text-[11px] uppercase tracking-[0.2em] mb-1">{v.vehicleStatus.replace(/_/g, " ")}</p>
-            <h1 className="text-3xl sm:text-4xl font-bold font-heading tracking-tight">{v.name}</h1>
+            <h1 className="text-2xl sm:text-4xl font-bold font-heading tracking-tight">{v.name}</h1>
             <p className="text-white/70 text-sm mt-1">
               {[v.year, v.make, v.model].filter(Boolean).join(" ")} {v.licensePlate ? `· ${v.licensePlate}` : ""}
             </p>

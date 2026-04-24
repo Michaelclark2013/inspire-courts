@@ -16,7 +16,7 @@ export const revalidate = 300;
 export default async function RevenuePage() {
   if (!isGoogleConfigured()) {
     return (
-      <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Revenue
@@ -110,7 +110,7 @@ export default async function RevenuePage() {
   // Early return for empty data (area 15)
   if (transactions.length === 0) {
     return (
-      <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Revenue
@@ -158,7 +158,7 @@ export default async function RevenuePage() {
   ];
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 pb-[env(safe-area-inset-bottom)]">
+    <div className="p-3 sm:p-6 lg:p-8 pb-[env(safe-area-inset-bottom)]">
       <div className="mb-4 md:mb-8">
         <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           Revenue

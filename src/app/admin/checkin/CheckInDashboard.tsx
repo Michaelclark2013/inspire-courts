@@ -153,7 +153,7 @@ export default function CheckInDashboard({
   }, [teams.length, debouncedSearch, filterStatus]);
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 overscroll-none">
+    <div className="p-3 sm:p-6 lg:p-8 overscroll-none">
       <CheckInHeader
         today={today}
         onRefresh={handleRefresh}

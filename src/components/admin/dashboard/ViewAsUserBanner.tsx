@@ -35,7 +35,7 @@ export default function ViewAsUserBanner() {
   if (!status.active || !status.target) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] bg-amber-500 text-white text-sm font-semibold shadow-lg">
+    <div className="sticky top-0 z-[70] bg-amber-500 text-white text-sm font-semibold shadow-lg">
       <div className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-3">
         <Eye className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
         <div className="flex items-center gap-2 min-w-0 flex-1">

@@ -143,19 +143,19 @@ export default function AnnouncementsAdminPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-full">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-full">
       <Link href="/admin" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4">
         <ArrowLeft className="w-3.5 h-3.5" /> Admin Dashboard
       </Link>
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy via-navy to-navy/85 text-white shadow-xl mb-6">
-        <div aria-hidden="true" className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-red/20 blur-3xl" />
-        <div className="relative p-6 sm:p-8">
+      <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-navy via-navy to-navy/85 text-white shadow-xl mb-4 sm:mb-6">
+        <div aria-hidden="true" className="absolute -right-10 -top-10 w-60 h-60 sm:-right-20 sm:-top-20 sm:w-80 sm:h-80 rounded-full bg-red/20 blur-3xl" />
+        <div className="relative p-4 sm:p-8">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
             <div>
               <p className="text-white/50 text-[11px] uppercase tracking-[0.2em] mb-1.5">Broadcast</p>
-              <h1 className="text-3xl sm:text-4xl font-bold font-heading tracking-tight flex items-center gap-3">
+              <h1 className="text-2xl sm:text-4xl font-bold font-heading tracking-tight flex items-center gap-3">
                 <Megaphone className="w-8 h-8 text-red" />
                 Announcements
               </h1>

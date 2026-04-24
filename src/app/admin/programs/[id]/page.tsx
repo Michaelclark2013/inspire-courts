@@ -84,7 +84,7 @@ export default function ProgramDetailPage() {
   const programName = sessions[0]?.programName ?? "Program";
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       <Link href="/admin/programs" className="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-navy mb-4">
         <ArrowLeft className="w-4 h-4" /> Back to programs
       </Link>

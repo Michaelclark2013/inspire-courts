@@ -13,7 +13,7 @@ export const revalidate = 300;
 export default async function ScoresPage() {
   if (!isGoogleConfigured()) {
     return (
-      <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+      <div className="p-3 sm:p-6 lg:p-8">
         <div className="mb-4 md:mb-8">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Game Scores</h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">Game Results from Google Sheets</p>
@@ -111,7 +111,7 @@ export default async function ScoresPage() {
     .sort((a, b) => b.wins - a.wins || a.losses - b.losses);
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       <PageHeader
         title="Game Scores"
         subtitle={`${games.length} games recorded from Google Sheets`}

@@ -15,7 +15,6 @@ import DashboardHero from "@/components/admin/dashboard/DashboardHero";
 import TodayCard from "@/components/admin/dashboard/TodayCard";
 import FleetAlertsCard from "@/components/admin/dashboard/FleetAlertsCard";
 import AccessDeniedBanner from "@/components/admin/dashboard/AccessDeniedBanner";
-import MobileDashboardHeader from "@/components/admin/dashboard/MobileDashboardHeader";
 import InstallPrompt from "@/components/admin/dashboard/InstallPrompt";
 import LiveScoresStrip from "@/components/admin/dashboard/LiveScoresStrip";
 import WidgetStrip from "@/components/admin/dashboard/WidgetStrip";
@@ -120,7 +119,7 @@ export default async function AdminDashboard() {
   if (!configured) {
     return (
       <div
-        className="p-6 lg:p-8 pt-[max(env(safe-area-inset-top),1.5rem)] pb-28 lg:pb-8"
+        className="p-6 lg:p-8 pt-[max(env(safe-area-inset-top),1.5rem)]"
         aria-labelledby="dashboard-heading"
       >
         <header className="mb-8">
@@ -221,12 +220,9 @@ export default async function AdminDashboard() {
 
   return (
     <div
-      className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 pt-[max(env(safe-area-inset-top),0.75rem)] max-w-full"
+      className="p-3 sm:p-6 lg:p-8 max-w-full"
       aria-labelledby="dashboard-heading"
     >
-      {/* Mobile-only sticky app bar — greeting + bell + avatar */}
-      <MobileDashboardHeader />
-
       {/* Mobile PWA install nudge (dismissable, once per device) */}
       <InstallPrompt />
 

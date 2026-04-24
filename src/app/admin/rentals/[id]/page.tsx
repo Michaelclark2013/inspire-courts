@@ -95,15 +95,15 @@ export default function RentalDetailPage() {
   if (error || !booking) return <div className="p-8 text-red">{error || "Not found"}</div>;
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-full">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-full">
       <Link href="/admin/rentals" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4">
         <ArrowLeft className="w-3.5 h-3.5" /> Rentals
       </Link>
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy via-navy to-navy/85 text-white shadow-xl mb-6">
-        <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-red/20 blur-3xl" />
-        <div className="relative p-6 sm:p-8">
+      <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-navy via-navy to-navy/85 text-white shadow-xl mb-4 sm:mb-6">
+        <div className="absolute -right-10 -top-10 w-60 h-60 sm:-right-20 sm:-top-20 sm:w-80 sm:h-80 rounded-full bg-red/20 blur-3xl" />
+        <div className="relative p-4 sm:p-8">
           <div className="flex items-start justify-between gap-3 mb-4">
             <div>
               <p className="text-white/50 text-[11px] uppercase tracking-[0.2em] mb-1 font-mono">

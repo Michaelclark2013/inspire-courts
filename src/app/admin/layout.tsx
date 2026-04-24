@@ -50,7 +50,15 @@ export default async function AdminLayout({
         </a>
         <div className="min-h-screen bg-off-white lg:flex">
           <AdminSidebar />
-          <main id="admin-main" className="flex-1 min-w-0 overflow-x-hidden pb-20 lg:pb-0 page-transition">
+          {/* Bottom padding on mobile = bottom-nav (~56px) + safe-area
+              inset. Using env() covers notched phones without over-
+              reserving space on flat-bottom devices. */}
+          <main
+            id="admin-main"
+            className="flex-1 min-w-0 overflow-x-hidden page-transition"
+            style={{ paddingBottom: "calc(56px + env(safe-area-inset-bottom) + 16px)" }}
+          >
+            <ViewAsUserBanner />
             <MobileAdminHeader />
             <OfflineBanner />
             {children}
@@ -58,7 +66,6 @@ export default async function AdminLayout({
           <AdminFAB />
           <KeyboardShortcutsHint />
           <CommandPalette />
-          <ViewAsUserBanner />
         </div>
       </ToastProvider>
     </SessionProvider>

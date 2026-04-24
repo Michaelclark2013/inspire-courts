@@ -39,24 +39,32 @@ export default function AdminFAB() {
         />
       )}
 
-      {/* FAB + action items — sits above the bottom tab bar with safe-area awareness */}
+      {/* FAB + action items — sits above the bottom tab bar with safe-area awareness.
+          Max-height + scroll so the action list never pushes past the
+          viewport on a short screen (e.g. iPhone SE). */}
       <div
         className="fixed right-4 md:bottom-6 md:right-6 z-[54] flex flex-col items-end gap-2.5"
         style={{ bottom: "calc(56px + env(safe-area-inset-bottom) + 12px)" }}
       >
-        {open &&
-          ACTIONS.map((action, i) => (
-            <Link
-              key={action.href}
-              href={action.href}
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 bg-white border border-light-gray rounded-full pl-4 pr-3 py-2.5 text-navy text-sm font-semibold shadow-xl"
-              style={{ animationDelay: `${i * 40}ms` }}
-            >
-              {action.label}
-              <action.icon className="w-4 h-4 text-red flex-shrink-0" />
-            </Link>
-          ))}
+        {open && (
+          <div
+            className="flex flex-col items-end gap-2.5 overflow-y-auto pr-1"
+            style={{ maxHeight: "calc(100vh - 200px)" }}
+          >
+            {ACTIONS.map((action, i) => (
+              <Link
+                key={action.href}
+                href={action.href}
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 bg-white border border-light-gray rounded-full pl-4 pr-3 py-2.5 text-navy text-sm font-semibold shadow-xl whitespace-nowrap"
+                style={{ animationDelay: `${i * 40}ms` }}
+              >
+                {action.label}
+                <action.icon className="w-4 h-4 text-red flex-shrink-0" />
+              </Link>
+            ))}
+          </div>
+        )}
 
         <Tooltip content={open ? "Close" : "Quick actions"} position="left">
           <button

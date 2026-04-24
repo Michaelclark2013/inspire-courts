@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   LogIn,
   LogOut,
+  Printer,
 } from "lucide-react";
 
 type Vehicle = {
@@ -183,6 +184,12 @@ export default function RentalDetailPage() {
             Cancel Rental
           </button>
         )}
+        <button
+          onClick={() => window.print()}
+          className="bg-white border border-border text-navy hover:bg-off-white rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 no-print"
+        >
+          <Printer className="w-3.5 h-3.5" /> Print Contract
+        </button>
       </div>
 
       {/* Summary */}

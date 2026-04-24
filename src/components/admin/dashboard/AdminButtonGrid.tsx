@@ -71,6 +71,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/teams", label: "Teams", desc: "Roster database", icon: Users, page: "teams" },
       { href: "/admin/players", label: "Players", desc: "Eligibility + check-ins", icon: UserCheck, page: "players" },
       { href: "/admin/programs", label: "Programs", desc: "Camps + clinics", icon: Calendar, page: "programs" },
+      { href: "/admin/gym-schedule", label: "Gym Calendar", desc: "Owner's schedule", icon: Calendar, page: "overview" as AdminPage },
     ],
   },
   {
@@ -115,7 +116,8 @@ const SECTIONS: Section[] = [
     blurb: "Gym operations",
     tint: "amber",
     tiles: [
-      { href: "/admin/resources", label: "Resources", desc: "Rentals + inventory", icon: Truck, page: "resources" },
+      { href: "/admin/resources", label: "Fleet", desc: "Vehicles + rentals", icon: Truck, page: "resources" },
+      { href: "/admin/rentals", label: "Rentals", desc: "Active contracts", icon: FileSignature, page: "resources" },
       { href: "/admin/equipment", label: "Equipment", desc: "Balls, cones, scoreboards", icon: Package, page: "equipment" },
       { href: "/admin/maintenance", label: "Maintenance", desc: "Work orders", icon: Wrench, page: "maintenance" },
       { href: "/admin/schools", label: "Schools", desc: "Partner contacts", icon: GraduationCap, page: "schools" },

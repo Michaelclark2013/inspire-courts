@@ -12,6 +12,8 @@ import AdminButtonGrid from "@/components/admin/dashboard/AdminButtonGrid";
 import RecentSignupsCard from "@/components/admin/dashboard/RecentSignupsCard";
 import GymScheduleCard from "@/components/admin/dashboard/GymScheduleCard";
 import DashboardHero from "@/components/admin/dashboard/DashboardHero";
+import TodayCard from "@/components/admin/dashboard/TodayCard";
+import FleetAlertsCard from "@/components/admin/dashboard/FleetAlertsCard";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
 import {
@@ -230,6 +232,13 @@ export default async function AdminDashboard() {
 
       {/* Push notification opt-in */}
       <PushNotificationPrompt />
+
+      {/* Today at Inspire — live auto-refreshing operational view */}
+      <TodayCard />
+
+      {/* Fleet alerts — renders only when there are expiring docs /
+          open damage, so the dashboard stays quiet on healthy days. */}
+      <FleetAlertsCard />
 
       {/* Today's focus — gym schedule + new signups, side by side on wide
           screens so the owner sees what's happening + who joined at a glance. */}

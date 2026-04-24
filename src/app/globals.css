@@ -457,3 +457,13 @@ html, body {
     color: black !important;
   }
 }
+
+
+/* Print styles — hide navigation/buttons when printing rental contracts */
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; }
+  [aria-label="Sidebar"], header, nav { display: none !important; }
+  main { padding: 0 !important; }
+}
+

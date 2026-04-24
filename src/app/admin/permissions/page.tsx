@@ -108,9 +108,24 @@ export default function PermissionsIndexPage() {
             <ShieldCheck className="w-8 h-8 text-red" />
             Permissions
           </h1>
-          <p className="text-white/60 text-sm max-w-xl mb-6">
+          <p className="text-white/60 text-sm max-w-xl mb-4">
             Every account has role-based defaults. Click a user to grant extra access or revoke specific pages without changing their role.
           </p>
+
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Link
+              href="/admin/permissions/roles"
+              className="bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
+            >
+              View Role Defaults
+            </Link>
+            <a
+              href="/api/admin/permissions/export"
+              className="bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
+            >
+              Export CSV
+            </a>
+          </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <HeroStat label="Accounts" value={totals.total} />

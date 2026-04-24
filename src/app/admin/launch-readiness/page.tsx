@@ -12,6 +12,8 @@ import {
   Loader2,
   RefreshCw,
   Rocket,
+  Mail,
+  Zap,
 } from "lucide-react";
 
 type Readiness = {
@@ -40,6 +42,65 @@ export default function LaunchReadinessPage() {
   const { status } = useSession();
   const [data, setData] = useState<Readiness | null>(null);
   const [loading, setLoading] = useState(true);
+  const [emailBusy, setEmailBusy] = useState(false);
+  const [emailResult, setEmailResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const [regenBusy, setRegenBusy] = useState(false);
+  const [regenResult, setRegenResult] = useState<{
+    attempted: number;
+    succeeded: number;
+    skipped: number;
+    results: Array<{ id: number; name: string; ok: boolean; gamesCreated?: number; error?: string }>;
+  } | null>(null);
+
+  async function sendTestEmail() {
+    setEmailBusy(true);
+    setEmailResult(null);
+    try {
+      const res = await fetch("/api/admin/launch-readiness/test-email", { method: "POST" });
+      const body = await res.json();
+      if (res.ok && body.ok) {
+        setEmailResult({ ok: true, message: `Sent to ${body.sentTo}. Check your inbox.` });
+      } else {
+        setEmailResult({ ok: false, message: body.error ?? "Unknown error" });
+      }
+    } catch {
+      setEmailResult({ ok: false, message: "Network error" });
+    } finally {
+      setEmailBusy(false);
+    }
+  }
+
+  async function regenerateAllBrackets() {
+    if (
+      !confirm(
+        "Regenerate every safe-to-fix single-elim bracket? Tournaments with played games will be skipped."
+      )
+    ) {
+      return;
+    }
+    setRegenBusy(true);
+    setRegenResult(null);
+    try {
+      const res = await fetch("/api/admin/launch-readiness/regenerate-brackets", { method: "POST" });
+      if (res.ok) {
+        const body = await res.json();
+        setRegenResult(body);
+        // Re-fetch the readiness data so the affected-brackets list shrinks
+        const readinessRes = await fetch("/api/admin/launch-readiness");
+        if (readinessRes.ok) setData(await readinessRes.json());
+      } else {
+        const body = await res.json().catch(() => ({}));
+        setRegenResult({
+          attempted: 0,
+          succeeded: 0,
+          skipped: 0,
+          results: [{ id: 0, name: "", ok: false, error: body.error ?? "Request failed" }],
+        });
+      }
+    } finally {
+      setRegenBusy(false);
+    }
+  }
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -123,6 +184,79 @@ export default function LaunchReadinessPage() {
             />
           </div>
 
+          {/* Quick actions */}
+          <section className="mb-6 bg-white border border-border rounded-xl p-5">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-navy mb-3">
+              Diagnostics
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={sendTestEmail}
+                disabled={emailBusy}
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-navy hover:bg-navy-hover disabled:opacity-40 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                {emailBusy ? (
+                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Mail className="w-4 h-4" aria-hidden="true" />
+                )}
+                Send test email to ADMIN_EMAIL
+              </button>
+              <button
+                type="button"
+                onClick={regenerateAllBrackets}
+                disabled={regenBusy || data.summary.bracketsNeedingRegenerate === 0}
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                {regenBusy ? (
+                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Zap className="w-4 h-4" aria-hidden="true" />
+                )}
+                Regenerate {data.summary.bracketsNeedingRegenerate} safe bracket
+                {data.summary.bracketsNeedingRegenerate === 1 ? "" : "s"}
+              </button>
+            </div>
+            {emailResult && (
+              <div
+                className={`mt-3 text-xs rounded-md px-3 py-2 ${
+                  emailResult.ok
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : "bg-red/10 text-red border border-red/20"
+                }`}
+              >
+                {emailResult.message}
+              </div>
+            )}
+            {regenResult && (
+              <div className="mt-3 text-xs rounded-md px-3 py-2 bg-off-white border border-border">
+                <p className="font-semibold mb-1">
+                  {regenResult.succeeded} succeeded · {regenResult.skipped} skipped
+                </p>
+                {regenResult.results.length > 0 && (
+                  <ul className="space-y-1 text-[11px]">
+                    {regenResult.results.map((r) => (
+                      <li key={r.id} className="flex items-start gap-1.5">
+                        {r.ok ? (
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600 mt-0.5 flex-shrink-0" />
+                        ) : (
+                          <XCircle className="w-3 h-3 text-red mt-0.5 flex-shrink-0" />
+                        )}
+                        <span>
+                          <strong>{r.name || "—"}</strong>
+                          {r.ok
+                            ? ` — ${r.gamesCreated} games regenerated`
+                            : ` — ${r.error}`}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </section>
+
           {/* Brackets needing regeneration */}
           <section className="mb-8 bg-white border border-border rounded-xl p-5">
             <h2 className="text-sm font-bold uppercase tracking-wider text-navy mb-3">
@@ -137,9 +271,8 @@ export default function LaunchReadinessPage() {
               <>
                 <p className="text-text-secondary text-sm mb-3">
                   These single-elimination tournaments were published before
-                  the bracket-seeding bug fix. The first-round matchups are
-                  incorrect (every team was paired 1-vs-2 instead of standard
-                  1-vs-N seeding).
+                  the bracket-seeding bug fix. Use the bulk action above to
+                  fix every safe tournament in one click.
                 </p>
                 <ul className="divide-y divide-border border border-border rounded-lg">
                   {data.affectedBrackets.map((b) => (

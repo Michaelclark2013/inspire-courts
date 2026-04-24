@@ -156,7 +156,7 @@ export default function ResourcesFleetPage() {
   }, [data, filter, search]);
 
   return (
-    <main className="bg-off-white min-h-screen p-4 sm:p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-full">
       {/* Hero */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy via-navy to-navy/85 text-white shadow-xl mb-6">
         <div
@@ -286,7 +286,7 @@ export default function ResourcesFleetPage() {
           ))}
         </div>
       )}
-    </main>
+    </div>
   );
 }
 

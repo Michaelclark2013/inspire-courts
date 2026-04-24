@@ -97,7 +97,7 @@ export default function NewVehiclePage() {
   }
 
   return (
-    <main className="bg-off-white min-h-screen p-4 sm:p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-full">
       <Link href="/admin/resources" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4">
         <ArrowLeft className="w-3.5 h-3.5" /> Back to Fleet
       </Link>
@@ -188,7 +188,7 @@ export default function NewVehiclePage() {
           <Save className="w-4 h-4" /> {submitting ? "Saving…" : "Save Vehicle"}
         </button>
       </form>
-    </main>
+    </div>
   );
 }
 

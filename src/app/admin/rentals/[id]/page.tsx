@@ -79,11 +79,11 @@ export default function RentalDetailPage() {
     load();
   }
 
-  if (loading) return <main className="p-8 text-text-muted">Loading…</main>;
-  if (error || !booking) return <main className="p-8 text-red">{error || "Not found"}</main>;
+  if (loading) return <div className="p-8 text-text-muted">Loading…</div>;
+  if (error || !booking) return <div className="p-8 text-red">{error || "Not found"}</div>;
 
   return (
-    <main className="bg-off-white min-h-screen p-4 sm:p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-full">
       <Link href="/admin/rentals" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4">
         <ArrowLeft className="w-3.5 h-3.5" /> Rentals
       </Link>
@@ -233,7 +233,7 @@ export default function RentalDetailPage() {
           <p className="text-navy text-sm whitespace-pre-wrap">{booking.notes}</p>
         </div>
       )}
-    </main>
+    </div>
   );
 }
 

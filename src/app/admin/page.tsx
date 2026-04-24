@@ -208,8 +208,8 @@ export default async function AdminDashboard() {
   });
 
   return (
-    <main
-      className="bg-off-white min-h-screen p-3 sm:p-6 lg:p-8 pt-[max(env(safe-area-inset-top),0.75rem)] pb-[max(env(safe-area-inset-bottom),1rem)]"
+    <div
+      className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 pt-[max(env(safe-area-inset-top),0.75rem)] max-w-full"
       aria-labelledby="dashboard-heading"
     >
       {/* Dramatic navy-gradient hero — greeting + bento KPIs */}
@@ -311,6 +311,6 @@ export default async function AdminDashboard() {
           to view contacts, statuses, and follow-ups.
         </p>
       </CollapsibleSection>
-    </main>
+    </div>
   );
 }

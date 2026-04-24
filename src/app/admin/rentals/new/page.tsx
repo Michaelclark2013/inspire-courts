@@ -97,7 +97,7 @@ export default function NewRentalPage() {
   }
 
   return (
-    <main className="bg-off-white min-h-screen p-4 sm:p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-full">
       <Link href="/admin/rentals" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4">
         <ArrowLeft className="w-3.5 h-3.5" /> Rentals
       </Link>
@@ -226,7 +226,7 @@ export default function NewRentalPage() {
           <Save className="w-4 h-4" /> {submitting ? "Creating…" : "Create Rental"}
         </button>
       </form>
-    </main>
+    </div>
   );
 }
 

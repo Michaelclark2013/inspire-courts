@@ -209,10 +209,13 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-navy shadow-lg">
+    <header
+      className="fixed top-0 left-0 right-0 z-50 bg-navy shadow-lg"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
+    >
       {/* Skip-to-content link lives in layout.tsx — no duplicate needed here */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 lg:h-[72px]">
+        <div className="flex items-center justify-between h-16 lg:h-[72px]">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
             <Image src="/images/inspire-athletics-logo.png" alt="Inspire Courts logo" width={64} height={64} className="h-12 lg:h-11 w-auto object-contain drop-shadow-lg" />

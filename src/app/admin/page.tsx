@@ -19,6 +19,7 @@ import MobileDashboardHeader from "@/components/admin/dashboard/MobileDashboardH
 import InstallPrompt from "@/components/admin/dashboard/InstallPrompt";
 import LiveScoresStrip from "@/components/admin/dashboard/LiveScoresStrip";
 import WidgetStrip from "@/components/admin/dashboard/WidgetStrip";
+import FloorStatusCard from "@/components/admin/dashboard/FloorStatusCard";
 import { Suspense } from "react";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
@@ -256,6 +257,10 @@ export default async function AdminDashboard() {
 
       {/* Push notification opt-in */}
       <PushNotificationPrompt />
+
+      {/* Court-by-court status + who's clocked in right now. Auto-
+          refreshes every 30s. The core front-desk ops pair. */}
+      <FloorStatusCard />
 
       {/* Today at Inspire — live auto-refreshing operational view */}
       <TodayCard />

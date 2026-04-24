@@ -16,7 +16,9 @@ import {
   ShieldCheck,
   Mail,
   CheckCircle2,
+  Palette,
 } from "lucide-react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 type Me = {
   id: number;
@@ -297,6 +299,13 @@ export default function MyProfilePage() {
                 {pwBusy ? "Updating…" : "Update Password"}
               </button>
             </form>
+          </Card>
+
+          <Card title="Appearance" icon={<Palette className="w-4 h-4 text-red" />}>
+            <ThemeToggle />
+            <p className="text-text-muted text-xs mt-3">
+              Device preference saved locally — affects only this browser.
+            </p>
           </Card>
 
           <Card title="Quick Links" icon={<ShieldCheck className="w-4 h-4 text-red" />}>

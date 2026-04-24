@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, PenLine, UserCheck, Trophy, Megaphone } from "lucide-react";
+import { Plus, PenLine, UserCheck, Trophy, Megaphone, FileSignature, UserPlus, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Tooltip from "@/components/ui/Tooltip";
 
 const ACTIONS = [
   { href: "/admin/scores/enter", label: "Enter Score", icon: PenLine },
   { href: "/admin/checkin", label: "Check In", icon: UserCheck },
+  { href: "/admin/rentals/new", label: "New Rental", icon: FileSignature },
+  { href: "/admin/members", label: "New Member", icon: UserPlus },
+  { href: "/admin/resources/new", label: "Add Vehicle", icon: Truck },
   { href: "/admin/tournaments/manage", label: "Tournament", icon: Trophy },
   { href: "/admin/announcements", label: "Announcement", icon: Megaphone },
 ];

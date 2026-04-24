@@ -308,8 +308,8 @@ export default function Header() {
         id="mobile-nav"
         ref={mobileNavRef}
         className={cn(
-          "lg:hidden bg-navy-dark border-t border-border-dark transition-all duration-300 overflow-hidden relative z-50",
-          open ? "max-h-[85vh] opacity-100 overflow-y-auto animate-slide-down" : "max-h-0 opacity-0"
+          "lg:hidden bg-navy-dark border-t border-border-dark transition-all duration-300 relative z-50",
+          open ? "max-h-[85vh] opacity-100 overflow-y-auto animate-slide-down" : "max-h-0 opacity-0 overflow-hidden"
         )}
         role={open ? "dialog" : undefined}
         aria-modal={open ? true : undefined}
@@ -359,7 +359,7 @@ export default function Header() {
           />
 
           {/* CTAs */}
-          <div className="pt-3 space-y-2">
+          <div className="pt-3 pb-24 space-y-2">
             <Link
               href="/book"
               onClick={() => { setOpen(false); trackConversion("book_cta_click"); }}
@@ -367,15 +367,6 @@ export default function Header() {
             >
               <Calendar className="w-4 h-4" aria-hidden="true" /> Book Facility
             </Link>
-            <a
-              href="https://inspirecourts.leagueapps.com/tournaments"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => { setOpen(false); trackConversion("register_click"); }}
-              className="flex items-center justify-center gap-2 min-h-[44px] bg-red hover:bg-red-hover text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
-            >
-              Register Now <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </a>
             <Link
               href={dashboardHref}
               onClick={() => setOpen(false)}

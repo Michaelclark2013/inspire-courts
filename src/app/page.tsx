@@ -199,7 +199,7 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-navy/80 via-navy/60 to-navy" aria-hidden="true" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.15),transparent_60%)]" aria-hidden="true" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 sm:py-24 lg:py-32 text-center">
           <h1
             id="hero-heading"
             className="heading-hero font-bold uppercase tracking-tight text-white leading-[0.9] mb-8 font-[var(--font-chakra)] drop-shadow-[2px_4px_16px_rgba(0,0,0,0.5)]"

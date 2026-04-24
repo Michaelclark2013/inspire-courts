@@ -17,8 +17,14 @@ import {
   Mail,
   CheckCircle2,
   Palette,
+  BellRing,
 } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+
+type NotificationPrefs = {
+  email?: { announcements?: boolean; gameReminders?: boolean; weekly?: boolean };
+  push?: { announcements?: boolean; gameReminders?: boolean };
+};
 
 type Me = {
   id: number;
@@ -34,11 +40,26 @@ type Me = {
   city: string | null;
   state: string | null;
   postalCode: string | null;
+  notificationPrefsJson: string | null;
   memberSince: string | null;
   emailVerifiedAt: string | null;
   profileComplete: boolean;
   createdAt: string;
 };
+
+function parsePrefs(json: string | null): NotificationPrefs {
+  if (!json) return {};
+  try { return JSON.parse(json) as NotificationPrefs; } catch { return {}; }
+}
+
+function prefOn(prefs: NotificationPrefs, path: string): boolean {
+  // null or missing = opt-in by default
+  const [channel, key] = path.split(".");
+  const c = (prefs as Record<string, Record<string, boolean>>)[channel];
+  if (!c) return true;
+  const v = c[key];
+  return v === undefined ? true : v;
+}
 
 export default function MyProfilePage() {
   const [me, setMe] = useState<Me | null>(null);
@@ -308,6 +329,8 @@ export default function MyProfilePage() {
             </p>
           </Card>
 
+          <NotificationPrefsCard me={me} onSaved={load} />
+
           <Card title="Quick Links" icon={<ShieldCheck className="w-4 h-4 text-red" />}>
             <div className="space-y-2">
               <Link href="/admin/my-schedule" className="flex items-center justify-between bg-off-white hover:bg-border rounded-xl px-4 py-2.5 text-sm text-navy font-semibold transition-colors">
@@ -344,6 +367,81 @@ function Card({ title, icon, children }: { title: string; icon: React.ReactNode;
         {icon} {title}
       </h2>
       {children}
+    </div>
+  );
+}
+
+function NotificationPrefsCard({ me, onSaved }: { me: Me; onSaved: () => void }) {
+  const initial = parsePrefs(me.notificationPrefsJson);
+  const [prefs, setPrefs] = useState<NotificationPrefs>(initial);
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  function toggle(path: string) {
+    const [channel, key] = path.split(".");
+    setPrefs((p) => {
+      const next = { ...p };
+      const c = { ...((next as Record<string, Record<string, boolean>>)[channel] || {}) };
+      c[key] = !prefOn(p, path);
+      (next as Record<string, Record<string, boolean>>)[channel] = c;
+      return next;
+    });
+    setSaved(false);
+  }
+
+  async function save() {
+    setBusy(true);
+    try {
+      await fetch("/api/me/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationPrefs: prefs }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      onSaved();
+    } finally { setBusy(false); }
+  }
+
+  const items: Array<{ path: string; label: string }> = [
+    { path: "email.announcements", label: "Announcement emails" },
+    { path: "email.gameReminders", label: "Game day email reminders" },
+    { path: "email.weekly", label: "Weekly digest email" },
+    { path: "push.announcements", label: "Announcement push notifications" },
+    { path: "push.gameReminders", label: "Game day push reminders" },
+  ];
+
+  return (
+    <div className="bg-white border border-border rounded-2xl shadow-sm p-5">
+      <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+        <BellRing className="w-4 h-4 text-red" /> Notifications
+      </h2>
+      <div className="space-y-2">
+        {items.map((i) => {
+          const on = prefOn(prefs, i.path);
+          return (
+            <button
+              key={i.path}
+              onClick={() => toggle(i.path)}
+              className={`w-full flex items-center justify-between bg-off-white hover:bg-border rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                on ? "text-navy" : "text-text-muted"
+              }`}
+            >
+              <span className="text-left">{i.label}</span>
+              <span className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${on ? "bg-red" : "bg-border"}`}>
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${on ? "translate-x-4" : "translate-x-0.5"}`} />
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      <button
+        onClick={save}
+        disabled={busy}
+        className="mt-4 w-full bg-navy hover:bg-navy/90 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider py-2.5 rounded-xl"
+      >
+        {busy ? "Saving…" : saved ? "Saved ✓" : "Save Preferences"}
+      </button>
     </div>
   );
 }

@@ -33,6 +33,7 @@ export async function GET() {
         city: users.city,
         state: users.state,
         postalCode: users.postalCode,
+        notificationPrefsJson: users.notificationPrefsJson,
         memberSince: users.memberSince,
         emailVerifiedAt: users.emailVerifiedAt,
         profileComplete: users.profileComplete,
@@ -76,6 +77,11 @@ export async function PATCH(request: NextRequest) {
         const v = body[k];
         update[k] = typeof v === "string" ? (v.trim() || null) : v ?? null;
       }
+    }
+
+    // Notification prefs — accept a nested object and store as JSON.
+    if (body && typeof body.notificationPrefs === "object" && body.notificationPrefs !== null) {
+      update.notificationPrefsJson = JSON.stringify(body.notificationPrefs);
     }
     if (Object.keys(update).length === 0) {
       return NextResponse.json({ error: "Nothing to update" }, { status: 400 });

@@ -40,6 +40,12 @@ export const users = sqliteTable("users", {
   // and re-hydrates on mismatch, so admin-side changes take effect
   // on the next request without forcing a re-login.
   permissionsUpdatedAt: text("permissions_updated_at"),
+  // JSON blob of notification preferences. Keeps the column count
+  // sane as we add new channels.
+  //   { email: { announcements, gameReminders, weekly },
+  //     push:  { announcements, gameReminders } }
+  // null = opt-in to everything by default.
+  notificationPrefsJson: text("notification_prefs_json"),
   // ── Email verification (R780 port from OFF SZN) ─────────────────
   // Null = unverified; ISO timestamp = verified at that moment.
   // Sensitive actions gate on isVerified(user) from lib/email-verification.

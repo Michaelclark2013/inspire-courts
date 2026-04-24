@@ -182,6 +182,36 @@ export async function PUT(request: NextRequest) {
       return apiNotFound("User not found");
     }
 
+    // Guard against self-demotion of the current admin. Without this, an
+    // admin could click "change role → parent" on their own row and
+    // instantly lock themselves out of the admin dashboard.
+    if (
+      role &&
+      role !== "admin" &&
+      before.role === "admin" &&
+      String(numericId) === String(session.user.id)
+    ) {
+      return NextResponse.json(
+        { error: "You cannot demote your own admin role. Ask another admin to do it." },
+        { status: 400 }
+      );
+    }
+
+    // Guard against demoting the LAST admin. Mirrors the DELETE
+    // handler's "cannot delete the last admin" check.
+    if (role && role !== "admin" && before.role === "admin") {
+      const [{ count }] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(users)
+        .where(eq(users.role, "admin"));
+      if (count <= 1) {
+        return NextResponse.json(
+          { error: "Cannot demote the last admin user. Promote another user first." },
+          { status: 400 }
+        );
+      }
+    }
+
     const updates: Record<string, unknown> = {
       updatedAt: new Date().toISOString(),
     };
@@ -248,7 +278,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const numId = Number(id);
-    if (isNaN(numId)) {
+    if (!Number.isInteger(numId) || numId <= 0) {
       return NextResponse.json({ error: "Invalid user id" }, { status: 400 });
     }
 

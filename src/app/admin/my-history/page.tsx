@@ -61,7 +61,7 @@ export default function MyHistoryPage() {
   const totalPay = shifts.reduce((sum, s) => sum + (parseFloat(s.amount.replace(/[$,]/g, "")) || 0), 0);
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
       <div className="mb-4 md:mb-8">
         <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           My Work History

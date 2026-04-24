@@ -1,6 +1,6 @@
 export default function AdminLoading() {
   return (
-    <div className="p-3 sm:p-6 lg:p-8" aria-hidden="true">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8" aria-hidden="true">
       {/* Header skeleton — matches PageHeader with icon */}
       <div className="mb-4 md:mb-8 flex items-center gap-3">
         <div className="hidden md:block w-10 h-10 skeleton-shimmer rounded-xl" />

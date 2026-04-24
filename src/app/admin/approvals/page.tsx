@@ -11,6 +11,7 @@ interface PendingUser {
   email: string;
   role: string;
   phone: string | null;
+  photoUrl: string | null;
   createdAt: string;
 }
 
@@ -97,7 +98,7 @@ export default function ApprovalsPage() {
   }
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
       {/* Header */}
       <div className="mb-4 md:mb-8">
         <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
@@ -166,6 +167,21 @@ export default function ApprovalsPage() {
               key={user.id}
               className="bg-white border border-light-gray rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 shadow-sm hover:shadow-md transition-shadow"
             >
+              {/* Profile photo — required for staff/ref so admin can
+                  verify identity before approving. */}
+              {user.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={user.photoUrl}
+                  alt={`${user.name} photo`}
+                  className="w-14 h-14 rounded-full object-cover border border-border flex-shrink-0"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = "0.4"; }}
+                />
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-off-white border border-dashed border-border flex items-center justify-center flex-shrink-0">
+                  <span className="text-text-muted text-[10px] font-bold uppercase tracking-wider">No&nbsp;photo</span>
+                </div>
+              )}
               {/* User info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">

@@ -14,6 +14,9 @@ export const users = sqliteTable("users", {
   phone: text("phone"),
   approved: integer("approved", { mode: "boolean" }).default(true), // staff/ref need admin approval
   memberSince: text("member_since"), // Year they started (e.g. "2022") — for loyalty badge
+  // Profile photo URL — required for staff/ref accounts so admin can
+  // verify identity at time of approval. Also shown in /admin/roster.
+  photoUrl: text("photo_url"),
   // ── Profile fact-check fields ───────────────────────────────────
   // YYYY-MM-DD birth date. Required for age-group eligibility checks
   // on tournament registration (can't register an athlete as 12U if

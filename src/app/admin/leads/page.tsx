@@ -87,7 +87,7 @@ export default function LeadsPage() {
   });
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">

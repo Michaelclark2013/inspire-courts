@@ -99,7 +99,7 @@ export default function MemberDetailPage() {
     : 0;
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8 space-y-6">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 space-y-6">
       <Link href="/admin/members" className="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-navy">
         <ArrowLeft className="w-4 h-4" /> Back to members
       </Link>

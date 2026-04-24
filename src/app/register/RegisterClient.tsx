@@ -81,6 +81,7 @@ export default function RegisterClient() {
     email: "",
     password: "",
     phone: "",
+    photoUrl: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -413,6 +414,40 @@ export default function RegisterClient() {
                   placeholder="(555) 123-4567"
                 />
               </div>
+
+              {/* Staff / ref / front-desk require a profile photo for
+                  identity verification before admin approves the account. */}
+              {["staff", "ref", "front_desk"].includes(selectedRole) && (
+                <div>
+                  <label htmlFor="reg-photo" className="block text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Profile Photo URL <span className="text-red">*</span>
+                  </label>
+                  <input
+                    id="reg-photo"
+                    type="url"
+                    required
+                    value={form.photoUrl}
+                    onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
+                    className="w-full bg-navy border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red transition-all placeholder:text-white/25"
+                    placeholder="https://..."
+                  />
+                  <p className="text-white/40 text-xs mt-1.5">
+                    Upload a clear headshot to Drive/Dropbox and paste the link. Admin will verify before approving.
+                  </p>
+                  {form.photoUrl && (
+                    <div className="mt-3 flex items-center gap-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={form.photoUrl}
+                        alt="Photo preview"
+                        className="w-16 h-16 rounded-full object-cover border border-white/10"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                      />
+                      <p className="text-white/40 text-xs">Preview</p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <button
                 type="submit"

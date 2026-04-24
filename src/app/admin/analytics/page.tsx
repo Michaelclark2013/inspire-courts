@@ -4,7 +4,7 @@ export default async function AnalyticsPage() {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">

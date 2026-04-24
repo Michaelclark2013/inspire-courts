@@ -170,7 +170,7 @@ export default function GymSchedulePage() {
   }, {});
 
   return (
-    <div className="p-5 lg:p-8 max-w-4xl pb-[env(safe-area-inset-bottom)]">
+    <div className="p-5 lg:p-8 pb-28 lg:pb-8 max-w-4xl pb-[env(safe-area-inset-bottom)]">
       {/* Breadcrumb */}
       <Link
         href="/admin"

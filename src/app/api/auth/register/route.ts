@@ -23,7 +23,11 @@ const registerSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters").max(200),
   role: z.enum(["parent", "coach", "staff", "ref", "front_desk"]),
   phone: z.string().trim().max(30).optional().nullable(),
-});
+  photoUrl: z.string().trim().url("Photo URL must be a valid link").max(500).optional().nullable(),
+}).refine(
+  (v) => !["staff", "ref", "front_desk"].includes(v.role) || !!v.photoUrl,
+  { message: "A profile photo is required for staff accounts", path: ["photoUrl"] }
+);
 
 /** Strip HTML special characters to prevent XSS in stored data. */
 function sanitize(value: string): string {
@@ -55,7 +59,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const { name, email, password, role, phone } = parsed.data;
+    const { name, email, password, role, phone, photoUrl } = parsed.data;
 
     // Check if email already exists
     const [existing] = await db
@@ -91,6 +95,7 @@ export async function POST(request: NextRequest) {
       passwordHash,
       role,
       phone: sanitizedPhone,
+      photoUrl: photoUrl ? photoUrl.slice(0, 500) : null,
       approved: !needsApproval,
       emailVerifyToken: verifyToken,
       emailVerifyExpiresAt: verifyExpiresAt,

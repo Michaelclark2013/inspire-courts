@@ -45,6 +45,7 @@ export const GET = withTiming("admin.approvals.list", async (request: NextReques
           email: users.email,
           role: users.role,
           phone: users.phone,
+          photoUrl: users.photoUrl,
           createdAt: users.createdAt,
         })
         .from(users)

@@ -1,6 +1,6 @@
 export default function LinksLoading() {
   return (
-    <div className="p-3 sm:p-6 lg:p-8 animate-pulse">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 animate-pulse">
       <div className="mb-4 md:mb-8">
         <div className="h-7 w-36 bg-light-gray rounded mb-2" />
         <div className="h-4 w-48 bg-light-gray/70 rounded" />

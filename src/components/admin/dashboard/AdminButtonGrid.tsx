@@ -97,6 +97,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/availability", label: "Availability", desc: "When staff can work", icon: Calendar, page: "roster" },
       { href: "/admin/certifications", label: "Certifications", desc: "Expiring docs", icon: BadgeCheck, page: "certifications" },
       { href: "/admin/time-off", label: "Time Off", desc: "PTO requests", icon: Plane, page: "time_off" },
+      { href: "/admin/staffing", label: "Staffing Plan", desc: "Game-day headcount", icon: Users, page: "roster" },
     ],
   },
   {

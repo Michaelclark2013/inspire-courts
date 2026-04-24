@@ -120,7 +120,7 @@ export default function MemberImportPage() {
   if (status === "unauthenticated" || !session?.user?.role) redirect("/admin/login");
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
       <Link href="/admin/members" className="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-navy mb-4">
         <ArrowLeft className="w-4 h-4" /> Back to members
       </Link>

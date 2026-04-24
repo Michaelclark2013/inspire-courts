@@ -14,7 +14,7 @@ export const revalidate = 300;
 export default async function StaffPage() {
   if (!isGoogleConfigured()) {
     return (
-      <div className="p-3 sm:p-6 lg:p-8">
+      <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
         <div className="mb-4 md:mb-8">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Staff & Refs
@@ -103,7 +103,7 @@ export default async function StaffPage() {
   const totalRefPay = refs.reduce((s, r) => s + r.pay, 0);
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
       <PageHeader
         title="Staff & Refs"
         subtitle={`${staff.length} staff shifts \u00B7 ${refs.length} ref check-outs`}

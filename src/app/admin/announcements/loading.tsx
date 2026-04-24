@@ -1,6 +1,6 @@
 export default function AnnouncementsLoading() {
   return (
-    <div className="p-3 sm:p-6 lg:p-8 animate-pulse" aria-hidden="true">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 animate-pulse" aria-hidden="true">
       <div className="mb-6">
         <div className="h-3 w-28 bg-light-gray rounded mb-2" />
         <div className="h-7 w-52 bg-light-gray rounded" />

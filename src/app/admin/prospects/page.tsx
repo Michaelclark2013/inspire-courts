@@ -14,7 +14,7 @@ export const revalidate = 300;
 export default async function ProspectsPage() {
   if (!isGoogleConfigured()) {
     return (
-      <div className="p-3 sm:p-6 lg:p-8">
+      <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
         <div className="mb-4 md:mb-8">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Prospects</h1>
           <p className="text-text-secondary text-sm mt-1 hidden md:block">Team Prospect Pipeline</p>
@@ -94,7 +94,7 @@ export default async function ProspectsPage() {
   ).length;
 
   return (
-    <div className="p-3 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8">
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-3">
         <PageHeader
           title="Prospects"

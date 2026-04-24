@@ -1,6 +1,6 @@
 export default function TournamentsLoading() {
   return (
-    <div className="p-3 sm:p-6 lg:p-8 " aria-hidden="true">
+    <div className="p-3 sm:p-6 lg:p-8 pb-28 lg:pb-8 " aria-hidden="true">
       <div className="mb-6">
         <div className="h-3 w-28 skeleton-shimmer rounded mb-2" />
         <div className="h-7 w-48 skeleton-shimmer rounded" />

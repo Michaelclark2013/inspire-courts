@@ -34,9 +34,10 @@ type Override = {
   page: string;
   granted: boolean;
   reason: string | null;
+  expiresAt: string | null;
 };
 
-type Effective = Record<string, { granted: boolean; source: "role" | "override" }>;
+type Effective = Record<string, { granted: boolean; source: "role" | "override" | "expired" }>;
 
 type Dossier = {
   user: User;
@@ -177,14 +178,23 @@ export default function PermissionsDetailPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  async function setPermission(page: string, granted: boolean | null, reason?: string) {
+  async function setPermission(
+    page: string,
+    granted: boolean | null,
+    opts: { reason?: string; expiresAt?: string | null } = {}
+  ) {
     if (!data) return;
     setSavingKey(page);
     try {
       const res = await fetch(`/api/admin/permissions/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ page, granted, reason }),
+        body: JSON.stringify({
+          page,
+          granted,
+          reason: opts.reason,
+          expiresAt: opts.expiresAt ?? null,
+        }),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -196,6 +206,14 @@ export default function PermissionsDetailPage() {
     } finally {
       setSavingKey(null);
     }
+  }
+
+  // Quick preset helpers. Ask for a day count and set expiry that
+  // many days from now.
+  function grantUntil(page: string, days: number) {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    setPermission(page, true, { expiresAt: d.toISOString() });
   }
 
   async function resetAll() {
@@ -367,29 +385,88 @@ export default function PermissionsDetailPage() {
                       <p className="text-text-muted text-[11px] truncate">
                         <span className="font-mono">{page.key}</span>
                         {override?.reason && ` · ${override.reason}`}
+                        {override?.expiresAt && (() => {
+                          const t = new Date(override.expiresAt).getTime();
+                          const expired = t < Date.now();
+                          return (
+                            <span className={expired ? "text-red" : "text-amber-600"}>
+                              {" · "}
+                              {expired ? "expired" : "expires"}{" "}
+                              {new Date(override.expiresAt).toLocaleDateString([], { month: "short", day: "numeric" })}
+                            </span>
+                          );
+                        })()}
                       </p>
                     </div>
-                    {override && (
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                        override.granted ? "bg-emerald-50 text-emerald-700" : "bg-red/10 text-red"
-                      }`}>
-                        {override.granted ? <ShieldPlus className="w-3 h-3" /> : <ShieldMinus className="w-3 h-3" />}
-                        Override
-                      </span>
-                    )}
+                    {override && (() => {
+                      const isExpired = override.expiresAt && new Date(override.expiresAt).getTime() < Date.now();
+                      return (
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 ${
+                          isExpired
+                            ? "bg-off-white text-text-muted"
+                            : override.granted
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-red/10 text-red"
+                        }`}>
+                          {override.granted ? <ShieldPlus className="w-3 h-3" /> : <ShieldMinus className="w-3 h-3" />}
+                          {isExpired ? "Expired" : "Override"}
+                        </span>
+                      );
+                    })()}
                     <div className="flex items-center gap-1 flex-shrink-0">
-                      <button
-                        onClick={() => setPermission(page.key, true)}
-                        disabled={saving}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg transition-colors ${
-                          override?.granted
-                            ? "bg-emerald-600 text-white"
-                            : "bg-off-white text-text-muted hover:bg-emerald-50 hover:text-emerald-700"
-                        }`}
-                        title="Grant this page"
-                      >
-                        Grant
-                      </button>
+                      <div className="relative group">
+                        <button
+                          onClick={() => setPermission(page.key, true)}
+                          disabled={saving}
+                          className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg transition-colors ${
+                            override?.granted
+                              ? "bg-emerald-600 text-white"
+                              : "bg-off-white text-text-muted hover:bg-emerald-50 hover:text-emerald-700"
+                          }`}
+                          title="Grant this page (click) — hover for temporary grants"
+                        >
+                          Grant
+                        </button>
+                        {/* Hover menu for time-boxed grants */}
+                        <div className="absolute right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg p-1 hidden group-hover:block z-10 whitespace-nowrap">
+                          <button
+                            onClick={() => grantUntil(page.key, 1)}
+                            className="block w-full text-left text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg hover:bg-off-white text-navy"
+                          >
+                            For 24 hours
+                          </button>
+                          <button
+                            onClick={() => grantUntil(page.key, 3)}
+                            className="block w-full text-left text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg hover:bg-off-white text-navy"
+                          >
+                            For 3 days (event)
+                          </button>
+                          <button
+                            onClick={() => grantUntil(page.key, 7)}
+                            className="block w-full text-left text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg hover:bg-off-white text-navy"
+                          >
+                            For 1 week
+                          </button>
+                          <button
+                            onClick={() => grantUntil(page.key, 30)}
+                            className="block w-full text-left text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg hover:bg-off-white text-navy"
+                          >
+                            For 30 days
+                          </button>
+                          <button
+                            onClick={() => {
+                              const d = prompt("Expires on (YYYY-MM-DD):");
+                              if (d) {
+                                const iso = new Date(d + "T23:59:59").toISOString();
+                                setPermission(page.key, true, { expiresAt: iso });
+                              }
+                            }}
+                            className="block w-full text-left text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg hover:bg-off-white text-navy border-t border-border"
+                          >
+                            Pick date…
+                          </button>
+                        </div>
+                      </div>
                       <button
                         onClick={() => setPermission(page.key, false)}
                         disabled={saving || (user.role === "admin" && page.key === "users")}

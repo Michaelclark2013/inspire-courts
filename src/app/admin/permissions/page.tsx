@@ -15,6 +15,7 @@ import {
   Square,
   X,
 } from "lucide-react";
+import PermissionActivityFeed from "@/components/admin/permissions/ActivityFeed";
 
 type UserRow = {
   id: number;
@@ -247,6 +248,11 @@ export default function PermissionsIndexPage() {
           </ul>
         </div>
       )}
+
+      {/* Recent permission activity — site-wide audit rolling feed */}
+      <div className="mt-8">
+        <PermissionActivityFeed />
+      </div>
 
       {/* Floating bulk action bar */}
       {selected.size > 0 && (

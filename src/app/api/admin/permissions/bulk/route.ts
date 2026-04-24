@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       : [];
     const action: "grant" | "revoke" | "clear" = body?.action;
     const reason = typeof body?.reason === "string" ? body.reason.trim().slice(0, 500) || null : null;
+    const expiresAt = typeof body?.expiresAt === "string" && body.expiresAt ? body.expiresAt : null;
 
     if (userIds.length === 0) {
       return NextResponse.json({ error: "No users selected" }, { status: 400 });
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
         if (existing) {
           await db
             .update(userPermissions)
-            .set({ granted, reason, grantedBy: actorId, updatedAt: nowIso })
+            .set({ granted, reason, expiresAt, grantedBy: actorId, updatedAt: nowIso })
             .where(eq(userPermissions.id, existing.id));
         } else {
           await db.insert(userPermissions).values({
@@ -103,6 +104,7 @@ export async function POST(request: NextRequest) {
             page,
             granted,
             reason,
+            expiresAt,
             grantedBy: actorId,
           });
         }

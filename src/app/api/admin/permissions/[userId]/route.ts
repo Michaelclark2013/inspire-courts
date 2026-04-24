@@ -102,6 +102,10 @@ export async function PUT(
       return NextResponse.json({ error: "Invalid page" }, { status: 400 });
     }
     const reason = typeof body?.reason === "string" ? body.reason.trim().slice(0, 500) || null : null;
+    // Optional ISO-8601 expiry — override lapses after this moment.
+    const expiresAt = typeof body?.expiresAt === "string" && body.expiresAt
+      ? body.expiresAt
+      : null;
 
     // Look up the target to confirm existence + capture role for audit.
     const [user] = await db
@@ -151,6 +155,7 @@ export async function PUT(
         .set({
           granted,
           reason,
+          expiresAt,
           grantedBy: Number(session.user.id),
           updatedAt: new Date().toISOString(),
         })
@@ -162,8 +167,8 @@ export async function PUT(
         action: granted ? "permission.granted" : "permission.revoked",
         entityType: "user_permission",
         entityId: result.id,
-        before: { granted: existing.granted },
-        after: { granted, reason },
+        before: { granted: existing.granted, expiresAt: existing.expiresAt },
+        after: { granted, reason, expiresAt },
       });
     } else {
       [result] = await db
@@ -173,6 +178,7 @@ export async function PUT(
           page,
           granted,
           reason,
+          expiresAt,
           grantedBy: Number(session.user.id),
         })
         .returning();
@@ -183,7 +189,7 @@ export async function PUT(
         entityType: "user_permission",
         entityId: result.id,
         before: null,
-        after: { userId, page, granted, reason },
+        after: { userId, page, granted, reason, expiresAt },
       });
     }
 

@@ -204,19 +204,32 @@ export function canAccess(role: UserRole | undefined, page: AdminPage): boolean 
   return PAGE_ACCESS[page]?.includes(role) ?? false;
 }
 
-export type PermissionOverride = { page: AdminPage; granted: boolean };
+export type PermissionOverride = {
+  page: AdminPage;
+  granted: boolean;
+  expiresAt?: string | null;
+};
+
+// Returns true if the override has an expiresAt that is strictly in
+// the past. Expired overrides are ignored by canAccessWithOverrides.
+function isExpired(o: PermissionOverride, atMs: number = Date.now()): boolean {
+  if (!o.expiresAt) return false;
+  const t = new Date(o.expiresAt).getTime();
+  return Number.isFinite(t) && t < atMs;
+}
 
 // Role-default layered with per-user overrides. Call this where you
 // have the user's full permission set available (session callback,
 // permission-aware API handlers). Overrides beat defaults — a `false`
-// override revokes even an admin's access.
+// override revokes even an admin's access. Expired overrides are
+// ignored.
 export function canAccessWithOverrides(
   role: UserRole | undefined,
   page: AdminPage,
   overrides: PermissionOverride[] | undefined
 ): boolean {
   if (!role) return false;
-  const override = overrides?.find((o) => o.page === page);
+  const override = overrides?.find((o) => o.page === page && !isExpired(o));
   if (override) return override.granted;
   return canAccess(role, page);
 }
@@ -226,12 +239,16 @@ export function canAccessWithOverrides(
 export function effectivePermissions(
   role: UserRole | undefined,
   overrides: PermissionOverride[] | undefined
-): Record<AdminPage, { granted: boolean; source: "role" | "override" }> {
-  const out = {} as Record<AdminPage, { granted: boolean; source: "role" | "override" }>;
+): Record<AdminPage, { granted: boolean; source: "role" | "override" | "expired" }> {
+  const out = {} as Record<AdminPage, { granted: boolean; source: "role" | "override" | "expired" }>;
   for (const page of ALL_ADMIN_PAGES) {
     const override = overrides?.find((o) => o.page === page);
-    if (override) {
+    if (override && !isExpired(override)) {
       out[page] = { granted: override.granted, source: "override" };
+    } else if (override) {
+      // Row exists but is expired — render as role default but flag so
+      // admin UI can show "(expired)" hint if it wants.
+      out[page] = { granted: canAccess(role, page), source: "expired" };
     } else {
       out[page] = { granted: canAccess(role, page), source: "role" };
     }

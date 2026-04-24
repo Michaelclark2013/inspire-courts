@@ -1565,6 +1565,10 @@ export const userPermissions = sqliteTable("user_permissions", {
   page: text("page").notNull(), // mirrors AdminPage union
   granted: integer("granted", { mode: "boolean" }).notNull(),
   reason: text("reason"),
+  // Optional auto-expiry. When set and in the past, the override is
+  // ignored by canAccessWithOverrides — useful for tournament-weekend
+  // grants that should lapse back to the role default after the event.
+  expiresAt: text("expires_at"),
   grantedBy: integer("granted_by").references(() => users.id, {
     onDelete: "set null",
   }),
@@ -1580,4 +1584,5 @@ export const userPermissions = sqliteTable("user_permissions", {
   // Unique pair — only one row per (user, page). The API upserts
   // by deleting + re-inserting to keep the handler simple.
   index("user_permissions_user_page_idx").on(table.userId, table.page),
+  index("user_permissions_expires_idx").on(table.expiresAt),
 ]);

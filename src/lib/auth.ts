@@ -182,10 +182,14 @@ export const authOptions: NextAuthOptions = {
           const uid = Number(token.userId);
           if (Number.isInteger(uid) && uid > 0) {
             const rows = await db
-              .select({ page: userPermissions.page, granted: userPermissions.granted })
+              .select({
+                page: userPermissions.page,
+                granted: userPermissions.granted,
+                expiresAt: userPermissions.expiresAt,
+              })
               .from(userPermissions)
               .where(eq(userPermissions.userId, uid));
-            (token as { permissionOverrides: Array<{ page: string; granted: boolean }> })
+            (token as { permissionOverrides: Array<{ page: string; granted: boolean; expiresAt: string | null }> })
               .permissionOverrides = rows;
           }
         } catch (err) {

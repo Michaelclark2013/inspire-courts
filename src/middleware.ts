@@ -116,28 +116,45 @@ export async function middleware(request: NextRequest) {
     }
 
     // Page-level enforcement using per-user permission overrides.
-    // Admin role always passes (catches any new pages the override
-    // map doesn't list yet). Non-admin admin-tier roles get checked
-    // against canAccessWithOverrides, so a staff user with a specific
-    // revoke on /admin/scores is actually redirected away.
-    if (!isApiRoute && token.role !== "admin") {
-      const page = pageFromAdminPath(pathname);
-      if (page) {
-        const overrides =
-          (token as { permissionOverrides?: Array<{ page: string; granted: boolean }> })
-            .permissionOverrides;
-        const allowed = canAccessWithOverrides(
-          token.role as UserRole,
-          page as AdminPage,
-          overrides as Array<{ page: AdminPage; granted: boolean }> | undefined
-        );
-        if (!allowed) {
-          // Bounce to the dashboard rather than /login so the user
-          // sees they're authenticated but just not permitted here.
-          return applySecurityHeaders(
-            NextResponse.redirect(new URL("/admin?denied=" + encodeURIComponent(page), request.url)),
-            requestId
+    //
+    // Admin role normally passes (catches any new pages the override
+    // map doesn't list yet). BUT if the admin has activated
+    // "view as user" mode (icaz-view-as cookie), we swap in the target
+    // user's role + overrides so the preview faithfully reproduces
+    // what that user would see, including denied-page redirects.
+    if (!isApiRoute) {
+      let effectiveRole = token.role as UserRole;
+      let effectiveOverrides =
+        (token as { permissionOverrides?: Array<{ page: string; granted: boolean; expiresAt?: string | null }> })
+          .permissionOverrides;
+
+      const viewAsCookie = request.cookies.get("icaz-view-as")?.value;
+      if (viewAsCookie && token.role === "admin") {
+        try {
+          const parsed = JSON.parse(viewAsCookie);
+          if (parsed?.role) effectiveRole = parsed.role as UserRole;
+          if (Array.isArray(parsed?.overrides)) effectiveOverrides = parsed.overrides;
+        } catch {
+          /* ignore malformed cookie */
+        }
+      }
+
+      // Only gate non-admin effective roles. Main admin still has full
+      // access unless view-as swaps them into a lower tier.
+      if (effectiveRole !== "admin") {
+        const page = pageFromAdminPath(pathname);
+        if (page) {
+          const allowed = canAccessWithOverrides(
+            effectiveRole,
+            page as AdminPage,
+            effectiveOverrides as Array<{ page: AdminPage; granted: boolean; expiresAt?: string | null }> | undefined
           );
+          if (!allowed) {
+            return applySecurityHeaders(
+              NextResponse.redirect(new URL("/admin?denied=" + encodeURIComponent(page), request.url)),
+              requestId
+            );
+          }
         }
       }
     }

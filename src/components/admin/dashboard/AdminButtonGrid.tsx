@@ -41,6 +41,7 @@ import {
 import { canAccessWithOverrides } from "@/lib/permissions";
 import type { AdminPage } from "@/lib/permissions";
 import type { UserRole } from "@/types/next-auth";
+import { triggerHaptic } from "@/lib/capacitor";
 
 /**
  * Simplified admin tile wall.
@@ -313,7 +314,8 @@ export default function AdminButtonGrid() {
                   <Link
                     key={tile.href}
                     href={tile.href}
-                    className="group bg-gradient-to-br from-navy to-navy/90 text-white rounded-2xl p-4 transition-all hover:shadow-lg"
+                    onClick={() => { void triggerHaptic("light"); }}
+                    className="group bg-gradient-to-br from-navy to-navy/90 text-white rounded-2xl p-4 min-h-[96px] transition-all hover:shadow-lg active:scale-[0.97]"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
@@ -408,8 +410,8 @@ function TileCard({
 }) {
   const t = TINT[tint];
   return (
-    <div className="group relative bg-white border border-border rounded-2xl transition-all shadow-sm hover:shadow-md hover:border-navy/20">
-      <Link href={tile.href} className="block p-4">
+    <div className="group relative bg-white border border-border rounded-2xl transition-all shadow-sm hover:shadow-md hover:border-navy/20 active:scale-[0.97]">
+      <Link href={tile.href} className="block p-4 min-h-[88px]">
         <div className="flex items-start justify-between mb-3">
           <div className={`w-10 h-10 rounded-xl ${t.iconBg} flex items-center justify-center`}>
             <tile.icon className={`w-5 h-5 ${t.iconFg}`} aria-hidden={true} />

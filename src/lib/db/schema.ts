@@ -1591,3 +1591,29 @@ export const userPermissions = sqliteTable("user_permissions", {
   index("user_permissions_user_page_idx").on(table.userId, table.page),
   index("user_permissions_expires_idx").on(table.expiresAt),
 ]);
+
+// ── Permission templates ─────────────────────────────────────────────
+// Reusable bundles of (page → granted) pairs that admin can apply to
+// any user in one click. Extends the hardcoded preset list in the
+// bulk dialog — e.g. save "Tournament Weekend Scorekeeper" once, then
+// drop that bundle on any ref for the event.
+export const permissionTemplates = sqliteTable("permission_templates", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  description: text("description"),
+  // JSON array: [{ page: "scores", granted: true }, …]
+  pagesJson: text("pages_json").notNull().default("[]"),
+  // Default duration in days when applied — null = permanent.
+  defaultDurationDays: integer("default_duration_days"),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("permission_templates_name_idx").on(table.name),
+]);

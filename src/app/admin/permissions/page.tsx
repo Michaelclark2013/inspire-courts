@@ -115,10 +115,16 @@ export default function PermissionsIndexPage() {
 
           <div className="flex flex-wrap gap-2 mb-6">
             <Link
+              href="/admin/permissions/templates"
+              className="bg-red hover:bg-red-hover rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
+            >
+              Templates
+            </Link>
+            <Link
               href="/admin/permissions/roles"
               className="bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
             >
-              View Role Defaults
+              Role Defaults
             </Link>
             <a
               href="/api/admin/permissions/export"

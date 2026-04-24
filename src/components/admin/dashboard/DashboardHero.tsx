@@ -65,20 +65,20 @@ export default function DashboardHero({ greeting, dateLine, stats }: Props) {
           className="absolute -left-16 -bottom-16 w-72 h-72 rounded-full bg-white/5 blur-2xl pointer-events-none"
         />
 
-        <div className="relative p-6 sm:p-8 lg:p-10">
+        <div className="relative p-5 sm:p-8 lg:p-10">
           {/* Top row: greeting + ops jump */}
-          <div className="flex items-start justify-between gap-4 mb-8 lg:mb-12">
-            <div>
-              <p className="text-white/50 text-[11px] uppercase tracking-[0.2em] mb-2">
+          <div className="flex items-start justify-between gap-4 mb-6 lg:mb-12">
+            <div className="min-w-0 flex-1">
+              <p className="text-white/50 text-[10px] sm:text-[11px] uppercase tracking-[0.2em] mb-1.5 sm:mb-2">
                 {dateLine}
               </p>
               <h1
                 id="dashboard-heading"
-                className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading tracking-tight leading-[1.05]"
+                className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading tracking-tight leading-[1.05]"
               >
                 {greeting}
               </h1>
-              <p className="text-white/60 text-sm mt-2 max-w-lg">
+              <p className="text-white/60 text-xs sm:text-sm mt-1.5 sm:mt-2 max-w-lg hidden sm:block">
                 Your command center. Live stats, upcoming events, and every
                 admin tool in one place.
               </p>

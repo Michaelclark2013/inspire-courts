@@ -467,3 +467,17 @@ html, body {
   main { padding: 0 !important; }
 }
 
+
+
+/* Mobile app polish — native-feeling touch behavior */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove tap-highlight flash on touch devices (custom :active handles feedback) */
+  button, a { -webkit-tap-highlight-color: transparent; }
+  /* Inertial scrolling on any overflow containers */
+  .overflow-y-auto, .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+}
+
+/* Disable pull-to-refresh overscroll glow inside admin shell so
+   custom pull-to-refresh gestures have sole control */
+#admin-main { overscroll-behavior-y: contain; }
+

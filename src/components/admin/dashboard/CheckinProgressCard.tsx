@@ -12,6 +12,7 @@ import {
   Phone,
   Search,
   Filter,
+  Send,
 } from "lucide-react";
 
 type Team = {
@@ -64,6 +65,35 @@ export default function CheckinProgressCard() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "complete" | "partial" | "none">("all");
   const [search, setSearch] = useState("");
+  const [nudging, setNudging] = useState(false);
+  const [nudgeMsg, setNudgeMsg] = useState<string | null>(null);
+
+  async function nudgeIncomplete() {
+    if (!data?.tournament) return;
+    const incompleteIds = (data.teams || []).filter((t) => !t.complete).map((t) => t.id);
+    if (incompleteIds.length === 0) {
+      setNudgeMsg("Nothing to send — all teams are complete.");
+      return;
+    }
+    if (!confirm(`Email ${incompleteIds.length} coach${incompleteIds.length === 1 ? "" : "es"} whose team hasn't finished check-in?`)) return;
+    setNudging(true);
+    setNudgeMsg(null);
+    try {
+      const res = await fetch("/api/admin/checkin-progress/nudge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tournamentId: data.tournament.id, teamIds: incompleteIds }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      const body = await res.json();
+      setNudgeMsg(`Sent ${body.sent || 0} email${body.sent === 1 ? "" : "s"}.`);
+      setTimeout(() => setNudgeMsg(null), 5000);
+    } catch (err) {
+      setNudgeMsg((err as Error).message);
+    } finally {
+      setNudging(false);
+    }
+  }
 
   const load = useCallback(async () => {
     try {
@@ -116,10 +146,27 @@ export default function CheckinProgressCard() {
               {data.tournament.name} · {totals.complete}/{totals.teams} teams complete
             </p>
           </div>
-          <Link href="/admin/checkin" className="text-red text-xs font-semibold hover:text-red-hover flex items-center gap-1 flex-shrink-0">
-            Open check-in <ArrowUpRight className="w-3 h-3" />
-          </Link>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={nudgeIncomplete}
+              disabled={nudging || (totals.teams - totals.complete) === 0}
+              className="bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5"
+              title="Email every coach whose team hasn't completed check-in"
+            >
+              <Send className="w-3 h-3" />
+              {nudging ? "Sending…" : "Nudge"}
+            </button>
+            <Link href="/admin/checkin" className="text-red text-xs font-semibold hover:text-red-hover flex items-center gap-1">
+              Open check-in <ArrowUpRight className="w-3 h-3" />
+            </Link>
+          </div>
         </div>
+
+        {nudgeMsg && (
+          <div className="px-5 py-2 bg-emerald-50 border-b border-emerald-200 text-emerald-700 text-xs font-semibold">
+            {nudgeMsg}
+          </div>
+        )}
 
         {/* Global progress strip */}
         <div className="px-5 pt-4">

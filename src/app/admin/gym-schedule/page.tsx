@@ -179,14 +179,17 @@ export default function GymSchedulePage() {
         <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" /> Admin Dashboard
       </Link>
 
-      <div className="mb-6">
-        <p className="text-text-muted text-xs uppercase tracking-widest mb-1">Gym Calendar</p>
-        <h1 className="text-navy text-2xl font-bold font-heading flex items-center gap-2">
-          <Calendar className="w-6 h-6 text-red" aria-hidden="true" /> Gym Schedule
-        </h1>
-        <p className="text-text-muted text-sm mt-1">
-          Add practices, rentals, maintenance, and closures. Shows on your admin dashboard.
-        </p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <p className="text-text-muted text-xs uppercase tracking-widest mb-1">Gym Calendar</p>
+          <h1 className="text-navy text-2xl font-bold font-heading flex items-center gap-2">
+            <Calendar className="w-6 h-6 text-red" aria-hidden="true" /> Gym Schedule
+          </h1>
+          <p className="text-text-muted text-sm mt-1">
+            Add practices, rentals, maintenance, and closures. Shows on your admin dashboard.
+          </p>
+        </div>
+        <SubscribeCalendarButton />
       </div>
 
       {/* Add form */}
@@ -362,5 +365,87 @@ export default function GymSchedulePage() {
         Back to dashboard <ChevronRight className="w-4 h-4" aria-hidden="true" />
       </Link>
     </div>
+  );
+}
+
+function SubscribeCalendarButton() {
+  const [open, setOpen] = useState(false);
+  const [token, setToken] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  // The admin needs to paste the GYM_CAL_TOKEN value (we don't expose
+  // it via an API for safety — they have it in their Vercel env). The
+  // UI builds a subscription URL they can click or copy.
+  const base = typeof window !== "undefined" ? window.location.origin : "";
+  const webcalUrl = token ? `webcal://${base.replace(/^https?:\/\//, "")}/api/gym-events/ical?token=${encodeURIComponent(token)}` : "";
+  const httpsUrl = token ? `${base}/api/gym-events/ical?token=${encodeURIComponent(token)}` : "";
+
+  function copy(url: string) {
+    if (!url) return;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="bg-white border border-border hover:bg-off-white text-navy rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2 self-start"
+      >
+        Subscribe in Calendar
+      </button>
+      {open && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-lg max-h-[92vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
+              <h2 className="text-navy font-bold text-lg font-heading">Subscribe to Gym Calendar</h2>
+              <button onClick={() => setOpen(false)} className="text-text-muted hover:text-navy p-1">✕</button>
+            </div>
+            <div className="p-5 space-y-3 text-sm">
+              <p className="text-text-muted">
+                Paste your <span className="font-mono text-navy">GYM_CAL_TOKEN</span> (set in Vercel env vars) to build a subscription URL.
+              </p>
+              <input
+                type="text"
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                placeholder="Token"
+                className="w-full bg-off-white border border-border rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60 font-mono"
+              />
+              {token && (
+                <>
+                  <div>
+                    <p className="text-navy text-xs font-bold uppercase tracking-wider mb-1">Apple / Google Calendar</p>
+                    <div className="flex items-center gap-2">
+                      <input
+                        readOnly
+                        value={webcalUrl}
+                        className="flex-1 bg-off-white border border-border rounded-xl px-3 py-2 text-navy text-xs font-mono truncate"
+                      />
+                      <button
+                        onClick={() => copy(webcalUrl)}
+                        className="bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-xl"
+                      >
+                        {copied ? "Copied" : "Copy"}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-navy text-xs font-bold uppercase tracking-wider mb-1">Download .ics once</p>
+                    <a
+                      href={httpsUrl}
+                      className="inline-block bg-red hover:bg-red-hover text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl"
+                    >
+                      Download
+                    </a>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

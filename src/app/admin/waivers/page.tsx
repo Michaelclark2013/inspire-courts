@@ -122,56 +122,106 @@ export default function WaiversPage() {
           <p className="text-navy font-semibold">No waivers match this view.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white border border-border rounded-xl">
-          <table className="w-full text-sm">
-            <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
-              <tr>
-                <th className="px-4 py-3">Player</th>
-                <th className="px-4 py-3">Signed By</th>
-                <th className="px-4 py-3">Type</th>
-                <th className="px-4 py-3">Signed</th>
-                <th className="px-4 py-3">Expires</th>
-                <th className="px-4 py-3 text-right">View</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((w) => {
-                const days = daysUntil(w.expiresAt);
-                const expired = days !== null && days < 0;
-                const expiring = days !== null && days >= 0 && days <= 30;
-                return (
-                  <tr key={w.id} className="border-b border-border last:border-0 hover:bg-off-white/50">
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-navy">{w.playerName}</div>
-                      <div className="text-xs text-text-secondary">{w.email || w.phone || w.teamName || "—"}</div>
-                    </td>
-                    <td className="px-4 py-3 text-xs">{w.signedByName || w.parentName || "—"}</td>
-                    <td className="px-4 py-3 text-xs">{TYPE_LABELS[w.waiverType] || w.waiverType}</td>
-                    <td className="px-4 py-3 text-xs text-text-secondary">{fmtDate(w.signedAt)}</td>
-                    <td className="px-4 py-3">
-                      <div className={`text-xs ${expired ? "text-red font-semibold" : expiring ? "text-amber-700 font-semibold" : "text-text-secondary"}`}>
-                        {fmtDate(w.expiresAt)}
+        <>
+          {/* Mobile: stacked cards — each row is one full-width tap target */}
+          <ul className="md:hidden space-y-2">
+            {filtered.map((w) => {
+              const days = daysUntil(w.expiresAt);
+              const expired = days !== null && days < 0;
+              const expiring = days !== null && days >= 0 && days <= 30;
+              return (
+                <li key={w.id}>
+                  <button
+                    type="button"
+                    onClick={() => setSelected(w)}
+                    className="w-full text-left bg-white border border-border rounded-xl p-3 hover:border-navy/30 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-navy truncate">{w.playerName}</p>
+                        <p className="text-xs text-text-secondary truncate">
+                          {w.signedByName || w.parentName || "—"}
+                          {" · "}
+                          {TYPE_LABELS[w.waiverType] || w.waiverType}
+                        </p>
                       </div>
                       {days !== null && (
-                        <div className="text-[10px] text-text-secondary">
-                          {expired ? (
-                            <span className="inline-flex items-center gap-0.5"><AlertTriangle className="w-3 h-3" /> {-days}d overdue</span>
-                          ) : (
-                            <span>{days}d left</span>
-                          )}
-                        </div>
+                        <span
+                          className={`inline-flex items-center gap-0.5 rounded-md px-2 py-0.5 text-[11px] font-semibold flex-shrink-0 ${
+                            expired
+                              ? "bg-red/10 text-red"
+                              : expiring
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-emerald-50 text-emerald-700"
+                          }`}
+                        >
+                          {expired && <AlertTriangle className="w-3 h-3" />}
+                          {expired ? `${-days}d overdue` : `${days}d left`}
+                        </span>
                       )}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <button onClick={() => setSelected(w)}
-                        className="text-xs text-navy hover:text-red">View</button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-text-secondary">
+                      <span>Signed {fmtDate(w.signedAt)}</span>
+                      <span>Expires {fmtDate(w.expiresAt)}</span>
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* Desktop: table — denser, sortable */}
+          <div className="hidden md:block overflow-x-auto bg-white border border-border rounded-xl">
+            <table className="w-full text-sm">
+              <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
+                <tr>
+                  <th className="px-4 py-3">Player</th>
+                  <th className="px-4 py-3">Signed By</th>
+                  <th className="px-4 py-3">Type</th>
+                  <th className="px-4 py-3">Signed</th>
+                  <th className="px-4 py-3">Expires</th>
+                  <th className="px-4 py-3 text-right">View</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((w) => {
+                  const days = daysUntil(w.expiresAt);
+                  const expired = days !== null && days < 0;
+                  const expiring = days !== null && days >= 0 && days <= 30;
+                  return (
+                    <tr key={w.id} className="border-b border-border last:border-0 hover:bg-off-white/50">
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-navy">{w.playerName}</div>
+                        <div className="text-xs text-text-secondary">{w.email || w.phone || w.teamName || "—"}</div>
+                      </td>
+                      <td className="px-4 py-3 text-xs">{w.signedByName || w.parentName || "—"}</td>
+                      <td className="px-4 py-3 text-xs">{TYPE_LABELS[w.waiverType] || w.waiverType}</td>
+                      <td className="px-4 py-3 text-xs text-text-secondary">{fmtDate(w.signedAt)}</td>
+                      <td className="px-4 py-3">
+                        <div className={`text-xs ${expired ? "text-red font-semibold" : expiring ? "text-amber-700 font-semibold" : "text-text-secondary"}`}>
+                          {fmtDate(w.expiresAt)}
+                        </div>
+                        {days !== null && (
+                          <div className="text-[10px] text-text-secondary">
+                            {expired ? (
+                              <span className="inline-flex items-center gap-0.5"><AlertTriangle className="w-3 h-3" /> {-days}d overdue</span>
+                            ) : (
+                              <span>{days}d left</span>
+                            )}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <button onClick={() => setSelected(w)}
+                          className="text-xs text-navy hover:text-red">View</button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       {selected && (

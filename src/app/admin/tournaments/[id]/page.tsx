@@ -28,6 +28,7 @@ import {
 import { Trophy, Calendar, BarChart3 } from "lucide-react";
 import { triggerHaptic } from "@/lib/capacitor";
 import Breadcrumbs from "@/components/admin/Breadcrumbs";
+import BottomSheet from "@/components/ui/BottomSheet";
 
 function isTab(value: string | null): value is Tab {
   return !!value && (TABS as readonly string[]).includes(value);
@@ -351,71 +352,50 @@ function TournamentDetailInner() {
         complete={kpis.final}
       />
 
-      {confirmGenerate && (
-        <div
-          role="alertdialog"
-          aria-modal="true"
-          className="mb-6 bg-white border-2 border-red shadow-sm rounded-xl p-5 flex items-center justify-between gap-4 flex-wrap"
-        >
-          <div>
-            <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">
-              Generate bracket?
-            </h3>
-            <p className="text-text-secondary text-xs">
-              This will create games from your current team list. You can
-              re-seed teams before generating.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setConfirmGenerate(false)}
-              className="min-h-[44px] px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-navy rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={generateBracket}
-              className="min-h-[44px] px-4 py-2.5 bg-red hover:bg-red-hover text-white rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
-            >
-              Generate
-            </button>
-          </div>
+      <BottomSheet
+        open={confirmGenerate}
+        onClose={() => setConfirmGenerate(false)}
+        title="Generate bracket?"
+        description="This will create games from your current team list. You can re-seed teams before generating."
+      >
+        <div className="flex gap-2">
+          <button
+            onClick={() => setConfirmGenerate(false)}
+            className="flex-1 min-h-[48px] px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-navy rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={generateBracket}
+            className="flex-1 min-h-[48px] px-4 py-2.5 bg-red hover:bg-red-hover text-white rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+          >
+            Generate
+          </button>
         </div>
-      )}
+      </BottomSheet>
 
-      {confirmResetBracket && (
-        <div
-          role="alertdialog"
-          aria-modal="true"
-          className="mb-6 bg-white border-2 border-amber-500 shadow-sm rounded-xl p-5 flex items-center justify-between gap-4 flex-wrap"
-        >
-          <div>
-            <h3 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">
-              Reset bracket?
-            </h3>
-            <p className="text-text-secondary text-xs">
-              Delete all generated games and revert this tournament to draft.
-              Only works if no games are live or final. Use this to regenerate
-              after fixing seedings or team lists.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setConfirmResetBracket(false)}
-              className="min-h-[44px] px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-navy rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={resetBracket}
-              disabled={resettingBracket}
-              className="min-h-[44px] px-4 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
-            >
-              {resettingBracket ? "Resetting…" : "Reset Bracket"}
-            </button>
-          </div>
+      <BottomSheet
+        open={confirmResetBracket}
+        onClose={() => setConfirmResetBracket(false)}
+        title="Reset bracket?"
+        description="Delete all generated games and revert this tournament to draft. Only works if no games are live or final."
+      >
+        <div className="flex gap-2">
+          <button
+            onClick={() => setConfirmResetBracket(false)}
+            className="flex-1 min-h-[48px] px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-navy rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={resetBracket}
+            disabled={resettingBracket}
+            className="flex-1 min-h-[48px] px-4 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white rounded-lg text-sm font-semibold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+          >
+            {resettingBracket ? "Resetting…" : "Reset Bracket"}
+          </button>
         </div>
-      )}
+      </BottomSheet>
 
       <TabNav tab={tab} onChange={setTab} />
 

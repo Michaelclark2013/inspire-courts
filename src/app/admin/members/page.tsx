@@ -173,67 +173,110 @@ export default function MembersPage() {
           <p className="text-text-secondary text-sm">Try clearing filters, or add a new member.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white border border-border rounded-xl">
-          <table className="w-full text-sm">
-            <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
-              <tr>
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Plan</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Joined</th>
-                <th className="px-4 py-3">Next Renewal</th>
-                <th className="px-4 py-3">Last Visit</th>
-                <th className="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {members.map((m) => (
-                <tr key={m.id} className="border-b border-border last:border-0 hover:bg-off-white/50">
-                  <td className="px-4 py-3">
-                    <Link href={`/admin/members/${m.id}`} className="font-medium text-navy hover:text-red">
-                      {m.firstName} {m.lastName}
-                    </Link>
-                    <div className="text-xs text-text-secondary">{m.email || m.phone || "—"}</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    {m.planName ? (
-                      <>
-                        <div className="text-navy">{m.planName}</div>
-                        <div className="text-xs text-text-secondary">{m.planType}</div>
-                      </>
-                    ) : (
-                      <span className="text-text-secondary italic text-xs">no plan</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[m.status]}`}>
+        <>
+          {/* Mobile: cards — each row is a tap target that opens member detail */}
+          <ul className="md:hidden space-y-2">
+            {members.map((m) => (
+              <li key={m.id}>
+                <Link
+                  href={`/admin/members/${m.id}`}
+                  className="block bg-white border border-border rounded-xl p-3 hover:border-navy/30 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-navy truncate">
+                        {m.firstName} {m.lastName}
+                      </p>
+                      <p className="text-xs text-text-secondary truncate">
+                        {m.email || m.phone || "—"}
+                      </p>
+                    </div>
+                    <span className={`inline-flex items-center rounded px-2 py-0.5 text-[11px] font-medium flex-shrink-0 ${STATUS_STYLES[m.status]}`}>
                       {m.status === "active" && <CheckCircle2 className="w-3 h-3 mr-1" />}
                       {m.status === "past_due" && <AlertTriangle className="w-3 h-3 mr-1" />}
                       {m.status === "paused" && <Pause className="w-3 h-3 mr-1" />}
                       {m.status.replace("_", " ")}
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-text-secondary">{fmtDate(m.joinedAt)}</td>
-                  <td className="px-4 py-3 text-xs text-text-secondary">
-                    {m.nextRenewalAt ? fmtDate(m.nextRenewalAt) : "—"}
-                    {!m.autoRenew && m.nextRenewalAt && (
-                      <div className="text-[10px] text-amber-600">manual</div>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] text-text-secondary gap-2">
+                    <span className="truncate">
+                      {m.planName ? `${m.planName}` : "no plan"}
+                    </span>
+                    {m.nextRenewalAt && (
+                      <span className="flex-shrink-0">
+                        Renews {fmtDate(m.nextRenewalAt)}
+                        {!m.autoRenew && " · manual"}
+                      </span>
                     )}
-                  </td>
-                  <td className="px-4 py-3 text-xs text-text-secondary">{fmtDate(m.lastVisitAt)}</td>
-                  <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() => setEditing(m)}
-                      className="text-xs text-navy hover:text-red"
-                    >
-                      Edit
-                    </button>
-                  </td>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* Desktop: table */}
+          <div className="hidden md:block overflow-x-auto bg-white border border-border rounded-xl">
+            <table className="w-full text-sm">
+              <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
+                <tr>
+                  <th className="px-4 py-3">Name</th>
+                  <th className="px-4 py-3">Plan</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Joined</th>
+                  <th className="px-4 py-3">Next Renewal</th>
+                  <th className="px-4 py-3">Last Visit</th>
+                  <th className="px-4 py-3"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {members.map((m) => (
+                  <tr key={m.id} className="border-b border-border last:border-0 hover:bg-off-white/50">
+                    <td className="px-4 py-3">
+                      <Link href={`/admin/members/${m.id}`} className="font-medium text-navy hover:text-red">
+                        {m.firstName} {m.lastName}
+                      </Link>
+                      <div className="text-xs text-text-secondary">{m.email || m.phone || "—"}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      {m.planName ? (
+                        <>
+                          <div className="text-navy">{m.planName}</div>
+                          <div className="text-xs text-text-secondary">{m.planType}</div>
+                        </>
+                      ) : (
+                        <span className="text-text-secondary italic text-xs">no plan</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[m.status]}`}>
+                        {m.status === "active" && <CheckCircle2 className="w-3 h-3 mr-1" />}
+                        {m.status === "past_due" && <AlertTriangle className="w-3 h-3 mr-1" />}
+                        {m.status === "paused" && <Pause className="w-3 h-3 mr-1" />}
+                        {m.status.replace("_", " ")}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-xs text-text-secondary">{fmtDate(m.joinedAt)}</td>
+                    <td className="px-4 py-3 text-xs text-text-secondary">
+                      {m.nextRenewalAt ? fmtDate(m.nextRenewalAt) : "—"}
+                      {!m.autoRenew && m.nextRenewalAt && (
+                        <div className="text-[10px] text-amber-600">manual</div>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-text-secondary">{fmtDate(m.lastVisitAt)}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() => setEditing(m)}
+                        className="text-xs text-navy hover:text-red"
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       {(showCreate || editing) && (

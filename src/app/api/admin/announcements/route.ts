@@ -146,6 +146,24 @@ export async function POST(request: NextRequest) {
     });
     revalidateAnnouncementSurfaces();
     storeIdempotent(session.user.id, idemKey, announcement, 201);
+
+    // Push notification fan-out on publish. Skip when scheduled for
+    // a future time (scheduledPublishAt in the future) — a future
+    // cron can pick those up. Non-blocking; errors land in the log.
+    const schedFuture =
+      announcement.scheduledPublishAt &&
+      new Date(announcement.scheduledPublishAt).getTime() > Date.now();
+    if (!schedFuture) {
+      try {
+        const { pushAnnouncement } = await import("@/lib/announcement-push");
+        pushAnnouncement(announcement.id).catch((err) =>
+          logger.warn("announcement push fan-out failed", { error: String(err) })
+        );
+      } catch (err) {
+        logger.warn("announcement push import failed", { error: String(err) });
+      }
+    }
+
     return NextResponse.json(announcement, { status: 201 });
   } catch (err) {
     logger.error("Failed to create announcement", { error: String(err) });

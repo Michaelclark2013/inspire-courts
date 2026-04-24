@@ -80,6 +80,10 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
   teams: ["admin"],
   scores: ["admin", "staff", "front_desk"],
+  // Score entry is staff + admin only. Refs don't get it (they ref,
+  // they don't score-keep — separate role). Every entry is attributed
+  // to the authenticated user via game_scores.updated_by so admin
+  // can verify who worked the game.
   score_entry: ["admin", "staff"],
   players: ["admin", "front_desk"],
   checkin: ["admin", "front_desk"],

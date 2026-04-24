@@ -133,6 +133,32 @@ function GameCardImpl({
             {game.lastQuarter && <span>Q{game.lastQuarter}</span>}
             {game.updatedAt && <span className="text-text-muted/70">{relativeTime(game.updatedAt)}</span>}
           </div>
+          {/* Scorekeeper attribution — who entered the latest score.
+              Admin can glance at this row to see which ref worked the
+              game. Tiny photo + name + role pill. */}
+          {game.enteredByName && (
+            <div className="flex items-center gap-1.5 mt-1 text-[11px] text-text-secondary">
+              <span className="text-text-muted">Scored by</span>
+              {game.enteredByPhotoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={game.enteredByPhotoUrl}
+                  alt=""
+                  className="w-4 h-4 rounded-full object-cover"
+                />
+              ) : (
+                <span className="w-4 h-4 rounded-full bg-off-white border border-border text-[8px] font-bold text-navy flex items-center justify-center uppercase">
+                  {game.enteredByName.split(" ").map((s) => s[0]).join("").slice(0, 2)}
+                </span>
+              )}
+              <span className="text-navy font-semibold">{game.enteredByName}</span>
+              {game.enteredByRole && (
+                <span className="bg-off-white text-text-muted text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full">
+                  {game.enteredByRole.replace("_", " ")}
+                </span>
+              )}
+            </div>
+          )}
           {rollbackError && (
             <div className="mt-2 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg px-3 py-1.5">
               <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />

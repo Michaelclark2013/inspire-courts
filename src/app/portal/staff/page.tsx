@@ -10,6 +10,7 @@ import {
   AlertCircle,
   CheckCircle2,
   ArrowRight,
+  ClipboardList,
 } from "lucide-react";
 
 type ShiftLite = {
@@ -179,7 +180,12 @@ export default function StaffPortalPage() {
       )}
 
       {/* Quick actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <Link href="/portal/staff/games" className="bg-white border border-red/30 rounded-2xl p-4 hover:shadow-sm transition-shadow">
+          <ClipboardList className="w-5 h-5 text-red mb-2" aria-hidden="true" />
+          <p className="text-navy font-bold text-sm">Score Games</p>
+          <p className="text-text-muted text-xs">Enter today&apos;s scores</p>
+        </Link>
         <Link href="/portal/staff/schedule" className="bg-white border border-light-gray rounded-2xl p-4 hover:shadow-sm transition-shadow">
           <CalendarDays className="w-5 h-5 text-blue-600 mb-2" aria-hidden="true" />
           <p className="text-navy font-bold text-sm">My Schedule</p>

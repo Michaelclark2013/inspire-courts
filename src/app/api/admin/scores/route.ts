@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { canAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
-import { games, gameScores, tournaments } from "@/lib/db/schema";
+import { games, gameScores, tournaments, users } from "@/lib/db/schema";
 import { eq, desc, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
@@ -108,7 +108,8 @@ export const GET = withTiming("admin.scores.list", async (request: NextRequest) 
       });
     }
 
-    // Batch: get latest score per game on the current page in 1 query.
+    // Batch: get latest score per game on the current page in 1 query,
+    // joined with the entering user for attribution.
     const ids = pagedGames.map((g) => g.id);
     const latestScores = await db
       .select({
@@ -117,8 +118,13 @@ export const GET = withTiming("admin.scores.list", async (request: NextRequest) 
         awayScore: gameScores.awayScore,
         quarter: gameScores.quarter,
         updatedAt: gameScores.updatedAt,
+        updatedBy: gameScores.updatedBy,
+        updatedByName: users.name,
+        updatedByRole: users.role,
+        updatedByPhotoUrl: users.photoUrl,
       })
       .from(gameScores)
+      .leftJoin(users, eq(users.id, gameScores.updatedBy))
       .where(inArray(gameScores.gameId, ids))
       .orderBy(desc(gameScores.updatedAt));
 
@@ -134,6 +140,13 @@ export const GET = withTiming("admin.scores.list", async (request: NextRequest) 
         homeScore: latest?.homeScore ?? 0,
         awayScore: latest?.awayScore ?? 0,
         lastQuarter: latest?.quarter ?? null,
+        // Who entered the latest score — shown on the game card so
+        // admin can see which scorekeeper captured the result.
+        enteredBy: latest?.updatedBy ?? null,
+        enteredByName: latest?.updatedByName ?? null,
+        enteredByRole: latest?.updatedByRole ?? null,
+        enteredByPhotoUrl: latest?.updatedByPhotoUrl ?? null,
+        enteredAt: latest?.updatedAt ?? null,
       };
     });
 

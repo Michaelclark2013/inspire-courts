@@ -13,6 +13,13 @@ export type Game = {
   awayScore: number;
   lastQuarter: string | null;
   updatedAt?: string | null;
+  // Accountability — who entered the latest score. Shown on every
+  // game card so admin can see which scorekeeper captured the result.
+  enteredBy?: number | null;
+  enteredByName?: string | null;
+  enteredByRole?: string | null;
+  enteredByPhotoUrl?: string | null;
+  enteredAt?: string | null;
 };
 
 export type TournamentOption = { id: number; name: string };

@@ -157,6 +157,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/approvals", label: "Approvals", desc: "Pending staff", icon: Shield, page: "approvals" },
       { href: "/admin/users", label: "User Accounts", desc: "Everyone with a login", icon: Shield, page: "users" },
       { href: "/admin/permissions", label: "Permissions", desc: "Per-user access", icon: Shield, page: "users" },
+      { href: "/admin/security", label: "Security", desc: "Force re-login + events", icon: Shield, page: "users" },
       { href: "/admin/announcements", label: "Announcements", desc: "Push to portals", icon: Megaphone, page: "announcements" },
       { href: "/admin/content", label: "Content Editor", desc: "Public site copy", icon: FileEdit, page: "content" },
       { href: "/admin/files", label: "Files & Drive", desc: "Uploads + Google Drive", icon: FolderOpen, page: "files" },

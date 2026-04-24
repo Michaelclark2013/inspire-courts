@@ -21,6 +21,7 @@ import LiveScoresStrip from "@/components/admin/dashboard/LiveScoresStrip";
 import WidgetStrip from "@/components/admin/dashboard/WidgetStrip";
 import FloorStatusCard from "@/components/admin/dashboard/FloorStatusCard";
 import OpsAlertsCard from "@/components/admin/dashboard/OpsAlertsCard";
+import RecentlyVisited from "@/components/admin/dashboard/RecentlyVisited";
 import { Suspense } from "react";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
@@ -248,6 +249,9 @@ export default async function AdminDashboard() {
       <div className="flex items-center justify-end mb-4">
         <DashboardRefreshButton />
       </div>
+
+      {/* Recently visited admin pages — MRU for speed */}
+      <RecentlyVisited />
 
       {/* Live-now pulsing strip — only shows when a game is live */}
       <LiveScoresStrip />

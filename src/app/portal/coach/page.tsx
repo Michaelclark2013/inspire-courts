@@ -9,7 +9,10 @@ import CoachDashboard from "@/components/portal/CoachDashboard";
 export default function CoachPortalPage() {
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-light-gray px-4 h-14 flex items-center justify-between">
+      <header
+        className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-light-gray px-4 flex items-center justify-between h-14"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+      >
         <Link href="/" className="flex items-center gap-2.5">
           <Image
             src="/images/inspire-athletics-logo.png"

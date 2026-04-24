@@ -387,7 +387,7 @@ export default async function TrainingPage() {
           </div>
           <div className="mt-8 bg-off-white border border-light-gray rounded-xl p-5 text-center max-w-md mx-auto">
             <p className="text-text-muted text-xs mb-3">
-              Trainer profiles are placeholders — real names, photos, and credentials coming soon.
+              New trainer profiles being added this season — message us to get matched with the right coach for your athlete.
             </p>
             <Link
               href="/contact?type=Training+Inquiry"

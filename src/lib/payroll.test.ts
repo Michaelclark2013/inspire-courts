@@ -201,6 +201,7 @@ function mkLine(overrides: Partial<PayrollLine> = {}): PayrollLine {
     flatPayCents: 0,
     grossCents: 20_000,
     entryCount: 1,
+    approvedEntries: 1,
     ...overrides,
   };
 }

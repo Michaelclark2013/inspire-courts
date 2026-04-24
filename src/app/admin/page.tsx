@@ -17,6 +17,8 @@ import FleetAlertsCard from "@/components/admin/dashboard/FleetAlertsCard";
 import AccessDeniedBanner from "@/components/admin/dashboard/AccessDeniedBanner";
 import MobileDashboardHeader from "@/components/admin/dashboard/MobileDashboardHeader";
 import InstallPrompt from "@/components/admin/dashboard/InstallPrompt";
+import LiveScoresStrip from "@/components/admin/dashboard/LiveScoresStrip";
+import WidgetStrip from "@/components/admin/dashboard/WidgetStrip";
 import { Suspense } from "react";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
@@ -244,6 +246,13 @@ export default async function AdminDashboard() {
       <div className="flex items-center justify-end mb-4">
         <DashboardRefreshButton />
       </div>
+
+      {/* Live-now pulsing strip — only shows when a game is live */}
+      <LiveScoresStrip />
+
+      {/* 4-up mini widget strip: revenue this week, active tournament
+          progress, 7-day signup spark, pending approvals */}
+      <WidgetStrip />
 
       {/* Push notification opt-in */}
       <PushNotificationPrompt />

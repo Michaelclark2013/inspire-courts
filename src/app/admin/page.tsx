@@ -23,6 +23,7 @@ import FloorStatusCard from "@/components/admin/dashboard/FloorStatusCard";
 import OpsAlertsCard from "@/components/admin/dashboard/OpsAlertsCard";
 import RecentlyVisited from "@/components/admin/dashboard/RecentlyVisited";
 import CheckinProgressCard from "@/components/admin/dashboard/CheckinProgressCard";
+import PnLCard from "@/components/admin/dashboard/PnLCard";
 import { Suspense } from "react";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
 import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
@@ -268,6 +269,9 @@ export default async function AdminDashboard() {
           refreshes every 45s. Renders nothing when there's no active
           tournament. */}
       <CheckinProgressCard />
+
+      {/* Profit & Loss — month revenue vs expenses with margin. */}
+      <PnLCard />
 
       {/* Court-by-court status + who's clocked in right now. Auto-
           refreshes every 30s. The core front-desk ops pair. */}

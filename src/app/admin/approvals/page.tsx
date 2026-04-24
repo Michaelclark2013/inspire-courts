@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Loader2, CheckCircle2, XCircle, Clock , AlertTriangle } from "lucide-react";
 import { cn, formatPhone } from "@/lib/utils";
+import { triggerHaptic } from "@/lib/capacitor";
 
 interface PendingUser {
   id: number;
@@ -57,6 +58,7 @@ export default function ApprovalsPage() {
   }, [fetchPending]);
 
   async function handleAction(userId: number, action: "approve" | "reject") {
+    triggerHaptic("medium");
     setActionLoading(userId);
     setMessage("");
 
@@ -70,12 +72,15 @@ export default function ApprovalsPage() {
       const data = await res.json();
 
       if (res.ok) {
+        triggerHaptic(action === "approve" ? "success" : "warning");
         setMessage(data.message);
         setPending((prev) => prev.filter((u) => u.id !== userId));
       } else {
+        triggerHaptic("error");
         setMessage(data.error || "Action failed");
       }
     } catch {
+      triggerHaptic("error");
       setMessage("Something went wrong");
     } finally {
       setActionLoading(null);

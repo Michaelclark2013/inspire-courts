@@ -15,6 +15,7 @@ import {
   Mail,
   Zap,
 } from "lucide-react";
+import { triggerHaptic } from "@/lib/capacitor";
 
 type Readiness = {
   env: Record<string, boolean | string | null>;
@@ -53,17 +54,21 @@ export default function LaunchReadinessPage() {
   } | null>(null);
 
   async function sendTestEmail() {
+    triggerHaptic("light");
     setEmailBusy(true);
     setEmailResult(null);
     try {
       const res = await fetch("/api/admin/launch-readiness/test-email", { method: "POST" });
       const body = await res.json();
       if (res.ok && body.ok) {
+        triggerHaptic("success");
         setEmailResult({ ok: true, message: `Sent to ${body.sentTo}. Check your inbox.` });
       } else {
+        triggerHaptic("error");
         setEmailResult({ ok: false, message: body.error ?? "Unknown error" });
       }
     } catch {
+      triggerHaptic("error");
       setEmailResult({ ok: false, message: "Network error" });
     } finally {
       setEmailBusy(false);
@@ -78,6 +83,7 @@ export default function LaunchReadinessPage() {
     ) {
       return;
     }
+    triggerHaptic("medium");
     setRegenBusy(true);
     setRegenResult(null);
     try {

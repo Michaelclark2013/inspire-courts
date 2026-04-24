@@ -1544,3 +1544,40 @@ export const resourceDamage = sqliteTable("resource_damage", {
   index("resource_damage_booking_idx").on(table.bookingId),
   index("resource_damage_repaired_idx").on(table.repaired),
 ]);
+
+// ── Per-user permission overrides ────────────────────────────────────
+// Layer on top of the role-based PAGE_ACCESS map in lib/permissions.ts.
+// Each row grants (granted=true) or revokes (granted=false) access
+// to a specific admin page for a specific user. Overrides win over
+// the role default — so a coach can be granted /admin/scores, or a
+// staff member can have /admin/payroll specifically revoked.
+//
+// Keeping this table small (just userId + page + granted + meta) makes
+// the matrix view cheap: one select per user, merge with role defaults
+// at read time. The page names mirror the AdminPage union in
+// lib/permissions.ts — see that file for the full list.
+
+export const userPermissions = sqliteTable("user_permissions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  page: text("page").notNull(), // mirrors AdminPage union
+  granted: integer("granted", { mode: "boolean" }).notNull(),
+  reason: text("reason"),
+  grantedBy: integer("granted_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("user_permissions_user_idx").on(table.userId),
+  index("user_permissions_page_idx").on(table.page),
+  // Unique pair — only one row per (user, page). The API upserts
+  // by deleting + re-inserting to keep the handler simple.
+  index("user_permissions_user_page_idx").on(table.userId, table.page),
+]);

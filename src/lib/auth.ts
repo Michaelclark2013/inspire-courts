@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { users, userPermissions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { saveRegistrationToDrive, appendSheetRow, sanitizeSheetRow, SHEETS } from "@/lib/google-sheets";
 import { logger } from "@/lib/logger";
@@ -97,7 +97,14 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt", maxAge: 8 * 60 * 60 },
   pages: { signIn: "/login" },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger }) {
+      // Refresh permission overrides from the DB whenever:
+      //   - initial login (user is defined)
+      //   - an explicit `update()` call from the client
+      //   - the token is missing the permissions array (first run after deploy)
+      // Keeping this inside the callback means every request reuses the
+      // cached set until the admin flips something, then calling
+      // session().update() picks up the change without re-login.
       if (user) {
         token.email = user.email;
         token.name = user.name;
@@ -166,6 +173,26 @@ export const authOptions: NextAuthOptions = {
           token.emailVerifiedAt = user.emailVerifiedAt ?? null;
         }
       }
+
+      // Hydrate permission overrides on (re)login or explicit refresh.
+      // Skips re-querying the DB on every request — the token is cached
+      // for the session lifetime.
+      if (user || trigger === "update" || !Array.isArray((token as { permissionOverrides?: unknown }).permissionOverrides)) {
+        try {
+          const uid = Number(token.userId);
+          if (Number.isInteger(uid) && uid > 0) {
+            const rows = await db
+              .select({ page: userPermissions.page, granted: userPermissions.granted })
+              .from(userPermissions)
+              .where(eq(userPermissions.userId, uid));
+            (token as { permissionOverrides: Array<{ page: string; granted: boolean }> })
+              .permissionOverrides = rows;
+          }
+        } catch (err) {
+          logger.warn("Failed to hydrate permission overrides", { error: String(err) });
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -175,6 +202,12 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role;
         session.user.id = token.userId;
         session.user.emailVerifiedAt = token.emailVerifiedAt ?? null;
+        // Expose the per-user permission overrides so client code can
+        // call canAccessWithOverrides() without a round-trip.
+        (session.user as { permissionOverrides?: Array<{ page: string; granted: boolean }> })
+          .permissionOverrides =
+          (token as { permissionOverrides?: Array<{ page: string; granted: boolean }> })
+            .permissionOverrides || [];
       }
       return session;
     },

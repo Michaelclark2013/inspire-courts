@@ -33,7 +33,7 @@ import {
   Handshake,
   ArrowUpRight,
 } from "lucide-react";
-import { canAccess } from "@/lib/permissions";
+import { canAccessWithOverrides } from "@/lib/permissions";
 import type { AdminPage } from "@/lib/permissions";
 import type { UserRole } from "@/types/next-auth";
 
@@ -131,6 +131,7 @@ const SECTIONS: Section[] = [
     tiles: [
       { href: "/admin/approvals", label: "Approvals", desc: "Pending staff", icon: Shield, page: "approvals" },
       { href: "/admin/users", label: "User Accounts", desc: "Everyone with a login", icon: Shield, page: "users" },
+      { href: "/admin/permissions", label: "Permissions", desc: "Per-user access control", icon: Shield, page: "users" },
       { href: "/admin/announcements", label: "Announcements", desc: "Push to portals", icon: Megaphone, page: "announcements" },
       { href: "/admin/content", label: "Content Editor", desc: "Public site copy", icon: FileEdit, page: "content" },
       { href: "/admin/files", label: "Files & Drive", desc: "Uploads + Google Drive", icon: FolderOpen, page: "files" },
@@ -219,12 +220,13 @@ const TINT: Record<
 export default function AdminButtonGrid() {
   const { data: session } = useSession();
   const role = (session?.user?.role ?? "") as UserRole | "";
+  const overrides = (session?.user as { permissionOverrides?: Array<{ page: AdminPage; granted: boolean }> } | undefined)?.permissionOverrides;
 
   if (!role) return null;
 
   const visible = SECTIONS.map((s) => ({
     ...s,
-    tiles: s.tiles.filter((t) => canAccess(role, t.page)),
+    tiles: s.tiles.filter((t) => canAccessWithOverrides(role, t.page, overrides)),
   })).filter((s) => s.tiles.length > 0);
 
   if (visible.length === 0) return null;

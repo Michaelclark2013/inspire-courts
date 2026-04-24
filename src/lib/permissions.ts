@@ -132,9 +132,111 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   equipment: ["admin", "front_desk", "staff"],
 };
 
+// All admin pages, in display order. Used by the permissions matrix UI.
+export const ALL_ADMIN_PAGES: AdminPage[] = [
+  "overview", "teams", "scores", "score_entry", "players", "checkin",
+  "staff_refs", "revenue", "prospects", "files", "analytics", "contacts",
+  "tournaments", "sponsors", "schools", "content", "users", "portal",
+  "my_schedule", "my_history", "announcements", "leads", "approvals",
+  "audit_log", "search", "health", "roster", "timeclock", "shifts",
+  "resources", "payroll", "members", "certifications", "maintenance",
+  "programs", "time_off", "equipment",
+];
+
+// Page groups for the matrix UI. Mirrors the AdminButtonGrid sections
+// so the permissions view reads like the nav.
+export const PAGE_GROUPS: Array<{ heading: string; pages: AdminPage[] }> = [
+  { heading: "Overview", pages: ["overview", "search", "health"] },
+  { heading: "Events", pages: ["tournaments", "teams", "players", "programs"] },
+  { heading: "Game Day", pages: ["score_entry", "scores", "checkin"] },
+  { heading: "Staff", pages: ["roster", "staff_refs", "timeclock", "shifts", "payroll", "certifications", "time_off", "approvals"] },
+  { heading: "Members + Revenue", pages: ["members", "revenue", "leads", "prospects", "sponsors"] },
+  { heading: "Facility", pages: ["resources", "equipment", "maintenance", "schools"] },
+  { heading: "Content & Comms", pages: ["announcements", "content", "files"] },
+  { heading: "Admin", pages: ["users", "audit_log", "analytics", "contacts", "portal"] },
+  { heading: "Personal", pages: ["my_schedule", "my_history"] },
+];
+
+export const PAGE_LABELS: Record<AdminPage, string> = {
+  overview: "Dashboard overview",
+  teams: "Teams",
+  scores: "Game scores",
+  score_entry: "Enter scores",
+  players: "Players database",
+  checkin: "Team check-in",
+  staff_refs: "Staff & refs",
+  revenue: "Revenue",
+  prospects: "Prospects pipeline",
+  files: "Files & drive",
+  analytics: "GA analytics",
+  contacts: "Contacts",
+  tournaments: "Tournaments",
+  sponsors: "Sponsors",
+  schools: "Schools",
+  content: "Content editor",
+  users: "User accounts",
+  portal: "Portal switcher",
+  my_schedule: "My schedule",
+  my_history: "My history",
+  announcements: "Announcements",
+  leads: "Leads pipeline",
+  approvals: "Pending approvals",
+  audit_log: "Audit log",
+  search: "Global search",
+  health: "System health",
+  roster: "Staff roster",
+  timeclock: "Time clock",
+  shifts: "Shift board",
+  resources: "Rental fleet",
+  payroll: "Payroll",
+  members: "Members",
+  certifications: "Certifications",
+  maintenance: "Maintenance",
+  programs: "Programs",
+  time_off: "Time off",
+  equipment: "Inventory",
+};
+
+// Role-based default access check. Kept for all call sites that
+// already pass just a role (middleware, layout checks, etc.).
 export function canAccess(role: UserRole | undefined, page: AdminPage): boolean {
   if (!role) return false;
   return PAGE_ACCESS[page]?.includes(role) ?? false;
+}
+
+export type PermissionOverride = { page: AdminPage; granted: boolean };
+
+// Role-default layered with per-user overrides. Call this where you
+// have the user's full permission set available (session callback,
+// permission-aware API handlers). Overrides beat defaults — a `false`
+// override revokes even an admin's access.
+export function canAccessWithOverrides(
+  role: UserRole | undefined,
+  page: AdminPage,
+  overrides: PermissionOverride[] | undefined
+): boolean {
+  if (!role) return false;
+  const override = overrides?.find((o) => o.page === page);
+  if (override) return override.granted;
+  return canAccess(role, page);
+}
+
+// Returns the full effective map for a user: every admin page →
+// boolean. Used by the permissions matrix UI to render the grid.
+export function effectivePermissions(
+  role: UserRole | undefined,
+  overrides: PermissionOverride[] | undefined
+): Record<AdminPage, { granted: boolean; source: "role" | "override" }> {
+  const out = {} as Record<AdminPage, { granted: boolean; source: "role" | "override" }>;
+  for (const page of ALL_ADMIN_PAGES) {
+    const override = overrides?.find((o) => o.page === page);
+    if (override) {
+      out[page] = { granted: override.granted, source: "override" };
+    } else {
+      out[page] = { granted: canAccess(role, page), source: "role" };
+    }
+  }
+  return out;
 }
 
 export function isAdminRole(role: string | undefined): boolean {

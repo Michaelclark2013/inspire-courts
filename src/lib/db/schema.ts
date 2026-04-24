@@ -14,6 +14,24 @@ export const users = sqliteTable("users", {
   phone: text("phone"),
   approved: integer("approved", { mode: "boolean" }).default(true), // staff/ref need admin approval
   memberSince: text("member_since"), // Year they started (e.g. "2022") — for loyalty badge
+  // ── Profile fact-check fields ───────────────────────────────────
+  // YYYY-MM-DD birth date. Required for age-group eligibility checks
+  // on tournament registration (can't register an athlete as 12U if
+  // their DOB says they're 14). Stored as a plain ISO date string to
+  // avoid timezone arithmetic surprises.
+  birthDate: text("birth_date"),
+  emergencyContactName: text("emergency_contact_name"),
+  emergencyContactPhone: text("emergency_contact_phone"),
+  // Postal address — used for reports + age-group league affiliation
+  // (e.g. regional tournaments that scope to certain zip ranges).
+  addressLine: text("address_line"),
+  city: text("city"),
+  state: text("state"),
+  postalCode: text("postal_code"),
+  // Marks the profile as "enough info to fact-check" — set true when
+  // birthDate + emergency contact are both filled. Actions that need a
+  // verified profile (waiver sign, tournament register) gate on this.
+  profileComplete: integer("profile_complete", { mode: "boolean" }).default(false),
   // ── Email verification (R780 port from OFF SZN) ─────────────────
   // Null = unverified; ISO timestamp = verified at that moment.
   // Sensitive actions gate on isVerified(user) from lib/email-verification.

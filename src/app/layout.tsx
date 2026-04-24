@@ -13,7 +13,6 @@ import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar"
 
 // Non-critical components loaded after initial paint
 const MobileRegisterBar = dynamic(() => import("@/components/layout/MobileRegisterBar"));
-const ChatWidget = dynamic(() => import("@/components/layout/ChatWidget"));
 const EditToolbar = dynamic(() => import("@/components/layout/EditToolbar"));
 const ScrollProgress = dynamic(() => import("@/components/ui/ScrollProgress"));
 const InstallPrompt = dynamic(() => import("@/components/pwa/InstallPrompt").then(m => ({ default: m.InstallPrompt })));
@@ -121,7 +120,6 @@ export default function RootLayout({
           <main id="main-content" tabIndex={-1} className="flex-1 page-transition focus:outline-none">{children}</main>
           <Footer />
           <MobileRegisterBar />
-          <ChatWidget />
           <EditToolbar />
           {/* GoogleAnalytics uses useSearchParams — must be Suspense-wrapped */}
           <Suspense fallback={null}>

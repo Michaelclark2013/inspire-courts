@@ -75,8 +75,17 @@ export default function TournamentManagePage() {
     description: "",
   });
 
-  const DIVISION_OPTIONS = ["8U", "10U", "12U", "14U", "16U", "18U", "Open"];
-  const COURT_OPTIONS = ["Court 1", "Court 2", "Court 3", "Court 4", "Court 5", "Court 6"];
+  // Full youth age range 8U through 17U + 18U + Open. Every odd age
+  // was missing from the chip list before ("14U to 16U" skipped 15U),
+  // forcing admins to type custom divisions.
+  const DIVISION_OPTIONS = [
+    "8U", "9U", "10U", "11U", "12U", "13U", "14U", "15U", "16U", "17U", "18U", "Open",
+  ];
+  // 7 physical courts. Courts 2 + 3 are the SMALLER side courts —
+  // marked separately so admins don't accidentally schedule big-age
+  // divisions on them.
+  const COURT_OPTIONS = ["Court 1", "Court 2", "Court 3", "Court 4", "Court 5", "Court 6", "Court 7"];
+  const SMALL_COURTS = new Set(["Court 2", "Court 3"]);
 
   function toggleChip(field: "divisions" | "courts", value: string) {
     const current = form[field]
@@ -195,7 +204,7 @@ export default function TournamentManagePage() {
         courts: "",
         gameLength: 40,
         breakLength: 10,
-        entryFee: "",
+        entryFee: "350",
         maxTeamsPerDivision: "",
         registrationDeadline: "",
         registrationOpen: false,
@@ -469,23 +478,40 @@ export default function TournamentManagePage() {
                       ))}
                     </div>
                   )}
-                  {/* Quick-pick buttons */}
+                  {/* Quick-pick buttons. Courts 2 + 3 are the smaller
+                      side courts — rendered in amber so admins don't
+                      accidentally schedule older / bigger-age divisions
+                      on them. The asterisk keeps the distinction
+                      visible even when the chip is selected. */}
                   <div className="flex flex-wrap gap-1.5 mb-2">
-                    {COURT_OPTIONS.map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => toggleChip("courts", c)}
-                        className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
-                          chipSelected("courts", c)
-                            ? "bg-blue-50 border-blue-300 text-blue-600"
-                            : "bg-white border-border text-text-muted hover:border-navy/30 hover:text-navy"
-                        }`}
-                      >
-                        {c}
-                      </button>
-                    ))}
+                    {COURT_OPTIONS.map((c) => {
+                      const small = SMALL_COURTS.has(c);
+                      const selected = chipSelected("courts", c);
+                      return (
+                        <button
+                          key={c}
+                          type="button"
+                          onClick={() => toggleChip("courts", c)}
+                          title={small ? "Smaller side court — best for younger age groups" : undefined}
+                          className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
+                            small
+                              ? selected
+                                ? "bg-amber-100 border-amber-400 text-amber-800"
+                                : "bg-amber-50 border-amber-300 text-amber-700 hover:border-amber-500"
+                              : selected
+                              ? "bg-blue-50 border-blue-300 text-blue-600"
+                              : "bg-white border-border text-text-muted hover:border-navy/30 hover:text-navy"
+                          }`}
+                        >
+                          {c}
+                          {small && <span className="ml-0.5" aria-hidden="true">*</span>}
+                        </button>
+                      );
+                    })}
                   </div>
+                  <p className="text-[11px] text-amber-700 mb-2">
+                    <span className="font-semibold">* Courts 2 &amp; 3</span> are our smaller side courts — best for 8U–12U divisions.
+                  </p>
                   <input
                     type="text"
                     id="tm-courts"

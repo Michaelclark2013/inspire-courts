@@ -411,6 +411,9 @@ export default function ChatWidget() {
           pathname: pathname || "/",
         }),
       });
+      if (!res.ok) {
+        throw new Error(`chat ${res.status}`);
+      }
       const data = await res.json();
       setMessages((prev) => [
         ...prev,
@@ -418,12 +421,16 @@ export default function ChatWidget() {
       ]);
       handleNewAssistantMessage();
     } catch {
+      // Distinguish "we're offline" from "the server returned an error" so
+      // the user sees a sensible recovery option instead of a generic
+      // server-side message when their phone has no signal.
+      const offline = typeof navigator !== "undefined" && navigator.onLine === false;
+      const message = offline
+        ? `You're offline. Reconnect and try again, or email us at ${FACILITY_EMAIL}.`
+        : `Sorry, something went wrong. Email us at ${FACILITY_EMAIL} for help.`;
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: `Sorry, something went wrong. Email us at ${FACILITY_EMAIL} for help.`,
-        },
+        { role: "assistant", content: message },
       ]);
     } finally {
       setLoading(false);

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const LAST_UPDATED = "November 2026";
+const LAST_UPDATED = "April 2026";
 
 export default function TermsPage() {
   return (

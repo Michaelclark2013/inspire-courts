@@ -4,6 +4,7 @@ import { members, membershipPlans } from "@/lib/db/schema";
 import { and, eq, gte, isNull, isNotNull, lt, lte, or } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { sendBroadcastEmail } from "@/lib/notify";
+import { requireCronSecret } from "@/lib/api-helpers";
 
 // GET/POST /api/admin/cron/member-daily
 //
@@ -19,20 +20,8 @@ import { sendBroadcastEmail } from "@/lib/notify";
 // Returns 503 if CRON_SECRET isn't configured so misfires show up
 // in logs instead of silently running.
 async function handle(request: NextRequest) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) {
-    return NextResponse.json(
-      { error: "member-daily cron disabled (CRON_SECRET not configured)" },
-      { status: 503 }
-    );
-  }
-  const authHeader = request.headers.get("authorization") || "";
-  const provided = authHeader.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length)
-    : "";
-  if (provided !== secret) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const fail = requireCronSecret(request);
+  if (fail) return fail;
 
   const now = new Date();
   const nowIso = now.toISOString();

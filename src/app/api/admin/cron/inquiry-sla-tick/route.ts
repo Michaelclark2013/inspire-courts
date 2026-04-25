@@ -4,6 +4,7 @@ import { inquiries, inquiryNotes } from "@/lib/db/schema";
 import { and, eq, isNull, lt, notInArray, sql } from "drizzle-orm";
 import { sendBroadcastEmail } from "@/lib/notify";
 import { logger } from "@/lib/logger";
+import { requireCronSecret } from "@/lib/api-helpers";
 
 // POST /api/admin/cron/inquiry-sla-tick
 // Runs every 5 min. Finds inquiries that:
@@ -13,11 +14,8 @@ import { logger } from "@/lib/logger";
 // Posts a single alert email per breach, then drops a note row so
 // we don't spam the same inquiry every 5 min.
 export async function POST(request: NextRequest) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 503 });
-  if (request.headers.get("authorization") !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const fail = requireCronSecret(request);
+  if (fail) return fail;
 
   const now = new Date().toISOString();
 

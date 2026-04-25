@@ -4,6 +4,7 @@ import { tournaments, resetTokens, auditLog } from "@/lib/db/schema";
 import { and, eq, lt } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
+import { requireCronSecret } from "@/lib/api-helpers";
 
 // POST /api/admin/cron/maintenance
 //
@@ -21,27 +22,8 @@ import { logger } from "@/lib/logger";
 //
 // Returns per-sweep counts so an ops dashboard can confirm what happened.
 export async function POST(request: NextRequest) {
-  // Auth: shared-secret header. CRON_SECRET must be set in the environment;
-  // if not set, the route is disabled entirely (fail closed).
-  const secret = process.env.CRON_SECRET;
-  if (!secret) {
-    return NextResponse.json(
-      { error: "Maintenance cron is disabled (CRON_SECRET not configured)" },
-      { status: 503 }
-    );
-  }
-
-  // Vercel Cron sends Authorization: Bearer <secret>; accept either that
-  // or an X-Cron-Secret header for flexibility.
-  const authHeader = request.headers.get("authorization") || "";
-  const cronHeader = request.headers.get("x-cron-secret") || "";
-  const provided = authHeader.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length)
-    : cronHeader;
-
-  if (provided !== secret) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const fail = requireCronSecret(request);
+  if (fail) return fail;
 
   const now = new Date();
   const nowIso = now.toISOString();

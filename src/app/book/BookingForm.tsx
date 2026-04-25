@@ -87,8 +87,19 @@ export default function BookingForm() {
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
-        const json = await res.json();
-        setError(json.error || "Something went wrong. Please try again.");
+        const json = await res.json().catch(() => ({}));
+        // Surface the server's specific reason when present, then fall
+        // back to a status-class hint so users know whether to retry,
+        // fix their input, or call us.
+        const fallback =
+          res.status === 429
+            ? "Too many submissions in a short period. Please wait a minute and try again."
+            : res.status >= 500
+              ? `Our server is having trouble. Try again in a moment, or email ${FACILITY_EMAIL}.`
+              : res.status >= 400
+                ? "Please check your entries and try again."
+                : "Something went wrong. Please try again.";
+        setError(json.error || fallback);
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     } catch {

@@ -73,7 +73,18 @@ function ContactPageInner() {
         trackConversion("contact_form_submit");
         setSubmitted(true);
       } else {
-        setError(`Could not send your message. Try again or email ${FACILITY_EMAIL}.`);
+        const json = await res.json().catch(() => ({}));
+        // Status-class fallback so we tell the user whether to retry,
+        // wait, fix input, or email us.
+        const fallback =
+          res.status === 429
+            ? "Too many submissions. Please wait a minute and try again."
+            : res.status >= 500
+              ? `Our server is having trouble. Try again in a moment, or email ${FACILITY_EMAIL}.`
+              : res.status >= 400
+                ? "Please check your entries and try again."
+                : `Could not send your message. Try again or email ${FACILITY_EMAIL}.`;
+        setError(json.error || fallback);
       }
     } catch {
       setError(`Network error. Check your connection or email ${FACILITY_EMAIL}.`);

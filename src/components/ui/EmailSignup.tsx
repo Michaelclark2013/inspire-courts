@@ -25,11 +25,21 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok || data.error) {
         setStatus("error");
-        setMessage(data.error || "Something went wrong. Try again.");
+        // Status-class fallback so users know whether to wait, retry,
+        // or fix the email field.
+        const fallback =
+          res.status === 429
+            ? "Too many sign-ups from this connection. Please wait a minute."
+            : res.status >= 500
+              ? "Service is temporarily down. Try again in a moment."
+              : res.status === 400
+                ? "That email doesn't look right. Double-check and try again."
+                : "Something went wrong. Try again.";
+        setMessage(data.error || fallback);
         return;
       }
 
@@ -39,7 +49,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
       trackConversion("newsletter_signup");
     } catch {
       setStatus("error");
-      setMessage("Something went wrong. Try again.");
+      setMessage("Network problem. Check your connection and try again.");
     }
   }
 

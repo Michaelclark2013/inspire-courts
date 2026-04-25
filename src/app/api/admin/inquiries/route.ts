@@ -7,7 +7,7 @@ import { and, desc, eq, ne, sql } from "drizzle-orm";
 import { canAccess } from "@/lib/permissions";
 import { logger } from "@/lib/logger";
 
-// GET /api/admin/inquiries?status=new&kind=training
+// GET /api/admin/inquiries?status=new&kind=training&format=csv
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "inquiries")) {
@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
   const sp = request.nextUrl.searchParams;
   const status = sp.get("status");
   const kind = sp.get("kind");
+  const format = sp.get("format");
   try {
     const filters = [];
     if (status === "open") filters.push(and(ne(inquiries.status, "won"), ne(inquiries.status, "lost")));
@@ -44,6 +45,33 @@ export async function GET(request: NextRequest) {
       .where(filters.length > 0 ? and(...filters) : undefined)
       .orderBy(desc(inquiries.createdAt))
       .limit(200);
+
+    // CSV export — same filters, marketing pulls these into Sheets weekly.
+    if (format === "csv") {
+      const headers = [
+        "id", "kind", "status", "name", "email", "phone", "sports",
+        "source", "createdAt", "slaDueAt", "firstTouchAt", "assignedTo",
+      ].join(",");
+      const escape = (v: unknown) => {
+        const s = v === null || v === undefined ? "" : String(v);
+        return s.includes(",") || s.includes("\"") || s.includes("\n")
+          ? `"${s.replace(/"/g, '""')}"`
+          : s;
+      };
+      const lines = rows.map((r) =>
+        [r.id, r.kind, r.status, r.name, r.email, r.phone, r.sports, r.source,
+         r.createdAt, r.slaDueAt, r.firstTouchAt, r.assignedName ?? r.assignedTo]
+          .map(escape)
+          .join(",")
+      );
+      const csv = [headers, ...lines].join("\n");
+      return new NextResponse(csv, {
+        headers: {
+          "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": `attachment; filename="inquiries-${new Date().toISOString().slice(0, 10)}.csv"`,
+        },
+      });
+    }
 
     // Funnel rollup for the dashboard cards.
     const funnel = await db

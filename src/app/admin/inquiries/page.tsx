@@ -84,6 +84,16 @@ export default function InquiriesPage() {
   const [refreshing, setRefreshing] = useState(false);
   const lastLoadRef = useRef<number>(0);
 
+  // Close the detail drawer on Escape so keyboard users aren't trapped.
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActive(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [active]);
+
   const buildQs = useCallback(() => {
     const params = new URLSearchParams();
     if (filterStatus) params.set("status", filterStatus);
@@ -338,7 +348,13 @@ export default function InquiriesPage() {
 
       {/* Detail drawer */}
       {active && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4" onClick={() => setActive(null)}>
+        <div
+          className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4"
+          onClick={() => setActive(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Inquiry detail: ${active.name}`}
+        >
           <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="px-5 py-4 border-b border-border flex items-center justify-between">
               <div>

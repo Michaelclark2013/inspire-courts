@@ -120,15 +120,15 @@ export default function LogoUploader({
             onClick={handleClose}
           />
           <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[81] w-full max-w-sm mx-auto px-4">
-            <div className="bg-off-white border border-white/[0.1] rounded-2xl p-5 shadow-2xl">
+            <div className="bg-white border border-border rounded-2xl p-5 shadow-2xl">
 
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-white font-bold text-sm uppercase tracking-wider">Team Logo</h3>
+                  <h3 className="text-navy font-bold text-sm uppercase tracking-wider">Team Logo</h3>
                   <p className="text-text-secondary text-xs mt-0.5 truncate max-w-[200px]">{teamName}</p>
                 </div>
-                <button onClick={handleClose} aria-label="Close" className="text-text-secondary hover:text-white transition-colors p-1">
+                <button onClick={handleClose} aria-label="Close" className="text-text-muted hover:text-navy transition-colors p-1">
                   <X className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
@@ -156,13 +156,13 @@ export default function LogoUploader({
                   {/* Gallery / file picker */}
                   <button
                     onClick={() => fileRef.current?.click()}
-                    className="w-full flex items-center gap-3 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl px-4 py-3.5 transition-colors"
+                    className="w-full flex items-center gap-3 bg-off-white hover:bg-light-gray border border-border rounded-xl px-4 py-3.5 transition-colors"
                   >
                     <div className="w-9 h-9 bg-red/10 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Upload className="w-4 h-4 text-red" aria-hidden="true" />
                     </div>
                     <div className="text-left">
-                      <p className="text-white text-sm font-semibold">Choose from library</p>
+                      <p className="text-navy text-sm font-semibold">Choose from library</p>
                       <p className="text-text-secondary text-xs">PNG, JPG, or WebP · max 2 MB</p>
                     </div>
                   </button>
@@ -171,13 +171,13 @@ export default function LogoUploader({
                   {/* Camera (mobile) */}
                   <button
                     onClick={() => cameraRef.current?.click()}
-                    className="w-full flex items-center gap-3 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl px-4 py-3.5 transition-colors"
+                    className="w-full flex items-center gap-3 bg-off-white hover:bg-light-gray border border-border rounded-xl px-4 py-3.5 transition-colors"
                   >
                     <div className="w-9 h-9 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Camera className="w-4 h-4 text-blue-400" aria-hidden="true" />
                     </div>
                     <div className="text-left">
-                      <p className="text-white text-sm font-semibold">Take a photo</p>
+                      <p className="text-navy text-sm font-semibold">Take a photo</p>
                       <p className="text-text-secondary text-xs">Use your camera</p>
                     </div>
                   </button>
@@ -185,7 +185,7 @@ export default function LogoUploader({
 
                   {/* Current logo if exists */}
                   {currentLogoUrl && (
-                    <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3">
+                    <div className="flex items-center gap-3 bg-off-white/60 border border-border rounded-xl px-4 py-3">
                       <Image src={currentLogoUrl} alt="current" width={32} height={32} className="w-8 h-8 object-contain rounded-full" unoptimized />
                       <p className="text-text-secondary text-xs">Current logo — upload a new one to replace</p>
                     </div>

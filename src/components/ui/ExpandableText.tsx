@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 interface ExpandableTextProps {
   text: string;
@@ -14,6 +14,7 @@ export default function ExpandableText({
   className = "",
 }: ExpandableTextProps) {
   const [expanded, setExpanded] = useState(false);
+  const bodyId = useId();
 
   if (!text) return null;
 
@@ -21,13 +22,15 @@ export default function ExpandableText({
 
   return (
     <div className={className}>
-      <p className={`text-text-muted text-sm leading-relaxed ${lineClampClass}`}>
+      <p id={bodyId} className={`text-text-muted text-sm leading-relaxed ${lineClampClass}`}>
         {text}
       </p>
       {text.length > 120 && (
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-controls={bodyId}
           className="text-red hover:text-red-hover text-xs font-semibold uppercase tracking-wider mt-1 transition-colors"
         >
           {expanded ? "Show less" : "Show more"}

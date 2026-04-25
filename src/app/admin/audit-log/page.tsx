@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Download, ChevronDown, ChevronRight, Filter } from "lucide-react";
@@ -77,6 +78,7 @@ export default function AuditLogPage() {
     action: "",
     actorUserId: "",
   });
+  const debouncedFilters = useDebouncedValue(filters, 300);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
   const load = useCallback(async (signal?: AbortSignal) => {
@@ -84,7 +86,7 @@ export default function AuditLogPage() {
     try {
       const params = new URLSearchParams();
       params.set("limit", "200");
-      for (const [k, v] of Object.entries(filters)) {
+      for (const [k, v] of Object.entries(debouncedFilters)) {
         if (v) params.set(k, v);
       }
       const res = await fetch(`/api/admin/audit-log?${params}`, { signal });
@@ -100,7 +102,7 @@ export default function AuditLogPage() {
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
-  }, [filters]);
+  }, [debouncedFilters]);
   useEffect(() => {
     if (status !== "authenticated") return;
     const controller = new AbortController();

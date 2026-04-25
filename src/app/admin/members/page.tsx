@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload } from "lucide-react";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 type Member = {
   id: number;
@@ -62,6 +63,7 @@ export default function MembersPage() {
   const [planFilter, setPlanFilter] = useState("");
   const [renewingSoon, setRenewingSoon] = useState(false);
   const [q, setQ] = useState("");
+  const debouncedQ = useDebouncedValue(q, 300);
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Member | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -76,7 +78,7 @@ export default function MembersPage() {
       if (statusFilter) params.set("status", statusFilter);
       if (planFilter) params.set("planId", planFilter);
       if (renewingSoon) params.set("renewingSoon", "true");
-      if (q.trim().length >= 2) params.set("q", q.trim());
+      if (debouncedQ.trim().length >= 2) params.set("q", debouncedQ.trim());
       const [mRes, pRes] = await Promise.all([
         fetch(`/api/admin/members?${params}`, { signal: controller.signal }),
         fetch("/api/admin/membership-plans", { signal: controller.signal }),
@@ -92,7 +94,7 @@ export default function MembersPage() {
     } finally {
       if (!controller.signal.aborted) setLoading(false);
     }
-  }, [statusFilter, planFilter, renewingSoon, q]);
+  }, [statusFilter, planFilter, renewingSoon, debouncedQ]);
 
   useEffect(() => {
     if (status === "authenticated") load();

@@ -203,7 +203,7 @@ export default function LeadsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <caption className="sr-only">Prospect pipeline leads</caption>
-              <thead>
+              <thead className="bg-white sticky top-0 z-10">
                 <tr className="border-b border-border">
                   <th scope="col" className="text-left text-navy/60 text-[10px] font-bold uppercase tracking-wider px-5 py-3">
                     Name

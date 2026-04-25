@@ -487,7 +487,7 @@ export default function UsersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <caption className="sr-only">User accounts</caption>
-              <thead>
+              <thead className="bg-white sticky top-0 z-10">
                 <tr className="border-b border-border text-navy/50 text-xs uppercase tracking-wider">
                   <th scope="col" className="text-left px-6 py-3 font-semibold">Name</th>
                   <th scope="col" className="text-left px-6 py-3 font-semibold hidden sm:table-cell">Email</th>

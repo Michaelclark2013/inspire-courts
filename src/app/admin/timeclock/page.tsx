@@ -195,7 +195,7 @@ export default function TimeclockPage() {
         ) : (
           <div className="overflow-x-auto bg-white border border-border rounded-lg">
             <table className="w-full text-sm">
-              <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
+              <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary sticky top-0 z-10">
                 <tr>
                   <th className="px-3 py-2">Name</th>
                   <th className="px-3 py-2">In</th>
@@ -257,7 +257,7 @@ export default function TimeclockPage() {
         </h2>
         <div className="overflow-x-auto bg-white border border-border rounded-lg">
           <table className="w-full text-sm">
-            <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
+            <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary sticky top-0 z-10">
               <tr>
                 <th className="px-3 py-2">Name</th>
                 <th className="px-3 py-2">When</th>

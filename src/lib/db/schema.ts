@@ -1024,6 +1024,10 @@ export const members = sqliteTable("members", {
   // Family plan linkage — primary member owns the plan, dependents
   // inherit. Null = standalone member.
   primaryMemberId: integer("primary_member_id"),
+  // Square Customer object ID — created lazily the first time a member
+  // adds a card or is charged. paymentMethods rows reference it via
+  // squareCustomerId for redundancy.
+  squareCustomerId: text("square_customer_id"),
   notes: text("notes"),
   // Stamped by the renewal-reminder cron so we don't re-email the
   // same person more than once per renewal cycle. Cleared when the
@@ -1760,3 +1764,389 @@ export const activeScoringSessions = sqliteTable("active_scoring_sessions", {
 // Ends disputes: "the parent says 58-42, here's the photo showing 58-42."
 // Stored on games (not gameScores) because it's a per-game artifact,
 // not per-score-update.
+
+// ── Recurring billing (subscriptions, invoices, payment methods) ─────
+// The actual SaaS-tier moneymaker. members.membershipPlanId stays as
+// "what plan is this person on" — `subscriptions` is the lifecycle
+// state machine that drives recurring charges, retries, and dunning.
+
+export const SUBSCRIPTION_STATUS = [
+  "trialing",     // free trial — no charges until trialEndsAt
+  "active",       // current period paid, will renew at currentPeriodEnd
+  "past_due",     // last charge failed, retries scheduled
+  "paused",       // member pause — no charges, no churn
+  "cancelled",    // terminal state
+] as const;
+
+export const subscriptions = sqliteTable("subscriptions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  memberId: integer("member_id")
+    .notNull()
+    .references(() => members.id, { onDelete: "cascade" }),
+  planId: integer("plan_id")
+    .notNull()
+    .references(() => membershipPlans.id, { onDelete: "restrict" }),
+  status: text("status", { enum: SUBSCRIPTION_STATUS }).notNull().default("active"),
+  // Billing interval. Most plans are monthly; annual is "12 months".
+  interval: text("interval", { enum: ["monthly", "annual"] }).notNull().default("monthly"),
+  // Locked-in price at sign-up — protects existing members from price
+  // changes on the membership plan. Cents per interval.
+  priceCents: integer("price_cents").notNull(),
+  // Trial — null means no trial. trialEndsAt overrides the first
+  // currentPeriodEnd so we don't charge until trial is over.
+  trialEndsAt: text("trial_ends_at"),
+  // Current billing period — every successful charge bumps this
+  // forward by `interval`. The cron renews when today >= currentPeriodEnd.
+  currentPeriodStart: text("current_period_start").notNull(),
+  currentPeriodEnd: text("current_period_end").notNull(),
+  // Square card to charge on renewal. Null means "manual collect at
+  // front desk" — front desk gets a daily list to chase.
+  paymentMethodId: integer("payment_method_id"),
+  // Dunning state — how many consecutive failed retries since the
+  // last successful charge. Resets to 0 on success. At 3 we cancel.
+  failedAttempts: integer("failed_attempts").notNull().default(0),
+  lastChargeAt: text("last_charge_at"),
+  lastChargeStatus: text("last_charge_status", {
+    enum: ["pending", "succeeded", "failed"],
+  }),
+  // When the cron should next try (used for retry scheduling).
+  // null means "process at currentPeriodEnd" (normal renewal).
+  nextRetryAt: text("next_retry_at"),
+  cancelledAt: text("cancelled_at"),
+  cancelReason: text("cancel_reason"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("subscriptions_member_idx").on(table.memberId),
+  index("subscriptions_status_idx").on(table.status),
+  index("subscriptions_period_end_idx").on(table.currentPeriodEnd),
+  index("subscriptions_retry_idx").on(table.nextRetryAt),
+]);
+
+// Tokenized card from Square. Many-to-one with members (a member can
+// have multiple cards on file; subscription points at one of them).
+export const paymentMethods = sqliteTable("payment_methods", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  memberId: integer("member_id")
+    .notNull()
+    .references(() => members.id, { onDelete: "cascade" }),
+  squareCustomerId: text("square_customer_id").notNull(),
+  squareCardId: text("square_card_id").notNull(), // the tokenized card ID we charge against
+  brand: text("brand"),       // "VISA", "MASTERCARD", etc.
+  last4: text("last4"),
+  expMonth: integer("exp_month"),
+  expYear: integer("exp_year"),
+  cardholderName: text("cardholder_name"),
+  isDefault: integer("is_default", { mode: "boolean" }).notNull().default(true),
+  // Set when Square reports the card is no longer valid (declined,
+  // closed, expired). Frontend surfaces a "fix payment" alert.
+  disabledAt: text("disabled_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("payment_methods_member_idx").on(table.memberId),
+  index("payment_methods_square_card_idx").on(table.squareCardId),
+]);
+
+// Every billing attempt — successful or not. The receipt log + the
+// audit trail. `status='paid'` rows feed revenue reports; `status='failed'`
+// drives dunning workflows.
+export const INVOICE_STATUS = ["pending", "paid", "failed", "refunded", "void"] as const;
+
+export const invoices = sqliteTable("invoices", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  memberId: integer("member_id")
+    .notNull()
+    .references(() => members.id, { onDelete: "cascade" }),
+  subscriptionId: integer("subscription_id").references(() => subscriptions.id, {
+    onDelete: "set null",
+  }),
+  amountCents: integer("amount_cents").notNull(),
+  currency: text("currency").notNull().default("USD"),
+  status: text("status", { enum: INVOICE_STATUS }).notNull().default("pending"),
+  // Period this invoice covers — for the receipt UI.
+  periodStart: text("period_start"),
+  periodEnd: text("period_end"),
+  // Square plumbing
+  squarePaymentId: text("square_payment_id"),
+  squareReceiptUrl: text("square_receipt_url"),
+  failureCode: text("failure_code"),     // e.g. "CARD_DECLINED", "INSUFFICIENT_FUNDS"
+  failureMessage: text("failure_message"),
+  attemptedAt: text("attempted_at"),
+  paidAt: text("paid_at"),
+  refundedAt: text("refunded_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("invoices_member_idx").on(table.memberId),
+  index("invoices_subscription_idx").on(table.subscriptionId),
+  index("invoices_status_idx").on(table.status),
+  index("invoices_paid_at_idx").on(table.paidAt),
+]);
+
+// ── Churn risk scoring (#3) ───────────────────────────────────────────
+// Daily-computed risk score per member. Drives /admin/churn — the
+// owner's "who to call this week" list. Recomputed nightly so the
+// dashboard is fast (no LIKE-then-aggregate at request time).
+export const memberRiskScores = sqliteTable("member_risk_scores", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  memberId: integer("member_id")
+    .notNull()
+    .unique() // one score per member; cron upserts
+    .references(() => members.id, { onDelete: "cascade" }),
+  // 0 = healthy, 100 = imminent churn. Tiers: 0-30 low, 31-70 med, 71-100 high.
+  score: integer("score").notNull().default(0),
+  tier: text("tier", { enum: ["low", "medium", "high"] }).notNull().default("low"),
+  // The dominant signal — drives the human-readable "why" badge.
+  primaryReason: text("primary_reason"),
+  // Component breakdown so the UI can show "why" without recomputing.
+  daysSinceLastVisit: integer("days_since_last_visit"),
+  visitsTrend: integer("visits_trend"), // delta vs previous 7d (negative = declining)
+  isPastDue: integer("is_past_due", { mode: "boolean" }).notNull().default(false),
+  tenureDays: integer("tenure_days"),
+  // Owner can mark "I called them, ignore for 14d" — surfaced as
+  // dismissedUntil. Cron preserves this on re-score.
+  dismissedUntil: text("dismissed_until"),
+  computedAt: text("computed_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("member_risk_score_idx").on(table.score),
+  index("member_risk_tier_idx").on(table.tier),
+  index("member_risk_dismissed_idx").on(table.dismissedUntil),
+]);
+
+// ── SMS + Journey automation (#5) ─────────────────────────────────────
+// Two-way SMS via Twilio + scheduled journey messages. Every send is
+// logged for opt-out compliance + reply threading. Journeys are
+// templated multi-step sequences (welcome, win-back, renewal reminder).
+
+export const SMS_DIRECTION = ["outbound", "inbound"] as const;
+export const SMS_STATUS = ["queued", "sent", "delivered", "failed", "received"] as const;
+
+export const smsMessages = sqliteTable("sms_messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // Resolves to either members.id, users.id, or just the raw phone for
+  // unknown numbers (lead funnel). At least one of memberId/userId/phone
+  // is always set.
+  memberId: integer("member_id").references(() => members.id, { onDelete: "set null" }),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+  phone: text("phone").notNull(),  // E.164: +1480xxxxxxx
+  direction: text("direction", { enum: SMS_DIRECTION }).notNull(),
+  body: text("body").notNull(),
+  status: text("status", { enum: SMS_STATUS }).notNull().default("queued"),
+  twilioSid: text("twilio_sid"),
+  errorCode: text("error_code"),
+  errorMessage: text("error_message"),
+  // For threading — outbound messages stamp this so inbound replies
+  // can be associated back to the original send.
+  threadKey: text("thread_key"),
+  // Which journey + step generated this (null for ad-hoc admin sends).
+  journeyId: integer("journey_id"),
+  journeyStepId: integer("journey_step_id"),
+  sentBy: integer("sent_by").references(() => users.id, { onDelete: "set null" }),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("sms_member_idx").on(table.memberId),
+  index("sms_phone_idx").on(table.phone),
+  index("sms_thread_idx").on(table.threadKey),
+  index("sms_created_idx").on(table.createdAt),
+]);
+
+// SMS opt-out registry. Honors STOP / UNSUBSCRIBE keywords. Every
+// outbound send must check this set first.
+export const smsOptOuts = sqliteTable("sms_opt_outs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  phone: text("phone").notNull().unique(),
+  reason: text("reason"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("sms_optout_phone_idx").on(table.phone),
+]);
+
+// Journey definitions — multi-step automated sequences.
+// Examples: "welcome" (5 messages over 30 days), "winback" (3 messages
+// over 14d after no_visit), "renewal_reminder" (2 messages 3d/1d before
+// next_renewal_at).
+export const JOURNEY_TRIGGERS = [
+  "manual",
+  "member_created",
+  "member_past_due",
+  "renewal_in_3d",
+  "high_churn_risk",
+] as const;
+
+export const journeys = sqliteTable("journeys", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  description: text("description"),
+  trigger: text("trigger", { enum: JOURNEY_TRIGGERS }).notNull().default("manual"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+// Steps within a journey. delayHours=0 fires immediately on enrollment,
+// delayHours=24 fires 1 day after the previous step.
+export const journeySteps = sqliteTable("journey_steps", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  journeyId: integer("journey_id").notNull().references(() => journeys.id, { onDelete: "cascade" }),
+  ordering: integer("ordering").notNull().default(0),
+  channel: text("channel", { enum: ["sms", "email", "push"] }).notNull().default("sms"),
+  // Message body. Supports `{firstName}`, `{lastName}`, `{daysSinceLastVisit}` placeholders.
+  body: text("body").notNull(),
+  subject: text("subject"), // email only
+  delayHours: integer("delay_hours").notNull().default(0),
+  // If the member checks in / pays / etc. before this step fires,
+  // skip it. Comma-separated list of skip events.
+  skipIfEvents: text("skip_if_events"),
+}, (table) => [
+  index("journey_steps_journey_idx").on(table.journeyId),
+]);
+
+// One row per (member, journey) enrollment. Tracks state machine cursor.
+export const JOURNEY_ENROLLMENT_STATUS = ["active", "completed", "cancelled", "skipped"] as const;
+
+export const journeyEnrollments = sqliteTable("journey_enrollments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  journeyId: integer("journey_id").notNull().references(() => journeys.id, { onDelete: "cascade" }),
+  memberId: integer("member_id").notNull().references(() => members.id, { onDelete: "cascade" }),
+  status: text("status", { enum: JOURNEY_ENROLLMENT_STATUS }).notNull().default("active"),
+  // The next step that should fire + when. Cron looks for nextFireAt <= now.
+  nextStepOrdering: integer("next_step_ordering").notNull().default(0),
+  nextFireAt: text("next_fire_at"),
+  // Stamped when the member replied to ANY message in this journey —
+  // signals to the cron that a human took over (skip remaining steps).
+  haltedByReplyAt: text("halted_by_reply_at"),
+  startedAt: text("started_at").notNull().$defaultFn(() => new Date().toISOString()),
+  completedAt: text("completed_at"),
+}, (table) => [
+  index("journey_enrollments_member_idx").on(table.memberId),
+  index("journey_enrollments_journey_idx").on(table.journeyId),
+  index("journey_enrollments_fire_idx").on(table.nextFireAt),
+  index("journey_enrollments_status_idx").on(table.status),
+]);
+
+// ── Workout tracking + leaderboards (#7) ──────────────────────────────
+// Members log results from class workouts / training sessions. Drives
+// per-class leaderboards (CrossFit playbook) + personal-best tracking.
+// Why this matters for retention: members come back to beat their own
+// numbers and to show up on the board.
+
+export const WORKOUT_SCORE_TYPES = [
+  "time",        // lower = better (e.g. mile time, "Fran")
+  "reps",        // higher = better (e.g. max push-ups in 1 min)
+  "weight",      // higher = better (e.g. 1RM bench press)
+  "rounds",      // higher = better (AMRAP-style)
+  "distance",    // higher = better (e.g. 5k row)
+] as const;
+
+export const workouts = sqliteTable("workouts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),       // "Fran", "5K Row", "Max Free Throws / Min"
+  description: text("description"),
+  scoreType: text("score_type", { enum: WORKOUT_SCORE_TYPES }).notNull(),
+  // Whether lower or higher is better — derived from scoreType but
+  // explicit so a custom workout can override (e.g. "min penalty time").
+  lowerIsBetter: integer("lower_is_better", { mode: "boolean" }).notNull().default(false),
+  // Optional category for filtering ("strength", "conditioning", "skill").
+  category: text("category"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("workouts_active_idx").on(table.active),
+]);
+
+export const workoutResults = sqliteTable("workout_results", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  workoutId: integer("workout_id").notNull().references(() => workouts.id, { onDelete: "cascade" }),
+  // Member-side: results posted by a member to their own log.
+  memberId: integer("member_id").references(() => members.id, { onDelete: "cascade" }),
+  // User-side: staff/coaches can also post (good for class leaderboards
+  // where the coach inputs everyone's number after class).
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+  // Numeric value in the unit implied by scoreType. For "time" it's
+  // total seconds; for "weight" it's pounds; for "reps" it's count;
+  // for "rounds" it's whole rounds; for "distance" it's meters.
+  scoreNumeric: integer("score_numeric").notNull(),
+  // Free-text addendum ("scaled", "Rx", form notes from coach).
+  scoreNote: text("score_note"),
+  // Display string — e.g. "4:32" for time-type even though stored as 272.
+  // Computed at write time so the leaderboard doesn't need to reformat.
+  scoreDisplay: text("score_display"),
+  performedAt: text("performed_at").notNull(),
+  // Coach who verified — leaderboards can filter "verified-only" so
+  // the records stay credible.
+  verifiedBy: integer("verified_by").references(() => users.id, { onDelete: "set null" }),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("workout_results_workout_idx").on(table.workoutId),
+  index("workout_results_member_idx").on(table.memberId),
+  index("workout_results_user_idx").on(table.userId),
+  index("workout_results_score_idx").on(table.scoreNumeric),
+  index("workout_results_performed_idx").on(table.performedAt),
+]);
+
+// ── Public API + webhooks (#9) ────────────────────────────────────────
+// API keys for external integrations (Zapier, custom dashboards, etc.).
+// Hashed (sha256) in storage so a DB leak doesn't expose live keys.
+// Each request is rate-limited per key in apiKeyRequests.
+
+export const apiKeys = sqliteTable("api_keys", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // Human label so admin can distinguish "Zapier" from "ProShop POS".
+  label: text("label").notNull(),
+  // sha256 hex of the secret key. The plaintext is shown ONCE on
+  // creation and never again.
+  keyHash: text("key_hash").notNull().unique(),
+  // First 8 chars of the plaintext for display ("ic_a1b2c3d4...").
+  // Lets the admin recognize the key without revealing the secret.
+  prefix: text("prefix").notNull(),
+  // Comma-sep scopes. v1: "read", "write". Future: "read:members", etc.
+  scopes: text("scopes").notNull().default("read"),
+  // Owner — for revocation + audit.
+  createdBy: integer("created_by").references(() => users.id, { onDelete: "set null" }),
+  lastUsedAt: text("last_used_at"),
+  revokedAt: text("revoked_at"),
+  expiresAt: text("expires_at"),  // null = no expiry
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("api_keys_hash_idx").on(table.keyHash),
+  index("api_keys_revoked_idx").on(table.revokedAt),
+]);
+
+// Webhook subscriptions — external URLs we POST to when domain events
+// happen (member.created, subscription.cancelled, game.finalized, etc.).
+// Each delivery is signed with the secret so receivers can verify.
+export const webhookSubscriptions = sqliteTable("webhook_subscriptions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  url: text("url").notNull(),
+  // Comma-sep list of event types this subscriber wants. "*" = all.
+  events: text("events").notNull().default("*"),
+  // Signing secret — receiver uses HMAC-SHA256 to verify.
+  secret: text("secret").notNull(),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdBy: integer("created_by").references(() => users.id, { onDelete: "set null" }),
+  lastDeliveryAt: text("last_delivery_at"),
+  lastDeliveryStatus: integer("last_delivery_status"),
+  failureCount: integer("failure_count").notNull().default(0),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("webhook_subs_active_idx").on(table.active),
+]);
+
+// Delivery log for retries + debugging.
+export const webhookDeliveries = sqliteTable("webhook_deliveries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  subscriptionId: integer("subscription_id")
+    .notNull()
+    .references(() => webhookSubscriptions.id, { onDelete: "cascade" }),
+  eventType: text("event_type").notNull(),
+  payload: text("payload").notNull(), // JSON string of the body
+  attemptedAt: text("attempted_at").notNull().$defaultFn(() => new Date().toISOString()),
+  status: integer("status"),  // HTTP status returned, null on network error
+  responseBody: text("response_body"),
+  errorMessage: text("error_message"),
+  attemptNumber: integer("attempt_number").notNull().default(1),
+}, (table) => [
+  index("webhook_deliveries_sub_idx").on(table.subscriptionId),
+  index("webhook_deliveries_attempted_idx").on(table.attemptedAt),
+]);

@@ -37,8 +37,10 @@ export async function GET() {
         checkEnv("GOOGLE_CLIENT_SECRET", "Optional — only if Google OAuth login is enabled"),
       ],
       email: [
-        checkEnv("GMAIL_USER"),
-        checkEnv("GMAIL_APP_PASSWORD"),
+        checkEnv("RESEND_API_KEY", "Preferred — higher deliverability + domain auth"),
+        checkEnv("RESEND_FROM_EMAIL", "e.g. noreply@inspirecourtsaz.com"),
+        checkEnv("GMAIL_USER", "Fallback if Resend isn't configured"),
+        checkEnv("GMAIL_APP_PASSWORD", "Fallback if Resend isn't configured"),
       ],
       payments: [
         checkEnv("SQUARE_ACCESS_TOKEN"),
@@ -87,7 +89,10 @@ export async function GET() {
 
     // Roll up a "launch-ready" boolean per category.
     const critical = env.critical.every((c) => c.present);
-    const emailReady = env.email.every((c) => c.present);
+    // Email is ready if EITHER transport is fully configured.
+    const resendReady = !!process.env.RESEND_API_KEY && !!process.env.RESEND_FROM_EMAIL;
+    const gmailReady = !!process.env.GMAIL_USER && !!process.env.GMAIL_APP_PASSWORD;
+    const emailReady = resendReady || gmailReady;
     const paymentsReady = env.payments.every((c) => c.present) && process.env.SQUARE_ENVIRONMENT === "production";
     const pushReady = env.push.every((c) => c.present);
     const calendarReady = env.calendar.every((c) => c.present);

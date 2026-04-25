@@ -74,7 +74,15 @@ export type AdminPage =
   | "maintenance"
   | "programs"
   | "time_off"
-  | "equipment";
+  | "equipment"
+  | "owner"
+  | "billing"
+  | "churn"
+  | "inbox"
+  | "journeys"
+  | "scheduler"
+  | "workouts"
+  | "integrations";
 
 const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
@@ -134,6 +142,24 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   // Equipment inventory — everyone with admin-surface access can
   // record usage (took 2 basketballs out) + file reorder alerts.
   equipment: ["admin", "front_desk", "staff"],
+  // Owner Mode — single-screen executive dashboard. Admin only.
+  owner: ["admin"],
+  // Billing — subscription management, retries, dunning. Admin only;
+  // moves money so we don't broaden it.
+  billing: ["admin"],
+  // Churn radar — projected revenue at risk + win-back drafts. Admin only.
+  churn: ["admin"],
+  // Two-way SMS inbox — admin + front desk (member service desk).
+  inbox: ["admin", "front_desk"],
+  // Journey automation — admin only (controls the autopilot).
+  journeys: ["admin"],
+  // AI scheduler — auto-fill open shifts. Admin only (commits assignments).
+  scheduler: ["admin"],
+  // Workouts library — admin + staff (coaches manage class WODs).
+  workouts: ["admin", "staff"],
+  // Integrations — public API keys + webhook subscriptions. Admin only;
+  // keys grant external read/write to PII.
+  integrations: ["admin"],
 };
 
 // All admin pages, in display order. Used by the permissions matrix UI.
@@ -144,7 +170,8 @@ export const ALL_ADMIN_PAGES: AdminPage[] = [
   "my_schedule", "my_history", "announcements", "leads", "approvals",
   "audit_log", "search", "health", "roster", "timeclock", "shifts",
   "resources", "payroll", "members", "certifications", "maintenance",
-  "programs", "time_off", "equipment",
+  "programs", "time_off", "equipment", "owner", "billing", "churn",
+  "inbox", "journeys", "scheduler", "workouts", "integrations",
 ];
 
 // Page groups for the matrix UI. Mirrors the AdminButtonGrid sections
@@ -199,6 +226,14 @@ export const PAGE_LABELS: Record<AdminPage, string> = {
   programs: "Programs",
   time_off: "Time off",
   equipment: "Inventory",
+  owner: "Owner Mode",
+  billing: "Billing",
+  churn: "Churn Radar",
+  inbox: "SMS Inbox",
+  journeys: "Journey Automation",
+  scheduler: "AI Scheduler",
+  workouts: "Workouts",
+  integrations: "Integrations",
 };
 
 // Role-based default access check. Kept for all call sites that

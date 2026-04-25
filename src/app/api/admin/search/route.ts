@@ -7,6 +7,9 @@ import {
   tournamentTeams,
   tournamentRegistrations,
   tournaments,
+  members,
+  players,
+  games,
 } from "@/lib/db/schema";
 import { like, or } from "drizzle-orm";
 import { logger } from "@/lib/logger";
@@ -14,19 +17,30 @@ import { canAccess } from "@/lib/permissions";
 import { withTiming } from "@/lib/timing";
 
 // Global admin search across users, teams (tournament_teams), registrations,
-// and tournaments. Each entity type returns up to PER_TYPE_LIMIT matches so
-// a broad query can't dump the full DB.
+// tournaments, members, players, and games. Each entity type returns up to
+// PER_TYPE_LIMIT matches so a broad query can't dump the full DB.
 const PER_TYPE_LIMIT = 5;
 
-type SearchType = "users" | "teams" | "registrations" | "tournaments";
-const ALL_TYPES: SearchType[] = ["users", "teams", "registrations", "tournaments"];
+type SearchType =
+  | "users"
+  | "teams"
+  | "registrations"
+  | "tournaments"
+  | "members"
+  | "players"
+  | "games";
+
+const ALL_TYPES: SearchType[] = [
+  "users",
+  "teams",
+  "registrations",
+  "tournaments",
+  "members",
+  "players",
+  "games",
+];
 
 // GET /api/admin/search?q=&types=users,teams
-//   q       required, min 2 chars
-//   types   comma-separated subset of: users|teams|registrations|tournaments
-//           (default: all)
-// Response: { query, results: { users, teams, registrations, tournaments } }
-// Only admin role — search results include PII (emails, phones).
 export const GET = withTiming("admin.search", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !canAccess(session.user.role, "search")) {
@@ -42,13 +56,6 @@ export const GET = withTiming("admin.search", async (request: NextRequest) => {
     );
   }
 
-  // Cap query length — no reason to LIKE against an unbounded string.
-  // Also escape the LIKE metacharacters (%, _, \) so a search for "%"
-  // doesn't match every row. SQLite recognizes \ as an escape character
-  // when ESCAPE is provided; Drizzle's `like()` doesn't expose ESCAPE, so
-  // we have to escape manually and rely on literal matching for the caller
-  // — backslash literals in the needle are not treated as special, so
-  // escaping the wildcards is what matters here.
   const safeQ = q.slice(0, 100).replace(/[\\%_]/g, "\\$&");
   const needle = `%${safeQ}%`;
 
@@ -59,17 +66,18 @@ export const GET = withTiming("admin.search", async (request: NextRequest) => {
   const types: SearchType[] = requestedTypes.length > 0 ? requestedTypes : ALL_TYPES;
 
   try {
-    // Run each fan-out query in parallel. Empty arrays for types not
-    // requested — keeps response shape stable.
-    const [userRows, teamRows, regRows, tournamentRows] = await Promise.all([
+    const [
+      userRows,
+      teamRows,
+      regRows,
+      tournamentRows,
+      memberRows,
+      playerRows,
+      gameRows,
+    ] = await Promise.all([
       types.includes("users")
         ? db
-            .select({
-              id: users.id,
-              name: users.name,
-              email: users.email,
-              role: users.role,
-            })
+            .select({ id: users.id, name: users.name, email: users.email, role: users.role })
             .from(users)
             .where(or(like(users.name, needle), like(users.email, needle)))
             .limit(PER_TYPE_LIMIT)
@@ -119,6 +127,55 @@ export const GET = withTiming("admin.search", async (request: NextRequest) => {
             .where(like(tournaments.name, needle))
             .limit(PER_TYPE_LIMIT)
         : Promise.resolve([]),
+      types.includes("members")
+        ? db
+            .select({
+              id: members.id,
+              firstName: members.firstName,
+              lastName: members.lastName,
+              email: members.email,
+              phone: members.phone,
+              status: members.status,
+            })
+            .from(members)
+            .where(
+              or(
+                like(members.firstName, needle),
+                like(members.lastName, needle),
+                like(members.email, needle),
+                like(members.phone, needle)
+              )
+            )
+            .limit(PER_TYPE_LIMIT)
+        : Promise.resolve([]),
+      types.includes("players")
+        ? db
+            .select({
+              id: players.id,
+              name: players.name,
+              division: players.division,
+              jerseyNumber: players.jerseyNumber,
+              teamId: players.teamId,
+            })
+            .from(players)
+            .where(like(players.name, needle))
+            .limit(PER_TYPE_LIMIT)
+        : Promise.resolve([]),
+      types.includes("games")
+        ? db
+            .select({
+              id: games.id,
+              homeTeam: games.homeTeam,
+              awayTeam: games.awayTeam,
+              division: games.division,
+              court: games.court,
+              scheduledTime: games.scheduledTime,
+              status: games.status,
+            })
+            .from(games)
+            .where(or(like(games.homeTeam, needle), like(games.awayTeam, needle)))
+            .limit(PER_TYPE_LIMIT)
+        : Promise.resolve([]),
     ]);
 
     return NextResponse.json(
@@ -129,12 +186,18 @@ export const GET = withTiming("admin.search", async (request: NextRequest) => {
           teams: teamRows,
           registrations: regRows,
           tournaments: tournamentRows,
+          members: memberRows,
+          players: playerRows,
+          games: gameRows,
         },
         totals: {
           users: userRows.length,
           teams: teamRows.length,
           registrations: regRows.length,
           tournaments: tournamentRows.length,
+          members: memberRows.length,
+          players: playerRows.length,
+          games: gameRows.length,
         },
       },
       { headers: { "Cache-Control": "no-store" } }
@@ -144,4 +207,3 @@ export const GET = withTiming("admin.search", async (request: NextRequest) => {
     return NextResponse.json({ error: "Search failed" }, { status: 500 });
   }
 });
-

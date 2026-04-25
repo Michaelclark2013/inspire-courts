@@ -34,7 +34,7 @@ export default function ScoreEntryPage() {
   const [tournamentOptions, setTournamentOptions] = useState<TournamentOption[]>([]);
 
   // Offline sync
-  const { isOnline, queueMutation, pendingCount: _pendingCount } = useOfflineSync();
+  const { isOnline, queueMutation, pendingCount } = useOfflineSync();
 
   // Per-endpoint error tracking
   const [errors, setErrors] = useState<{ games: boolean; tournaments: boolean }>({
@@ -339,6 +339,28 @@ export default function ScoreEntryPage() {
           </button>
         </div>
       </div>
+
+      {/* Offline banner — score changes queue to IndexedDB and flush on
+          reconnect. Shown whenever the browser reports offline OR there
+          are still-pending mutations waiting to sync. */}
+      {(!isOnline || pendingCount > 0) && (
+        <div
+          role="status"
+          className="mb-4 bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-4 py-3 flex items-start gap-2"
+        >
+          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <div className="flex-1">
+            <p className="font-semibold">
+              {!isOnline ? "Offline — taps queue and sync on reconnect" : "Syncing…"}
+            </p>
+            {pendingCount > 0 && (
+              <p className="text-xs mt-0.5">
+                {pendingCount} pending {pendingCount === 1 ? "change" : "changes"}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Partial failure banner */}
       {hasPartialFailure && (

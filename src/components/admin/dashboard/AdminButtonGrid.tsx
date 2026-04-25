@@ -172,7 +172,14 @@ const CATEGORIES: Category[] = [
       { href: "/admin/files", label: "Files & Drive", desc: "Uploads + Drive", icon: FolderOpen, page: "files" },
       { href: "/admin/reports", label: "Reports", desc: "Exports + PDFs", icon: BarChart3, page: "analytics" },
       { href: "/admin/analytics", label: "GA Analytics", desc: "Traffic", icon: BarChart3, page: "analytics" },
+      { href: "/admin/billing", label: "Billing", desc: "Subscriptions + dunning", icon: Banknote, page: "billing" },
+      { href: "/admin/churn", label: "Churn Radar", desc: "At-risk members", icon: TrendingUp, page: "churn" },
+      { href: "/admin/inbox", label: "SMS Inbox", desc: "Two-way texts", icon: Megaphone, page: "inbox" },
+      { href: "/admin/scheduler", label: "AI Scheduler", desc: "Auto-fill shifts", icon: Sparkles, page: "scheduler" },
+      { href: "/admin/workouts", label: "Workouts", desc: "Library + leaderboards", icon: Trophy, page: "workouts" },
+      { href: "/admin/integrations", label: "Integrations", desc: "API + webhooks", icon: Zap, page: "integrations" },
       { href: "/admin/audit-log", label: "Audit Log", desc: "Who did what", icon: History, page: "audit_log" },
+      { href: "/admin/search", label: "Global Search", desc: "Find anything", icon: Search, page: "search" },
       { href: "/admin/launch-readiness", label: "Launch", desc: "Pre-flight", icon: Rocket, page: "users" },
       { href: "/admin/launch-status", label: "Go-Live Status", desc: "Env + seed", icon: Rocket, page: "users" },
     ],
@@ -182,10 +189,10 @@ const CATEGORIES: Category[] = [
 // Quick actions — the 4 most-used daily tasks. Surfaced above the
 // category grid so the owner never has to drill into anything.
 const QUICK_ACTIONS: Tile[] = [
+  { href: "/admin/owner", label: "Owner Mode", desc: "The 5 numbers", icon: Sparkles, page: "owner" },
   { href: "/admin/scores/enter", label: "Enter Scores", desc: "Live scorekeeping", icon: PenLine, page: "score_entry" },
   { href: "/admin/checkin", label: "Check-In", desc: "Team + player", icon: UserCheck, page: "checkin" },
   { href: "/admin/tournaments/manage", label: "Tournaments", desc: "Brackets", icon: Trophy, page: "tournaments" },
-  { href: "/admin/announcements", label: "Announce", desc: "Post + push", icon: Megaphone, page: "announcements" },
 ];
 
 const TINT: Record<Tint, { bar: string; iconBg: string; iconFg: string; ringHover: string }> = {

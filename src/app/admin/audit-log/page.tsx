@@ -5,6 +5,34 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Download, ChevronDown, ChevronRight, Filter } from "lucide-react";
 
+// Static lists of every entity type and action emitted by recordAudit()
+// across the codebase. Drives the filter datalists for typeahead.
+const KNOWN_ENTITY_TYPES = [
+  "announcement", "broadcast", "cache", "equipment", "game", "maintenance_ticket",
+  "member", "member_visit", "membership_plan", "pay_period", "permission_template",
+  "program", "program_registration", "program_session", "registration", "resource",
+  "resource_booking", "shift", "shift_assignment", "site_content", "square_payment",
+  "staff_availability", "staff_certification", "staff_profile", "team", "time_entry",
+  "time_off_request", "tournament", "tournament_registration", "tournament_team",
+  "user", "user_permission", "waiver",
+] as const;
+
+const KNOWN_ACTIONS = [
+  "admin.revalidate", "announcement.created", "announcement.deleted", "announcement.pushed",
+  "announcement.updated", "certification.created", "certification.deleted",
+  "certification.updated", "certification.verified", "checkin.nudge_sent",
+  "equipment.created", "equipment.updated", "game.created", "game.deleted",
+  "game.finalized", "game.play_voided", "game.score_entered", "game.status_changed",
+  "maintenance.ticket_opened", "member.bulk_imported", "member.cancelled",
+  "member.created", "member_visit.logged", "membership_plan.archived",
+  "membership_plan.created", "membership_plan.updated", "notify.broadcast",
+  "pay_period.created", "permission.auto_expired", "permission.bulk_cleared",
+  "permission.copied", "permission.override_cleared", "permission.reset_user",
+  "permission.template_applied", "program.archived", "program.created",
+  "program.updated", "program_registration.cancelled", "program_registration.created",
+  "program_session.created",
+] as const;
+
 type AuditRow = {
   id: number;
   createdAt: string;
@@ -115,43 +143,63 @@ export default function AuditLogPage() {
       </div>
 
       {/* FILTERS */}
-      <div className="bg-white border border-border rounded-xl p-4 mb-4 grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <label className="block">
-          <span className="block text-xs text-text-secondary mb-1">Entity Type</span>
-          <input
-            value={filters.entityType}
-            onChange={(e) => setFilters({ ...filters, entityType: e.target.value })}
-            placeholder="member, tournament, staff_profile…"
-            className="w-full bg-off-white border border-border rounded px-2 py-1.5 text-sm"
-          />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-text-secondary mb-1">Entity ID</span>
-          <input
-            value={filters.entityId}
-            onChange={(e) => setFilters({ ...filters, entityId: e.target.value })}
-            placeholder="42"
-            className="w-full bg-off-white border border-border rounded px-2 py-1.5 text-sm"
-          />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-text-secondary mb-1">Action</span>
-          <input
-            value={filters.action}
-            onChange={(e) => setFilters({ ...filters, action: e.target.value })}
-            placeholder="user.approved, time_entry.approved…"
-            className="w-full bg-off-white border border-border rounded px-2 py-1.5 text-sm"
-          />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-text-secondary mb-1">Actor User ID</span>
-          <input
-            value={filters.actorUserId}
-            onChange={(e) => setFilters({ ...filters, actorUserId: e.target.value })}
-            placeholder="1"
-            className="w-full bg-off-white border border-border rounded px-2 py-1.5 text-sm"
-          />
-        </label>
+      <div className="bg-white border border-border rounded-xl p-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <label className="block">
+            <span className="block text-xs text-text-secondary mb-1">Entity Type</span>
+            <input
+              list="audit-entity-types"
+              value={filters.entityType}
+              onChange={(e) => setFilters({ ...filters, entityType: e.target.value })}
+              placeholder="member, tournament, staff_profile…"
+              className="w-full bg-off-white border border-border rounded px-2 py-1.5 text-sm"
+            />
+            <datalist id="audit-entity-types">
+              {KNOWN_ENTITY_TYPES.map((t) => (<option key={t} value={t} />))}
+            </datalist>
+          </label>
+          <label className="block">
+            <span className="block text-xs text-text-secondary mb-1">Entity ID</span>
+            <input
+              value={filters.entityId}
+              onChange={(e) => setFilters({ ...filters, entityId: e.target.value })}
+              placeholder="42"
+              className="w-full bg-off-white border border-border rounded px-2 py-1.5 text-sm"
+            />
+          </label>
+          <label className="block">
+            <span className="block text-xs text-text-secondary mb-1">Action</span>
+            <input
+              list="audit-actions"
+              value={filters.action}
+              onChange={(e) => setFilters({ ...filters, action: e.target.value })}
+              placeholder="user.approved, time_entry.approved…"
+              className="w-full bg-off-white border border-border rounded px-2 py-1.5 text-sm"
+            />
+            <datalist id="audit-actions">
+              {KNOWN_ACTIONS.map((a) => (<option key={a} value={a} />))}
+            </datalist>
+          </label>
+          <label className="block">
+            <span className="block text-xs text-text-secondary mb-1">Actor User ID</span>
+            <input
+              value={filters.actorUserId}
+              onChange={(e) => setFilters({ ...filters, actorUserId: e.target.value })}
+              placeholder="1"
+              className="w-full bg-off-white border border-border rounded px-2 py-1.5 text-sm"
+            />
+          </label>
+        </div>
+        {(filters.entityType || filters.entityId || filters.action || filters.actorUserId) && (
+          <div className="mt-3 flex items-center gap-2">
+            <button
+              onClick={() => setFilters({ entityType: "", entityId: "", action: "", actorUserId: "" })}
+              className="text-xs text-text-secondary hover:text-navy underline"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -194,18 +242,7 @@ export default function AuditLogPage() {
                   <div className="mt-3 ml-5 bg-off-white rounded p-3 text-xs space-y-2">
                     {r.requestId && <div className="text-text-secondary">Request ID: <span className="font-mono">{r.requestId}</span></div>}
                     {r.actorUserAgent && <div className="text-text-secondary truncate">UA: <span className="font-mono">{r.actorUserAgent}</span></div>}
-                    {r.beforeJson && (
-                      <div>
-                        <div className="text-text-secondary uppercase text-[10px] font-bold mb-0.5">Before</div>
-                        <pre className="bg-white border border-border rounded p-2 overflow-x-auto">{prettyJson(r.beforeJson)}</pre>
-                      </div>
-                    )}
-                    {r.afterJson && (
-                      <div>
-                        <div className="text-text-secondary uppercase text-[10px] font-bold mb-0.5">After</div>
-                        <pre className="bg-white border border-border rounded p-2 overflow-x-auto">{prettyJson(r.afterJson)}</pre>
-                      </div>
-                    )}
+                    <DiffView beforeJson={r.beforeJson} afterJson={r.afterJson} />
                   </div>
                 )}
               </div>
@@ -220,4 +257,95 @@ export default function AuditLogPage() {
 function prettyJson(raw: string): string {
   try { return JSON.stringify(JSON.parse(raw), null, 2); }
   catch { return raw; }
+}
+
+// ── Diff viewer ──────────────────────────────────────────────────────
+// Renders before/after as a field-by-field table so admins can spot
+// what actually changed at a glance. For complex nested values we
+// stringify; for primitives we show inline. Changed rows get highlighted.
+
+function parseObj(raw: string | null): Record<string, unknown> | null {
+  if (!raw) return null;
+  try {
+    const v = JSON.parse(raw);
+    return v && typeof v === "object" && !Array.isArray(v) ? (v as Record<string, unknown>) : null;
+  } catch { return null; }
+}
+
+function fmtVal(v: unknown): string {
+  if (v === null) return "—";
+  if (v === undefined) return "";
+  if (typeof v === "string") return v;
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  try { return JSON.stringify(v); } catch { return String(v); }
+}
+
+function DiffView({ beforeJson, afterJson }: { beforeJson: string | null; afterJson: string | null }) {
+  const before = parseObj(beforeJson);
+  const after = parseObj(afterJson);
+
+  // If neither side parses as an object, fall back to raw pre blocks
+  // (avoids breaking on non-JSON payloads or plain arrays).
+  if (!before && !after) {
+    return (
+      <div className="space-y-2">
+        {beforeJson && (
+          <div>
+            <div className="text-text-secondary uppercase text-[10px] font-bold mb-0.5">Before</div>
+            <pre className="bg-white border border-border rounded p-2 overflow-x-auto">{prettyJson(beforeJson)}</pre>
+          </div>
+        )}
+        {afterJson && (
+          <div>
+            <div className="text-text-secondary uppercase text-[10px] font-bold mb-0.5">After</div>
+            <pre className="bg-white border border-border rounded p-2 overflow-x-auto">{prettyJson(afterJson)}</pre>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const keys = Array.from(new Set([...Object.keys(before || {}), ...Object.keys(after || {})])).sort();
+  const rows = keys.map((k) => {
+    const b = before?.[k];
+    const a = after?.[k];
+    const bStr = fmtVal(b);
+    const aStr = fmtVal(a);
+    const changed = bStr !== aStr;
+    return { k, bStr, aStr, changed, added: b === undefined && a !== undefined, removed: a === undefined && b !== undefined };
+  });
+
+  const changedCount = rows.filter((r) => r.changed).length;
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-1">
+        <div className="text-text-secondary uppercase text-[10px] font-bold">Changes</div>
+        <span className="text-[10px] text-text-muted">
+          {changedCount} field{changedCount === 1 ? "" : "s"} changed
+        </span>
+      </div>
+      <div className="bg-white border border-border rounded overflow-hidden">
+        <div className="grid grid-cols-[auto_1fr_1fr] text-[10px] font-bold uppercase tracking-wider text-text-muted bg-off-white border-b border-border">
+          <div className="px-2 py-1.5">Field</div>
+          <div className="px-2 py-1.5 border-l border-border">Before</div>
+          <div className="px-2 py-1.5 border-l border-border">After</div>
+        </div>
+        {rows.map((r) => (
+          <div
+            key={r.k}
+            className={`grid grid-cols-[auto_1fr_1fr] border-b border-border last:border-b-0 ${r.changed ? "bg-amber-50/50" : ""}`}
+          >
+            <div className="px-2 py-1.5 font-mono text-navy font-semibold break-all">{r.k}</div>
+            <div className={`px-2 py-1.5 border-l border-border font-mono break-all ${r.changed && !r.added ? "text-red bg-red/5" : "text-text-muted"}`}>
+              {r.bStr || <span className="text-text-muted/60">—</span>}
+            </div>
+            <div className={`px-2 py-1.5 border-l border-border font-mono break-all ${r.changed && !r.removed ? "text-emerald-700 bg-emerald-50/50" : "text-text-muted"}`}>
+              {r.aStr || <span className="text-text-muted/60">—</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

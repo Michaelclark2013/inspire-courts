@@ -11,6 +11,51 @@ import { parseJsonBody, apiError, apiNotFound } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
+// ── Geofence ─────────────────────────────────────────────────────────
+// Facility coordinates + radius come from env. If FACILITY_GEOFENCE_LAT
+// is unset, geofence is disabled (clock-in works as before, lat/lng
+// optional). When enabled and a clock-in lacks coordinates OR is outside
+// the radius, we reject. Kills the "I forgot to clock in, just text me
+// when you got there" fraud vector.
+const FACILITY_LAT = Number(process.env.FACILITY_GEOFENCE_LAT) || null;
+const FACILITY_LNG = Number(process.env.FACILITY_GEOFENCE_LNG) || null;
+const FACILITY_RADIUS_M = Number(process.env.FACILITY_GEOFENCE_RADIUS_M) || 250;
+
+function haversineMeters(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6_371_000; // earth radius in meters
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+function checkGeofence(lat: string | null | undefined, lng: string | null | undefined): {
+  ok: boolean;
+  reason?: string;
+  distanceM?: number;
+} {
+  if (FACILITY_LAT === null || FACILITY_LNG === null) {
+    return { ok: true }; // geofence disabled
+  }
+  const userLat = lat ? Number(lat) : NaN;
+  const userLng = lng ? Number(lng) : NaN;
+  if (!Number.isFinite(userLat) || !Number.isFinite(userLng)) {
+    return { ok: false, reason: "GPS coordinates required to clock in. Enable location and try again." };
+  }
+  const d = haversineMeters(userLat, userLng, FACILITY_LAT, FACILITY_LNG);
+  if (d > FACILITY_RADIUS_M) {
+    return {
+      ok: false,
+      reason: `You're ${Math.round(d)}m from the facility. Clock-in is restricted to within ${FACILITY_RADIUS_M}m.`,
+      distanceM: Math.round(d),
+    };
+  }
+  return { ok: true, distanceM: Math.round(d) };
+}
+
 // GET /api/portal/clock — returns the caller's currently-open time
 // entry (if any) so the clock-in UI can render "You clocked in at 9:14am"
 // without a second round trip.
@@ -114,6 +159,17 @@ export const POST = withTiming("portal.clock.in", async (request: NextRequest) =
       return apiError("You are already clocked in — clock out first.", 409, {
         extras: { openEntryId: existingOpen.id, since: existingOpen.clockInAt },
       });
+    }
+
+    // Geofence — admin/owner can override by toggling FACILITY_GEOFENCE_LAT.
+    // Kiosk source bypasses (it's the front-desk iPad, location auth doesn't make sense).
+    if (body.source !== "kiosk") {
+      const fence = checkGeofence(body.lat, body.lng);
+      if (!fence.ok) {
+        return apiError(fence.reason || "Outside facility", 403, {
+          extras: { distanceM: fence.distanceM, geofenced: true },
+        });
+      }
     }
 
     const nowIso = new Date().toISOString();

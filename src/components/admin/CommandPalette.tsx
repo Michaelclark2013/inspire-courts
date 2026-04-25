@@ -21,6 +21,9 @@ import {
   BarChart3,
   Image,
   Star,
+  ScrollText,
+  Rocket,
+  Activity,
 } from "lucide-react";
 import { triggerHaptic } from "@/lib/capacitor";
 
@@ -55,6 +58,14 @@ const COMMANDS: CommandItem[] = [
   { label: "My Schedule", href: "/admin/my-schedule", icon: CalendarDays, keywords: ["calendar"] },
   { label: "Approvals", href: "/admin/approvals", icon: UserCheck, keywords: ["pending", "review"] },
   { label: "Files", href: "/admin/files", icon: FileText, keywords: ["documents", "uploads"] },
+  { label: "Owner Mode", href: "/admin/owner", icon: Star, keywords: ["dashboard", "executive", "five numbers", "mrr"] },
+  { label: "Billing", href: "/admin/billing", icon: DollarSign, keywords: ["subscriptions", "dunning", "past due", "mrr"] },
+  { label: "Churn Radar", href: "/admin/churn", icon: Activity, keywords: ["at risk", "win back", "retention", "ai"] },
+  { label: "SMS Inbox", href: "/admin/inbox", icon: Megaphone, keywords: ["text", "messages", "twilio", "two way"] },
+  { label: "Global Search", href: "/admin/search", icon: Search, keywords: ["find", "lookup", "everywhere"] },
+  { label: "Audit Log", href: "/admin/audit-log", icon: ScrollText, keywords: ["history", "changes", "diff"] },
+  { label: "Launch Status", href: "/admin/launch-status", icon: Rocket, keywords: ["env", "go-live", "ready"] },
+  { label: "System Health", href: "/admin/ops", icon: Activity, keywords: ["health", "infra", "uptime"] },
 ];
 
 export default function CommandPalette() {

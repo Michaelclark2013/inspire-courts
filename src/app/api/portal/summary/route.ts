@@ -12,7 +12,7 @@ import {
   tournaments,
   waivers,
 } from "@/lib/db/schema";
-import { desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull, ne, or, sql } from "drizzle-orm";
 
 // GET /api/portal/summary — consolidated dashboard payload.
 // Returns liveGames, announcements, registrations, rosterCount, waiverSubmitted
@@ -96,25 +96,27 @@ export async function GET() {
   }> = [];
   try {
     const nowIso = new Date().toISOString();
-    const allA = await db
-      .select()
-      .from(announcements)
-      .orderBy(desc(announcements.createdAt));
-    filteredAnnouncements = allA
-      .filter((a) => {
-        if (a.expiresAt && a.expiresAt < nowIso) return false;
-        if (a.audience === "all") return true;
-        if (a.audience === "coaches" && role === "coach") return true;
-        if (a.audience === "parents" && role === "parent") return true;
-        return true;
+    // Filter in SQL: drop expired posts and exclude the role-scoped
+    // audience the current user doesn't belong to. Division-style
+    // audiences fall through (mirrors /api/portal/announcements).
+    const excludedRoleAudience = role === "coach" ? "parents" : "coaches";
+    const rows = await db
+      .select({
+        id: announcements.id,
+        title: announcements.title,
+        body: announcements.body,
+        audience: announcements.audience,
+        createdAt: announcements.createdAt,
       })
-      .map((a) => ({
-        id: a.id,
-        title: a.title,
-        body: a.body,
-        audience: a.audience,
-        createdAt: a.createdAt,
-      }));
+      .from(announcements)
+      .where(
+        and(
+          or(isNull(announcements.expiresAt), gt(announcements.expiresAt, nowIso)),
+          ne(announcements.audience, excludedRoleAudience)
+        )
+      )
+      .orderBy(desc(announcements.createdAt));
+    filteredAnnouncements = rows;
   } catch {
     // leave empty
   }

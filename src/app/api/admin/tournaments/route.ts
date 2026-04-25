@@ -63,25 +63,26 @@ export const GET = withTiming("admin.tournaments.list", async (request: NextRequ
 
   const ids = allTournaments.map((t) => t.id);
 
-  // Batch: get all team counts in 1 query (instead of N)
-  const teamCounts = await db
-    .select({
-      tournamentId: tournamentTeams.tournamentId,
-      count: sql<number>`count(*)`,
-    })
-    .from(tournamentTeams)
-    .where(inArray(tournamentTeams.tournamentId, ids))
-    .groupBy(tournamentTeams.tournamentId);
-
-  // Batch: get all game counts in 1 query (instead of N)
-  const gameCounts = await db
-    .select({
-      tournamentId: tournamentGames.tournamentId,
-      count: sql<number>`count(*)`,
-    })
-    .from(tournamentGames)
-    .where(inArray(tournamentGames.tournamentId, ids))
-    .groupBy(tournamentGames.tournamentId);
+  // Batch: get all team and game counts in 1 query each (instead of N)
+  // and run both rollups in parallel — they're independent.
+  const [teamCounts, gameCounts] = await Promise.all([
+    db
+      .select({
+        tournamentId: tournamentTeams.tournamentId,
+        count: sql<number>`count(*)`,
+      })
+      .from(tournamentTeams)
+      .where(inArray(tournamentTeams.tournamentId, ids))
+      .groupBy(tournamentTeams.tournamentId),
+    db
+      .select({
+        tournamentId: tournamentGames.tournamentId,
+        count: sql<number>`count(*)`,
+      })
+      .from(tournamentGames)
+      .where(inArray(tournamentGames.tournamentId, ids))
+      .groupBy(tournamentGames.tournamentId),
+  ]);
 
   const teamMap = new Map(teamCounts.map((r) => [r.tournamentId, r.count]));
   const gameMap = new Map(gameCounts.map((r) => [r.tournamentId, r.count]));

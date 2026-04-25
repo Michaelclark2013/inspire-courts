@@ -177,8 +177,8 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
                       <span className="flex items-center gap-1.5">
                         <span className="font-mono text-xs">{showAccounts.has(`s-${i}`) ? s.payAccount : maskAccount(s.payAccount)}</span>
                         {s.payAccount && s.payAccount !== "—" && (
-                          <button onClick={() => toggleAccount(`s-${i}`)} className="text-text-secondary hover:text-navy" title={showAccounts.has(`s-${i}`) ? "Hide" : "Show"} aria-label={showAccounts.has(`s-${i}`) ? "Hide account" : "Show account"}>
-                            {showAccounts.has(`s-${i}`) ? <EyeOff className="w-3 h-3" aria-hidden="true" /> : <Eye className="w-3 h-3" aria-hidden="true" />}
+                          <button onClick={() => toggleAccount(`s-${i}`)} className="text-text-secondary hover:text-navy inline-flex items-center justify-center min-w-[44px] min-h-[44px] -my-3 -mx-2" title={showAccounts.has(`s-${i}`) ? "Hide" : "Show"} aria-label={showAccounts.has(`s-${i}`) ? "Hide account" : "Show account"}>
+                            {showAccounts.has(`s-${i}`) ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
                           </button>
                         )}
                       </span>
@@ -216,8 +216,8 @@ export default function StaffClient({ staff, refs }: { staff: StaffMember[]; ref
                       <span className="flex items-center gap-1.5">
                         <span className="font-mono text-xs">{showAccounts.has(`r-${i}`) ? r.payAccount : maskAccount(r.payAccount)}</span>
                         {r.payAccount && r.payAccount !== "—" && (
-                          <button onClick={() => toggleAccount(`r-${i}`)} className="text-text-secondary hover:text-navy" title={showAccounts.has(`r-${i}`) ? "Hide" : "Show"} aria-label={showAccounts.has(`r-${i}`) ? "Hide account" : "Show account"}>
-                            {showAccounts.has(`r-${i}`) ? <EyeOff className="w-3 h-3" aria-hidden="true" /> : <Eye className="w-3 h-3" aria-hidden="true" />}
+                          <button onClick={() => toggleAccount(`r-${i}`)} className="text-text-secondary hover:text-navy inline-flex items-center justify-center min-w-[44px] min-h-[44px] -my-3 -mx-2" title={showAccounts.has(`r-${i}`) ? "Hide" : "Show"} aria-label={showAccounts.has(`r-${i}`) ? "Hide account" : "Show account"}>
+                            {showAccounts.has(`r-${i}`) ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
                           </button>
                         )}
                       </span>

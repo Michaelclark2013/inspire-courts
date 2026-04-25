@@ -27,7 +27,7 @@ function revalidateAnnouncementSurfaces() {
 // createdAt, which is cheap to compute and captures every mutation.
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "announcements")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/announcements — create
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "announcements")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/admin/announcements — update existing announcement
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "announcements")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -247,7 +247,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/admin/announcements — delete by id
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "announcements")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

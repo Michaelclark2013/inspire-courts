@@ -208,7 +208,7 @@ export default function CommandPalette() {
                 >
                   <Icon className="w-4 h-4 flex-shrink-0 opacity-60" />
                   <span className="text-sm font-medium">{cmd.label}</span>
-                  <span className="ml-auto text-[10px] text-text-muted font-mono opacity-0 group-hover:opacity-100">
+                  <span className="ml-auto text-[10px] text-text-muted font-mono opacity-100 md:opacity-0 md:group-hover:opacity-100 hidden sm:inline truncate max-w-[40%]">
                     {cmd.href}
                   </span>
                 </button>

@@ -98,22 +98,24 @@ export async function GET() {
       .map((t) => t.id);
 
     if (singleElimIds.length > 0) {
-      // Count games per tournament (via tournament_games → games)
-      const gameRows = await db
-        .select({
-          tournamentId: tournamentGames.tournamentId,
-          status: games.status,
-        })
-        .from(tournamentGames)
-        .innerJoin(games, eq(games.id, tournamentGames.gameId))
-        .where(inArray(tournamentGames.tournamentId, singleElimIds));
-
-      // Only consider single_elim tournaments for the seedings audit.
-      // We don't have format in the initial query for brevity — re-fetch.
-      const formatRows = await db
-        .select({ id: tournaments.id, format: tournaments.format })
-        .from(tournaments)
-        .where(inArray(tournaments.id, singleElimIds));
+      // Game-status rollup and tournament format lookup are independent —
+      // fetch them in parallel.
+      const [gameRows, formatRows] = await Promise.all([
+        db
+          .select({
+            tournamentId: tournamentGames.tournamentId,
+            status: games.status,
+          })
+          .from(tournamentGames)
+          .innerJoin(games, eq(games.id, tournamentGames.gameId))
+          .where(inArray(tournamentGames.tournamentId, singleElimIds)),
+        // Only consider single_elim tournaments for the seedings audit.
+        // We don't have format in the initial query for brevity — re-fetch.
+        db
+          .select({ id: tournaments.id, format: tournaments.format })
+          .from(tournaments)
+          .where(inArray(tournaments.id, singleElimIds)),
+      ]);
       const formatById = new Map(formatRows.map((r) => [r.id, r.format]));
 
       const statsById = new Map<

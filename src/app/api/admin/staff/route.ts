@@ -57,30 +57,33 @@ export const GET = withTiming("admin.staff.list", async (request: NextRequest) =
           ? staffProfiles.payRateCents
           : users.name;
 
-    const rows = await db
-      .select({
-        userId: staffProfiles.userId,
-        name: users.name,
-        email: users.email,
-        phone: users.phone,
-        role: users.role,
-        employmentClassification: staffProfiles.employmentClassification,
-        paymentMethod: staffProfiles.paymentMethod,
-        payRateCents: staffProfiles.payRateCents,
-        payRateType: staffProfiles.payRateType,
-        roleTags: staffProfiles.roleTags,
-        payoutHandle: staffProfiles.payoutHandle,
-        hireDate: staffProfiles.hireDate,
-        notes: staffProfiles.notes,
-        status: staffProfiles.status,
-        updatedAt: staffProfiles.updatedAt,
-      })
-      .from(staffProfiles)
-      .leftJoin(users, eq(users.id, staffProfiles.userId))
-      .where(whereClause)
-      .orderBy(dir(sortCol));
-
-    const ytd = await ytdGrossByUser();
+    // Roster query and YTD payroll roll-up are independent — fan them out
+    // in parallel so we wait on max(roster, ytd) instead of their sum.
+    const [rows, ytd] = await Promise.all([
+      db
+        .select({
+          userId: staffProfiles.userId,
+          name: users.name,
+          email: users.email,
+          phone: users.phone,
+          role: users.role,
+          employmentClassification: staffProfiles.employmentClassification,
+          paymentMethod: staffProfiles.paymentMethod,
+          payRateCents: staffProfiles.payRateCents,
+          payRateType: staffProfiles.payRateType,
+          roleTags: staffProfiles.roleTags,
+          payoutHandle: staffProfiles.payoutHandle,
+          hireDate: staffProfiles.hireDate,
+          notes: staffProfiles.notes,
+          status: staffProfiles.status,
+          updatedAt: staffProfiles.updatedAt,
+        })
+        .from(staffProfiles)
+        .leftJoin(users, eq(users.id, staffProfiles.userId))
+        .where(whereClause)
+        .orderBy(dir(sortCol)),
+      ytdGrossByUser(),
+    ]);
     const enriched = rows.map((r) => {
       const ytdCents = ytd.get(r.userId) ?? 0;
       return {

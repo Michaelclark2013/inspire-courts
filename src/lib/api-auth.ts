@@ -18,6 +18,26 @@ export function hashApiKey(plaintext: string): string {
   return createHash("sha256").update(plaintext).digest("hex");
 }
 
+// Per-key in-memory rate limit. 60 req/min/key. In-memory is fine for
+// single-region Vercel deploy; if we go multi-region this should move
+// to a shared store (Upstash/KV).
+const RATE_LIMIT_PER_MINUTE = 60;
+const rateLimitBucket = new Map<number, { count: number; resetAt: number }>();
+
+export function checkApiKeyRateLimit(keyId: number): { ok: true } | { ok: false; retryAfterSeconds: number } {
+  const now = Date.now();
+  const entry = rateLimitBucket.get(keyId);
+  if (!entry || entry.resetAt < now) {
+    rateLimitBucket.set(keyId, { count: 1, resetAt: now + 60_000 });
+    return { ok: true };
+  }
+  if (entry.count >= RATE_LIMIT_PER_MINUTE) {
+    return { ok: false, retryAfterSeconds: Math.ceil((entry.resetAt - now) / 1000) };
+  }
+  entry.count++;
+  return { ok: true };
+}
+
 /**
  * Verify a request's `Authorization: Bearer ic_...` header.
  * Returns the matching key row (with scopes) or null.

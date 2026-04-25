@@ -70,7 +70,9 @@ const nextConfig: NextConfig = {
         { key: "X-XSS-Protection", value: "1; mode=block" },
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
-        { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=()" },
+        // geolocation=(self) required for geofenced staff clock-in.
+        // camera=(self) for score-finalization scoreboard photo capture.
+        { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=(self)" },
       ],
     },
   ],

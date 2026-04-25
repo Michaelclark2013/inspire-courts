@@ -159,6 +159,14 @@ export default function RentalsListPage() {
           >
             <Download className="w-3 h-3" /> CSV
           </button>
+          {(search || filter !== "all") && (
+            <button
+              onClick={() => { setSearch(""); setFilter("all"); }}
+              className="text-xs text-text-muted hover:text-navy underline whitespace-nowrap"
+            >
+              Reset
+            </button>
+          )}
         </div>
       </div>
 

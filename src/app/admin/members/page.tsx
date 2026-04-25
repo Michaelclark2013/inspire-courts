@@ -164,6 +164,20 @@ export default function MembersPage() {
           <input type="checkbox" checked={renewingSoon} onChange={(e) => setRenewingSoon(e.target.checked)} />
           Renewing this week
         </label>
+        {(q || statusFilter !== "active" || planFilter || renewingSoon) && (
+          <button
+            type="button"
+            onClick={() => {
+              setQ("");
+              setStatusFilter("active");
+              setPlanFilter("");
+              setRenewingSoon(false);
+            }}
+            className="text-xs text-text-secondary hover:text-navy underline"
+          >
+            Reset filters
+          </button>
+        )}
       </div>
 
       {loading ? (

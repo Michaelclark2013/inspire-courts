@@ -80,17 +80,17 @@ export function SportMicrosite({ config }: { config: SportConfig }) {
             {config.hero.headline}
           </h1>
           <p className="text-white/80 text-base sm:text-lg max-w-2xl mb-8">{config.hero.body}</p>
-          <div className="flex gap-3 flex-wrap">
+          <div className="flex flex-col sm:flex-row gap-3 sm:flex-wrap">
             <Link
               href={`/inquire/${config.hero.primaryCta.slug}?source=${config.slug}-hero`}
-              className="bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-colors"
+              className="bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-5 min-h-[48px] rounded-xl inline-flex items-center justify-center gap-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-colors"
             >
               {config.hero.primaryCta.label} <ArrowRight className="w-4 h-4" />
             </Link>
             {config.hero.secondaryCta && (
               <Link
                 href={`/inquire/${config.hero.secondaryCta.slug}?source=${config.slug}-hero`}
-                className="bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-colors"
+                className="bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-wider px-5 min-h-[48px] rounded-xl inline-flex items-center justify-center gap-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-colors"
               >
                 {config.hero.secondaryCta.label}
               </Link>

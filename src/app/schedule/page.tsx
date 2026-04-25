@@ -71,7 +71,7 @@ export default async function SchedulePage() {
               href="https://quickscores.com/inspirecourts"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-red hover:text-red-hover text-xs font-bold uppercase tracking-wide transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 text-red hover:text-red-hover text-xs font-bold uppercase tracking-wide px-4 min-h-[44px] rounded-lg border border-red/20 hover:bg-red/5 transition-colors"
             >
               Open in QuickScores <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
             </a>

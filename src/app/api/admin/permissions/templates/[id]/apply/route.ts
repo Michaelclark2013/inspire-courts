@@ -99,27 +99,43 @@ export async function POST(
     const actorId = Number(session.user.id);
     const nowIso = new Date().toISOString();
 
-    let touched = 0;
+    // Batch the work: 1 SELECT to find existing rows, then group
+    // existing IDs by their target `granted` value so we can issue at
+    // most 2 UPDATEs (granted=true / granted=false) plus 1 INSERT for
+    // missing pairs. Old loop ran 2N×M queries.
+    const pagePaths = pages.map((p) => p.page);
+    const existingRows = targetIds.length === 0
+      ? []
+      : await db
+          .select({ id: userPermissions.id, userId: userPermissions.userId, page: userPermissions.page })
+          .from(userPermissions)
+          .where(
+            and(
+              inArray(userPermissions.userId, targetIds),
+              inArray(userPermissions.page, pagePaths)
+            )
+          );
+    const existingByPair = new Map<string, number>(
+      existingRows.map((r) => [`${r.userId}:${r.page}`, r.id])
+    );
+
+    const updateGrant: number[] = [];
+    const updateRevoke: number[] = [];
+    const toInsert: Array<{
+      userId: number;
+      page: AdminPage;
+      granted: boolean;
+      reason: string;
+      expiresAt: string | null;
+      grantedBy: number;
+    }> = [];
     for (const uid of targetIds) {
       for (const p of pages) {
-        const [existing] = await db
-          .select()
-          .from(userPermissions)
-          .where(and(eq(userPermissions.userId, uid), eq(userPermissions.page, p.page)))
-          .limit(1);
-        if (existing) {
-          await db
-            .update(userPermissions)
-            .set({
-              granted: p.granted,
-              reason,
-              expiresAt,
-              grantedBy: actorId,
-              updatedAt: nowIso,
-            })
-            .where(eq(userPermissions.id, existing.id));
+        const id = existingByPair.get(`${uid}:${p.page}`);
+        if (id) {
+          (p.granted ? updateGrant : updateRevoke).push(id);
         } else {
-          await db.insert(userPermissions).values({
+          toInsert.push({
             userId: uid,
             page: p.page,
             granted: p.granted,
@@ -128,9 +144,25 @@ export async function POST(
             grantedBy: actorId,
           });
         }
-        touched++;
       }
     }
+
+    if (updateGrant.length > 0) {
+      await db
+        .update(userPermissions)
+        .set({ granted: true, reason, expiresAt, grantedBy: actorId, updatedAt: nowIso })
+        .where(inArray(userPermissions.id, updateGrant));
+    }
+    if (updateRevoke.length > 0) {
+      await db
+        .update(userPermissions)
+        .set({ granted: false, reason, expiresAt, grantedBy: actorId, updatedAt: nowIso })
+        .where(inArray(userPermissions.id, updateRevoke));
+    }
+    if (toInsert.length > 0) {
+      await db.insert(userPermissions).values(toInsert);
+    }
+    const touched = updateGrant.length + updateRevoke.length + toInsert.length;
 
     await recordAudit({
       session,

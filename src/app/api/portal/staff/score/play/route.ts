@@ -41,7 +41,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid points" }, { status: 400 });
     }
 
-    const [game] = await db.select().from(games).where(eq(games.id, gameId)).limit(1);
+    const [game] = await db
+      .select({ id: games.id, status: games.status })
+      .from(games)
+      .where(eq(games.id, gameId))
+      .limit(1);
     if (!game) return NextResponse.json({ error: "Game not found" }, { status: 404 });
 
     const [play] = await db
@@ -112,7 +116,18 @@ export async function DELETE(request: NextRequest) {
     if (!Number.isInteger(id) || id <= 0) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
-    const [play] = await db.select().from(playEvents).where(eq(playEvents.id, id)).limit(1);
+    const [play] = await db
+      .select({
+        id: playEvents.id,
+        gameId: playEvents.gameId,
+        quarter: playEvents.quarter,
+        points: playEvents.points,
+        team: playEvents.team,
+        playType: playEvents.playType,
+      })
+      .from(playEvents)
+      .where(eq(playEvents.id, id))
+      .limit(1);
     if (!play) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     await db

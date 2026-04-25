@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, userPermissions } from "@/lib/db/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, inArray } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { bumpPermissionsUpdated } from "@/lib/permission-bump";
@@ -110,32 +110,56 @@ export async function POST(request: NextRequest) {
       ? targetIds
       : targetIds.filter((id) => !(id === actorId && pages.includes("users")));
 
-    let touched = 0;
+    // Fetch every (userId, page) row that already exists for this batch
+    // in ONE query, instead of one SELECT per pair. Then we know which
+    // pairs need INSERT vs UPDATE without further round-trips.
+    const existingRows = filteredIds.length === 0
+      ? []
+      : await db
+          .select({ id: userPermissions.id, userId: userPermissions.userId, page: userPermissions.page })
+          .from(userPermissions)
+          .where(
+            and(
+              inArray(userPermissions.userId, filteredIds),
+              inArray(userPermissions.page, pages)
+            )
+          );
+    const existingByPair = new Map<string, number>(
+      existingRows.map((r) => [`${r.userId}:${r.page}`, r.id])
+    );
+
+    const toInsert: Array<{
+      userId: number;
+      page: AdminPage;
+      granted: boolean;
+      reason: string | null;
+      expiresAt: string | null;
+      grantedBy: number;
+    }> = [];
+    const updateIds: number[] = [];
     for (const uid of filteredIds) {
       for (const page of pages) {
-        const [existing] = await db
-          .select()
-          .from(userPermissions)
-          .where(and(eq(userPermissions.userId, uid), eq(userPermissions.page, page)))
-          .limit(1);
-        if (existing) {
-          await db
-            .update(userPermissions)
-            .set({ granted, reason, expiresAt, grantedBy: actorId, updatedAt: nowIso })
-            .where(eq(userPermissions.id, existing.id));
+        const id = existingByPair.get(`${uid}:${page}`);
+        if (id) {
+          updateIds.push(id);
         } else {
-          await db.insert(userPermissions).values({
-            userId: uid,
-            page,
-            granted,
-            reason,
-            expiresAt,
-            grantedBy: actorId,
-          });
+          toInsert.push({ userId: uid, page, granted, reason, expiresAt, grantedBy: actorId });
         }
-        touched++;
       }
     }
+
+    if (updateIds.length > 0) {
+      // Single batched UPDATE — every existing pair gets the same
+      // granted/reason/expiresAt regardless of which user/page it is.
+      await db
+        .update(userPermissions)
+        .set({ granted, reason, expiresAt, grantedBy: actorId, updatedAt: nowIso })
+        .where(inArray(userPermissions.id, updateIds));
+    }
+    if (toInsert.length > 0) {
+      await db.insert(userPermissions).values(toInsert);
+    }
+    const touched = updateIds.length + toInsert.length;
 
     await recordAudit({
       session,

@@ -30,3 +30,29 @@ export function SkeletonGrid({ count = 3 }: { count?: number }) {
     </div>
   );
 }
+
+// Skeleton rows for table-style admin lists (members, rentals, etc.).
+// Renders a faux-row with a circular avatar, two text columns, and a
+// trailing pill. Used while a /api/admin/... fetch is in flight so the
+// page doesn't suddenly collapse to "Loading…" plain text.
+export function SkeletonRows({ count = 6 }: { count?: number }) {
+  return (
+    <div
+      className="bg-white border border-border rounded-xl divide-y divide-border overflow-hidden"
+      role="status"
+      aria-busy="true"
+      aria-label="Loading list"
+    >
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="flex items-center gap-3 p-3">
+          <div className="h-9 w-9 skeleton-shimmer rounded-full shrink-0" />
+          <div className="flex-1 min-w-0 space-y-2">
+            <div className="h-3 w-1/3 skeleton-shimmer rounded" />
+            <div className="h-3 w-1/2 skeleton-shimmer rounded" />
+          </div>
+          <div className="h-5 w-16 skeleton-shimmer rounded-full shrink-0" />
+        </div>
+      ))}
+    </div>
+  );
+}

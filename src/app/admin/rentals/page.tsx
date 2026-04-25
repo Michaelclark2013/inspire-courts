@@ -12,6 +12,7 @@ import {
   Download,
 } from "lucide-react";
 import { exportCSV } from "@/lib/export";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Row = {
   booking: {
@@ -171,7 +172,7 @@ export default function RentalsListPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white border border-border rounded-2xl p-10 text-center text-text-muted">Loading…</div>
+        <SkeletonRows count={6} />
       ) : error ? (
         <div className="bg-red/10 border border-red/20 rounded-2xl p-6 text-red text-sm">{error}</div>
       ) : filteredRows.length === 0 ? (

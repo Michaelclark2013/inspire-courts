@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Download, ChevronDown, ChevronRight, Filter } from "lucide-react";
@@ -205,7 +206,7 @@ export default function AuditLogPage() {
       </div>
 
       {loading ? (
-        <div className="text-text-secondary text-sm">Loading…</div>
+        <SkeletonRows count={8} />
       ) : rows.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <Filter className="w-10 h-10 text-text-secondary mx-auto mb-3" />

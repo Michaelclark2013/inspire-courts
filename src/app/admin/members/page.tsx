@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload } from "lucide-react";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Member = {
   id: number;
@@ -181,7 +182,7 @@ export default function MembersPage() {
       </div>
 
       {loading ? (
-        <div className="text-text-secondary text-sm">Loading…</div>
+        <SkeletonRows count={8} />
       ) : members.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <Users className="w-10 h-10 text-text-secondary mx-auto mb-3" />

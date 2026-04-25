@@ -13,6 +13,7 @@ import {
   Download,
 } from "lucide-react";
 import { exportCSV } from "@/lib/export";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Expense = {
   id: number;
@@ -203,7 +204,7 @@ export default function ExpensesPage() {
 
       {/* List */}
       {loading ? (
-        <div className="bg-white border border-border rounded-2xl p-10 text-center text-text-muted">Loading…</div>
+        <SkeletonRows count={6} />
       ) : !data || data.rows.length === 0 ? (
         <div className="bg-white border border-border rounded-2xl p-10 text-center">
           <Receipt className="w-10 h-10 text-text-muted mx-auto mb-3" />

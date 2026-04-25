@@ -36,20 +36,27 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Field key of the first invalid input so we can highlight it inline.
+  // Cleared whenever the user edits any field.
+  const [invalidField, setInvalidField] = useState<string | null>(null);
 
   function setField(key: string, value: FieldValue) {
     setDetails((prev) => ({ ...prev, [key]: value }));
+    if (invalidField === key) setInvalidField(null);
   }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setInvalidField(null);
     if (!name.trim()) {
       setError("Please share your name.");
+      setInvalidField("name");
       return;
     }
     if (!email.trim() && !phone.trim()) {
       setError("Email or phone is required so we can get back to you.");
+      setInvalidField("phone");
       return;
     }
     // Validate required custom fields
@@ -58,6 +65,7 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
         const v = details[f.key];
         if (v === undefined || v === "" || (Array.isArray(v) && v.length === 0)) {
           setError(`Please fill out: ${f.label}`);
+          setInvalidField(f.key);
           return;
         }
       }
@@ -150,22 +158,30 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Field label="Your name" required>
+        <Field label="Your name" required invalid={invalidField === "name"}>
           <input
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
+            onChange={(e) => {
+              setName(e.target.value);
+              if (invalidField === "name") setInvalidField(null);
+            }}
+            className={inputClass(invalidField === "name")}
             placeholder="Jane Smith"
+            aria-invalid={invalidField === "name" || undefined}
             required
           />
         </Field>
-        <Field label="Phone" helper="We'll text you back within 30 min">
+        <Field label="Phone" helper="We'll text you back within 30 min" invalid={invalidField === "phone"}>
           <input
             type="tel"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
+            onChange={(e) => {
+              setPhone(e.target.value);
+              if (invalidField === "phone") setInvalidField(null);
+            }}
+            className={inputClass(invalidField === "phone")}
             placeholder="(480) 555-0100"
+            aria-invalid={invalidField === "phone" || undefined}
           />
         </Field>
       </div>
@@ -173,8 +189,11 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (invalidField === "phone") setInvalidField(null);
+          }}
+          className={inputClass(false)}
           placeholder="you@example.com"
         />
       </Field>
@@ -183,7 +202,12 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {config.fields.map((field) => (
           <div key={field.key} className={field.type === "textarea" ? "sm:col-span-2" : ""}>
-            <DynamicField field={field} value={details[field.key]} onChange={(v) => setField(field.key, v)} />
+            <DynamicField
+              field={field}
+              value={details[field.key]}
+              onChange={(v) => setField(field.key, v)}
+              invalid={invalidField === field.key}
+            />
           </div>
         ))}
       </div>
@@ -198,7 +222,7 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
       </Field>
 
       {error && (
-        <div className="bg-red/5 border border-red/20 text-red rounded-lg px-3 py-2 text-sm">
+        <div role="alert" aria-live="polite" className="bg-red/5 border border-red/20 text-red rounded-lg px-3 py-2 text-sm">
           {error}
         </div>
       )}
@@ -219,7 +243,15 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
   );
 }
 
-function Field({ label, required, helper, children }: { label: string; required?: boolean; helper?: string; children: React.ReactNode }) {
+function inputClass(invalid: boolean) {
+  return `w-full bg-off-white border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 ${
+    invalid
+      ? "border-red focus:ring-red/30"
+      : "border-border focus:ring-navy/20"
+  }`;
+}
+
+function Field({ label, required, helper, invalid, children }: { label: string; required?: boolean; helper?: string; invalid?: boolean; children: React.ReactNode }) {
   return (
     <label className="block">
       <span className="block text-xs font-bold uppercase tracking-wider text-navy mb-1">
@@ -227,21 +259,27 @@ function Field({ label, required, helper, children }: { label: string; required?
       </span>
       {children}
       {helper && <span className="block text-[10px] text-text-muted mt-1">{helper}</span>}
+      {invalid && (
+        <span className="block text-[10px] font-semibold text-red mt-1">
+          {required ? "Required" : "Please complete this field"}
+        </span>
+      )}
     </label>
   );
 }
 
-function DynamicField({ field, value, onChange }: { field: InquiryField; value: FieldValue | undefined; onChange: (v: FieldValue) => void }) {
+function DynamicField({ field, value, onChange, invalid }: { field: InquiryField; value: FieldValue | undefined; onChange: (v: FieldValue) => void; invalid?: boolean }) {
   const required = field.required;
-  const baseClass = "w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20";
+  const cls = inputClass(!!invalid);
   return (
-    <Field label={field.label} required={required} helper={field.helper}>
+    <Field label={field.label} required={required} helper={field.helper} invalid={invalid}>
       {field.type === "text" && (
         <input
           value={(value as string) || ""}
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder}
-          className={baseClass}
+          className={cls}
+          aria-invalid={invalid || undefined}
           required={required}
         />
       )}
@@ -251,7 +289,8 @@ function DynamicField({ field, value, onChange }: { field: InquiryField; value: 
           value={(value as number) ?? ""}
           onChange={(e) => onChange(Number(e.target.value))}
           placeholder={field.placeholder}
-          className={baseClass}
+          className={cls}
+          aria-invalid={invalid || undefined}
           required={required}
         />
       )}
@@ -260,7 +299,8 @@ function DynamicField({ field, value, onChange }: { field: InquiryField; value: 
           type="date"
           value={(value as string) || ""}
           onChange={(e) => onChange(e.target.value)}
-          className={baseClass}
+          className={cls}
+          aria-invalid={invalid || undefined}
           required={required}
         />
       )}
@@ -270,7 +310,8 @@ function DynamicField({ field, value, onChange }: { field: InquiryField; value: 
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder}
           rows={3}
-          className={baseClass}
+          className={cls}
+          aria-invalid={invalid || undefined}
           required={required}
         />
       )}
@@ -278,7 +319,8 @@ function DynamicField({ field, value, onChange }: { field: InquiryField; value: 
         <select
           value={(value as string) || ""}
           onChange={(e) => onChange(e.target.value)}
-          className={baseClass}
+          className={cls}
+          aria-invalid={invalid || undefined}
           required={required}
         >
           <option value="">Select…</option>
@@ -286,7 +328,10 @@ function DynamicField({ field, value, onChange }: { field: InquiryField; value: 
         </select>
       )}
       {field.type === "multiselect" && (
-        <div className="flex flex-wrap gap-1.5">
+        <div
+          className={`flex flex-wrap gap-1.5 ${invalid ? "ring-2 ring-red/40 rounded-lg p-1" : ""}`}
+          aria-invalid={invalid || undefined}
+        >
           {field.options?.map((o) => {
             const sel = Array.isArray(value) && (value as string[]).includes(o);
             return (

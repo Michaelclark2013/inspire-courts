@@ -117,18 +117,24 @@ export async function POST(request: NextRequest) {
     const adminEmail = process.env.INQUIRY_NOTIFY_EMAIL || process.env.ADMIN_EMAIL || "mikeyclark.240@gmail.com";
     if (adminEmail) {
       const config = getInquiryConfigByKind(validKind);
+      // Escape user input before interpolating into the notification
+      // HTML — names like `<script>` would otherwise render in the
+      // admin's email client. The fields themselves are short-string
+      // user input so we render them as text.
+      const esc = (s: string) =>
+        s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
       const subject = `🆕 New ${config?.title || "general"} inquiry — ${name}`;
       const html = `
-        <h2>New inquiry: ${config?.title || "General"}</h2>
-        <p><b>${name}</b><br/>
-        ${email ? `Email: <a href="mailto:${email}">${email}</a><br/>` : ""}
-        ${phone ? `Phone: ${phone}<br/>` : ""}
-        ${sports ? `Sports: ${sports}<br/>` : ""}
-        ${source ? `Source: ${source}<br/>` : ""}
-        ${pageUrl ? `Page: ${pageUrl}<br/>` : ""}
+        <h2>New inquiry: ${esc(config?.title || "General")}</h2>
+        <p><b>${esc(name)}</b><br/>
+        ${email ? `Email: <a href="mailto:${esc(email)}">${esc(email)}</a><br/>` : ""}
+        ${phone ? `Phone: ${esc(phone)}<br/>` : ""}
+        ${sports ? `Sports: ${esc(sports)}<br/>` : ""}
+        ${source ? `Source: ${esc(source)}<br/>` : ""}
+        ${pageUrl ? `Page: ${esc(pageUrl)}<br/>` : ""}
         </p>
-        ${details ? `<h3>Details</h3><pre>${JSON.stringify(details, null, 2)}</pre>` : ""}
-        ${message ? `<h3>Message</h3><p>${message}</p>` : ""}
+        ${details ? `<h3>Details</h3><pre>${esc(JSON.stringify(details, null, 2))}</pre>` : ""}
+        ${message ? `<h3>Message</h3><p>${esc(message)}</p>` : ""}
         <p><b>SLA — respond by ${new Date(slaDueAt).toLocaleString()}</b></p>
         <p><a href="${process.env.NEXTAUTH_URL || "https://inspirecourtsaz.com"}/admin/inquiries">Open in admin</a></p>
       `;

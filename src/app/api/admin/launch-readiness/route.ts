@@ -154,13 +154,13 @@ export async function GET() {
   // User sanity: we shouldn't launch with zero users or zero admins.
   let userStats = { totalUsers: 0, totalAdmins: 0 };
   try {
-    const [{ total }] = await db
-      .select({ total: sql<number>`count(*)` })
-      .from(users);
-    const [{ admins }] = await db
-      .select({ admins: sql<number>`count(*)` })
-      .from(users)
-      .where(eq(users.role, "admin"));
+    const [[{ total }], [{ admins }]] = await Promise.all([
+      db.select({ total: sql<number>`count(*)` }).from(users),
+      db
+        .select({ admins: sql<number>`count(*)` })
+        .from(users)
+        .where(eq(users.role, "admin")),
+    ]);
     userStats = { totalUsers: Number(total) || 0, totalAdmins: Number(admins) || 0 };
   } catch {
     // Ignore — surface as 0 in the UI.

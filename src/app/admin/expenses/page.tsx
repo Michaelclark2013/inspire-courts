@@ -12,6 +12,7 @@ import {
   Filter,
   Download,
 } from "lucide-react";
+import { exportCSV } from "@/lib/export";
 
 type Expense = {
   id: number;
@@ -86,23 +87,18 @@ export default function ExpensesPage() {
   function exportCsv() {
     if (!data) return;
     const header = ["Date", "Description", "Category", "Vendor", "Payment", "Amount", "Deductible", "Receipt URL", "Notes"];
-    const lines = data.rows.map((r) => [
+    const rows = data.rows.map((r) => [
       r.incurredAt.slice(0, 10),
-      r.description, r.category,
-      r.vendor || "", r.paymentMethod || "",
+      r.description,
+      r.category,
+      r.vendor || "",
+      r.paymentMethod || "",
       (r.amountCents / 100).toFixed(2),
       r.taxDeductible ? "yes" : "no",
       r.receiptUrl || "",
       r.notes || "",
-    ].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
-    const csv = [header.join(","), ...lines].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `expenses-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    ]);
+    exportCSV(`expenses-${new Date().toISOString().slice(0, 10)}`, header, rows);
   }
 
   return (

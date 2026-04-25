@@ -11,6 +11,7 @@ import {
   Search,
   Download,
 } from "lucide-react";
+import { exportCSV } from "@/lib/export";
 
 type Row = {
   booking: {
@@ -93,10 +94,10 @@ export default function RentalsListPage() {
 
   function exportCsv(records: Row[]) {
     const header = ["Contract", "Renter", "Vehicle", "Plate", "Status", "Paid", "Start", "End", "Base", "Total"];
-    const lines = records.map(({ booking: b, vehicleName, vehiclePlate }) => [
+    const rows = records.map(({ booking: b, vehicleName, vehiclePlate }) => [
       b.contractNumber || "",
-      (b.renterName || "").replace(/"/g, '""'),
-      (vehicleName || "").replace(/"/g, '""'),
+      b.renterName || "",
+      vehicleName || "",
       vehiclePlate || "",
       b.status,
       b.paid ? "yes" : "no",
@@ -104,15 +105,8 @@ export default function RentalsListPage() {
       b.endAt,
       ((b.amountCents ?? 0) / 100).toFixed(2),
       (((b.totalCents ?? b.amountCents) ?? 0) / 100).toFixed(2),
-    ].map((v) => `"${v}"`).join(","));
-    const csv = [header.join(","), ...lines].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `rentals-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    ]);
+    exportCSV(`rentals-${new Date().toISOString().slice(0, 10)}`, header, rows);
   }
 
   return (

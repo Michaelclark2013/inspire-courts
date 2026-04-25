@@ -22,6 +22,7 @@ import {
   ArrowDown,
   Download,
 } from "lucide-react";
+import { exportCSV } from "@/lib/export";
 
 type Item = {
   id: number;
@@ -174,25 +175,18 @@ export default function EquipmentPage() {
   function exportReorderCsv() {
     if (!data) return;
     const header = ["Name", "SKU", "Category", "On Hand", "Min Qty", "To Order", "Supplier", "Supplier SKU", "Unit Cost"];
-    const lines = data.needsReorder.map((i) => [
+    const rows = data.needsReorder.map((i) => [
       i.name,
       i.sku || "",
       i.category,
-      i.onHand,
-      i.minQuantity,
-      Math.max(0, i.minQuantity - i.onHand + i.minQuantity), // suggest topping to 2× min
+      String(i.onHand),
+      String(i.minQuantity),
+      String(Math.max(0, i.minQuantity - i.onHand + i.minQuantity)),
       i.supplier || "",
       i.supplierSku || "",
-      (i.unitCostCents || 0) / 100,
-    ].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
-    const csv = [header.join(","), ...lines].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `reorder-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+      String((i.unitCostCents || 0) / 100),
+    ]);
+    exportCSV(`reorder-${new Date().toISOString().slice(0, 10)}`, header, rows);
   }
 
   if (status === "loading") return null;

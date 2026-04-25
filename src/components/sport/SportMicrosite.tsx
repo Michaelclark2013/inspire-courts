@@ -12,7 +12,18 @@ export function SportMicrosite({ config }: { config: SportConfig }) {
     <main className="min-h-screen bg-off-white">
       {/* Hero */}
       <section className="bg-gradient-to-br from-navy via-navy to-navy/85 text-white relative overflow-hidden">
+        {/* Layered visual depth: red blur orb + subtle dot grid + bottom-edge fade */}
         <div aria-hidden className="absolute -right-20 -top-20 w-[500px] h-[500px] rounded-full bg-red/20 blur-3xl" />
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.6) 1px, transparent 0)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div aria-hidden className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-navy/70 to-transparent" />
         <div className="relative max-w-6xl mx-auto px-4 py-16 sm:py-24">
           <p className="text-white/50 text-[11px] uppercase tracking-[0.3em] mb-3">{config.hero.eyebrow}</p>
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold font-heading mb-5 max-w-3xl leading-[1.05]">
@@ -22,14 +33,14 @@ export function SportMicrosite({ config }: { config: SportConfig }) {
           <div className="flex gap-3 flex-wrap">
             <Link
               href={`/inquire/${config.hero.primaryCta.slug}?source=${config.slug}-hero`}
-              className="bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm"
+              className="bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-colors"
             >
               {config.hero.primaryCta.label} <ArrowRight className="w-4 h-4" />
             </Link>
             {config.hero.secondaryCta && (
               <Link
                 href={`/inquire/${config.hero.secondaryCta.slug}?source=${config.slug}-hero`}
-                className="bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm"
+                className="bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-colors"
               >
                 {config.hero.secondaryCta.label}
               </Link>
@@ -68,7 +79,7 @@ export function SportMicrosite({ config }: { config: SportConfig }) {
             <Link
               key={p.title}
               href={`/inquire/${p.inquireSlug}?source=${config.slug}-${p.inquireSlug}`}
-              className="group bg-white border border-border hover:border-red/40 rounded-2xl p-5 shadow-sm transition-colors block"
+              className="group bg-white border border-border hover:border-red/40 rounded-2xl p-5 shadow-sm transition-all block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 hover:shadow-md hover:-translate-y-0.5"
             >
               {p.badge && (
                 <span className="inline-block bg-red/10 text-red text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2">
@@ -93,8 +104,8 @@ export function SportMicrosite({ config }: { config: SportConfig }) {
         </h2>
         <div className="space-y-3">
           {config.faqs.map((f) => (
-            <details key={f.q} className="group bg-white border border-border rounded-2xl p-5 shadow-sm">
-              <summary className="cursor-pointer list-none flex items-center justify-between gap-3">
+            <details key={f.q} className="group bg-white border border-border rounded-2xl p-5 shadow-sm hover:border-red/30 transition-colors">
+              <summary className="cursor-pointer list-none flex items-center justify-between gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2">
                 <span className="text-navy font-bold pr-4">{f.q}</span>
                 <span className="text-red text-2xl leading-none transition-transform group-open:rotate-45">+</span>
               </summary>
@@ -116,14 +127,14 @@ export function SportMicrosite({ config }: { config: SportConfig }) {
           <div className="flex gap-3 justify-center flex-wrap">
             <Link
               href={`/inquire/${config.hero.primaryCta.slug}?source=${config.slug}-bottom`}
-              className="bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm"
+              className="bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
               Start an inquiry
             </Link>
             <a
               href="tel:+14805550100"
-              className="bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm"
+              className="bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy transition-colors"
             >
               <Phone className="w-4 h-4" />
               (480) 555-0100

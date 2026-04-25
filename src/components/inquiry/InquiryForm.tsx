@@ -75,12 +75,16 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
 
   if (submitted) {
     return (
-      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 text-center">
-        <div className="w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
-          <Check className="w-6 h-6 text-white" />
+      <div
+        role="status"
+        aria-live="polite"
+        className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 text-center animate-fade-in-up"
+      >
+        <div className="w-14 h-14 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 animate-success-pop">
+          <Check className="w-7 h-7 text-white" strokeWidth={3} />
         </div>
-        <h3 className="text-emerald-800 font-bold text-lg mb-1">Got it.</h3>
-        <p className="text-emerald-700 text-sm">
+        <h3 className="text-emerald-800 font-bold text-xl mb-1.5">Got it.</h3>
+        <p className="text-emerald-700 text-sm max-w-md mx-auto">
           A team member will reach out within 30 minutes during business hours
           (Mon-Fri 8a-7p · Sat 9a-5p). Check your phone — we sent an instant text
           confirmation.
@@ -148,7 +152,7 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
       <button
         type="submit"
         disabled={busy}
-        className="w-full bg-red hover:bg-red-hover disabled:opacity-50 text-white font-bold uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 text-sm transition-colors"
+        className="w-full bg-red hover:bg-red-hover disabled:opacity-50 text-white font-bold uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
       >
         <Send className="w-4 h-4" />
         {busy ? "Sending…" : "Send inquiry"}

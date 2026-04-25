@@ -9,7 +9,7 @@ import {
   users,
   WORKOUT_SCORE_TYPES,
 } from "@/lib/db/schema";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { asc, desc, eq, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { parseJsonBody } from "@/lib/api-helpers";
 import { z } from "zod";
@@ -124,5 +124,3 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// helper unused after refactor — keep import alive for grep tools
-void and;

@@ -53,7 +53,7 @@ export default function GlobalError({
         <h1 className="text-white font-bold text-2xl uppercase tracking-tight font-[var(--font-chakra)] mb-3">
           Something Went Wrong
         </h1>
-        <p className="text-white/50 text-sm leading-relaxed mb-3 max-w-xs mx-auto">
+        <p className="text-white/75 text-sm leading-relaxed mb-3 max-w-xs mx-auto">
           We hit an unexpected error. Try refreshing — it usually fixes itself.
         </p>
         {error.digest && (

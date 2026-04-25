@@ -48,7 +48,7 @@ export default function NotFound() {
         <h1 className="text-white font-bold text-2xl uppercase tracking-tight font-[var(--font-chakra)] mb-3">
           Page Not Found
         </h1>
-        <p className="text-white/50 text-sm leading-relaxed mb-10 max-w-xs mx-auto">
+        <p className="text-white/75 text-sm leading-relaxed mb-10 max-w-xs mx-auto">
           Looks like this page went out of bounds. Let&apos;s get you back in the game.
         </p>
 

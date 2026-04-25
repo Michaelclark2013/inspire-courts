@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { games, gameScores } from "@/lib/db/schema";
+import { games } from "@/lib/db/schema";
 import { and, desc, eq, gte } from "drizzle-orm";
 import { verifyApiKey, checkApiKeyRateLimit } from "@/lib/api-auth";
 import { logger } from "@/lib/logger";
 
-// GET /api/v1/games?status=live  → list games + latest score per game.
+// GET /api/v1/games?status=live  → list games (no scores; that's a separate
+// endpoint). Filtered by status enum and an optional `since` ISO timestamp.
 export async function GET(request: NextRequest) {
   const auth = await verifyApiKey(request.headers.get("authorization"));
   if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -64,13 +65,6 @@ export async function GET(request: NextRequest) {
       .where(filters.length > 0 ? and(...filters) : undefined)
       .orderBy(desc(games.scheduledTime))
       .limit(limit);
-
-    // Pull latest score per game
-    const ids = rows.map((r) => r.id);
-    const scoreRows = ids.length
-      ? await db.select().from(gameScores).where(eq(gameScores.gameId, ids[0])).limit(0)
-      : [];
-    void scoreRows;
 
     return NextResponse.json({ data: rows, count: rows.length });
   } catch (err) {

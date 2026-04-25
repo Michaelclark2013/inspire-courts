@@ -79,10 +79,13 @@ export default function ConfirmModal({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Backdrop */}
+      {/* Backdrop — click-to-dismiss is bonus UX. Keyboard users get
+          Escape, the Close button, and the Cancel button. Marking it
+          aria-hidden so screen readers skip the empty div. */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-backdrop-in"
         onClick={onCancel}
+        aria-hidden="true"
       />
       {/* Modal */}
       <div

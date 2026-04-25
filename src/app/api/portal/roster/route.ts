@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { players, teams } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { recordAudit } from "@/lib/audit";
 
 // GET /api/portal/roster — get roster for coach's team
 export async function GET() {
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
   }
 
   const [team] = await db
-    .select()
+    .select({ id: teams.id, name: teams.name, division: teams.division })
     .from(teams)
     .where(eq(teams.coachUserId, userId))
     .limit(1);
@@ -112,6 +113,16 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
+    await recordAudit({
+      session,
+      request,
+      action: "roster.player_added",
+      entityType: "player",
+      entityId: player.id,
+      before: null,
+      after: { name: player.name, teamId: team.id, teamName: team.name, jerseyNumber: player.jerseyNumber },
+    });
+
     return NextResponse.json(player, { status: 201 });
   } catch (err) {
     logger.error("Failed to add player", { error: String(err) });
@@ -139,7 +150,7 @@ export async function DELETE(request: NextRequest) {
 
   // Verify this player belongs to the coach's team
   const [team] = await db
-    .select()
+    .select({ id: teams.id, name: teams.name })
     .from(teams)
     .where(eq(teams.coachUserId, userId))
     .limit(1);
@@ -152,11 +163,21 @@ export async function DELETE(request: NextRequest) {
     const deleted = await db
       .delete(players)
       .where(and(eq(players.id, playerId), eq(players.teamId, team.id)))
-      .returning({ id: players.id });
+      .returning({ id: players.id, name: players.name, jerseyNumber: players.jerseyNumber });
 
     if (deleted.length === 0) {
       return NextResponse.json({ error: "Player not found" }, { status: 404 });
     }
+
+    await recordAudit({
+      session,
+      request,
+      action: "roster.player_removed",
+      entityType: "player",
+      entityId: deleted[0].id,
+      before: { name: deleted[0].name, teamId: team.id, teamName: team.name, jerseyNumber: deleted[0].jerseyNumber },
+      after: null,
+    });
 
     return NextResponse.json({ success: true, id: deleted[0].id });
   } catch (err) {

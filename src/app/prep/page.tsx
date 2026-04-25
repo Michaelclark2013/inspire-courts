@@ -296,7 +296,7 @@ export default function PrepPage() {
             <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight text-white mb-4 font-[var(--font-chakra)] leading-[0.95]">
               Watch Our <span className="text-red">Athletes</span>
             </h2>
-            <p className="text-white/60 text-base mb-10 max-w-xl mx-auto">
+            <p className="text-white/75 text-base mb-10 max-w-xl mx-auto">
               Follow along as our players train, compete, and level up.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center max-w-[760px] mx-auto">

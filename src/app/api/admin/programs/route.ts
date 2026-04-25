@@ -47,32 +47,33 @@ export const GET = withTiming("admin.programs.list", async (request: NextRequest
 
     const ids = rows.map((r) => r.id);
     const nowIso = new Date().toISOString();
-    const upcoming = await db
-      .select({
-        programId: programSessions.programId,
-        id: programSessions.id,
-        startsAt: programSessions.startsAt,
-        endsAt: programSessions.endsAt,
-        status: programSessions.status,
-        location: programSessions.location,
-      })
-      .from(programSessions)
-      .where(
-        and(
-          inArray(programSessions.programId, ids),
-          gte(programSessions.startsAt, nowIso)
+    const [upcoming, sessionCounts] = await Promise.all([
+      db
+        .select({
+          programId: programSessions.programId,
+          id: programSessions.id,
+          startsAt: programSessions.startsAt,
+          endsAt: programSessions.endsAt,
+          status: programSessions.status,
+          location: programSessions.location,
+        })
+        .from(programSessions)
+        .where(
+          and(
+            inArray(programSessions.programId, ids),
+            gte(programSessions.startsAt, nowIso)
+          )
         )
-      )
-      .orderBy(programSessions.startsAt);
-
-    const sessionCounts = await db
-      .select({
-        programId: programSessions.programId,
-        total: sql<number>`count(*)`,
-      })
-      .from(programSessions)
-      .where(inArray(programSessions.programId, ids))
-      .groupBy(programSessions.programId);
+        .orderBy(programSessions.startsAt),
+      db
+        .select({
+          programId: programSessions.programId,
+          total: sql<number>`count(*)`,
+        })
+        .from(programSessions)
+        .where(inArray(programSessions.programId, ids))
+        .groupBy(programSessions.programId),
+    ]);
 
     const nextByProgram = new Map<number, typeof upcoming[number]>();
     for (const s of upcoming) if (!nextByProgram.has(s.programId)) nextByProgram.set(s.programId, s);

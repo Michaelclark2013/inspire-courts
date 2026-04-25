@@ -23,7 +23,9 @@ export async function GET(request: NextRequest) {
     else if (status) filters.push(eq(inquiries.status, status as "new"));
     if (kind) filters.push(eq(inquiries.kind, kind as "court_rental"));
 
-    const rows = await db
+    // Rows query and funnel rollup are independent — run in parallel.
+    // CSV export skips the funnel since it isn't included in the response.
+    const rowsQuery = db
       .select({
         id: inquiries.id,
         kind: inquiries.kind,
@@ -48,6 +50,7 @@ export async function GET(request: NextRequest) {
 
     // CSV export — same filters, marketing pulls these into Sheets weekly.
     if (format === "csv") {
+      const rows = await rowsQuery;
       const headers = [
         "id", "kind", "status", "name", "email", "phone", "sports",
         "source", "createdAt", "slaDueAt", "firstTouchAt", "assignedTo",
@@ -73,8 +76,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Funnel rollup for the dashboard cards.
-    const funnel = await db
+    // Funnel rollup for the dashboard cards — runs in parallel with rows.
+    const funnelQuery = db
       .select({
         kind: inquiries.kind,
         status: inquiries.status,
@@ -83,6 +86,7 @@ export async function GET(request: NextRequest) {
       .from(inquiries)
       .groupBy(inquiries.kind, inquiries.status);
 
+    const [rows, funnel] = await Promise.all([rowsQuery, funnelQuery]);
     return NextResponse.json({ rows, funnel });
   } catch (err) {
     logger.error("admin inquiries failed", { error: String(err) });

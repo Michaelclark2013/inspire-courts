@@ -190,6 +190,7 @@ export default function AnnouncementsAdminPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search title or body"
+            aria-label="Search announcements by title or body"
             className="w-full bg-off-white border border-border rounded-xl pl-9 pr-4 py-2 text-navy text-sm focus:outline-none focus:border-red/60"
           />
         </div>

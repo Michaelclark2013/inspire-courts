@@ -249,6 +249,7 @@ export default function InquiriesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search name, phone, email, sport…"
+            aria-label="Search inquiries by name, phone, email, or sport"
             className="w-full bg-white border border-border rounded-lg pl-8 pr-8 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
           />
           {search && (

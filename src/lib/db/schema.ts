@@ -2150,3 +2150,84 @@ export const webhookDeliveries = sqliteTable("webhook_deliveries", {
   index("webhook_deliveries_sub_idx").on(table.subscriptionId),
   index("webhook_deliveries_attempted_idx").on(table.attemptedAt),
 ]);
+
+// ── Inquiries (lead capture engine) ───────────────────────────────────
+// Public-site visitors submit one of six inquiry types (court rental,
+// training, party, league, tournament host, membership). This is the
+// conversion engine — no self-booking, every submission becomes a lead
+// that lands in /admin/inquiries with a 30-min SLA timer + auto SMS reply.
+
+export const INQUIRY_KINDS = [
+  "court_rental",
+  "training",
+  "party",
+  "league",
+  "tournament_host",
+  "membership",
+  "general",
+] as const;
+
+export const INQUIRY_STATUS = [
+  "new",          // just submitted
+  "contacted",    // rep made first touch
+  "qualifying",   // mid-conversation
+  "won",          // converted to member/booking/registration
+  "lost",         // not a fit / went cold
+] as const;
+
+export const inquiries = sqliteTable("inquiries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  kind: text("kind", { enum: INQUIRY_KINDS }).notNull().default("general"),
+  status: text("status", { enum: INQUIRY_STATUS }).notNull().default("new"),
+  // Contact
+  name: text("name").notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  // Tailored fields — captured as JSON so each inquiry kind can have
+  // its own shape without a column explosion. Form schema lives in
+  // src/lib/inquiry-forms.ts and renders by `kind`.
+  detailsJson: text("details_json"),
+  // Free-text "anything else?" — always shown.
+  message: text("message"),
+  // Sport interest — comma-sep, helps SEO + routing.
+  sports: text("sports"),
+  // Marketing source — utm_source / referrer / "homepage_hero" / etc.
+  source: text("source"),
+  pageUrl: text("page_url"),
+  // SLA — auto-calc 30 min from createdAt. Surfaced in /admin/inquiries
+  // as a countdown chip; turns red when overdue.
+  slaDueAt: text("sla_due_at"),
+  // Assigned rep (admin user). Null = unassigned, on the queue.
+  assignedTo: integer("assigned_to").references(() => users.id, { onDelete: "set null" }),
+  firstTouchAt: text("first_touch_at"),
+  closedAt: text("closed_at"),
+  closeReason: text("close_reason"), // for status=won/lost
+  // Anti-spam — IP + user-agent for after-the-fact triage.
+  submittedIp: text("submitted_ip"),
+  submittedUa: text("submitted_ua"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("inquiries_kind_idx").on(table.kind),
+  index("inquiries_status_idx").on(table.status),
+  index("inquiries_assigned_idx").on(table.assignedTo),
+  index("inquiries_sla_idx").on(table.slaDueAt),
+  index("inquiries_created_idx").on(table.createdAt),
+]);
+
+// Audit log of every status change / note added — gives the admin a
+// timeline view without joining against the main audit_log.
+export const inquiryNotes = sqliteTable("inquiry_notes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  inquiryId: integer("inquiry_id")
+    .notNull()
+    .references(() => inquiries.id, { onDelete: "cascade" }),
+  authorUserId: integer("author_user_id").references(() => users.id, { onDelete: "set null" }),
+  body: text("body").notNull(),
+  // null for plain notes; "status_change" / "sms_sent" / "email_sent"
+  // for system-generated entries.
+  kind: text("kind").default("note"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("inquiry_notes_inquiry_idx").on(table.inquiryId),
+]);

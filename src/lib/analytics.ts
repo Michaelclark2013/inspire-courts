@@ -34,6 +34,8 @@ export function trackConversion(
     | "email_click"
     | "chat_open"
     | "book_cta_click"
+    | "inquire_cta_click"
+    | "inquire_form_submit"
 ) {
   trackEvent(type);
 

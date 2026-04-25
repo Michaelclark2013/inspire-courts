@@ -59,118 +59,101 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // ── Coach's team + roster ────────────────────────────────────
-    const [team] = await db
-      .select({
-        id: teams.id,
-        name: teams.name,
-        division: teams.division,
-      })
-      .from(teams)
-      .where(eq(teams.coachUserId, userId))
-      .limit(1);
-
-    let roster: Array<{
-      id: number;
-      name: string;
-      jerseyNumber: string | null;
-      division: string | null;
-    }> = [];
-    let playersWithoutWaiver = 0;
-    if (team) {
-      roster = await db
-        .select({
-          id: players.id,
-          name: players.name,
-          jerseyNumber: players.jerseyNumber,
-          division: players.division,
-        })
-        .from(players)
-        .where(eq(players.teamId, team.id));
-
-      // Waiver coverage — simple lookup by player name + team.
-      // Not perfect (name typos lose match) but good enough to surface
-      // an approximate count; exact audit happens admin-side.
-      if (roster.length > 0) {
-        const signedRows = await db
-          .select({ playerName: waivers.playerName })
-          .from(waivers)
-          .where(
-            and(
-              eq(waivers.teamName, team.name),
-              inArray(
-                waivers.playerName,
-                roster.map((r) => r.name)
+    // After the user row is in hand, three branches are independent:
+    //   1. team → roster → waivers
+    //   2. myRegistrations → tournament names
+    //   3. upcoming tournaments
+    // Run all three in parallel instead of one after another.
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const lowerEmail = user.email.toLowerCase();
+    const [teamBranch, regsBranch, upcoming] = await Promise.all([
+      (async () => {
+        const [team] = await db
+          .select({ id: teams.id, name: teams.name, division: teams.division })
+          .from(teams)
+          .where(eq(teams.coachUserId, userId))
+          .limit(1);
+        if (!team) return { team: null, roster: [], playersWithoutWaiver: 0 };
+        const roster = await db
+          .select({
+            id: players.id,
+            name: players.name,
+            jerseyNumber: players.jerseyNumber,
+            division: players.division,
+          })
+          .from(players)
+          .where(eq(players.teamId, team.id));
+        let playersWithoutWaiver = 0;
+        if (roster.length > 0) {
+          const signedRows = await db
+            .select({ playerName: waivers.playerName })
+            .from(waivers)
+            .where(
+              and(
+                eq(waivers.teamName, team.name),
+                inArray(waivers.playerName, roster.map((r) => r.name))
               )
-            )
-          );
-        const signedSet = new Set(signedRows.map((r) => r.playerName));
-        playersWithoutWaiver = roster.filter((r) => !signedSet.has(r.name)).length;
-      }
-    }
-
-    // ── My tournament registrations ──────────────────────────────
-    const myRegistrations = await db
-      .select({
-        id: tournamentRegistrations.id,
-        tournamentId: tournamentRegistrations.tournamentId,
-        teamName: tournamentRegistrations.teamName,
-        division: tournamentRegistrations.division,
-        status: tournamentRegistrations.status,
-        paymentStatus: tournamentRegistrations.paymentStatus,
-      })
-      .from(tournamentRegistrations)
-      .where(eq(tournamentRegistrations.coachEmail, user.email.toLowerCase()))
-      .orderBy(desc(tournamentRegistrations.createdAt))
-      .limit(20);
-
-    // Join tournament name/date in a second query to keep the ORM simple.
-    let myRegistrationsWithTournament: Array<
-      (typeof myRegistrations)[number] & {
-        tournamentName: string;
-        startDate: string;
-      }
-    > = [];
-    if (myRegistrations.length > 0) {
-      const ids = myRegistrations.map((r) => r.tournamentId);
-      const tourneys = await db
+            );
+          const signedSet = new Set(signedRows.map((r) => r.playerName));
+          playersWithoutWaiver = roster.filter((r) => !signedSet.has(r.name)).length;
+        }
+        return { team, roster, playersWithoutWaiver };
+      })(),
+      (async () => {
+        const myRegistrations = await db
+          .select({
+            id: tournamentRegistrations.id,
+            tournamentId: tournamentRegistrations.tournamentId,
+            teamName: tournamentRegistrations.teamName,
+            division: tournamentRegistrations.division,
+            status: tournamentRegistrations.status,
+            paymentStatus: tournamentRegistrations.paymentStatus,
+          })
+          .from(tournamentRegistrations)
+          .where(eq(tournamentRegistrations.coachEmail, lowerEmail))
+          .orderBy(desc(tournamentRegistrations.createdAt))
+          .limit(20);
+        let myRegistrationsWithTournament: Array<
+          (typeof myRegistrations)[number] & { tournamentName: string; startDate: string }
+        > = [];
+        if (myRegistrations.length > 0) {
+          const ids = myRegistrations.map((r) => r.tournamentId);
+          const tourneys = await db
+            .select({ id: tournaments.id, name: tournaments.name, startDate: tournaments.startDate })
+            .from(tournaments)
+            .where(inArray(tournaments.id, ids));
+          const byId = new Map(tourneys.map((t) => [t.id, t]));
+          myRegistrationsWithTournament = myRegistrations.map((r) => ({
+            ...r,
+            tournamentName: byId.get(r.tournamentId)?.name ?? "Tournament",
+            startDate: byId.get(r.tournamentId)?.startDate ?? "",
+          }));
+        }
+        return { myRegistrations, myRegistrationsWithTournament };
+      })(),
+      db
         .select({
           id: tournaments.id,
           name: tournaments.name,
           startDate: tournaments.startDate,
+          location: tournaments.location,
+          entryFee: tournaments.entryFee,
+          registrationOpen: tournaments.registrationOpen,
+          registrationDeadline: tournaments.registrationDeadline,
         })
         .from(tournaments)
-        .where(inArray(tournaments.id, ids));
-      const byId = new Map(tourneys.map((t) => [t.id, t]));
-      myRegistrationsWithTournament = myRegistrations.map((r) => ({
-        ...r,
-        tournamentName: byId.get(r.tournamentId)?.name ?? "Tournament",
-        startDate: byId.get(r.tournamentId)?.startDate ?? "",
-      }));
-    }
-
-    // ── Upcoming tournaments open for registration ───────────────
-    const todayIso = new Date().toISOString().slice(0, 10);
-    const upcoming = await db
-      .select({
-        id: tournaments.id,
-        name: tournaments.name,
-        startDate: tournaments.startDate,
-        location: tournaments.location,
-        entryFee: tournaments.entryFee,
-        registrationOpen: tournaments.registrationOpen,
-        registrationDeadline: tournaments.registrationDeadline,
-      })
-      .from(tournaments)
-      .where(
-        and(
-          inArray(tournaments.status, ["published"]),
-          gte(tournaments.startDate, todayIso),
-          eq(tournaments.registrationOpen, true)
+        .where(
+          and(
+            inArray(tournaments.status, ["published"]),
+            gte(tournaments.startDate, todayIso),
+            eq(tournaments.registrationOpen, true)
+          )
         )
-      )
-      .orderBy(tournaments.startDate)
-      .limit(10);
+        .orderBy(tournaments.startDate)
+        .limit(10),
+    ]);
+    const { team, roster, playersWithoutWaiver } = teamBranch;
+    const { myRegistrations, myRegistrationsWithTournament } = regsBranch;
 
     const registeredSet = new Set(myRegistrations.map((r) => r.tournamentId));
     const upcomingOpen = upcoming.filter((t) => !registeredSet.has(t.id));

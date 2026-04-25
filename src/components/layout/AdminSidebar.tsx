@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -215,16 +215,32 @@ export default function AdminSidebar() {
   // Respect per-user permission overrides too — so a revoked page
   // disappears from the sidebar immediately (not just the tile grid).
   const permOverrides = (session?.user as { permissionOverrides?: Array<{ page: AdminPage; granted: boolean }> } | undefined)?.permissionOverrides;
-  const allowed = (page: AdminPage) => canAccessWithOverrides(role, page, permOverrides);
 
-  const visibleEventSetup = EVENT_SETUP.filter((item) => allowed(item.page));
-  const visibleGameDay = GAME_DAY.filter((item) => allowed(item.page));
-  const visibleStaffOps = STAFF_OPS.filter((item) => allowed(item.page));
-  const visibleMemberOps = MEMBER_OPS.filter((item) => allowed(item.page));
-  const visibleFinance = FINANCE.filter((item) => allowed(item.page));
-  const visibleAdmin = ADMIN_SECTION.filter((item) => allowed(item.page));
-  const visiblePersonal = PERSONAL.filter((item) => allowed(item.page));
-  const visibleBottomTabs = BOTTOM_TABS.filter((item) => allowed(item.page));
+  // The sidebar re-renders on every session poll. Memoize the eight
+  // permission-filter passes so a no-op session refresh doesn't reallocate
+  // arrays and trigger downstream renders.
+  const {
+    visibleEventSetup,
+    visibleGameDay,
+    visibleStaffOps,
+    visibleMemberOps,
+    visibleFinance,
+    visibleAdmin,
+    visiblePersonal,
+    visibleBottomTabs,
+  } = useMemo(() => {
+    const allowed = (page: AdminPage) => canAccessWithOverrides(role, page, permOverrides);
+    return {
+      visibleEventSetup: EVENT_SETUP.filter((item) => allowed(item.page)),
+      visibleGameDay: GAME_DAY.filter((item) => allowed(item.page)),
+      visibleStaffOps: STAFF_OPS.filter((item) => allowed(item.page)),
+      visibleMemberOps: MEMBER_OPS.filter((item) => allowed(item.page)),
+      visibleFinance: FINANCE.filter((item) => allowed(item.page)),
+      visibleAdmin: ADMIN_SECTION.filter((item) => allowed(item.page)),
+      visiblePersonal: PERSONAL.filter((item) => allowed(item.page)),
+      visibleBottomTabs: BOTTOM_TABS.filter((item) => allowed(item.page)),
+    };
+  }, [role, permOverrides]);
 
   // Close more drawer on route change or Escape
   useEffect(() => {

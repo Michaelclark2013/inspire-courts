@@ -16,27 +16,28 @@ export async function GET() {
   }
 
   try {
-    const rows = await db
-      .select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        role: users.role,
-        approved: users.approved,
-        photoUrl: users.photoUrl,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .orderBy(asc(users.name));
-
-    const overrides = await db
-      .select({
-        userId: userPermissions.userId,
-        grantCount: sql<number>`sum(case when ${userPermissions.granted} = 1 then 1 else 0 end)`,
-        revokeCount: sql<number>`sum(case when ${userPermissions.granted} = 0 then 1 else 0 end)`,
-      })
-      .from(userPermissions)
-      .groupBy(userPermissions.userId);
+    const [rows, overrides] = await Promise.all([
+      db
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          role: users.role,
+          approved: users.approved,
+          photoUrl: users.photoUrl,
+          createdAt: users.createdAt,
+        })
+        .from(users)
+        .orderBy(asc(users.name)),
+      db
+        .select({
+          userId: userPermissions.userId,
+          grantCount: sql<number>`sum(case when ${userPermissions.granted} = 1 then 1 else 0 end)`,
+          revokeCount: sql<number>`sum(case when ${userPermissions.granted} = 0 then 1 else 0 end)`,
+        })
+        .from(userPermissions)
+        .groupBy(userPermissions.userId),
+    ]);
 
     const counts = Object.fromEntries(
       overrides.map((o) => [

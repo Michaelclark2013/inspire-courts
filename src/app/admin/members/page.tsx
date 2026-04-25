@@ -439,12 +439,16 @@ function MemberModal({
   const [err, setErr] = useState("");
 
   async function save() {
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      setErr("First and last name are required.");
+      return;
+    }
     setSaving(true);
     setErr("");
     try {
       const body: Record<string, unknown> = {
-        firstName: form.firstName,
-        lastName: form.lastName,
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
         email: form.email || null,
         phone: form.phone || null,
         membershipPlanId: form.membershipPlanId ? Number(form.membershipPlanId) : null,
@@ -481,18 +485,25 @@ function MemberModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-navy/30 flex items-center justify-center p-4">
+    <div
+      className="fixed inset-0 z-50 bg-navy/30 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={isEdit ? "Edit Member" : "New Member"}
+      onKeyDown={(e) => { if (e.key === "Escape") onClose(); }}
+      tabIndex={-1}
+    >
       <div className="bg-white rounded-xl border border-border shadow-sm w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
         <h2 className="text-lg font-bold text-navy mb-4">{isEdit ? "Edit Member" : "New Member"}</h2>
         <div className="space-y-3 text-sm">
           <div className="grid grid-cols-2 gap-3">
             <label className="block">
-              <span className="block text-xs text-text-secondary mb-1">First Name</span>
-              <input value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
+              <span className="block text-xs text-text-secondary mb-1">First Name <span className="text-red">*</span></span>
+              <input required autoFocus value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
             </label>
             <label className="block">
-              <span className="block text-xs text-text-secondary mb-1">Last Name</span>
-              <input value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
+              <span className="block text-xs text-text-secondary mb-1">Last Name <span className="text-red">*</span></span>
+              <input required value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
             </label>
             <label className="block">
               <span className="block text-xs text-text-secondary mb-1">Email</span>

@@ -84,6 +84,20 @@ export default function NewRentalPage() {
     setError(null);
     try {
       if (!resourceId) throw new Error("Pick a vehicle");
+      const startMs = new Date(startAt).getTime();
+      const endMs = new Date(endAt).getTime();
+      if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) {
+        throw new Error("Enter valid start and end times");
+      }
+      if (endMs <= startMs) {
+        throw new Error("End time must be after start time");
+      }
+      if (renterLicenseExpiry) {
+        const expiryMs = new Date(renterLicenseExpiry + "T00:00:00").getTime();
+        if (expiryMs < startMs) {
+          throw new Error("Driver's license expires before rental start — cannot proceed");
+        }
+      }
       const res = await fetch("/api/admin/rentals", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -137,9 +151,14 @@ export default function NewRentalPage() {
             </div>
             <div>
               <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">End *</label>
-              <input type="datetime-local" required value={endAt} onChange={(e) => setEndAt(e.target.value)} className={ipt} />
+              <input type="datetime-local" required value={endAt} min={startAt} onChange={(e) => setEndAt(e.target.value)} className={ipt} />
             </div>
           </div>
+          {new Date(endAt).getTime() <= new Date(startAt).getTime() && (
+            <p className="text-red text-xs font-semibold mt-3 flex items-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5" /> End must be after start
+            </p>
+          )}
         </div>
 
         {/* Availability picker */}

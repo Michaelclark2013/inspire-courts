@@ -88,6 +88,7 @@ export default function AnnouncementsAdminPage() {
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Announcement | null>(null);
   const [composerOpen, setComposerOpen] = useState(false);
+  const [pendingId, setPendingId] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -128,18 +129,30 @@ export default function AnnouncementsAdminPage() {
   const visible = (grouped as Record<string, Announcement[]>)[filter] || grouped.active;
 
   async function togglePin(a: Announcement) {
-    await fetch("/api/admin/announcements", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: a.id, title: a.title, body: a.body, pinned: !a.pinned }),
-    });
-    load();
+    if (pendingId !== null) return;
+    setPendingId(a.id);
+    try {
+      await fetch("/api/admin/announcements", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: a.id, title: a.title, body: a.body, pinned: !a.pinned }),
+      });
+      await load();
+    } finally {
+      setPendingId(null);
+    }
   }
 
   async function remove(a: Announcement) {
+    if (pendingId !== null) return;
     if (!confirm(`Delete "${a.title}"?`)) return;
-    await fetch(`/api/admin/announcements?id=${a.id}`, { method: "DELETE" });
-    load();
+    setPendingId(a.id);
+    try {
+      await fetch(`/api/admin/announcements?id=${a.id}`, { method: "DELETE" });
+      await load();
+    } finally {
+      setPendingId(null);
+    }
   }
 
   return (
@@ -303,14 +316,16 @@ export default function AnnouncementsAdminPage() {
                 </button>
                 <button
                   onClick={() => togglePin(a)}
-                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white border border-border text-navy hover:bg-off-white flex items-center gap-1"
+                  disabled={pendingId === a.id}
+                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white border border-border text-navy hover:bg-off-white flex items-center gap-1 disabled:opacity-50 disabled:cursor-wait"
                 >
                   {a.pinned ? <PinOff className="w-3 h-3" /> : <Pin className="w-3 h-3" />}
                   {a.pinned ? "Unpin" : "Pin"}
                 </button>
                 <button
                   onClick={() => remove(a)}
-                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-red/5 border border-red/20 text-red hover:bg-red/10 flex items-center gap-1 ml-auto"
+                  disabled={pendingId === a.id}
+                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-red/5 border border-red/20 text-red hover:bg-red/10 flex items-center gap-1 ml-auto disabled:opacity-50 disabled:cursor-wait"
                 >
                   <Trash2 className="w-3 h-3" /> Delete
                 </button>
@@ -397,7 +412,14 @@ function Composer({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div
+      className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={existing ? "Edit Announcement" : "New Announcement"}
+      onKeyDown={(e) => { if (e.key === "Escape" && !busy) onClose(); }}
+      tabIndex={-1}
+    >
       <form onSubmit={save} className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-[92vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
           <h2 className="text-navy font-bold text-lg font-heading">

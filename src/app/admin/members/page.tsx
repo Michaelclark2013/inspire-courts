@@ -284,7 +284,7 @@ export default function MembersPage() {
           {/* Desktop: table */}
           <div className="hidden md:block overflow-x-auto bg-white border border-border rounded-xl">
             <table className="w-full text-sm">
-              <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
+              <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary sticky top-0 z-10">
                 <tr>
                   <SortableTh
                     label="Name"

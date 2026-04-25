@@ -7,7 +7,8 @@ const config = getSportConfig("volleyball")!;
 export const metadata: Metadata = {
   title: config.metaTitle,
   description: config.metaDescription,
-  openGraph: { title: config.metaTitle, description: config.metaDescription },
+  alternates: { canonical: "/volleyball" },
+  openGraph: { title: config.metaTitle, description: config.metaDescription, url: "/volleyball" },
 };
 
 export default function VolleyballPage() {

@@ -7,7 +7,8 @@ const config = getSportConfig("basketball")!;
 export const metadata: Metadata = {
   title: config.metaTitle,
   description: config.metaDescription,
-  openGraph: { title: config.metaTitle, description: config.metaDescription },
+  alternates: { canonical: "/basketball" },
+  openGraph: { title: config.metaTitle, description: config.metaDescription, url: "/basketball" },
 };
 
 export default function BasketballPage() {

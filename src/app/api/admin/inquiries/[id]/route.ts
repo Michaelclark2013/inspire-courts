@@ -7,6 +7,17 @@ import { asc, eq } from "drizzle-orm";
 import { canAccess } from "@/lib/permissions";
 import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
+import { parseJsonBody } from "@/lib/api-helpers";
+import { z } from "zod";
+
+const inquiryPatchSchema = z.object({
+  status: z.enum(["new", "contacted", "qualifying", "won", "lost"]).optional(),
+  assignedTo: z
+    .union([z.number().int().positive(), z.string().regex(/^\d+$/), z.null()])
+    .optional(),
+  note: z.string().max(2000).optional(),
+  closeReason: z.string().max(500).nullable().optional(),
+});
 
 // GET /api/admin/inquiries/[id] — full detail + notes timeline
 export async function GET(
@@ -60,31 +71,35 @@ export async function PATCH(
   if (!Number.isInteger(id) || id <= 0) {
     return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   }
+  const parsed = await parseJsonBody(request, inquiryPatchSchema);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.data;
   try {
-    const body = await request.json();
     const [before] = await db.select().from(inquiries).where(eq(inquiries.id, id)).limit(1);
     if (!before) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const now = new Date().toISOString();
     const update: Record<string, unknown> = { updatedAt: now };
 
-    if (body.status && ["new", "contacted", "qualifying", "won", "lost"].includes(body.status)) {
+    if (body.status) {
       update.status = body.status;
       if (body.status === "won" || body.status === "lost") update.closedAt = now;
       if (before.status === "new" && body.status !== "new" && !before.firstTouchAt) {
         update.firstTouchAt = now;
       }
     }
-    if (body.assignedTo !== undefined) update.assignedTo = body.assignedTo ? Number(body.assignedTo) : null;
+    if (body.assignedTo !== undefined) {
+      update.assignedTo = body.assignedTo != null ? Number(body.assignedTo) : null;
+    }
     if (body.closeReason !== undefined) update.closeReason = body.closeReason;
 
     await db.update(inquiries).set(update).where(eq(inquiries.id, id));
 
-    if (body.note && typeof body.note === "string") {
+    if (body.note) {
       await db.insert(inquiryNotes).values({
         inquiryId: id,
         authorUserId: session.user.id ? Number(session.user.id) : null,
-        body: String(body.note).slice(0, 2000),
+        body: body.note,
         kind: "note",
       });
     }

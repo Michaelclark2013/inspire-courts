@@ -6,6 +6,14 @@ import { smsMessages, members } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { sendSms } from "@/lib/sms";
 import { logger } from "@/lib/logger";
+import { parseJsonBody } from "@/lib/api-helpers";
+import { z } from "zod";
+
+const smsSendSchema = z.object({
+  to: z.string().min(7).max(20),
+  body: z.string().min(1).max(1600),
+  memberId: z.union([z.number().int().positive(), z.string().regex(/^\d+$/)]).optional().nullable(),
+});
 
 // GET /api/admin/sms — recent SMS conversations (last 100).
 export async function GET() {
@@ -38,15 +46,14 @@ export async function POST(request: NextRequest) {
   if (session?.user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const parsed = await parseJsonBody(request, smsSendSchema);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.data;
   try {
-    const body = await request.json();
-    if (!body?.to || !body?.body) {
-      return NextResponse.json({ error: "Missing to/body" }, { status: 400 });
-    }
     const r = await sendSms({
-      to: String(body.to),
-      body: String(body.body).slice(0, 1600),
-      memberId: body.memberId ? Number(body.memberId) : null,
+      to: body.to,
+      body: body.body,
+      memberId: body.memberId != null ? Number(body.memberId) : null,
       sentBy: session.user.id ? Number(session.user.id) : null,
     });
     return NextResponse.json(r);

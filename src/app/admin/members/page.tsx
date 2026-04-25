@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload, ChevronUp, ChevronDown } from "lucide-react";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Member = {
@@ -72,6 +73,10 @@ export default function MembersPage() {
   const [sortKey, setSortKey] = useState<"lastName" | "joinedAt" | "nextRenewalAt" | "status">("lastName");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const abortRef = useRef<AbortController | null>(null);
+
+  useDocumentTitle(
+    total > 0 ? `Members (${total.toLocaleString()})` : "Members"
+  );
 
   function toggleSort(key: typeof sortKey) {
     if (sortKey === key) {

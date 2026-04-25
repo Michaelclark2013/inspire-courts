@@ -125,6 +125,9 @@ export default function EquipmentPage() {
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [showMovements, setShowMovements] = useState(false);
+  // Track per-row in-flight movements so the buttons can disable themselves
+  // and the row can show a subtle pending state until the refetch completes.
+  const [pendingItemIds, setPendingItemIds] = useState<Set<number>>(new Set());
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -137,12 +140,26 @@ export default function EquipmentPage() {
   useEffect(() => { if (status === "authenticated") load(); }, [status, load]);
 
   async function movement(item: Item, delta: number, type: "restock" | "usage" | "adjustment") {
-    await fetch("/api/admin/equipment/movement", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ equipmentId: item.id, type, delta }),
+    if (pendingItemIds.has(item.id)) return;
+    setPendingItemIds((prev) => {
+      const next = new Set(prev);
+      next.add(item.id);
+      return next;
     });
-    load();
+    try {
+      await fetch("/api/admin/equipment/movement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ equipmentId: item.id, type, delta }),
+      });
+      await load();
+    } finally {
+      setPendingItemIds((prev) => {
+        const next = new Set(prev);
+        next.delete(item.id);
+        return next;
+      });
+    }
   }
 
   const filteredItems = useMemo(() => {
@@ -274,9 +291,10 @@ export default function EquipmentPage() {
                     const qty = prompt(`Restock — how many ${i.name}?`, String(i.minQuantity));
                     if (qty) movement(i, Number(qty), "restock");
                   }}
-                  className="text-red text-xs font-bold hover:underline whitespace-nowrap"
+                  disabled={pendingItemIds.has(i.id)}
+                  className="text-red text-xs font-bold hover:underline whitespace-nowrap disabled:opacity-50 disabled:cursor-wait disabled:no-underline"
                 >
-                  Restock
+                  {pendingItemIds.has(i.id) ? "Saving…" : "Restock"}
                 </button>
               </li>
             ))}
@@ -449,30 +467,32 @@ export default function EquipmentPage() {
                   </div>
                 </div>
 
-                <div className="px-5 py-3 border-t border-border flex flex-wrap gap-1.5">
+                <div className={`px-5 py-3 border-t border-border flex flex-wrap gap-1.5 transition-opacity ${pendingItemIds.has(i.id) ? "opacity-60" : ""}`}>
                   <button
                     onClick={() => movement(i, -1, "usage")}
-                    disabled={i.onHand === 0}
-                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-off-white text-navy hover:bg-border disabled:opacity-40 flex items-center gap-1"
+                    disabled={i.onHand === 0 || pendingItemIds.has(i.id)}
+                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-off-white text-navy hover:bg-border disabled:opacity-40 disabled:cursor-wait flex items-center gap-1"
                   >
                     <Minus className="w-3 h-3" /> 1
                   </button>
                   <button
                     onClick={() => movement(i, -5, "usage")}
-                    disabled={i.onHand < 5}
-                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-off-white text-navy hover:bg-border disabled:opacity-40"
+                    disabled={i.onHand < 5 || pendingItemIds.has(i.id)}
+                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-off-white text-navy hover:bg-border disabled:opacity-40 disabled:cursor-wait"
                   >
                     −5
                   </button>
                   <button
                     onClick={() => movement(i, 1, "restock")}
-                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 flex items-center gap-1"
+                    disabled={pendingItemIds.has(i.id)}
+                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:cursor-wait flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" /> 1
                   </button>
                   <button
                     onClick={() => movement(i, 10, "restock")}
-                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    disabled={pendingItemIds.has(i.id)}
+                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:cursor-wait"
                   >
                     +10
                   </button>
@@ -481,7 +501,8 @@ export default function EquipmentPage() {
                       const qty = prompt("Restock how many?", "0");
                       if (qty) movement(i, Number(qty), "restock");
                     }}
-                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-red text-white hover:bg-red-hover flex items-center gap-1 ml-auto"
+                    disabled={pendingItemIds.has(i.id)}
+                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-red text-white hover:bg-red-hover disabled:opacity-60 disabled:cursor-wait flex items-center gap-1 ml-auto"
                   >
                     <Truck className="w-3 h-3" /> Restock
                   </button>

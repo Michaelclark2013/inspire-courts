@@ -11,6 +11,7 @@ import {
 import { SELECT_CLASS } from "@/lib/form-styles";
 import { exportCSV } from "@/lib/export";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Lead = {
   timestamp: string;
@@ -45,6 +46,8 @@ export default function LeadsPage() {
   const [sourceFilter, setSourceFilter] = useState("");
   const [expandedLead, setExpandedLead] = useState<number | null>(null);
   const [fetchError, setFetchError] = useState(false);
+
+  useDocumentTitle(leads.length > 0 ? `Leads (${leads.length})` : "Leads");
 
   const fetchLeads = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);

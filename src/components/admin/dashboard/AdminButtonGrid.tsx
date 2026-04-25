@@ -43,6 +43,7 @@ import {
   Settings,
   Cog,
   Receipt,
+  Inbox,
 } from "lucide-react";
 import { canAccessWithOverrides } from "@/lib/permissions";
 import type { AdminPage } from "@/lib/permissions";
@@ -174,6 +175,7 @@ const CATEGORIES: Category[] = [
       { href: "/admin/analytics", label: "GA Analytics", desc: "Traffic", icon: BarChart3, page: "analytics" },
       { href: "/admin/billing", label: "Billing", desc: "Subscriptions + dunning", icon: Banknote, page: "billing" },
       { href: "/admin/churn", label: "Churn Radar", desc: "At-risk members", icon: TrendingUp, page: "churn" },
+      { href: "/admin/inquiries", label: "Inquiries", desc: "Lead pipeline · 30-min SLA", icon: Inbox, page: "inquiries" },
       { href: "/admin/inbox", label: "SMS Inbox", desc: "Two-way texts", icon: Megaphone, page: "inbox" },
       { href: "/admin/scheduler", label: "AI Scheduler", desc: "Auto-fill shifts", icon: Sparkles, page: "scheduler" },
       { href: "/admin/workouts", label: "Workouts", desc: "Library + leaderboards", icon: Trophy, page: "workouts" },

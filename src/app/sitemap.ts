@@ -24,6 +24,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/faq`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${base}/camps`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/open-gym`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    // Sport microsites — high SEO priority.
+    { url: `${base}/basketball`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.95 },
+    { url: `${base}/volleyball`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.95 },
+    { url: `${base}/pickleball`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.95 },
+    { url: `${base}/futsal`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.95 },
+    // Inquiry pages.
+    { url: `${base}/inquire`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/inquire/court-rental`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/inquire/training`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/inquire/league`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/inquire/party`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/inquire/tournament-host`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/inquire/membership`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
   ];
 
   // Dynamic tournament pages

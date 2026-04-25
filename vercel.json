@@ -28,6 +28,10 @@
     {
       "path": "/api/admin/cron/journey-tick",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/admin/cron/inquiry-sla-tick",
+      "schedule": "*/5 * * * *"
     }
   ]
 }

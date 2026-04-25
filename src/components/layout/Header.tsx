@@ -17,12 +17,28 @@ const PRIMARY_NAV = [
   { href: "/contact", label: "Contact" },
 ];
 
+const SPORTS_DROPDOWN = [
+  { href: "/basketball", label: "Basketball" },
+  { href: "/volleyball", label: "Volleyball" },
+  { href: "/pickleball", label: "Pickleball" },
+  { href: "/futsal", label: "Futsal" },
+];
+
 const PROGRAMS_DROPDOWN = [
   { href: "/training", label: "Training" },
   { href: "/teams", label: "Team Inspire" },
   { href: "/prep", label: "Inspire Prep" },
   { href: "/camps", label: "Camps" },
   { href: "/open-gym", label: "Open Gym" },
+];
+
+const INQUIRE_DROPDOWN = [
+  { href: "/inquire/court-rental", label: "Court rental" },
+  { href: "/inquire/training", label: "Private training" },
+  { href: "/inquire/league", label: "Join a league" },
+  { href: "/inquire/party", label: "Party / group event" },
+  { href: "/inquire/tournament-host", label: "Host a tournament" },
+  { href: "/inquire/membership", label: "Membership" },
 ];
 
 const MORE_DROPDOWN = [
@@ -247,7 +263,9 @@ export default function Header() {
                 </Link>
               );
             })}
+            <DropdownMenu label="Sports" items={SPORTS_DROPDOWN} />
             <DropdownMenu label="Programs" items={PROGRAMS_DROPDOWN} />
+            <DropdownMenu label="Inquire" items={INQUIRE_DROPDOWN} />
             <DropdownMenu label="More" items={MORE_DROPDOWN} />
             <DropdownMenu label="Portal" items={PORTAL_DROPDOWN} />
           </nav>
@@ -265,11 +283,11 @@ export default function Header() {
               )}
             </Link>
             <Link
-              href="/book"
-              onClick={() => trackConversion("book_cta_click")}
+              href="/inquire"
+              onClick={() => trackConversion("inquire_cta_click")}
               className="flex items-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-5 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
             >
-              <Calendar className="w-4 h-4" aria-hidden="true" /> Book
+              <Calendar className="w-4 h-4" aria-hidden="true" /> Inquire
             </Link>
             <a
               href="https://inspirecourts.leagueapps.com/tournaments"
@@ -337,10 +355,24 @@ export default function Header() {
             );
           })}
 
+          {/* Sports accordion */}
+          <MobileAccordion
+            label="Sports"
+            items={SPORTS_DROPDOWN}
+            onClose={() => setOpen(false)}
+          />
+
           {/* Programs accordion */}
           <MobileAccordion
             label="Programs"
             items={PROGRAMS_DROPDOWN}
+            onClose={() => setOpen(false)}
+          />
+
+          {/* Inquire accordion */}
+          <MobileAccordion
+            label="Inquire"
+            items={INQUIRE_DROPDOWN}
             onClose={() => setOpen(false)}
           />
 
@@ -361,11 +393,11 @@ export default function Header() {
           {/* CTAs */}
           <div className="pt-3 pb-24 space-y-2">
             <Link
-              href="/book"
-              onClick={() => { setOpen(false); trackConversion("book_cta_click"); }}
+              href="/inquire"
+              onClick={() => { setOpen(false); trackConversion("inquire_cta_click"); }}
               className="flex items-center justify-center gap-2 min-h-[44px] border border-white/50 hover:border-white/80 hover:bg-white/10 text-white px-6 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark"
             >
-              <Calendar className="w-4 h-4" aria-hidden="true" /> Book Facility
+              <Calendar className="w-4 h-4" aria-hidden="true" /> Inquire
             </Link>
             <Link
               href={dashboardHref}

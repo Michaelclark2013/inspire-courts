@@ -82,7 +82,8 @@ export type AdminPage =
   | "journeys"
   | "scheduler"
   | "workouts"
-  | "integrations";
+  | "integrations"
+  | "inquiries";
 
 const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
@@ -160,6 +161,9 @@ const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   // Integrations — public API keys + webhook subscriptions. Admin only;
   // keys grant external read/write to PII.
   integrations: ["admin"],
+  // Inquiries pipeline — admin + front desk (front desk handles first
+  // touch on most inquiries; admin sees the funnel).
+  inquiries: ["admin", "front_desk"],
 };
 
 // All admin pages, in display order. Used by the permissions matrix UI.
@@ -171,7 +175,7 @@ export const ALL_ADMIN_PAGES: AdminPage[] = [
   "audit_log", "search", "health", "roster", "timeclock", "shifts",
   "resources", "payroll", "members", "certifications", "maintenance",
   "programs", "time_off", "equipment", "owner", "billing", "churn",
-  "inbox", "journeys", "scheduler", "workouts", "integrations",
+  "inbox", "journeys", "scheduler", "workouts", "integrations", "inquiries",
 ];
 
 // Page groups for the matrix UI. Mirrors the AdminButtonGrid sections
@@ -234,6 +238,7 @@ export const PAGE_LABELS: Record<AdminPage, string> = {
   scheduler: "AI Scheduler",
   workouts: "Workouts",
   integrations: "Integrations",
+  inquiries: "Inquiries",
 };
 
 // Role-based default access check. Kept for all call sites that

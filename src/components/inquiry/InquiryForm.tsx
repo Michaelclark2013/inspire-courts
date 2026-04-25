@@ -1,0 +1,312 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Send, Check } from "lucide-react";
+import type { InquiryConfig, InquiryField } from "@/lib/inquiry-forms";
+import { trackConversion, trackEvent } from "@/lib/analytics";
+
+type FieldValue = string | string[] | number;
+
+export function InquiryForm({ config, source }: { config: InquiryConfig; source?: string }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [details, setDetails] = useState<Record<string, FieldValue>>({});
+  const [honeypot, setHoneypot] = useState("");
+  // Capture UTM + referrer once on mount. Keeps the source field
+  // attribution-rich without the user seeing or filling anything.
+  const [attribution, setAttribution] = useState<{
+    utmSource?: string;
+    utmMedium?: string;
+    utmCampaign?: string;
+    referrer?: string;
+  }>({});
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    setAttribution({
+      utmSource: params.get("utm_source") || undefined,
+      utmMedium: params.get("utm_medium") || undefined,
+      utmCampaign: params.get("utm_campaign") || undefined,
+      referrer: document.referrer || undefined,
+    });
+  }, []);
+  const [busy, setBusy] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function setField(key: string, value: FieldValue) {
+    setDetails((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!name.trim()) {
+      setError("Please share your name.");
+      return;
+    }
+    if (!email.trim() && !phone.trim()) {
+      setError("Email or phone is required so we can get back to you.");
+      return;
+    }
+    // Validate required custom fields
+    for (const f of config.fields) {
+      if (f.required) {
+        const v = details[f.key];
+        if (v === undefined || v === "" || (Array.isArray(v) && v.length === 0)) {
+          setError(`Please fill out: ${f.label}`);
+          return;
+        }
+      }
+    }
+    setBusy(true);
+    try {
+      // Pull `sports` to top-level if present in details for indexing.
+      const sports = details["sports"] || details["sport"];
+      // Stitch UTM into source so attribution rolls up cleanly.
+      const utmTag = attribution.utmSource
+        ? `utm:${attribution.utmSource}${attribution.utmCampaign ? `/${attribution.utmCampaign}` : ""}`
+        : "";
+      const finalSource = [source || `inquire/${config.slug}`, utmTag]
+        .filter(Boolean)
+        .join("|");
+      const res = await fetch("/api/inquire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: config.kind,
+          name,
+          email: email || undefined,
+          phone: phone || undefined,
+          message: message || undefined,
+          details: { ...details, ...attribution },
+          sports,
+          source: finalSource,
+          pageUrl: typeof window !== "undefined" ? window.location.href : undefined,
+          // Honeypot — bots fill it, real users never see it.
+          website: honeypot,
+        }),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        setError(json.error || "Something went wrong. Try again or call us.");
+        return;
+      }
+      // Fire analytics — gives marketing a real conversion event in
+      // GA + Meta Pixel + any future tools, with the inquiry kind +
+      // source so funnels can be sliced.
+      trackConversion("inquire_form_submit");
+      trackEvent("inquire_submitted", {
+        kind: config.kind,
+        source: finalSource,
+        utm_source: attribution.utmSource ?? "",
+        utm_campaign: attribution.utmCampaign ?? "",
+      });
+      setSubmitted(true);
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (submitted) {
+    return (
+      <div
+        role="status"
+        aria-live="polite"
+        className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 text-center animate-fade-in-up"
+      >
+        <div className="w-14 h-14 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 animate-success-pop">
+          <Check className="w-7 h-7 text-white" strokeWidth={3} />
+        </div>
+        <h3 className="text-emerald-800 font-bold text-xl mb-1.5">Got it.</h3>
+        <p className="text-emerald-700 text-sm max-w-md mx-auto">
+          A team member will reach out within 30 minutes during business hours
+          (Mon-Fri 8a-7p · Sat 9a-5p). Check your phone — we sent an instant text
+          confirmation.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} className="bg-white border border-border rounded-2xl shadow-lg p-5 sm:p-6 space-y-4">
+      {/* Honeypot — visually hidden + tabindex out of order. Bots fill,
+          humans don't. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] w-px h-px overflow-hidden" style={{ position: "absolute" }}>
+        <label htmlFor="website-url-field">Website (leave blank)</label>
+        <input
+          id="website-url-field"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Field label="Your name" required>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
+            placeholder="Jane Smith"
+            required
+          />
+        </Field>
+        <Field label="Phone" helper="We'll text you back within 30 min">
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
+            placeholder="(480) 555-0100"
+          />
+        </Field>
+      </div>
+      <Field label="Email">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
+          placeholder="you@example.com"
+        />
+      </Field>
+
+      {/* Custom fields */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {config.fields.map((field) => (
+          <div key={field.key} className={field.type === "textarea" ? "sm:col-span-2" : ""}>
+            <DynamicField field={field} value={details[field.key]} onChange={(v) => setField(field.key, v)} />
+          </div>
+        ))}
+      </div>
+
+      <Field label="Anything else we should know?">
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          rows={3}
+          className="w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
+        />
+      </Field>
+
+      {error && (
+        <div className="bg-red/5 border border-red/20 text-red rounded-lg px-3 py-2 text-sm">
+          {error}
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={busy}
+        className="w-full bg-red hover:bg-red-hover disabled:opacity-50 text-white font-bold uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
+      >
+        <Send className="w-4 h-4" />
+        {busy ? "Sending…" : "Send inquiry"}
+      </button>
+
+      <p className="text-[10px] text-text-muted text-center">
+        By submitting you agree to receive a follow-up text or call. Reply STOP anytime to opt out.
+      </p>
+    </form>
+  );
+}
+
+function Field({ label, required, helper, children }: { label: string; required?: boolean; helper?: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="block text-xs font-bold uppercase tracking-wider text-navy mb-1">
+        {label} {required && <span className="text-red">*</span>}
+      </span>
+      {children}
+      {helper && <span className="block text-[10px] text-text-muted mt-1">{helper}</span>}
+    </label>
+  );
+}
+
+function DynamicField({ field, value, onChange }: { field: InquiryField; value: FieldValue | undefined; onChange: (v: FieldValue) => void }) {
+  const required = field.required;
+  const baseClass = "w-full bg-off-white border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20";
+  return (
+    <Field label={field.label} required={required} helper={field.helper}>
+      {field.type === "text" && (
+        <input
+          value={(value as string) || ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={field.placeholder}
+          className={baseClass}
+          required={required}
+        />
+      )}
+      {field.type === "number" && (
+        <input
+          type="number"
+          value={(value as number) ?? ""}
+          onChange={(e) => onChange(Number(e.target.value))}
+          placeholder={field.placeholder}
+          className={baseClass}
+          required={required}
+        />
+      )}
+      {field.type === "date" && (
+        <input
+          type="date"
+          value={(value as string) || ""}
+          onChange={(e) => onChange(e.target.value)}
+          className={baseClass}
+          required={required}
+        />
+      )}
+      {field.type === "textarea" && (
+        <textarea
+          value={(value as string) || ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={field.placeholder}
+          rows={3}
+          className={baseClass}
+          required={required}
+        />
+      )}
+      {field.type === "select" && (
+        <select
+          value={(value as string) || ""}
+          onChange={(e) => onChange(e.target.value)}
+          className={baseClass}
+          required={required}
+        >
+          <option value="">Select…</option>
+          {field.options?.map((o) => <option key={o} value={o}>{o}</option>)}
+        </select>
+      )}
+      {field.type === "multiselect" && (
+        <div className="flex flex-wrap gap-1.5">
+          {field.options?.map((o) => {
+            const sel = Array.isArray(value) && (value as string[]).includes(o);
+            return (
+              <button
+                type="button"
+                key={o}
+                onClick={() => {
+                  const cur = Array.isArray(value) ? (value as string[]) : [];
+                  onChange(sel ? cur.filter((x) => x !== o) : [...cur, o]);
+                }}
+                className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border ${
+                  sel ? "bg-navy text-white border-navy" : "bg-off-white text-text-muted border-border hover:border-navy/40"
+                }`}
+              >
+                {o}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </Field>
+  );
+}

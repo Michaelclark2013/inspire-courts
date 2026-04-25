@@ -60,6 +60,7 @@ export default function MembersPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState("active");
   const [planFilter, setPlanFilter] = useState("");
   const [renewingSoon, setRenewingSoon] = useState(false);
@@ -86,6 +87,7 @@ export default function MembersPage() {
     const controller = new AbortController();
     abortRef.current = controller;
     setLoading(true);
+    setLoadError(null);
     try {
       const params = new URLSearchParams();
       if (statusFilter) params.set("status", statusFilter);
@@ -102,10 +104,14 @@ export default function MembersPage() {
         const json = await mRes.json();
         setMembers(json.data || []);
         setTotal(json.total || 0);
+      } else {
+        setLoadError(`Failed to load members (${mRes.status})`);
       }
       if (pRes.ok) setPlans((await pRes.json()).data || []);
     } catch (e) {
-      if ((e as Error)?.name !== "AbortError") throw e;
+      if ((e as Error)?.name !== "AbortError") {
+        setLoadError((e as Error).message || "Network error");
+      }
     } finally {
       if (!controller.signal.aborted) setLoading(false);
     }
@@ -209,6 +215,21 @@ export default function MembersPage() {
           </button>
         )}
       </div>
+
+      {loadError ? (
+        <div role="alert" className="bg-red/10 border border-red/20 rounded-xl p-6 mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-red font-semibold">Couldn&apos;t load members</p>
+            <p className="text-red/80 text-sm">{loadError}</p>
+          </div>
+          <button
+            onClick={() => load()}
+            className="bg-red hover:bg-red-hover text-white rounded-md px-4 py-1.5 text-sm font-semibold whitespace-nowrap"
+          >
+            Retry
+          </button>
+        </div>
+      ) : null}
 
       {loading ? (
         <SkeletonRows count={8} />

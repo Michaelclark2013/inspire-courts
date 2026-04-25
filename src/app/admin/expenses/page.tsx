@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { exportCSV } from "@/lib/export";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Expense = {
   id: number;
@@ -67,6 +68,10 @@ export default function ExpensesPage() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState<string>("all");
   const [composerOpen, setComposerOpen] = useState(false);
+
+  useDocumentTitle(
+    data ? `Expenses (${data.rows.length})` : "Expenses"
+  );
 
   const load = useCallback(async () => {
     try {

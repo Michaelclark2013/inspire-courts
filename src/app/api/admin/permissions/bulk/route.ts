@@ -8,6 +8,13 @@ import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { bumpPermissionsUpdated } from "@/lib/permission-bump";
 import { ALL_ADMIN_PAGES, type AdminPage } from "@/lib/permissions";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+
+// Hard cap on a single bulk request. Each (user, page) pair triggers
+// 1–2 sequential queries; without a cap a malformed UI submission could
+// generate hundreds of thousands of writes and stall the DB.
+const MAX_USERS = 500;
+const MAX_PAGES = 50;
 
 // POST /api/admin/permissions/bulk
 // Body: {
@@ -23,6 +30,16 @@ export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Throttle bulk writes per IP — a misbehaving UI could otherwise
+  // spam several hundred mutations a second.
+  const ip = getClientIp(request);
+  if (isRateLimited(`admin-perm-bulk:${ip}`, 10, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many bulk operations. Slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
   }
 
   try {
@@ -42,6 +59,12 @@ export async function POST(request: NextRequest) {
     }
     if (pages.length === 0) {
       return NextResponse.json({ error: "No pages selected" }, { status: 400 });
+    }
+    if (userIds.length > MAX_USERS) {
+      return NextResponse.json({ error: `Too many users in one request (max ${MAX_USERS}).` }, { status: 413 });
+    }
+    if (pages.length > MAX_PAGES) {
+      return NextResponse.json({ error: `Too many pages in one request (max ${MAX_PAGES}).` }, { status: 413 });
     }
     if (!["grant", "revoke", "clear"].includes(action)) {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });

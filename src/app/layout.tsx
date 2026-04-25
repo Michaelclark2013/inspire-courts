@@ -37,7 +37,9 @@ const chakra = Chakra_Petch({
   variable: "--font-chakra",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "600", "700"],
+  // Only 600/700 are used in markup — Chakra is exclusively for headings
+  // and CTA buttons that pair with font-semibold or font-bold.
+  weight: ["600", "700"],
 });
 
 export const viewport: Viewport = {

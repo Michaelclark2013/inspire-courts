@@ -40,6 +40,11 @@ export async function POST(
     if (userIds.length === 0) {
       return NextResponse.json({ error: "No users selected" }, { status: 400 });
     }
+    // Same upper bound as /api/admin/permissions/bulk — keeps a single
+    // request from spawning hundreds of thousands of upserts.
+    if (userIds.length > 500) {
+      return NextResponse.json({ error: "Too many users in one request (max 500)." }, { status: 413 });
+    }
 
     const [template] = await db
       .select()

@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   }
   try {
     const body = await request.json();
-    const name = typeof body?.name === "string" ? body.name.trim() : "";
+    const name = typeof body?.name === "string" ? body.name.trim().slice(0, 80) : "";
     if (!name) return NextResponse.json({ error: "Name required" }, { status: 400 });
 
     const pages = Array.isArray(body?.pages)
@@ -48,15 +48,22 @@ export async function POST(request: NextRequest) {
         )
       : [];
 
+    // Defensive: keep stored payload bounded.
+    const description =
+      typeof body?.description === "string" ? body.description.trim().slice(0, 500) || null : null;
+    const durRaw = Number(body?.defaultDurationDays);
+    // Cap at 5 years — a 10000-day template would silently become a
+    // permanent grant on the next overflow.
+    const defaultDurationDays =
+      Number.isFinite(durRaw) && durRaw > 0 && durRaw <= 1825 ? Math.floor(durRaw) : null;
+
     const [created] = await db
       .insert(permissionTemplates)
       .values({
         name,
-        description: typeof body?.description === "string" ? body.description.trim() || null : null,
+        description,
         pagesJson: JSON.stringify(pages),
-        defaultDurationDays: Number.isFinite(Number(body?.defaultDurationDays))
-          ? Number(body.defaultDurationDays)
-          : null,
+        defaultDurationDays,
         createdBy: Number(session.user.id),
       })
       .returning();

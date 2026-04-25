@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import {
   Megaphone,
   Plus,
@@ -89,6 +90,8 @@ export default function AnnouncementsAdminPage() {
   const [editing, setEditing] = useState<Announcement | null>(null);
   const [composerOpen, setComposerOpen] = useState(false);
   const [pendingId, setPendingId] = useState<number | null>(null);
+
+  useDocumentTitle(items.length > 0 ? `Announcements (${items.length})` : "Announcements");
 
   const load = useCallback(async () => {
     try {

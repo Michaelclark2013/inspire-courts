@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { exportCSV } from "@/lib/export";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Item = {
   id: number;
@@ -128,6 +129,12 @@ export default function EquipmentPage() {
   // Track per-row in-flight movements so the buttons can disable themselves
   // and the row can show a subtle pending state until the refetch completes.
   const [pendingItemIds, setPendingItemIds] = useState<Set<number>>(new Set());
+
+  useDocumentTitle(
+    data?.totals.needsReorder
+      ? `Inventory · ${data.totals.needsReorder} to reorder`
+      : "Inventory"
+  );
 
   const load = useCallback(async () => {
     setLoading(true);

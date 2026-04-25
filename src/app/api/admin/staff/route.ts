@@ -25,7 +25,7 @@ import { ytdGrossByUser, form1099Status } from "@/lib/payroll";
 //   ?dir=asc|desc
 export const GET = withTiming("admin.staff.list", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "roster")) {
     return apiError("Unauthorized", 401);
   }
 
@@ -104,7 +104,7 @@ export const GET = withTiming("admin.staff.list", async (request: NextRequest) =
 // user already has a staff_profiles row, returns 409 (use PUT instead).
 export const POST = withTiming("admin.staff.create", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "roster")) {
     return apiError("Unauthorized", 401);
   }
 
@@ -181,7 +181,7 @@ export const POST = withTiming("admin.staff.create", async (request: NextRequest
 // changes are a fraud-relevant event.
 export const PUT = withTiming("admin.staff.update", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "roster")) {
     return apiError("Unauthorized", 401);
   }
 
@@ -253,7 +253,7 @@ export const PUT = withTiming("admin.staff.update", async (request: NextRequest)
 // transitions for onboarding lifecycle.
 export const DELETE = withTiming("admin.staff.delete", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "roster")) {
     return apiError("Unauthorized", 401);
   }
 

@@ -3,18 +3,17 @@ import { db } from "@/lib/db";
 import { userPermissions, users, auditLog } from "@/lib/db/schema";
 import { and, inArray, isNotNull, lt } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { requireCronSecret } from "@/lib/api-helpers";
 
 // GET /api/cron/clean-expired-permissions
 // Scheduled task (daily) that deletes per-user permission overrides
 // whose expiresAt has passed. Bumps permissions_updated_at on every
 // affected user so their next request picks up the reverted state.
 //
-// Auth: requires x-cron-secret header matching CRON_SECRET env var.
+// Auth: requires CRON_SECRET via Authorization: Bearer or x-cron-secret.
 export async function GET(request: NextRequest) {
-  const secret = request.headers.get("x-cron-secret") || request.nextUrl.searchParams.get("secret");
-  if (!secret || secret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const fail = requireCronSecret(request);
+  if (fail) return fail;
   try {
     const nowIso = new Date().toISOString();
 
@@ -45,6 +44,9 @@ export async function GET(request: NextRequest) {
       .where(inArray(users.id, affectedUserIds));
 
     // System-initiated audit entry (no session; actor fields null).
+    // Audit insert errors are non-fatal — the cleanup itself succeeded —
+    // but they need to surface in logs so a missing audit trail can be
+    // investigated (compliance + forensics).
     try {
       await db.insert(auditLog).values({
         actorUserId: null,
@@ -56,7 +58,13 @@ export async function GET(request: NextRequest) {
         beforeJson: null,
         afterJson: JSON.stringify({ removed: expired.length, users: affectedUserIds.length }),
       });
-    } catch { /* don't let audit failure break the cron */ }
+    } catch (auditErr) {
+      logger.warn("clean-expired-permissions: audit insert failed (cleanup succeeded)", {
+        error: String(auditErr),
+        removed: expired.length,
+        users: affectedUserIds.length,
+      });
+    }
 
     logger.info("Cleaned expired permission overrides", { removed: expired.length });
     return NextResponse.json({

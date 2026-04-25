@@ -66,12 +66,18 @@ export default function RentalDetailPage() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
   const load = useCallback(async () => {
     if (!id) return;
     try {
       setError(null);
+      setNotFound(false);
       const res = await fetch(`/api/admin/rentals/${id}`);
+      if (res.status === 404) {
+        setNotFound(true);
+        return;
+      }
       if (!res.ok) throw new Error(`load ${res.status}`);
       const d = await res.json();
       setBooking(d.booking);
@@ -92,7 +98,44 @@ export default function RentalDetailPage() {
   }
 
   if (loading) return <div className="p-8 text-text-muted">Loading…</div>;
-  if (error || !booking) return <div className="p-8 text-red">{error || "Not found"}</div>;
+  if (notFound) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 max-w-2xl">
+        <Link href="/admin/rentals" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4">
+          <ArrowLeft className="w-3.5 h-3.5" /> Rentals
+        </Link>
+        <div className="bg-white border border-border rounded-2xl p-10 text-center">
+          <FileText className="w-10 h-10 text-text-muted mx-auto mb-3" />
+          <p className="text-navy font-bold mb-1">Rental not found</p>
+          <p className="text-text-muted text-sm mb-4">
+            This rental contract may have been deleted, or the link is incorrect.
+          </p>
+          <Link
+            href="/admin/rentals"
+            className="inline-flex items-center gap-2 bg-navy hover:bg-navy/90 text-white rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to rentals
+          </Link>
+        </div>
+      </div>
+    );
+  }
+  if (error || !booking) {
+    return (
+      <div className="p-8 max-w-2xl">
+        <div className="bg-red/10 border border-red/20 rounded-2xl p-6">
+          <p className="text-red font-semibold mb-2">Couldn&apos;t load rental</p>
+          <p className="text-red/80 text-sm mb-3">{error || "Try again."}</p>
+          <button
+            onClick={() => { setLoading(true); load(); }}
+            className="bg-red hover:bg-red-hover text-white rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-full">

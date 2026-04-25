@@ -116,6 +116,11 @@ export async function GET(request: Request) {
     });
   } catch (err) {
     logger.error("Failed to fetch live scores", { error: String(err) });
-    return NextResponse.json([], { status: 500 });
+    // Don't let a CDN cache the empty error payload — clients should
+    // retry against fresh data on the next poll.
+    return NextResponse.json([], {
+      status: 500,
+      headers: { "Cache-Control": "no-store" },
+    });
   }
 }

@@ -147,7 +147,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true, sent, missing });
   } catch (err) {
-    logger.error("checkin nudge failed", { error: String(err) });
+    logger.error("checkin nudge failed", {
+      error: String(err),
+      actorId: session.user.id,
+    });
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }

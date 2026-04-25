@@ -125,6 +125,9 @@ export async function GET(_request: NextRequest, { params }: Params) {
     );
   } catch (err) {
     logger.error("Tournament detail fetch failed", { error: String(err), tournamentId });
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Server error" },
+      { status: 500, headers: { "Cache-Control": "no-store" } }
+    );
   }
 }

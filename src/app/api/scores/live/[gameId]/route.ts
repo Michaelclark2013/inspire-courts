@@ -17,15 +17,37 @@ export async function GET(
     if (!Number.isInteger(gameId) || gameId <= 0) {
       return NextResponse.json({ error: "Invalid gameId" }, { status: 400 });
     }
-    const [g] = await db.select().from(games).where(eq(games.id, gameId)).limit(1);
+    // Game lookup + latest score are independent — fetch both in
+    // parallel. Public endpoint polled every 3s, so cutting one DB
+    // round-trip per call shows up at scale.
+    const [[g], [latest]] = await Promise.all([
+      db
+        .select({
+          id: games.id,
+          homeTeam: games.homeTeam,
+          awayTeam: games.awayTeam,
+          court: games.court,
+          division: games.division,
+          eventName: games.eventName,
+          scheduledTime: games.scheduledTime,
+          status: games.status,
+        })
+        .from(games)
+        .where(eq(games.id, gameId))
+        .limit(1),
+      db
+        .select({
+          homeScore: gameScores.homeScore,
+          awayScore: gameScores.awayScore,
+          quarter: gameScores.quarter,
+          updatedAt: gameScores.updatedAt,
+        })
+        .from(gameScores)
+        .where(eq(gameScores.gameId, gameId))
+        .orderBy(desc(gameScores.updatedAt))
+        .limit(1),
+    ]);
     if (!g) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-    const [latest] = await db
-      .select()
-      .from(gameScores)
-      .where(eq(gameScores.gameId, gameId))
-      .orderBy(desc(gameScores.updatedAt))
-      .limit(1);
 
     return NextResponse.json(
       {
@@ -46,6 +68,9 @@ export async function GET(
     );
   } catch (err) {
     logger.error("public live score failed", { error: String(err) });
-    return NextResponse.json({ error: "Failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed" },
+      { status: 500, headers: { "Cache-Control": "no-store" } }
+    );
   }
 }

@@ -35,24 +35,27 @@ export async function GET(request: Request) {
 
     const ids = allTournaments.map((t) => t.id);
 
-    // Batch counts in 2 queries instead of 2N
-    const teamCounts = await db
-      .select({
-        tournamentId: tournamentTeams.tournamentId,
-        count: sql<number>`count(*)`,
-      })
-      .from(tournamentTeams)
-      .where(inArray(tournamentTeams.tournamentId, ids))
-      .groupBy(tournamentTeams.tournamentId);
-
-    const regCounts = await db
-      .select({
-        tournamentId: tournamentRegistrations.tournamentId,
-        count: sql<number>`count(*)`,
-      })
-      .from(tournamentRegistrations)
-      .where(inArray(tournamentRegistrations.tournamentId, ids))
-      .groupBy(tournamentRegistrations.tournamentId);
+    // Batch counts in 2 queries instead of 2N — and run them in
+    // parallel since they're independent rollups against different
+    // tables.
+    const [teamCounts, regCounts] = await Promise.all([
+      db
+        .select({
+          tournamentId: tournamentTeams.tournamentId,
+          count: sql<number>`count(*)`,
+        })
+        .from(tournamentTeams)
+        .where(inArray(tournamentTeams.tournamentId, ids))
+        .groupBy(tournamentTeams.tournamentId),
+      db
+        .select({
+          tournamentId: tournamentRegistrations.tournamentId,
+          count: sql<number>`count(*)`,
+        })
+        .from(tournamentRegistrations)
+        .where(inArray(tournamentRegistrations.tournamentId, ids))
+        .groupBy(tournamentRegistrations.tournamentId),
+    ]);
 
     const teamMap = new Map(teamCounts.map((r) => [r.tournamentId, r.count]));
     const regMap = new Map(regCounts.map((r) => [r.tournamentId, r.count]));
@@ -80,6 +83,9 @@ export async function GET(request: Request) {
     });
   } catch (err) {
     logger.error("[api/tournaments] Failed to fetch tournaments", { error: String(err) });
-    return NextResponse.json([], { status: 500 });
+    return NextResponse.json([], {
+      status: 500,
+      headers: { "Cache-Control": "no-store" },
+    });
   }
 }

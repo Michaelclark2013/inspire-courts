@@ -7,6 +7,7 @@ import { sendSms } from "@/lib/sms";
 import { sendBroadcastEmail } from "@/lib/notify";
 import { fireWebhookEvent } from "@/lib/api-auth";
 import { getInquiryConfigByKind, INQUIRY_CONFIGS } from "@/lib/inquiry-forms";
+import { escapeHtml } from "@/lib/utils";
 
 // POST /api/inquire — public endpoint; no auth.
 // Rate limited per IP. Sends auto-SMS reply if phone present, emails
@@ -119,22 +120,19 @@ export async function POST(request: NextRequest) {
       const config = getInquiryConfigByKind(validKind);
       // Escape user input before interpolating into the notification
       // HTML — names like `<script>` would otherwise render in the
-      // admin's email client. The fields themselves are short-string
-      // user input so we render them as text.
-      const esc = (s: string) =>
-        s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+      // admin's email client.
       const subject = `🆕 New ${config?.title || "general"} inquiry — ${name}`;
       const html = `
-        <h2>New inquiry: ${esc(config?.title || "General")}</h2>
-        <p><b>${esc(name)}</b><br/>
-        ${email ? `Email: <a href="mailto:${esc(email)}">${esc(email)}</a><br/>` : ""}
-        ${phone ? `Phone: ${esc(phone)}<br/>` : ""}
-        ${sports ? `Sports: ${esc(sports)}<br/>` : ""}
-        ${source ? `Source: ${esc(source)}<br/>` : ""}
-        ${pageUrl ? `Page: ${esc(pageUrl)}<br/>` : ""}
+        <h2>New inquiry: ${escapeHtml(config?.title || "General")}</h2>
+        <p><b>${escapeHtml(name)}</b><br/>
+        ${email ? `Email: <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a><br/>` : ""}
+        ${phone ? `Phone: ${escapeHtml(phone)}<br/>` : ""}
+        ${sports ? `Sports: ${escapeHtml(sports)}<br/>` : ""}
+        ${source ? `Source: ${escapeHtml(source)}<br/>` : ""}
+        ${pageUrl ? `Page: ${escapeHtml(pageUrl)}<br/>` : ""}
         </p>
-        ${details ? `<h3>Details</h3><pre>${esc(JSON.stringify(details, null, 2))}</pre>` : ""}
-        ${message ? `<h3>Message</h3><p>${esc(message)}</p>` : ""}
+        ${details ? `<h3>Details</h3><pre>${escapeHtml(JSON.stringify(details, null, 2))}</pre>` : ""}
+        ${message ? `<h3>Message</h3><p>${escapeHtml(message)}</p>` : ""}
         <p><b>SLA — respond by ${new Date(slaDueAt).toLocaleString()}</b></p>
         <p><a href="${process.env.NEXTAUTH_URL || "https://inspirecourtsaz.com"}/admin/inquiries">Open in admin</a></p>
       `;

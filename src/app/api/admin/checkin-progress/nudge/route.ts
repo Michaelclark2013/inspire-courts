@@ -7,6 +7,7 @@ import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { sendBroadcastEmail } from "@/lib/notify";
+import { escapeHtml } from "@/lib/utils";
 
 // POST /api/admin/checkin-progress/nudge
 // Body: { tournamentId?: number, teamIds?: number[] }
@@ -49,11 +50,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No active tournament" }, { status: 400 });
     }
 
-    const regs = await db
-      .select()
-      .from(tournamentRegistrations)
-      .where(eq(tournamentRegistrations.tournamentId, tournament.id));
-    const filtered = onlyIds.length > 0 ? regs.filter((r) => onlyIds.includes(r.id)) : regs;
+    // Narrow to fields actually read by the nudge logic + email body.
+    // If the caller passes onlyIds, push it into SQL too instead of
+    // pulling every registration and filtering in JS.
+    const regsQuery = db
+      .select({
+        id: tournamentRegistrations.id,
+        teamName: tournamentRegistrations.teamName,
+        coachName: tournamentRegistrations.coachName,
+        coachEmail: tournamentRegistrations.coachEmail,
+        playerCount: tournamentRegistrations.playerCount,
+        rosterSubmitted: tournamentRegistrations.rosterSubmitted,
+        waiversSigned: tournamentRegistrations.waiversSigned,
+        paymentStatus: tournamentRegistrations.paymentStatus,
+      })
+      .from(tournamentRegistrations);
+    const filtered = onlyIds.length > 0
+      ? await regsQuery.where(
+          and(
+            eq(tournamentRegistrations.tournamentId, tournament.id),
+            inArray(tournamentRegistrations.id, onlyIds)
+          )
+        )
+      : await regsQuery.where(eq(tournamentRegistrations.tournamentId, tournament.id));
 
     // Pull current check-in counts
     const teamNames = filtered.map((r) => r.teamName);
@@ -94,15 +113,18 @@ export async function POST(request: NextRequest) {
       missing.push({ teamName: r.teamName, email: r.coachEmail, gaps });
 
       // Fire-and-forget email. Ignore errors so one bad address doesn't
-      // block the batch; admin sees sent vs missing count.
+      // block the batch; admin sees sent vs missing count. Coach name +
+      // team name + tournament name are escaped before interpolation
+      // so a name like `<img onerror>` can't render in the recipient's
+      // mail client.
       try {
         const result = await sendBroadcastEmail({
           recipients: [r.coachEmail],
           subject: `Action needed: ${tournament.name} check-in (${r.teamName})`,
           html: `
-            <p>Hi ${r.coachName},</p>
-            <p>Our records show ${r.teamName} hasn't completed the check-in process for <strong>${tournament.name}</strong>. Outstanding items:</p>
-            <ul>${gaps.map((g) => `<li>${g}</li>`).join("")}</ul>
+            <p>Hi ${escapeHtml(r.coachName || "Coach")},</p>
+            <p>Our records show ${escapeHtml(r.teamName)} hasn't completed the check-in process for <strong>${escapeHtml(tournament.name)}</strong>. Outstanding items:</p>
+            <ul>${gaps.map((g) => `<li>${escapeHtml(g)}</li>`).join("")}</ul>
             <p>Please sign into the coach portal to finish check-in, or reply to this email if you need help.</p>
             <p>Thanks,<br/>Inspire Courts</p>
           `,

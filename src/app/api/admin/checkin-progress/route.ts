@@ -45,8 +45,23 @@ export async function GET(request: Request) {
       return NextResponse.json({ tournament: null, teams: [], totals: null });
     }
 
+    // Narrow projection — handler only reads these 11 columns. Avoids
+    // shipping internal timestamps + admin-only notes through the wire
+    // on every dashboard refresh.
     const regs = await db
-      .select()
+      .select({
+        id: tournamentRegistrations.id,
+        teamName: tournamentRegistrations.teamName,
+        division: tournamentRegistrations.division,
+        coachName: tournamentRegistrations.coachName,
+        coachEmail: tournamentRegistrations.coachEmail,
+        coachPhone: tournamentRegistrations.coachPhone,
+        playerCount: tournamentRegistrations.playerCount,
+        rosterSubmitted: tournamentRegistrations.rosterSubmitted,
+        waiversSigned: tournamentRegistrations.waiversSigned,
+        paymentStatus: tournamentRegistrations.paymentStatus,
+        status: tournamentRegistrations.status,
+      })
       .from(tournamentRegistrations)
       .where(eq(tournamentRegistrations.tournamentId, tournament.id))
       .orderBy(asc(tournamentRegistrations.teamName));

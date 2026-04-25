@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Send, Check } from "lucide-react";
 import type { InquiryConfig, InquiryField } from "@/lib/inquiry-forms";
 import { trackConversion, trackEvent } from "@/lib/analytics";
+import { FACILITY_PHONE } from "@/lib/constants";
 
 type FieldValue = string | string[] | number;
 
@@ -100,7 +101,18 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
       });
       if (!res.ok) {
         const json = await res.json().catch(() => ({}));
-        setError(json.error || "Something went wrong. Try again or call us.");
+        // Surface the server's specific reason when we have one, then
+        // fall back to a status-class hint so users know whether to
+        // retry now (5xx), fix their input (4xx), or call us.
+        const fallback =
+          res.status === 429
+            ? "Too many submissions. Please wait a minute and try again."
+            : res.status >= 500
+              ? `Our server is having trouble. Try again in a moment, or call ${FACILITY_PHONE}.`
+              : res.status >= 400
+                ? "Please check your entries and try again."
+                : "Something went wrong. Try again or call us.";
+        setError(json.error || fallback);
         return;
       }
       // Fire analytics — gives marketing a real conversion event in

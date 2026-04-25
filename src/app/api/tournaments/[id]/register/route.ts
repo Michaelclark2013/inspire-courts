@@ -6,7 +6,7 @@ import {
   tournamentRegistrations,
   tournamentTeams,
 } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or, sql } from "drizzle-orm";
 import { createCheckoutLink, isSquareConfigured } from "@/lib/square";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
@@ -106,33 +106,25 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
   }
 
-  // Check capacity per division
+  // Check capacity per division. Approved registrations and pending-
+  // but-paid registrations both consume a slot, so we count rows that
+  // satisfy either condition in a single query (count(*) keeps the
+  // query plan tight — we never need the row data, just the total).
   if (tournament.maxTeamsPerDivision && division) {
-    const existingTeams = await db
-      .select()
+    const [{ count = 0 } = {}] = await db
+      .select({ count: sql<number>`count(*)` })
       .from(tournamentRegistrations)
       .where(
         and(
           eq(tournamentRegistrations.tournamentId, tournamentId),
           eq(tournamentRegistrations.division, division),
-          eq(tournamentRegistrations.status, "approved")
+          or(
+            eq(tournamentRegistrations.status, "approved"),
+            eq(tournamentRegistrations.paymentStatus, "paid")
+          )
         )
       );
-
-    // Also count pending paid registrations
-    const pendingPaid = await db
-      .select()
-      .from(tournamentRegistrations)
-      .where(
-        and(
-          eq(tournamentRegistrations.tournamentId, tournamentId),
-          eq(tournamentRegistrations.division, division),
-          eq(tournamentRegistrations.paymentStatus, "paid")
-        )
-      );
-
-    const count = Math.max(existingTeams.length, pendingPaid.length);
-    if (count >= tournament.maxTeamsPerDivision) {
+    if (Number(count) >= tournament.maxTeamsPerDivision) {
       return NextResponse.json(
         { error: `Division ${division} is full (${tournament.maxTeamsPerDivision} teams max)` },
         { status: 400 }

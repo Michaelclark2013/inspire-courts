@@ -17,9 +17,21 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Query 1: Get relevant games (limit to 100 most recent to prevent unbounded responses)
+    // Query 1: Get relevant games (limit to 100 most recent to prevent
+    // unbounded responses). Narrow projection to fields actually shipped
+    // back — saves payload + DB IO on a public 60/min endpoint.
     const allGames = await db
-      .select()
+      .select({
+        id: games.id,
+        homeTeam: games.homeTeam,
+        awayTeam: games.awayTeam,
+        division: games.division,
+        court: games.court,
+        eventName: games.eventName,
+        scheduledTime: games.scheduledTime,
+        status: games.status,
+        createdAt: games.createdAt,
+      })
       .from(games)
       .where(inArray(games.status, ["live", "final", "scheduled"]))
       .orderBy(desc(games.createdAt))
@@ -34,7 +46,12 @@ export async function GET(request: Request) {
     // Query 2: Get scores only for the games we fetched (not all scores in DB)
     const gameIds = allGames.map((g) => g.id);
     const allScores = await db
-      .select()
+      .select({
+        gameId: gameScores.gameId,
+        homeScore: gameScores.homeScore,
+        awayScore: gameScores.awayScore,
+        quarter: gameScores.quarter,
+      })
       .from(gameScores)
       .where(inArray(gameScores.gameId, gameIds))
       .orderBy(desc(gameScores.updatedAt));

@@ -256,7 +256,12 @@ export default function AnnouncementsAdminPage() {
             >
               {a.imageUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={a.imageUrl} alt="" className="w-full h-32 object-cover" />
+                <img
+                  src={a.imageUrl}
+                  alt={`Hero image for ${a.title}`}
+                  loading="lazy"
+                  className="w-full h-32 object-cover"
+                />
               )}
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">

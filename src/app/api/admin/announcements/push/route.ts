@@ -5,6 +5,10 @@ import { canAccess } from "@/lib/permissions";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { pushAnnouncement } from "@/lib/announcement-push";
+import { parseJsonBody } from "@/lib/api-helpers";
+import { z } from "zod";
+
+const pushSchema = z.object({ id: z.number().int().positive() });
 
 // POST /api/admin/announcements/push  { id }
 // Re-broadcast (or first-broadcast) an existing announcement as a
@@ -14,12 +18,10 @@ export async function POST(request: NextRequest) {
   if (!session?.user?.role || !canAccess(session.user.role, "announcements")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const parsed = await parseJsonBody(request, pushSchema);
+  if (!parsed.ok) return parsed.response;
+  const { id } = parsed.data;
   try {
-    const body = await request.json();
-    const id = Number(body?.id);
-    if (!Number.isInteger(id) || id <= 0) {
-      return NextResponse.json({ error: "Invalid id" }, { status: 400 });
-    }
     const result = await pushAnnouncement(id);
     await recordAudit({
       session,

@@ -89,12 +89,21 @@ export default function RentalDetailPage() {
   useEffect(() => { load(); }, [load]);
 
   async function patch(body: Record<string, unknown>) {
-    await fetch(`/api/admin/rentals/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    load();
+    try {
+      const res = await fetch(`/api/admin/rentals/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const detail = await res.json().catch(() => ({}));
+        setError(detail.error || `Update failed (${res.status})`);
+        return;
+      }
+      load();
+    } catch (err) {
+      setError(`Network error: ${(err as Error).message}`);
+    }
   }
 
   if (loading) return <div className="p-8 text-text-muted">Loading…</div>;

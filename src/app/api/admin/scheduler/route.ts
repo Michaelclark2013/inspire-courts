@@ -4,6 +4,19 @@ import { authOptions } from "@/lib/auth";
 import { suggestAssignments, applyAssignments } from "@/lib/scheduler";
 import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
+import { parseJsonBody } from "@/lib/api-helpers";
+import { z } from "zod";
+
+const schedulerApplySchema = z.object({
+  pairs: z
+    .array(
+      z.object({
+        shiftId: z.number().int().positive(),
+        userId: z.number().int().positive(),
+      })
+    )
+    .max(500),
+});
 
 // GET /api/admin/scheduler?from=ISO&to=ISO  — suggested fillings
 // POST /api/admin/scheduler { pairs: [{shiftId, userId}] } — apply
@@ -29,17 +42,16 @@ export async function POST(request: NextRequest) {
   if (session?.user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const parsed = await parseJsonBody(request, schedulerApplySchema);
+  if (!parsed.ok) return parsed.response;
+  const { pairs } = parsed.data;
+  if (pairs.length === 0) return NextResponse.json({ applied: 0 });
   try {
-    const body = await request.json();
-    const pairs = Array.isArray(body?.pairs) ? body.pairs : [];
-    if (pairs.length === 0) return NextResponse.json({ applied: 0 });
-    const valid = pairs
-      .filter((p: { shiftId: unknown; userId: unknown }) => Number.isInteger(p?.shiftId) && Number.isInteger(p?.userId))
-      .map((p: { shiftId: number; userId: number }) => ({
-        shiftId: p.shiftId,
-        userId: p.userId,
-        assignedBy: Number(session.user.id),
-      }));
+    const valid = pairs.map((p) => ({
+      shiftId: p.shiftId,
+      userId: p.userId,
+      assignedBy: Number(session.user.id),
+    }));
     const r = await applyAssignments(valid);
     await recordAudit({
       session,

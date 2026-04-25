@@ -17,12 +17,37 @@ export async function GET(request: NextRequest) {
     );
   }
   const sp = request.nextUrl.searchParams;
-  const status = sp.get("status");
-  const since = sp.get("since"); // ISO; only return games scheduled at or after
-  const limit = Math.min(Number(sp.get("limit")) || 100, 500);
+  // Validate the user-supplied query params before letting them reach the
+  // SQL builder. Untrusted callers can hit this with a valid API key, so a
+  // bogus status enum or malformed `since` should 400 fast rather than
+  // turn into a runtime SQL error or a misleading empty result set.
+  const STATUS_VALUES = ["scheduled", "live", "final"] as const;
+  const rawStatus = sp.get("status");
+  const status = rawStatus && (STATUS_VALUES as readonly string[]).includes(rawStatus)
+    ? (rawStatus as (typeof STATUS_VALUES)[number])
+    : null;
+  if (rawStatus && !status) {
+    return NextResponse.json(
+      { error: `status must be one of ${STATUS_VALUES.join(", ")}` },
+      { status: 400 }
+    );
+  }
+  const rawSince = sp.get("since");
+  let since: string | null = null;
+  if (rawSince) {
+    const t = Date.parse(rawSince);
+    if (!Number.isFinite(t)) {
+      return NextResponse.json(
+        { error: "since must be an ISO-8601 timestamp" },
+        { status: 400 }
+      );
+    }
+    since = new Date(t).toISOString();
+  }
+  const limit = Math.min(Math.max(Number(sp.get("limit")) || 100, 1), 500);
   try {
     const filters = [];
-    if (status) filters.push(eq(games.status, status as "live"));
+    if (status) filters.push(eq(games.status, status));
     if (since) filters.push(gte(games.scheduledTime, since));
     const rows = await db
       .select({

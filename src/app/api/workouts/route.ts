@@ -2,9 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { workouts, workoutResults, members, users } from "@/lib/db/schema";
+import {
+  workouts,
+  workoutResults,
+  members,
+  users,
+  WORKOUT_SCORE_TYPES,
+} from "@/lib/db/schema";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { parseJsonBody } from "@/lib/api-helpers";
+import { z } from "zod";
+
+const workoutCreateSchema = z.object({
+  name: z.string().min(1).max(120),
+  description: z.string().max(1000).optional().nullable(),
+  scoreType: z.enum(WORKOUT_SCORE_TYPES),
+  lowerIsBetter: z.boolean().optional(),
+  category: z.string().max(60).optional().nullable(),
+});
 
 // GET /api/workouts                      → list workouts + leaderboards
 // GET /api/workouts?id=<id>              → leaderboard for one workout
@@ -85,20 +101,20 @@ export async function POST(request: NextRequest) {
   if (session?.user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const parsed = await parseJsonBody(request, workoutCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.data;
   try {
-    const body = await request.json();
-    if (!body?.name || !body?.scoreType) {
-      return NextResponse.json({ error: "Missing name or scoreType" }, { status: 400 });
-    }
-    const lowerIsBetter = body.scoreType === "time" ? true : Boolean(body.lowerIsBetter);
+    const lowerIsBetter =
+      body.scoreType === "time" ? true : Boolean(body.lowerIsBetter);
     const [row] = await db
       .insert(workouts)
       .values({
-        name: String(body.name).slice(0, 120),
-        description: body.description ? String(body.description).slice(0, 1000) : null,
+        name: body.name,
+        description: body.description ?? null,
         scoreType: body.scoreType,
         lowerIsBetter,
-        category: body.category || null,
+        category: body.category ?? null,
       })
       .returning({ id: workouts.id });
     return NextResponse.json({ id: row.id }, { status: 201 });

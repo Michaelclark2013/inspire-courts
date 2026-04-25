@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   TrendingUp,
-  Loader2,
   Search,
   Mail,
   Phone,
@@ -11,6 +10,7 @@ import {
   Download} from "lucide-react";
 import { SELECT_CLASS } from "@/lib/form-styles";
 import { exportCSV } from "@/lib/export";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Lead = {
   timestamp: string;
@@ -153,7 +153,7 @@ export default function LeadsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy/30" aria-hidden="true" />
           <input
@@ -178,13 +178,28 @@ export default function LeadsPage() {
             </option>
           ))}
         </select>
+        {(search || sourceFilter) && (
+          <button
+            type="button"
+            onClick={() => { setSearch(""); setSourceFilter(""); }}
+            className="text-xs text-text-secondary hover:text-navy underline whitespace-nowrap"
+          >
+            Reset
+          </button>
+        )}
       </div>
+      <p
+        className="text-text-secondary text-xs mb-4"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {filtered.length} {filtered.length === 1 ? "lead" : "leads"}
+        {(search || sourceFilter) && leads.length !== filtered.length ? ` (filtered from ${leads.length})` : ""}
+      </p>
 
       {/* Lead List */}
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-navy/40">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" /> Loading leads...
-        </div>
+        <SkeletonRows count={6} />
       ) : fetchError ? (
         <div className="bg-red/10 border border-red/20 rounded-xl p-8 text-center">
           <TrendingUp className="w-10 h-10 text-red/40 mx-auto mb-3" aria-hidden="true" />

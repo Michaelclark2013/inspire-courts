@@ -1,6 +1,45 @@
 import Link from "next/link";
 import { ArrowRight, Check, MessageSquare, Phone } from "lucide-react";
 import type { SportConfig } from "@/lib/sport-microsites";
+import { SPORT_CONFIGS } from "@/lib/sport-microsites";
+
+// JSON-LD generators — emitted once per sport page so Google can show
+// rich results (FAQ panel, sitelinks, business info) for free.
+function buildJsonLd(config: SportConfig): object[] {
+  const baseUrl = "https://inspirecourtsaz.com";
+  const sportUrl = `${baseUrl}/${config.slug}`;
+  const localBusiness = {
+    "@context": "https://schema.org",
+    "@type": "SportsActivityLocation",
+    name: `Inspire Courts AZ — ${config.name}`,
+    description: config.metaDescription,
+    url: sportUrl,
+    telephone: "+1-480-555-0100",
+    image: `${baseUrl}/images/inspire-athletics-logo.png`,
+    sport: config.name,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Gilbert",
+      addressRegion: "AZ",
+      addressCountry: "US",
+    },
+    parentOrganization: {
+      "@type": "SportsOrganization",
+      name: "Inspire Courts AZ",
+      url: baseUrl,
+    },
+  };
+  const faq = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: config.faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+  return [localBusiness, faq];
+}
 
 // Server-rendered (no "use client") so each sport page is fully
 // statically generated for SEO. The inquiry CTAs deep-link into the
@@ -8,8 +47,19 @@ import type { SportConfig } from "@/lib/sport-microsites";
 // can attribute leads back to the sport page they came from.
 
 export function SportMicrosite({ config }: { config: SportConfig }) {
+  const jsonLd = buildJsonLd(config);
+  const otherSports = SPORT_CONFIGS.filter((s) => s.slug !== config.slug);
   return (
     <main className="min-h-screen bg-off-white">
+      {/* JSON-LD: SportsActivityLocation + FAQPage. One script tag each
+          for cleanest crawler parsing. */}
+      {jsonLd.map((obj, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }}
+        />
+      ))}
       {/* Hero */}
       <section className="bg-gradient-to-br from-navy via-navy to-navy/85 text-white relative overflow-hidden">
         {/* Layered visual depth: red blur orb + subtle dot grid + bottom-edge fade */}
@@ -112,6 +162,62 @@ export function SportMicrosite({ config }: { config: SportConfig }) {
               <p className="text-text-muted text-sm mt-3 leading-relaxed">{f.a}</p>
             </details>
           ))}
+        </div>
+      </section>
+
+      {/* Cross-linking — other sports + key public pages. SEO + UX. */}
+      <section className="max-w-6xl mx-auto px-4 py-10 border-t border-border">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <p className="text-text-muted text-[11px] uppercase tracking-[0.3em] mb-3 font-bold">
+              Other sports at Inspire
+            </p>
+            <ul className="space-y-1.5">
+              {otherSports.map((s) => (
+                <li key={s.slug}>
+                  <Link
+                    href={`/${s.slug}`}
+                    className="text-navy hover:text-red font-bold inline-flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 rounded"
+                  >
+                    {s.name}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <span className="text-text-muted text-xs ml-2">{s.tagline}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-text-muted text-[11px] uppercase tracking-[0.3em] mb-3 font-bold">
+              While you&apos;re here
+            </p>
+            <ul className="space-y-1.5 text-sm">
+              <li>
+                <Link href="/scores" className="text-navy hover:text-red font-bold inline-flex items-center gap-1.5 transition-colors">
+                  Live scores <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <span className="text-text-muted ml-2">Watch any game in real time</span>
+              </li>
+              <li>
+                <Link href="/tournaments" className="text-navy hover:text-red font-bold inline-flex items-center gap-1.5 transition-colors">
+                  Upcoming tournaments <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <span className="text-text-muted ml-2">Find your next event</span>
+              </li>
+              <li>
+                <Link href="/schedule" className="text-navy hover:text-red font-bold inline-flex items-center gap-1.5 transition-colors">
+                  Daily schedule <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <span className="text-text-muted ml-2">What&apos;s on every court today</span>
+              </li>
+              <li>
+                <Link href="/facility" className="text-navy hover:text-red font-bold inline-flex items-center gap-1.5 transition-colors">
+                  Tour the facility <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <span className="text-text-muted ml-2">Photos + amenities</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </section>
 

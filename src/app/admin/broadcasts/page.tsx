@@ -100,10 +100,10 @@ export default function BroadcastsPage() {
 
       <form onSubmit={send} className="bg-white border border-border rounded-2xl shadow-sm p-5 space-y-4 max-w-2xl">
         <div>
-          <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1">
-            <UsersIcon className="w-3 h-3" /> Team
+          <label htmlFor="bc-team" className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1">
+            <UsersIcon className="w-3 h-3" /> Team <span className="text-red" aria-hidden="true">*</span>
           </label>
-          <select value={teamName} onChange={(e) => setTeamName(e.target.value)} className="w-full bg-off-white border border-border rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60">
+          <select id="bc-team" value={teamName} onChange={(e) => setTeamName(e.target.value)} required aria-required="true" className="w-full bg-off-white border border-border rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60">
             <option value="">— Pick a team —</option>
             {teams.map((t) => (
               <option key={t.id} value={t.teamName}>
@@ -113,14 +113,16 @@ export default function BroadcastsPage() {
           </select>
         </div>
         <div>
-          <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Subject</label>
-          <input value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full bg-off-white border border-border rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60" placeholder="Saturday schedule update" />
+          <label htmlFor="bc-subject" className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">
+            Subject <span className="text-red" aria-hidden="true">*</span>
+          </label>
+          <input id="bc-subject" value={subject} onChange={(e) => setSubject(e.target.value)} required aria-required="true" className="w-full bg-off-white border border-border rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60" placeholder="Saturday schedule update" />
         </div>
         <div>
-          <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1">
-            <FileText className="w-3 h-3" /> Message
+          <label htmlFor="bc-body" className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1">
+            <FileText className="w-3 h-3" /> Message <span className="text-red" aria-hidden="true">*</span>
           </label>
-          <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={8} className="w-full bg-off-white border border-border rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60 resize-none" placeholder="Write your message here…" />
+          <textarea id="bc-body" value={body} onChange={(e) => setBody(e.target.value)} rows={8} required aria-required="true" className="w-full bg-off-white border border-border rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60 resize-none" placeholder="Write your message here…" />
           <p className="text-text-muted text-[11px] mt-1">Line breaks preserved. HTML not allowed directly.</p>
         </div>
 

@@ -6,6 +6,12 @@ import { INQUIRY_CONFIGS } from "@/lib/inquiry-forms";
 export const metadata: Metadata = {
   title: "Inquire — Inspire Courts AZ",
   description: "Reserve a court, book training, host a tournament, or join a league at Arizona's premier multi-sport facility. Get a response within 30 minutes.",
+  alternates: { canonical: "/inquire" },
+  openGraph: {
+    title: "Inquire — Inspire Courts AZ",
+    description: "Reserve a court, book training, host a tournament, or join a league. Response within 30 minutes.",
+    url: "/inquire",
+  },
 };
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {

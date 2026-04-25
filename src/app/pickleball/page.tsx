@@ -7,7 +7,8 @@ const config = getSportConfig("pickleball")!;
 export const metadata: Metadata = {
   title: config.metaTitle,
   description: config.metaDescription,
-  openGraph: { title: config.metaTitle, description: config.metaDescription },
+  alternates: { canonical: "/pickleball" },
+  openGraph: { title: config.metaTitle, description: config.metaDescription, url: "/pickleball" },
 };
 
 export default function PickleballPage() {

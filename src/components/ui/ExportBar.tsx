@@ -13,6 +13,7 @@ export default function ExportBar({
     <div className="flex items-center gap-2">
       {onExportCSV && (
         <button
+          type="button"
           onClick={onExportCSV}
           className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider px-3 py-2 rounded-lg bg-off-white hover:bg-navy/[0.06] border border-light-gray transition-colors"
         >
@@ -21,6 +22,7 @@ export default function ExportBar({
         </button>
       )}
       <button
+        type="button"
         onClick={() => window.print()}
         className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider px-3 py-2 rounded-lg bg-off-white hover:bg-navy/[0.06] border border-light-gray transition-colors"
       >

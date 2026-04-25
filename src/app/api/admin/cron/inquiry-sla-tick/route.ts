@@ -68,6 +68,9 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         logger.warn("sla alert email failed", { id: inq.id, error: String(err) });
       }
+      // If the note insert fails the row never marks the alert as sent,
+      // so the next tick re-fires the email — surface the failure so it
+      // can be investigated rather than silently spamming on-call.
       await db
         .insert(inquiryNotes)
         .values({
@@ -75,7 +78,9 @@ export async function POST(request: NextRequest) {
           body: "SLA breach — alert email sent to on-call",
           kind: "sla_alert_sent",
         })
-        .catch(() => {});
+        .catch((err) => {
+          logger.warn("sla alert note insert failed (will re-fire)", { id: inq.id, error: String(err) });
+        });
     }
 
     logger.info("inquiry SLA tick", { breached: due.length });

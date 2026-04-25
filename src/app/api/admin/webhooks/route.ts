@@ -6,6 +6,13 @@ import { webhookSubscriptions } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
 import { recordAudit } from "@/lib/audit";
+import { parseJsonBody } from "@/lib/api-helpers";
+import { z } from "zod";
+
+const webhookCreateSchema = z.object({
+  url: z.string().url().max(500),
+  events: z.string().max(500).optional(),
+});
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -17,13 +24,14 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const body = await request.json();
-  if (!body?.url) return NextResponse.json({ error: "url required" }, { status: 400 });
+  const parsed = await parseJsonBody(request, webhookCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.data;
   const secret = `whsec_${randomBytes(24).toString("hex")}`;
   const [row] = await db
     .insert(webhookSubscriptions)
     .values({
-      url: String(body.url).slice(0, 500),
+      url: body.url,
       events: body.events || "*",
       secret,
       createdBy: session.user.id ? Number(session.user.id) : null,

@@ -7,6 +7,14 @@ import { desc, eq } from "drizzle-orm";
 import { generateApiKey } from "@/lib/api-auth";
 import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
+import { parseJsonBody } from "@/lib/api-helpers";
+import { z } from "zod";
+
+const apiKeyCreateSchema = z.object({
+  label: z.string().trim().min(1).max(80),
+  scopes: z.string().max(200).optional(),
+  expiresAt: z.string().datetime().optional().nullable(),
+});
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -30,14 +38,15 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const parsed = await parseJsonBody(request, apiKeyCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.data;
   try {
-    const body = await request.json();
-    if (!body?.label) return NextResponse.json({ error: "label required" }, { status: 400 });
     const { plaintext, hash, prefix } = generateApiKey();
     const [row] = await db
       .insert(apiKeys)
       .values({
-        label: String(body.label).slice(0, 80),
+        label: body.label,
         keyHash: hash,
         prefix,
         scopes: body.scopes || "read",

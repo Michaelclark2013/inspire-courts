@@ -5,6 +5,21 @@ import { db } from "@/lib/db";
 import { expenses, EXPENSE_CATEGORIES } from "@/lib/db/schema";
 import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { parseJsonBody } from "@/lib/api-helpers";
+import { z } from "zod";
+
+const expenseCreateSchema = z.object({
+  description: z.string().trim().min(1).max(500),
+  amountCents: z.number().int().nonnegative(),
+  incurredAt: z.string().min(1),
+  category: z.string().optional(),
+  vendor: z.string().trim().max(200).optional().nullable(),
+  paymentMethod: z.string().trim().max(80).optional().nullable(),
+  receiptUrl: z.string().trim().max(1000).optional().nullable(),
+  taxDeductible: z.boolean().optional(),
+  resourceId: z.union([z.number().int().positive(), z.string().regex(/^\d+$/)]).optional().nullable(),
+  notes: z.string().trim().max(2000).optional().nullable(),
+});
 
 // GET /api/admin/expenses?from=ISO&to=ISO&category=X
 export async function GET(request: NextRequest) {
@@ -69,35 +84,27 @@ export async function POST(request: NextRequest) {
   if (!session?.user?.id || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const parsed = await parseJsonBody(request, expenseCreateSchema);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.data;
   try {
-    const body = await request.json();
-    const description = typeof body?.description === "string" ? body.description.trim() : "";
-    const amountCents = Number(body?.amountCents);
-    const incurredAt = typeof body?.incurredAt === "string" ? body.incurredAt : "";
-    if (!description) return NextResponse.json({ error: "Description required" }, { status: 400 });
-    if (!Number.isFinite(amountCents) || amountCents < 0) {
-      return NextResponse.json({ error: "Amount required" }, { status: 400 });
-    }
-    if (!incurredAt) return NextResponse.json({ error: "Date required" }, { status: 400 });
-
-    const rawCat = typeof body?.category === "string" ? body.category : "other";
-    const category = (EXPENSE_CATEGORIES as readonly string[]).includes(rawCat)
-      ? (rawCat as (typeof EXPENSE_CATEGORIES)[number])
+    const category = body.category && (EXPENSE_CATEGORIES as readonly string[]).includes(body.category)
+      ? (body.category as (typeof EXPENSE_CATEGORIES)[number])
       : "other";
 
     const [created] = await db
       .insert(expenses)
       .values({
-        description,
+        description: body.description,
         category,
-        amountCents: Math.round(amountCents),
-        vendor: typeof body?.vendor === "string" ? body.vendor.trim() || null : null,
-        paymentMethod: typeof body?.paymentMethod === "string" ? body.paymentMethod.trim() || null : null,
-        incurredAt,
-        receiptUrl: typeof body?.receiptUrl === "string" ? body.receiptUrl.trim() || null : null,
-        taxDeductible: body?.taxDeductible !== false,
-        resourceId: Number.isInteger(Number(body?.resourceId)) && Number(body.resourceId) > 0 ? Number(body.resourceId) : null,
-        notes: typeof body?.notes === "string" ? body.notes.trim() || null : null,
+        amountCents: Math.round(body.amountCents),
+        vendor: body.vendor?.trim() || null,
+        paymentMethod: body.paymentMethod?.trim() || null,
+        incurredAt: body.incurredAt,
+        receiptUrl: body.receiptUrl?.trim() || null,
+        taxDeductible: body.taxDeductible !== false,
+        resourceId: body.resourceId != null ? Number(body.resourceId) : null,
+        notes: body.notes?.trim() || null,
         createdBy: Number(session.user.id),
       })
       .returning();

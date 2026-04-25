@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload } from "lucide-react";
+import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload, ChevronUp, ChevronDown } from "lucide-react";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
@@ -67,7 +67,19 @@ export default function MembersPage() {
   const debouncedQ = useDebouncedValue(q, 300);
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Member | null>(null);
+  // Sort key matches the API's accepted values: lastName | joinedAt | nextRenewalAt | status.
+  const [sortKey, setSortKey] = useState<"lastName" | "joinedAt" | "nextRenewalAt" | "status">("lastName");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const abortRef = useRef<AbortController | null>(null);
+
+  function toggleSort(key: typeof sortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  }
 
   const load = useCallback(async () => {
     abortRef.current?.abort();
@@ -80,6 +92,8 @@ export default function MembersPage() {
       if (planFilter) params.set("planId", planFilter);
       if (renewingSoon) params.set("renewingSoon", "true");
       if (debouncedQ.trim().length >= 2) params.set("q", debouncedQ.trim());
+      params.set("sort", sortKey);
+      params.set("dir", sortDir);
       const [mRes, pRes] = await Promise.all([
         fetch(`/api/admin/members?${params}`, { signal: controller.signal }),
         fetch("/api/admin/membership-plans", { signal: controller.signal }),
@@ -95,7 +109,7 @@ export default function MembersPage() {
     } finally {
       if (!controller.signal.aborted) setLoading(false);
     }
-  }, [statusFilter, planFilter, renewingSoon, debouncedQ]);
+  }, [statusFilter, planFilter, renewingSoon, debouncedQ, sortKey, sortDir]);
 
   useEffect(() => {
     if (status === "authenticated") load();
@@ -236,11 +250,35 @@ export default function MembersPage() {
             <table className="w-full text-sm">
               <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
                 <tr>
-                  <th className="px-4 py-3">Name</th>
+                  <SortableTh
+                    label="Name"
+                    sortKey="lastName"
+                    activeKey={sortKey}
+                    dir={sortDir}
+                    onClick={toggleSort}
+                  />
                   <th className="px-4 py-3">Plan</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Joined</th>
-                  <th className="px-4 py-3">Next Renewal</th>
+                  <SortableTh
+                    label="Status"
+                    sortKey="status"
+                    activeKey={sortKey}
+                    dir={sortDir}
+                    onClick={toggleSort}
+                  />
+                  <SortableTh
+                    label="Joined"
+                    sortKey="joinedAt"
+                    activeKey={sortKey}
+                    dir={sortDir}
+                    onClick={toggleSort}
+                  />
+                  <SortableTh
+                    label="Next Renewal"
+                    sortKey="nextRenewalAt"
+                    activeKey={sortKey}
+                    dir={sortDir}
+                    onClick={toggleSort}
+                  />
                   <th className="px-4 py-3">Last Visit</th>
                   <th className="px-4 py-3"></th>
                 </tr>
@@ -305,6 +343,36 @@ export default function MembersPage() {
         />
       )}
     </div>
+  );
+}
+
+type SortKey = "lastName" | "joinedAt" | "nextRenewalAt" | "status";
+
+function SortableTh({
+  label, sortKey, activeKey, dir, onClick,
+}: {
+  label: string;
+  sortKey: SortKey;
+  activeKey: SortKey;
+  dir: "asc" | "desc";
+  onClick: (key: SortKey) => void;
+}) {
+  const isActive = activeKey === sortKey;
+  return (
+    <th className="px-4 py-3" aria-sort={isActive ? (dir === "asc" ? "ascending" : "descending") : "none"}>
+      <button
+        type="button"
+        onClick={() => onClick(sortKey)}
+        className="inline-flex items-center gap-1 uppercase tracking-wide text-xs text-text-secondary hover:text-navy"
+      >
+        <span>{label}</span>
+        {isActive ? (
+          dir === "asc" ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />
+        ) : (
+          <ChevronUp className="w-3 h-3 opacity-25" />
+        )}
+      </button>
+    </th>
   );
 }
 

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send, Check } from "lucide-react";
 import type { InquiryConfig, InquiryField } from "@/lib/inquiry-forms";
+import { trackConversion, trackEvent } from "@/lib/analytics";
 
 type FieldValue = string | string[] | number;
 
@@ -13,6 +14,25 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
   const [message, setMessage] = useState("");
   const [details, setDetails] = useState<Record<string, FieldValue>>({});
   const [honeypot, setHoneypot] = useState("");
+  // Capture UTM + referrer once on mount. Keeps the source field
+  // attribution-rich without the user seeing or filling anything.
+  const [attribution, setAttribution] = useState<{
+    utmSource?: string;
+    utmMedium?: string;
+    utmCampaign?: string;
+    referrer?: string;
+  }>({});
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    setAttribution({
+      utmSource: params.get("utm_source") || undefined,
+      utmMedium: params.get("utm_medium") || undefined,
+      utmCampaign: params.get("utm_campaign") || undefined,
+      referrer: document.referrer || undefined,
+    });
+  }, []);
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +66,13 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
     try {
       // Pull `sports` to top-level if present in details for indexing.
       const sports = details["sports"] || details["sport"];
+      // Stitch UTM into source so attribution rolls up cleanly.
+      const utmTag = attribution.utmSource
+        ? `utm:${attribution.utmSource}${attribution.utmCampaign ? `/${attribution.utmCampaign}` : ""}`
+        : "";
+      const finalSource = [source || `inquire/${config.slug}`, utmTag]
+        .filter(Boolean)
+        .join("|");
       const res = await fetch("/api/inquire", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,9 +82,9 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
           email: email || undefined,
           phone: phone || undefined,
           message: message || undefined,
-          details,
+          details: { ...details, ...attribution },
           sports,
-          source: source || `inquire/${config.slug}`,
+          source: finalSource,
           pageUrl: typeof window !== "undefined" ? window.location.href : undefined,
           // Honeypot — bots fill it, real users never see it.
           website: honeypot,
@@ -68,6 +95,16 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
         setError(json.error || "Something went wrong. Try again or call us.");
         return;
       }
+      // Fire analytics — gives marketing a real conversion event in
+      // GA + Meta Pixel + any future tools, with the inquiry kind +
+      // source so funnels can be sliced.
+      trackConversion("inquire_form_submit");
+      trackEvent("inquire_submitted", {
+        kind: config.kind,
+        source: finalSource,
+        utm_source: attribution.utmSource ?? "",
+        utm_campaign: attribution.utmCampaign ?? "",
+      });
       setSubmitted(true);
     } catch {
       setError("Network error. Please try again.");

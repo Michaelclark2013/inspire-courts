@@ -2231,3 +2231,22 @@ export const inquiryNotes = sqliteTable("inquiry_notes", {
 }, (table) => [
   index("inquiry_notes_inquiry_idx").on(table.inquiryId),
 ]);
+
+// ── Short links / redirects (#5 marketing) ───────────────────────────
+// SMS + QR campaigns need short, trackable URLs. /r/[slug] resolves
+// here and 302s, with a click counter for attribution. Front desk
+// can mint these without engineering involvement.
+export const shortLinks = sqliteTable("short_links", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  slug: text("slug").notNull().unique(),
+  destination: text("destination").notNull(),
+  label: text("label"), // "Summer camps SMS blast"
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  clickCount: integer("click_count").notNull().default(0),
+  createdBy: integer("created_by").references(() => users.id, { onDelete: "set null" }),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  expiresAt: text("expires_at"),
+}, (table) => [
+  index("short_links_slug_idx").on(table.slug),
+  index("short_links_active_idx").on(table.active),
+]);

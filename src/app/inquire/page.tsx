@@ -42,7 +42,7 @@ export default function InquireIndexPage() {
           What can we help you with?
         </h1>
         <p className="text-white/70 text-center max-w-2xl mx-auto mb-12">
-          Pick the closest option below. You'll fill out a short form and a real human will text you back within 30 minutes during business hours.
+          Pick the closest option below. You&apos;ll fill out a short form and a real human will text you back within 30 minutes during business hours.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

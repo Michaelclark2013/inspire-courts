@@ -224,6 +224,35 @@ export default function Header() {
     return () => window.clearTimeout(id);
   }, [open]);
 
+  // Trap Tab inside the mobile menu while it's open so keyboard users
+  // don't accidentally tab onto links behind the backdrop.
+  useEffect(() => {
+    if (!open) return;
+    const root = mobileNavRef.current;
+    if (!root) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      const focusables = Array.from(
+        root.querySelectorAll<HTMLElement>(
+          'a, button, [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => !el.hasAttribute("disabled") && el.offsetParent !== null);
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [open]);
+
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50 bg-navy shadow-lg"

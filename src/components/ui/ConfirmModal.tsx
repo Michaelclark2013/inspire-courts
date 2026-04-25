@@ -29,6 +29,11 @@ export default function ConfirmModal({
 
   useEffect(() => {
     if (open) {
+      // Capture the element that opened the modal so we can return focus
+      // to it on close. Without this, screen-reader/keyboard users land
+      // back at the top of the document — disorienting in long admin
+      // tables where the trigger button is far down the page.
+      const previouslyFocused = document.activeElement as HTMLElement | null;
       confirmRef.current?.focus();
       const handleKey = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
@@ -61,6 +66,9 @@ export default function ConfirmModal({
       return () => {
         document.removeEventListener("keydown", handleKey);
         document.body.style.overflow = "";
+        if (previouslyFocused && typeof previouslyFocused.focus === "function") {
+          previouslyFocused.focus();
+        }
       };
     }
   }, [open, onCancel]);

@@ -67,7 +67,7 @@ export default function AccessDeniedBanner() {
       <div className="flex-1 min-w-0">
         <p className="text-navy font-bold text-sm">Access denied</p>
         <p className="text-text-muted text-xs mt-0.5">
-          You don't have permission for <span className="text-navy font-semibold">{pretty}</span>.
+          You don&apos;t have permission for <span className="text-navy font-semibold">{pretty}</span>.
           Ask the main admin to grant access in Permissions.
         </p>
       </div>

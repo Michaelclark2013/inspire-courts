@@ -6,7 +6,7 @@ import { redirect, useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Phone, Mail, Calendar, CheckCircle2,
-  AlertTriangle, Pause, Users as UsersIcon, LogIn, Plus} from "lucide-react";
+  AlertTriangle, Pause, Users as UsersIcon, LogIn, Plus, UserX } from "lucide-react";
 
 type Detail = {
   member: {
@@ -91,7 +91,28 @@ export default function MemberDetailPage() {
   if (status === "loading") return null;
   if (status === "unauthenticated" || !session?.user?.role) redirect("/admin/login");
   if (loading) return <div className="p-6 text-text-secondary">Loading…</div>;
-  if (!detail) return <div className="p-6 text-text-secondary">Member not found</div>;
+  if (!detail) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 max-w-2xl">
+        <Link href="/admin/members" className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider mb-4">
+          <ArrowLeft className="w-3.5 h-3.5" /> Members
+        </Link>
+        <div className="bg-white border border-border rounded-2xl p-10 text-center">
+          <UserX className="w-10 h-10 text-text-muted mx-auto mb-3" />
+          <p className="text-navy font-bold mb-1">Member not found</p>
+          <p className="text-text-muted text-sm mb-4">
+            This member may have been removed, or the link is incorrect.
+          </p>
+          <Link
+            href="/admin/members"
+            className="inline-flex items-center gap-2 bg-navy hover:bg-navy/90 text-white rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to members
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const m = detail.member;
   const monthPct = m.maxVisitsPerMonth

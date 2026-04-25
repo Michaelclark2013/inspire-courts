@@ -11,6 +11,8 @@ import {
   Search,
   Download,
 } from "lucide-react";
+import { exportCSV } from "@/lib/export";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Row = {
   booking: {
@@ -93,10 +95,10 @@ export default function RentalsListPage() {
 
   function exportCsv(records: Row[]) {
     const header = ["Contract", "Renter", "Vehicle", "Plate", "Status", "Paid", "Start", "End", "Base", "Total"];
-    const lines = records.map(({ booking: b, vehicleName, vehiclePlate }) => [
+    const rows = records.map(({ booking: b, vehicleName, vehiclePlate }) => [
       b.contractNumber || "",
-      (b.renterName || "").replace(/"/g, '""'),
-      (vehicleName || "").replace(/"/g, '""'),
+      b.renterName || "",
+      vehicleName || "",
       vehiclePlate || "",
       b.status,
       b.paid ? "yes" : "no",
@@ -104,15 +106,8 @@ export default function RentalsListPage() {
       b.endAt,
       ((b.amountCents ?? 0) / 100).toFixed(2),
       (((b.totalCents ?? b.amountCents) ?? 0) / 100).toFixed(2),
-    ].map((v) => `"${v}"`).join(","));
-    const csv = [header.join(","), ...lines].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `rentals-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    ]);
+    exportCSV(`rentals-${new Date().toISOString().slice(0, 10)}`, header, rows);
   }
 
   return (
@@ -144,6 +139,7 @@ export default function RentalsListPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search renter, contract #, vehicle, plate"
+            aria-label="Search rentals by renter, contract, or vehicle"
             className="w-full bg-off-white border border-border rounded-xl pl-9 pr-4 py-2 text-navy text-sm focus:outline-none focus:border-red/60"
           />
         </div>
@@ -165,11 +161,19 @@ export default function RentalsListPage() {
           >
             <Download className="w-3 h-3" /> CSV
           </button>
+          {(search || filter !== "all") && (
+            <button
+              onClick={() => { setSearch(""); setFilter("all"); }}
+              className="text-xs text-text-muted hover:text-navy underline whitespace-nowrap"
+            >
+              Reset
+            </button>
+          )}
         </div>
       </div>
 
       {loading ? (
-        <div className="bg-white border border-border rounded-2xl p-10 text-center text-text-muted">Loading…</div>
+        <SkeletonRows count={6} />
       ) : error ? (
         <div className="bg-red/10 border border-red/20 rounded-2xl p-6 text-red text-sm">{error}</div>
       ) : filteredRows.length === 0 ? (

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Download, ChevronDown, ChevronRight, Filter } from "lucide-react";
@@ -77,6 +79,7 @@ export default function AuditLogPage() {
     action: "",
     actorUserId: "",
   });
+  const debouncedFilters = useDebouncedValue(filters, 300);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
   const load = useCallback(async (signal?: AbortSignal) => {
@@ -84,7 +87,7 @@ export default function AuditLogPage() {
     try {
       const params = new URLSearchParams();
       params.set("limit", "200");
-      for (const [k, v] of Object.entries(filters)) {
+      for (const [k, v] of Object.entries(debouncedFilters)) {
         if (v) params.set(k, v);
       }
       const res = await fetch(`/api/admin/audit-log?${params}`, { signal });
@@ -100,7 +103,7 @@ export default function AuditLogPage() {
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
-  }, [filters]);
+  }, [debouncedFilters]);
   useEffect(() => {
     if (status !== "authenticated") return;
     const controller = new AbortController();
@@ -203,7 +206,7 @@ export default function AuditLogPage() {
       </div>
 
       {loading ? (
-        <div className="text-text-secondary text-sm">Loading…</div>
+        <SkeletonRows count={8} />
       ) : rows.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <Filter className="w-10 h-10 text-text-secondary mx-auto mb-3" />

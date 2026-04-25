@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { members, membershipPlans, memberVisits } from "@/lib/db/schema";
-import { and, asc, desc, eq, gte, inArray, like, lt, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, like, lt, or, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { canAccess } from "@/lib/permissions";
@@ -72,6 +72,18 @@ export const GET = withTiming("admin.members.list", async (request: NextRequest)
     : members.lastName;
 
   try {
+    // lastVisitAt is computed via a correlated subquery so the entire
+    // page of rows comes back in one round-trip (paired in parallel with
+    // the count query). The previous implementation issued a third
+    // serial query against member_visits — the hottest write table in
+    // the schema — to attach this column, which was the dominant cost
+    // on this endpoint.
+    const lastVisitSubquery = sql<string | null>`(
+      SELECT MAX(${memberVisits.visitedAt})
+      FROM ${memberVisits}
+      WHERE ${memberVisits.memberId} = ${members.id}
+    )`;
+
     const [rows, [{ total }]] = await Promise.all([
       db
         .select({
@@ -89,6 +101,7 @@ export const GET = withTiming("admin.members.list", async (request: NextRequest)
           planId: members.membershipPlanId,
           planName: membershipPlans.name,
           planType: membershipPlans.type,
+          lastVisitAt: lastVisitSubquery,
         })
         .from(members)
         .leftJoin(membershipPlans, eq(membershipPlans.id, members.membershipPlanId))
@@ -99,28 +112,8 @@ export const GET = withTiming("admin.members.list", async (request: NextRequest)
       db.select({ total: sql<number>`count(*)` }).from(members).where(whereClause),
     ]);
 
-    // Attach last-visit timestamp per member in one aggregate query.
-    let lastVisitByMember: Map<number, string> = new Map();
-    if (rows.length > 0) {
-      const ids = rows.map((r) => r.id);
-      const visits = await db
-        .select({
-          memberId: memberVisits.memberId,
-          last: sql<string>`MAX(${memberVisits.visitedAt})`,
-        })
-        .from(memberVisits)
-        .where(inArray(memberVisits.memberId, ids))
-        .groupBy(memberVisits.memberId);
-      lastVisitByMember = new Map(visits.map((v) => [v.memberId, v.last]));
-    }
-
-    const data = rows.map((r) => ({
-      ...r,
-      lastVisitAt: lastVisitByMember.get(r.id) ?? null,
-    }));
-
     return NextResponse.json({
-      data,
+      data: rows,
       total: Number(total) || 0,
       page,
       limit,

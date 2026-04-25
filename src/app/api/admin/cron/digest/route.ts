@@ -9,6 +9,7 @@ import {
 import { and, desc, gte, sql } from "drizzle-orm";
 import nodemailer from "nodemailer";
 import { logger } from "@/lib/logger";
+import { requireCronSecret } from "@/lib/api-helpers";
 
 // POST /api/admin/cron/digest
 //
@@ -20,22 +21,8 @@ import { logger } from "@/lib/logger";
 // approvals, rejections, score entries, announcement changes, and tourney
 // mutations as a one-glance email.
 export async function POST(request: NextRequest) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) {
-    return NextResponse.json(
-      { error: "Digest cron disabled (CRON_SECRET not configured)" },
-      { status: 503 }
-    );
-  }
-
-  const authHeader = request.headers.get("authorization") || "";
-  const cronHeader = request.headers.get("x-cron-secret") || "";
-  const provided = authHeader.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length)
-    : cronHeader;
-  if (provided !== secret) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const fail = requireCronSecret(request);
+  if (fail) return fail;
 
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 

@@ -4,7 +4,9 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload } from "lucide-react";
+import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload, ChevronUp, ChevronDown } from "lucide-react";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Member = {
   id: number;
@@ -58,25 +60,42 @@ export default function MembersPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState("active");
   const [planFilter, setPlanFilter] = useState("");
   const [renewingSoon, setRenewingSoon] = useState(false);
   const [q, setQ] = useState("");
+  const debouncedQ = useDebouncedValue(q, 300);
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Member | null>(null);
+  // Sort key matches the API's accepted values: lastName | joinedAt | nextRenewalAt | status.
+  const [sortKey, setSortKey] = useState<"lastName" | "joinedAt" | "nextRenewalAt" | "status">("lastName");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const abortRef = useRef<AbortController | null>(null);
+
+  function toggleSort(key: typeof sortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  }
 
   const load = useCallback(async () => {
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
     setLoading(true);
+    setLoadError(null);
     try {
       const params = new URLSearchParams();
       if (statusFilter) params.set("status", statusFilter);
       if (planFilter) params.set("planId", planFilter);
       if (renewingSoon) params.set("renewingSoon", "true");
-      if (q.trim().length >= 2) params.set("q", q.trim());
+      if (debouncedQ.trim().length >= 2) params.set("q", debouncedQ.trim());
+      params.set("sort", sortKey);
+      params.set("dir", sortDir);
       const [mRes, pRes] = await Promise.all([
         fetch(`/api/admin/members?${params}`, { signal: controller.signal }),
         fetch("/api/admin/membership-plans", { signal: controller.signal }),
@@ -85,14 +104,18 @@ export default function MembersPage() {
         const json = await mRes.json();
         setMembers(json.data || []);
         setTotal(json.total || 0);
+      } else {
+        setLoadError(`Failed to load members (${mRes.status})`);
       }
       if (pRes.ok) setPlans((await pRes.json()).data || []);
     } catch (e) {
-      if ((e as Error)?.name !== "AbortError") throw e;
+      if ((e as Error)?.name !== "AbortError") {
+        setLoadError((e as Error).message || "Network error");
+      }
     } finally {
       if (!controller.signal.aborted) setLoading(false);
     }
-  }, [statusFilter, planFilter, renewingSoon, q]);
+  }, [statusFilter, planFilter, renewingSoon, debouncedQ, sortKey, sortDir]);
 
   useEffect(() => {
     if (status === "authenticated") load();
@@ -113,7 +136,11 @@ export default function MembersPage() {
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Members
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p
+            className="text-text-secondary text-sm mt-1"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             {total} total · {members.filter((m) => m.status === "active").length} active
           </p>
         </div>
@@ -134,17 +161,23 @@ export default function MembersPage() {
       </div>
 
       {/* FILTERS */}
-      <div className="flex flex-wrap gap-2 mb-4 items-center">
+      <div className="flex flex-wrap gap-2 mb-4 items-center" role="search">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="w-3.5 h-3.5 text-text-secondary absolute left-2.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-text-secondary absolute left-2.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search name, email, phone…"
+            aria-label="Search members by name, email, or phone"
             className="w-full bg-off-white border border-border rounded-md pl-8 pr-3 py-1.5 text-sm"
           />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          aria-label="Filter by member status"
+          className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm"
+        >
           <option value="">All statuses</option>
           <option value="active">Active</option>
           <option value="trial">Trial</option>
@@ -152,7 +185,12 @@ export default function MembersPage() {
           <option value="past_due">Past Due</option>
           <option value="cancelled">Cancelled</option>
         </select>
-        <select value={planFilter} onChange={(e) => setPlanFilter(e.target.value)} className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm">
+        <select
+          value={planFilter}
+          onChange={(e) => setPlanFilter(e.target.value)}
+          aria-label="Filter by membership plan"
+          className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm"
+        >
           <option value="">All plans</option>
           {plans.map((p) => (
             <option key={p.id} value={p.id}>{p.name}</option>
@@ -162,10 +200,39 @@ export default function MembersPage() {
           <input type="checkbox" checked={renewingSoon} onChange={(e) => setRenewingSoon(e.target.checked)} />
           Renewing this week
         </label>
+        {(q || statusFilter !== "active" || planFilter || renewingSoon) && (
+          <button
+            type="button"
+            onClick={() => {
+              setQ("");
+              setStatusFilter("active");
+              setPlanFilter("");
+              setRenewingSoon(false);
+            }}
+            className="text-xs text-text-secondary hover:text-navy underline"
+          >
+            Reset filters
+          </button>
+        )}
       </div>
 
+      {loadError ? (
+        <div role="alert" className="bg-red/10 border border-red/20 rounded-xl p-6 mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-red font-semibold">Couldn&apos;t load members</p>
+            <p className="text-red/80 text-sm">{loadError}</p>
+          </div>
+          <button
+            onClick={() => load()}
+            className="bg-red hover:bg-red-hover text-white rounded-md px-4 py-1.5 text-sm font-semibold whitespace-nowrap"
+          >
+            Retry
+          </button>
+        </div>
+      ) : null}
+
       {loading ? (
-        <div className="text-text-secondary text-sm">Loading…</div>
+        <SkeletonRows count={8} />
       ) : members.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <Users className="w-10 h-10 text-text-secondary mx-auto mb-3" />
@@ -217,13 +284,37 @@ export default function MembersPage() {
           {/* Desktop: table */}
           <div className="hidden md:block overflow-x-auto bg-white border border-border rounded-xl">
             <table className="w-full text-sm">
-              <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary">
+              <thead className="bg-off-white border-b border-border text-left text-xs uppercase tracking-wide text-text-secondary sticky top-0 z-10">
                 <tr>
-                  <th className="px-4 py-3">Name</th>
+                  <SortableTh
+                    label="Name"
+                    sortKey="lastName"
+                    activeKey={sortKey}
+                    dir={sortDir}
+                    onClick={toggleSort}
+                  />
                   <th className="px-4 py-3">Plan</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Joined</th>
-                  <th className="px-4 py-3">Next Renewal</th>
+                  <SortableTh
+                    label="Status"
+                    sortKey="status"
+                    activeKey={sortKey}
+                    dir={sortDir}
+                    onClick={toggleSort}
+                  />
+                  <SortableTh
+                    label="Joined"
+                    sortKey="joinedAt"
+                    activeKey={sortKey}
+                    dir={sortDir}
+                    onClick={toggleSort}
+                  />
+                  <SortableTh
+                    label="Next Renewal"
+                    sortKey="nextRenewalAt"
+                    activeKey={sortKey}
+                    dir={sortDir}
+                    onClick={toggleSort}
+                  />
                   <th className="px-4 py-3">Last Visit</th>
                   <th className="px-4 py-3"></th>
                 </tr>
@@ -288,6 +379,36 @@ export default function MembersPage() {
         />
       )}
     </div>
+  );
+}
+
+type SortKey = "lastName" | "joinedAt" | "nextRenewalAt" | "status";
+
+function SortableTh({
+  label, sortKey, activeKey, dir, onClick,
+}: {
+  label: string;
+  sortKey: SortKey;
+  activeKey: SortKey;
+  dir: "asc" | "desc";
+  onClick: (key: SortKey) => void;
+}) {
+  const isActive = activeKey === sortKey;
+  return (
+    <th className="px-4 py-3" aria-sort={isActive ? (dir === "asc" ? "ascending" : "descending") : "none"}>
+      <button
+        type="button"
+        onClick={() => onClick(sortKey)}
+        className="inline-flex items-center gap-1 uppercase tracking-wide text-xs text-text-secondary hover:text-navy"
+      >
+        <span>{label}</span>
+        {isActive ? (
+          dir === "asc" ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />
+        ) : (
+          <ChevronUp className="w-3 h-3 opacity-25" />
+        )}
+      </button>
+    </th>
   );
 }
 

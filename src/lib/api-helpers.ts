@@ -67,6 +67,32 @@ export function apiNotFound(detail?: string) {
   );
 }
 
+// ── Cron auth helper ─────────────────────────────────────────────────
+// Vercel Cron sends `Authorization: Bearer <CRON_SECRET>`; manual ops
+// triggers may also use `X-Cron-Secret: <CRON_SECRET>` (no Bearer prefix).
+// Returns null when authorized, or a NextResponse to short-circuit when not.
+// Centralizes the env-check + header-check so every cron route stays
+// uniform — adding a new cron is now: write the work + `const fail =
+// requireCronSecret(req); if (fail) return fail;` and that's it.
+export function requireCronSecret(request: Request): NextResponse | null {
+  const secret = process.env.CRON_SECRET;
+  if (!secret) {
+    return NextResponse.json(
+      { error: "CRON_SECRET not configured" },
+      { status: 503 }
+    );
+  }
+  const authHeader = request.headers.get("authorization") || "";
+  const cronHeader = request.headers.get("x-cron-secret") || "";
+  const provided = authHeader.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length)
+    : cronHeader;
+  if (provided !== secret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return null;
+}
+
 /**
  * Parse a request body as JSON + validate against a Zod schema.
  *

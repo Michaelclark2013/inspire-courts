@@ -2,15 +2,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Calendar, GraduationCap, Cake, Users, Trophy, Star } from "lucide-react";
 import { INQUIRY_CONFIGS } from "@/lib/inquiry-forms";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Inquire — Inspire Courts AZ",
   description: "Reserve a court, book training, host a tournament, or join a league at Arizona's premier multi-sport facility. Get a response within 30 minutes.",
-  alternates: { canonical: "/inquire" },
+  alternates: { canonical: `${SITE_URL}/inquire` },
   openGraph: {
     title: "Inquire — Inspire Courts AZ",
     description: "Reserve a court, book training, host a tournament, or join a league. Response within 30 minutes.",
-    url: "/inquire",
+    url: `${SITE_URL}/inquire`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/images/courts-bg.jpg`,
+        width: 1200,
+        height: 630,
+        alt: "Inspire Courts AZ — Gilbert, Arizona indoor multi-sport facility",
+      },
+    ],
   },
 };
 

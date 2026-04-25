@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Check, Clock, MessageSquare } from "lucide-react";
 import { INQUIRY_CONFIGS, getInquiryConfig } from "@/lib/inquiry-forms";
 import { InquiryForm } from "@/components/inquiry/InquiryForm";
+import { SITE_URL } from "@/lib/constants";
 
 export function generateStaticParams() {
   return INQUIRY_CONFIGS.filter((c) => c.kind !== "general").map((c) => ({ slug: c.slug }));
@@ -13,10 +14,25 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const config = getInquiryConfig(slug);
   if (!config) return { title: "Inquire — Inspire Courts AZ" };
+  const url = `${SITE_URL}/inquire/${slug}`;
   return {
     title: config.metaTitle,
     description: config.metaDescription,
-    openGraph: { title: config.metaTitle, description: config.metaDescription },
+    alternates: { canonical: url },
+    openGraph: {
+      title: config.metaTitle,
+      description: config.metaDescription,
+      url,
+      type: "website",
+      images: [
+        {
+          url: `${SITE_URL}/images/courts-bg.jpg`,
+          width: 1200,
+          height: 630,
+          alt: `${config.title} — Inspire Courts AZ`,
+        },
+      ],
+    },
   };
 }
 

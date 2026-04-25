@@ -24,6 +24,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/faq`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${base}/camps`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/open-gym`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    { url: `${base}/leave-a-review`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/privacy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+    { url: `${base}/terms`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     // Sport microsites — high SEO priority.
     { url: `${base}/basketball`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.95 },
     { url: `${base}/volleyball`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.95 },

@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { SITE_URL } from "@/lib/constants";
+import {
+  FACILITY_ADDRESS,
+  FACILITY_EMAIL,
+  FACILITY_NAME,
+  FACILITY_PHONE,
+  SITE_URL,
+} from "@/lib/constants";
 import ContactClient from "./ContactClient";
 
 export const metadata: Metadata = {
@@ -33,6 +39,49 @@ export const metadata: Metadata = {
   },
 };
 
+// LocalBusiness schema so Google can render rich knowledge-panel-style
+// results when someone searches for the facility by name. Mirrors the
+// SportsActivityLocation block on /facility but uses LocalBusiness here
+// because the contact page is the canonical "how to reach us" surface.
+const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": `${SITE_URL}/#contact`,
+  name: FACILITY_NAME,
+  url: `${SITE_URL}/contact`,
+  telephone: `+1${FACILITY_PHONE.replace(/\D/g, "")}`,
+  email: FACILITY_EMAIL,
+  image: `${SITE_URL}/images/courts-bg.jpg`,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: `${FACILITY_ADDRESS.street}, ${FACILITY_ADDRESS.suite}`,
+    addressLocality: FACILITY_ADDRESS.city,
+    addressRegion: FACILITY_ADDRESS.state,
+    postalCode: FACILITY_ADDRESS.zip,
+    addressCountry: "US",
+  },
+  // Daily 6am–10pm — matches what's surfaced elsewhere on the site.
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [
+        "Monday", "Tuesday", "Wednesday", "Thursday",
+        "Friday", "Saturday", "Sunday",
+      ],
+      opens: "06:00",
+      closes: "22:00",
+    },
+  ],
+};
+
 export default function ContactPage() {
-  return <ContactClient />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      />
+      <ContactClient />
+    </>
+  );
 }

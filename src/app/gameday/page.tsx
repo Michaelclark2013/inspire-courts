@@ -156,6 +156,10 @@ const INFO_SECTIONS = [
   },
 ];
 
+// Public marketing page hydrated from siteContent — revalidate hourly so
+// admin content edits propagate without rebuilding the whole site.
+export const revalidate = 3600;
+
 export default async function GameDayPage() {
   const page = await getPageContent("gameday");
 

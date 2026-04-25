@@ -117,6 +117,10 @@ const SKILLS = [
   { icon: Clock, title: "Game Situations", desc: "Late-game scenarios, pressure free throws, and decision-making under fatigue." },
 ];
 
+// Public marketing page hydrated from siteContent — revalidate hourly so
+// admin content edits propagate without rebuilding the whole site.
+export const revalidate = 3600;
+
 export default async function TrainingPage() {
   const page = await getPageContent("training");
 

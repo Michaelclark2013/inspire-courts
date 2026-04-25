@@ -147,6 +147,10 @@ const JSON_LD = {
     "Arizona's premier indoor basketball & volleyball facility. 7 courts and a full concession stand in Gilbert, AZ.",
 };
 
+// Public marketing page hydrated from siteContent — revalidate hourly so
+// admin content edits propagate without rebuilding the whole site.
+export const revalidate = 3600;
+
 export default async function FacilityPage() {
   const page = await getPageContent("facility");
 

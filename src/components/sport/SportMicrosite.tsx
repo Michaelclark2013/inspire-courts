@@ -2,20 +2,20 @@ import Link from "next/link";
 import { ArrowRight, Check, MessageSquare, Phone } from "lucide-react";
 import type { SportConfig } from "@/lib/sport-microsites";
 import { SPORT_CONFIGS } from "@/lib/sport-microsites";
+import { FACILITY_PHONE, SITE_URL } from "@/lib/constants";
 
 // JSON-LD generators — emitted once per sport page so Google can show
 // rich results (FAQ panel, sitelinks, business info) for free.
 function buildJsonLd(config: SportConfig): object[] {
-  const baseUrl = "https://inspirecourtsaz.com";
-  const sportUrl = `${baseUrl}/${config.slug}`;
+  const sportUrl = `${SITE_URL}/${config.slug}`;
   const localBusiness = {
     "@context": "https://schema.org",
     "@type": "SportsActivityLocation",
     name: `Inspire Courts AZ — ${config.name}`,
     description: config.metaDescription,
     url: sportUrl,
-    telephone: "+1-480-555-0100",
-    image: `${baseUrl}/images/inspire-athletics-logo.png`,
+    telephone: FACILITY_PHONE,
+    image: `${SITE_URL}/images/inspire-athletics-logo.png`,
     sport: config.name,
     address: {
       "@type": "PostalAddress",
@@ -26,7 +26,7 @@ function buildJsonLd(config: SportConfig): object[] {
     parentOrganization: {
       "@type": "SportsOrganization",
       name: "Inspire Courts AZ",
-      url: baseUrl,
+      url: SITE_URL,
     },
   };
   const faq = {

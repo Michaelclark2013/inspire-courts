@@ -162,6 +162,11 @@ const FOCUS_RING =
 const FOCUS_RING_ON_DARK =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy";
 
+// Public homepage hydrated from siteContent. Revalidate every 5 minutes
+// so admin content/CTA edits go live quickly while still serving most
+// requests from the edge cache.
+export const revalidate = 300;
+
 export default async function Home() {
   const page = await getPageContent("home");
 

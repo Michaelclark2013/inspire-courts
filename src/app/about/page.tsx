@@ -70,6 +70,10 @@ const sportsOrgSchema = {
   sport: ["Basketball", "Volleyball", "Futsal", "Jiu-Jitsu"],
 };
 
+// Public marketing page hydrated from siteContent — revalidate hourly so
+// admin content edits propagate without rebuilding the whole site.
+export const revalidate = 3600;
+
 export default async function AboutPage() {
   const page = await getPageContent("about");
 

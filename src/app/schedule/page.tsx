@@ -31,6 +31,10 @@ export const metadata: Metadata = {
   },
 };
 
+// Schedules update intra-day; revalidate every 5 minutes so manual edits
+// in admin propagate quickly while still benefiting from edge cache.
+export const revalidate = 300;
+
 export default async function SchedulePage() {
   const page = await getPageContent("schedule");
 

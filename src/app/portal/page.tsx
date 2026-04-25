@@ -271,17 +271,17 @@ export default function PortalDashboard() {
               </p>
             </div>
             <div className="grid gap-2 max-w-sm mx-auto">
-              <a href="/portal/profile" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
+              <Link href="/portal/profile" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
                 <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
                 <span className="text-navy text-sm font-medium">Complete your profile</span>
                 <Calendar className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
-              </a>
+              </Link>
               {(role === "parent" || role === "coach") && (
-                <a href="/portal/waiver" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
+                <Link href="/portal/waiver" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
                   <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
                   <span className="text-navy text-sm font-medium">Submit player waivers</span>
                   <FileCheck className="w-3.5 h-3.5 text-text-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
-                </a>
+                </Link>
               )}
               <Link href="/tournaments" className="flex items-center gap-3 p-3 bg-off-white hover:bg-light-gray rounded-xl transition-colors group">
                 <span className="w-7 h-7 rounded-full bg-red/10 text-red flex items-center justify-center text-xs font-bold flex-shrink-0">{role === "parent" || role === "coach" ? "3" : "2"}</span>

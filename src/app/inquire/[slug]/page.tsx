@@ -83,7 +83,7 @@ export default async function InquirePage({
               30-minute response SLA
             </div>
             <p className="text-text-muted text-sm">
-              Mon-Fri 8a-7p · Sat 9a-5p. Outside hours we'll reach out first thing the next morning.
+              Mon-Fri 8a-7p · Sat 9a-5p. Outside hours we&apos;ll reach out first thing the next morning.
             </p>
           </div>
           <div className="bg-white border border-border rounded-2xl p-5">

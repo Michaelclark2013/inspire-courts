@@ -126,8 +126,10 @@ export default function PermissionsIndexPage() {
             >
               Role Defaults
             </Link>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API route, not a page */}
             <a
               href="/api/admin/permissions/export"
+              download
               className="bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
             >
               Export CSV

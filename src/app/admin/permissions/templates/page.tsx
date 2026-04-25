@@ -114,7 +114,7 @@ export default function TemplatesPage() {
           <ShieldCheck className="w-10 h-10 text-text-muted mx-auto mb-3" />
           <p className="text-navy font-bold mb-1">No templates yet</p>
           <p className="text-text-muted text-sm mb-4">
-            Save a bundle like "Tournament scorekeeper" or "Fill-in manager" so you can apply it to anyone in seconds.
+            Save a bundle like &ldquo;Tournament scorekeeper&rdquo; or &ldquo;Fill-in manager&rdquo; so you can apply it to anyone in seconds.
           </p>
           <button
             onClick={() => { setEditing(null); setComposerOpen(true); }}
@@ -283,7 +283,7 @@ function ApplyDialog({
     <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-lg max-h-[92vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
-          <h2 className="text-navy font-bold text-lg font-heading">Apply "{templateName}"</h2>
+          <h2 className="text-navy font-bold text-lg font-heading">Apply &ldquo;{templateName}&rdquo;</h2>
           <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-navy p-1"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-5 space-y-4">

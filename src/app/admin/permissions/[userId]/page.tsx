@@ -534,7 +534,7 @@ export default function PermissionsDetailPage() {
         <div className="mt-6 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 flex items-start gap-2">
           <AlertCircle className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
           <p className="text-amber-700 text-xs">
-            <strong>Admin account:</strong> revokes won't lock this person out of /admin/permissions (self-protection).
+            <strong>Admin account:</strong> revokes won&apos;t lock this person out of /admin/permissions (self-protection).
             Change the role instead if you want to demote.
           </p>
         </div>

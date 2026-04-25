@@ -164,7 +164,7 @@ export default function RoleDefaultsPage() {
         <div>
           <p className="text-navy font-bold text-sm mb-1">Want someone to have extra access?</p>
           <p className="text-text-muted text-xs mb-3">
-            Instead of changing a user's role (which affects their whole experience), add a per-user override.
+            Instead of changing a user&apos;s role (which affects their whole experience), add a per-user override.
             Overrides beat defaults — you can grant a Coach access to /admin/scores, or revoke /admin/payroll from a Staff member.
           </p>
           <Link

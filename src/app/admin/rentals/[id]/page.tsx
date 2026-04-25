@@ -321,7 +321,7 @@ export default function RentalDetailPage() {
             <>
               <div className="border-t border-border my-2" />
               <p className="text-text-muted text-[10px] uppercase tracking-widest mb-1">
-                Renter's Vehicle Registration
+                Renter&apos;s Vehicle Registration
               </p>
               <Kv
                 label="Reg #"

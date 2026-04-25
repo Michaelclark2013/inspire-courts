@@ -234,7 +234,7 @@ export default function NewRentalPage() {
               <input value={purpose} onChange={(e) => setPurpose(e.target.value)} className={ipt} placeholder="Team trip, delivery, etc." />
             </div>
             <div>
-              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Driver's License #</label>
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Driver&apos;s License #</label>
               <input value={renterLicenseNumber} onChange={(e) => setRenterLicenseNumber(e.target.value)} className={ipt} />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -248,7 +248,7 @@ export default function NewRentalPage() {
               </div>
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Driver's License Photo URL</label>
+              <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Driver&apos;s License Photo URL</label>
               <input value={renterLicensePhotoUrl} onChange={(e) => setRenterLicensePhotoUrl(e.target.value)} className={ipt} placeholder="https://... (uploaded photo of DL)" />
             </div>
             <div className="sm:col-span-2">
@@ -262,7 +262,7 @@ export default function NewRentalPage() {
         <div className="bg-white border border-border rounded-2xl shadow-sm p-5">
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-1">Renter Insurance</h2>
           <p className="text-text-muted text-xs mb-4">
-            Capture the renter's personal auto insurance. Required unless they accept our collision damage waiver below.
+            Capture the renter&apos;s personal auto insurance. Required unless they accept our collision damage waiver below.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>

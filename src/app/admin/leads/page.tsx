@@ -243,11 +243,16 @@ export default function LeadsPage() {
               <tbody className="divide-y divide-border">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={6}
-                      className="px-5 py-8 text-center text-navy/30"
-                    >
-                      No leads found
+                    <td colSpan={6} className="px-5 py-12 text-center">
+                      <TrendingUp className="w-8 h-8 mx-auto mb-2 text-navy/20" aria-hidden="true" />
+                      <p className="text-navy/60 text-sm font-semibold">
+                        {search || sourceFilter ? "No leads match these filters" : "No leads yet"}
+                      </p>
+                      <p className="text-navy/40 text-xs mt-1">
+                        {search || sourceFilter
+                          ? "Try clearing filters or a different search."
+                          : "New form submissions and signups will appear here."}
+                      </p>
                     </td>
                   </tr>
                 ) : (

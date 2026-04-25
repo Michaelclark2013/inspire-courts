@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { formatDate, formatPhone } from "@/lib/utils";
 
 type User = {
@@ -462,9 +463,8 @@ export default function UsersPage() {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-16 text-navy/40">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" aria-hidden="true" />
-            Loading users...
+          <div className="p-3">
+            <SkeletonRows count={6} />
           </div>
         ) : fetchError ? (
           <div className="text-center py-16">
@@ -487,7 +487,7 @@ export default function UsersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <caption className="sr-only">User accounts</caption>
-              <thead>
+              <thead className="bg-white sticky top-0 z-10">
                 <tr className="border-b border-border text-navy/50 text-xs uppercase tracking-wider">
                   <th scope="col" className="text-left px-6 py-3 font-semibold">Name</th>
                   <th scope="col" className="text-left px-6 py-3 font-semibold hidden sm:table-cell">Email</th>

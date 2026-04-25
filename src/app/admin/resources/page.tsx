@@ -223,6 +223,7 @@ export default function ResourcesFleetPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, plate, make, model"
+            aria-label="Search vehicles by name, plate, make, or model"
             className="w-full bg-off-white border border-border rounded-xl pl-9 pr-4 py-2.5 text-navy text-sm focus:outline-none focus:border-red/60"
           />
         </div>

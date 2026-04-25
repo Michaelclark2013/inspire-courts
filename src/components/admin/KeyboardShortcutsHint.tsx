@@ -52,14 +52,18 @@ export default function KeyboardShortcutsHint() {
             onClick={() => setOpen(false)}
           />
           <div
-            className="fixed z-[61] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border border-border w-[340px] p-6"
+            className="fixed z-[61] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border border-border w-[90vw] max-w-[340px] max-h-[90vh] overflow-y-auto p-6"
             role="dialog"
             aria-modal="true"
             aria-labelledby="kb-shortcuts-title"
           >
             <div className="flex items-center justify-between mb-5">
               <h3 id="kb-shortcuts-title" className="text-navy font-bold text-sm uppercase tracking-wider">Keyboard Shortcuts</h3>
-              <button onClick={() => setOpen(false)} className="text-text-secondary hover:text-navy transition-colors" aria-label="Close">
+              <button
+                onClick={() => setOpen(false)}
+                className="-mr-2 -mt-2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-text-secondary hover:text-navy hover:bg-off-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                aria-label="Close"
+              >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>

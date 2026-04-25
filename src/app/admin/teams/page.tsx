@@ -267,7 +267,7 @@ function TeamsPageShell({
               {/* Desktop: table — denser, sortable */}
               <div className="hidden md:block overflow-x-auto -mx-1">
                 <table className="w-full text-sm">
-                  <thead className="text-[11px] uppercase tracking-wider text-text-secondary border-b border-border">
+                  <thead className="text-[11px] uppercase tracking-wider text-text-secondary border-b border-border bg-white sticky top-0 z-10">
                     <tr>
                       <th className="text-left px-2 py-2 font-semibold">Team</th>
                       <th className="text-left px-2 py-2 font-semibold">Coach</th>

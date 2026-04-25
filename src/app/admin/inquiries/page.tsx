@@ -249,6 +249,7 @@ export default function InquiriesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search name, phone, email, sport…"
+            aria-label="Search inquiries by name, phone, email, or sport"
             className="w-full bg-white border border-border rounded-lg pl-8 pr-8 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
           />
           {search && (
@@ -261,7 +262,7 @@ export default function InquiriesPage() {
             </button>
           )}
         </div>
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="bg-off-white border border-border rounded-lg px-3 py-1.5 text-sm">
+        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} aria-label="Filter inquiries by status" className="bg-off-white border border-border rounded-lg px-3 py-1.5 text-sm">
           <option value="open">Open</option>
           <option value="">All</option>
           <option value="new">New</option>
@@ -270,11 +271,27 @@ export default function InquiriesPage() {
           <option value="won">Won</option>
           <option value="lost">Lost</option>
         </select>
-        <select value={filterKind} onChange={(e) => setFilterKind(e.target.value)} className="bg-off-white border border-border rounded-lg px-3 py-1.5 text-sm">
+        <select value={filterKind} onChange={(e) => setFilterKind(e.target.value)} aria-label="Filter inquiries by kind" className="bg-off-white border border-border rounded-lg px-3 py-1.5 text-sm">
           <option value="">All kinds</option>
           {INQUIRY_CONFIGS.filter((c) => c.kind !== "general").map((c) => <option key={c.kind} value={c.kind}>{c.title}</option>)}
         </select>
+        {(search || filterStatus !== "open" || filterKind) && (
+          <button
+            type="button"
+            onClick={() => { setSearch(""); setFilterStatus("open"); setFilterKind(""); }}
+            className="text-xs text-text-muted hover:text-navy underline whitespace-nowrap"
+          >
+            Reset
+          </button>
+        )}
       </div>
+      <p
+        className="text-text-muted text-xs mb-3"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        Showing {filtered.length} {filtered.length === 1 ? "inquiry" : "inquiries"}
+      </p>
 
       {/* List */}
       {filtered.length === 0 ? (

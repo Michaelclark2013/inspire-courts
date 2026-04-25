@@ -484,10 +484,10 @@ export default function ChatWidget() {
             </div>
             <button
               onClick={closeChat}
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center flex-shrink-0 transition-colors"
+              className="min-w-[44px] min-h-[44px] -mr-2 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center flex-shrink-0 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               aria-label="Close chat"
             >
-              <X className="w-4 h-4 text-white" aria-hidden="true" />
+              <X className="w-5 h-5 text-white" aria-hidden="true" />
             </button>
           </div>
 

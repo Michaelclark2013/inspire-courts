@@ -41,10 +41,9 @@ export const GET = withTiming("admin.availability.list", async (request: NextReq
     if (userIdRaw && Number.isInteger(userId) && userId > 0) {
       query = query.where(eq(staffAvailability.userId, userId));
     }
-    const rows = await query.orderBy(
-      asc(staffAvailability.weekday),
-      asc(staffAvailability.startTime)
-    );
+    const rows = await query
+      .orderBy(asc(staffAvailability.weekday), asc(staffAvailability.startTime))
+      .limit(1000);
     return NextResponse.json({ data: rows, total: rows.length });
   } catch (err) {
     logger.error("Failed to load availability", { error: String(err) });

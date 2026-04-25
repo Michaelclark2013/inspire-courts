@@ -154,6 +154,7 @@ export default function KioskPage() {
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder="Search name, email, phone…"
+            aria-label="Search check-in by name, email, or phone"
             className="w-full bg-white border-2 border-border rounded-xl pl-14 pr-4 py-5 text-2xl font-medium text-navy focus:border-navy outline-none"
           />
           {q && (

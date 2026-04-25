@@ -102,6 +102,7 @@ export default function WaiversPage() {
         <input
           value={q} onChange={(e) => setQ(e.target.value)}
           placeholder="Search name, email, team…"
+          aria-label="Search waivers by name, email, or team"
           className="flex-1 min-w-[200px] bg-off-white border border-border rounded-md px-3 py-1.5 text-sm"
         />
         <div className="inline-flex border border-border rounded-md overflow-hidden">

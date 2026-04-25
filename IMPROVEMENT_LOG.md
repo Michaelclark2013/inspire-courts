@@ -483,3 +483,65 @@
 ### Build Status
 - ✅ PASS — `npm run build` clean across all 21 cycles
 - ✅ All pushed to `improvements/round-76-clubform-contact-2026-04-17` branch
+
+---
+
+## 2026-04-25 — Automated Improvement Run (Round 4)
+
+### Summary
+- 1 issue fixed, 3 flagged for manual review
+
+### Changes Made
+- [Accessibility]: Add `focus-visible:outline-2 focus-visible:outline-white` to courts number input in admin staffing page — on dark navy background, `focus:outline-none` left keyboard users with zero focus indicator (`src/app/admin/staffing/page.tsx:164`)
+
+### Flagged for Manual Review
+- [Build Warning]: Next.js 16.2.3 deprecates the `middleware` file convention in favor of `proxy`. `src/middleware.ts` should be renamed to `src/proxy.ts` to eliminate the build warning. Requires careful review of Next.js docs — the matcher config and `next-auth/jwt` import may need updates.
+- [Dependencies]: `npm audit` reports 11 moderate vulnerabilities in the `uuid → svix → resend` chain. `npm audit fix --force` would downgrade next-auth to a breaking version (1.x). Defer to a planned maintenance window where next-auth 5.x migration can be done properly.
+- [Performance/Maintainability]: Several component files exceed 500 lines: `EventsHub.tsx` (875), `AdminSidebar.tsx` (788), `OpsDashboard.tsx` (766), `facility/page.tsx` (723), `LiveScoreboard.tsx` (745). These are functional but candidates for splitting in a dedicated refactor pass.
+
+### Audit Coverage
+- ✅ Build & Type Safety — no TypeScript errors or unused imports
+- ✅ Silent Error Swallowing — all empty catch blocks reviewed; all intentional with comments
+- ✅ Security Review — no raw string SQL, no secrets in client code, ID validation confirmed
+- ✅ Theme Consistency — dark-theme artifacts confirmed intentional (dark section heroes, portal pages, scoreboard)
+- ✅ SEO & Metadata — all public pages export metadata; sitemap.ts and robots.ts present
+- ✅ Images — all `<img>` elements have `alt` attributes
+- ✅ Loading & Error States — existing patterns consistent with prior cycles
+- ✅ Dependency Health — 11 moderate vulns flagged (no auto-fix safe to apply)
+- ✅ Broken References — no broken admin hrefs or fetch() calls to missing routes found
+
+### Build Status
+- ✅ PASS — `npm run build` clean (229 pages, 0 TypeScript errors)
+
+---
+
+## 2026-04-25 — Automated Improvement Run
+
+### Summary
+- 7 issues found, 7 fixed, 3 flagged for manual review
+
+### Changes Made
+- [Accessibility]: Added `aria-label="Close"` to icon-only `<X>` close button in `src/app/admin/permissions/page.tsx:372`
+- [Accessibility]: Added `aria-label="Close"` to two icon-only `<X>` close buttons in `src/app/admin/permissions/[userId]/page.tsx:601,682`
+- [Accessibility]: Added `aria-label="Close"` to two icon-only `<X>` close buttons in `src/app/admin/permissions/templates/page.tsx:287,419`
+- [Accessibility]: Added `aria-label="Close"` to icon-only `<X>` close button in `src/app/admin/announcements/page.tsx:405`
+- [Accessibility]: Added `aria-label="Revoke API key"` and `aria-label="Delete webhook"` to icon-only `<Trash2>` buttons in `src/app/admin/integrations/page.tsx:135,179`
+
+### Flagged for Manual Review
+- [Build Warning]: Next.js 16.2.3 deprecates the `middleware` file convention in favor of `proxy`. `src/middleware.ts` should be renamed to `src/proxy.ts`. Requires careful review — matcher config and `next-auth/jwt` import may need updates.
+- [Dependencies]: `npm audit` reports 11 moderate vulnerabilities in the `uuid → svix → resend` chain. `npm audit fix --force` would downgrade next-auth to a breaking version (1.x). Defer to a planned maintenance window where next-auth 5.x migration can be done properly.
+- [Performance/Maintainability]: Several component files exceed 500 lines: `content/page.tsx` (795), `tournaments/manage/page.tsx` (775), `permissions/[userId]/page.tsx` (758), `equipment/page.tsx` (645). Functional but candidates for splitting in a dedicated refactor pass.
+
+### Audit Coverage
+- ✅ Build & Type Safety — compiled cleanly (251 pages, 0 TypeScript errors)
+- ✅ Silent Error Swallowing — all empty/ignore catch blocks reviewed; heartbeat polling and parse-fallback patterns are intentional
+- ✅ Security Review — all admin API routes use `getServerSession`/auth checks; no raw SQL concatenation; no hardcoded secrets in source
+- ✅ Theme Consistency — `text-white/`, `bg-white/10` patterns in admin confirmed inside navy hero sections (intentional); no dark-theme artifacts on light admin cards/inputs
+- ✅ SEO & Metadata — all public pages export `metadata`; `sitemap.ts` and `robots.ts` present
+- ✅ Images — no `<img>` tags missing `alt` attributes
+- ✅ Loading & Error States — key admin pages (revenue, tournaments, checkin) have loading/error handling
+- ⚠ Dependency Health — 11 moderate vulns flagged, no safe auto-fix available
+- ✅ Broken References — no missing import targets, broken hrefs, or orphaned API routes found
+
+### Build Status
+- ✅ PASS — `npm run build` clean (251 pages, 0 TypeScript errors, 0 TS errors)

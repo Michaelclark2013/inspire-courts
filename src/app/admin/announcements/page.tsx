@@ -402,7 +402,7 @@ function Composer({
           <h2 className="text-navy font-bold text-lg font-heading">
             {existing ? "Edit Announcement" : "New Announcement"}
           </h2>
-          <button type="button" onClick={onClose} className="text-text-muted hover:text-navy p-1">
+          <button type="button" onClick={onClose} aria-label="Close" className="text-text-muted hover:text-navy p-1">
             <X className="w-5 h-5" />
           </button>
         </div>

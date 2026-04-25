@@ -598,7 +598,7 @@ function HistoryPanel({
             <Clock className="w-4 h-4 text-red" />
             <h2 className="text-navy font-bold text-lg font-heading">Permission History</h2>
           </div>
-          <button onClick={onClose} className="text-text-muted hover:text-navy p-1">
+          <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-navy p-1">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -679,7 +679,7 @@ function CopyFromDialog({
           <h2 className="text-navy font-bold text-lg font-heading flex items-center gap-2">
             <Copy className="w-4 h-4 text-red" /> Copy Permissions From
           </h2>
-          <button onClick={onClose} className="text-text-muted hover:text-navy p-1">
+          <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-navy p-1">
             <X className="w-5 h-5" />
           </button>
         </div>

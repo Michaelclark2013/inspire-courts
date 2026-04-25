@@ -284,7 +284,7 @@ function ApplyDialog({
       <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-lg max-h-[92vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
           <h2 className="text-navy font-bold text-lg font-heading">Apply "{templateName}"</h2>
-          <button onClick={onClose} className="text-text-muted hover:text-navy p-1"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-navy p-1"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-5 space-y-4">
           <input
@@ -416,7 +416,7 @@ function Composer({
           <h2 className="text-navy font-bold text-lg font-heading">
             {existing ? "Edit Template" : "New Template"}
           </h2>
-          <button type="button" onClick={onClose} className="text-text-muted hover:text-navy p-1"><X className="w-5 h-5" /></button>
+          <button type="button" onClick={onClose} aria-label="Close" className="text-text-muted hover:text-navy p-1"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-5 space-y-4">
           <div>

@@ -31,12 +31,12 @@ export function UpdatePrompt() {
   if (!visible) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-[9999] bg-[#0B1D3A] text-white rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3 animate-slide-down max-w-xs">
+    <div className="fixed top-4 right-4 z-[9999] bg-navy text-white rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3 animate-slide-down max-w-xs">
       <RefreshCw className="w-5 h-5 shrink-0 animate-spin" aria-hidden="true" />
       <p className="text-sm flex-1">A new version is available</p>
       <button
         onClick={handleUpdate}
-        className="shrink-0 bg-white text-[#0B1D3A] font-bold text-xs px-3 py-1.5 rounded-lg hover:bg-white/90 transition-colors"
+        className="shrink-0 bg-white text-navy font-bold text-xs px-3 py-1.5 rounded-lg hover:bg-white/90 transition-colors"
       >
         Update
       </button>

@@ -12,6 +12,7 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [details, setDetails] = useState<Record<string, FieldValue>>({});
+  const [honeypot, setHoneypot] = useState("");
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +59,8 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
           sports,
           source: source || `inquire/${config.slug}`,
           pageUrl: typeof window !== "undefined" ? window.location.href : undefined,
+          // Honeypot — bots fill it, real users never see it.
+          website: honeypot,
         }),
       });
       if (!res.ok) {
@@ -95,6 +98,20 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
 
   return (
     <form onSubmit={submit} className="bg-white border border-border rounded-2xl shadow-lg p-5 sm:p-6 space-y-4">
+      {/* Honeypot — visually hidden + tabindex out of order. Bots fill,
+          humans don't. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] w-px h-px overflow-hidden" style={{ position: "absolute" }}>
+        <label htmlFor="website-url-field">Website (leave blank)</label>
+        <input
+          id="website-url-field"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Your name" required>
           <input

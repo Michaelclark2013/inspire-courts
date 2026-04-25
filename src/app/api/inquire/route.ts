@@ -23,14 +23,45 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
+
+    // Honeypot — bots fill every field. Real users never see this one.
+    // Form name "website" because that's the most-likely auto-fill bait.
+    if (body?.website && String(body.website).trim().length > 0) {
+      // Pretend success so the bot doesn't retry. Don't insert.
+      return NextResponse.json({ ok: true, id: 0 });
+    }
+
     const kindRaw = String(body?.kind || "general");
     const validKind = (INQUIRY_KINDS as readonly string[]).includes(kindRaw)
       ? (kindRaw as (typeof INQUIRY_KINDS)[number])
       : ("general" as const);
 
     const name = String(body?.name || "").trim().slice(0, 100);
-    const email = body?.email ? String(body.email).trim().slice(0, 200) : null;
-    const phone = body?.phone ? String(body.phone).trim().slice(0, 30) : null;
+    let email = body?.email ? String(body.email).trim().slice(0, 200) : null;
+    let phone = body?.phone ? String(body.phone).trim().slice(0, 30) : null;
+
+    // Strict format validation — early reject prevents downstream send
+    // failures (Resend rejects malformed addresses; Twilio rejects non-E.164).
+    if (email) {
+      // Pragmatic email regex — RFC 5322 is overkill. Catches the 99% case.
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+      if (!ok) {
+        return NextResponse.json({ error: "That email doesn't look right." }, { status: 400 });
+      }
+      email = email.toLowerCase();
+    }
+    if (phone) {
+      const digits = phone.replace(/\D/g, "");
+      if (digits.length === 10) phone = `+1${digits}`;
+      else if (digits.length === 11 && digits.startsWith("1")) phone = `+${digits}`;
+      else if (phone.startsWith("+") && digits.length >= 10) phone = `+${digits}`;
+      else {
+        return NextResponse.json(
+          { error: "That phone number doesn't look right. Use a 10-digit US format." },
+          { status: 400 }
+        );
+      }
+    }
     const message = body?.message ? String(body.message).slice(0, 2000) : null;
     const sports = body?.sports ? (Array.isArray(body.sports) ? body.sports.join(",") : String(body.sports)).slice(0, 200) : null;
     const source = body?.source ? String(body.source).slice(0, 80) : null;
@@ -106,6 +137,39 @@ export async function POST(request: NextRequest) {
 
     // Fire webhook so external integrations get notified.
     fireWebhookEvent("inquiry.created", { id: row.id, kind: validKind, name, email, phone, sports }).catch(() => {});
+
+    // Auto-enroll into a "new_lead" journey if one is configured + active.
+    // Inquiries don't have a memberId yet (they're pre-member), so we
+    // only enroll when we can match an existing member by email/phone.
+    // If no match, the journey is skipped — admin can manually enroll
+    // after creating a member record from the inquiry.
+    (async () => {
+      try {
+        const { db: dbInner } = await import("@/lib/db");
+        const { journeys, members } = await import("@/lib/db/schema");
+        const { eq, or } = await import("drizzle-orm");
+        const [j] = await dbInner
+          .select({ id: journeys.id })
+          .from(journeys)
+          .where(eq(journeys.trigger, "member_created"))
+          .limit(1);
+        if (!j) return;
+        const matchClauses = [];
+        if (email) matchClauses.push(eq(members.email, email));
+        if (phone) matchClauses.push(eq(members.phone, phone));
+        if (matchClauses.length === 0) return;
+        const [m] = await dbInner
+          .select({ id: members.id })
+          .from(members)
+          .where(or(...matchClauses))
+          .limit(1);
+        if (!m) return;
+        const { enrollMember } = await import("@/lib/journeys");
+        await enrollMember({ journeyId: j.id, memberId: m.id });
+      } catch (err) {
+        logger.warn("inquiry journey enroll failed", { error: String(err) });
+      }
+    })();
 
     return NextResponse.json({ ok: true, id: row.id });
   } catch (err) {

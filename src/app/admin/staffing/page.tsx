@@ -161,7 +161,7 @@ export default function StaffingNeedsPage() {
                 max={20}
                 value={courts}
                 onChange={(e) => setCourts(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
-                className="bg-transparent text-white font-heading text-3xl font-bold tracking-tight tabular-nums w-full focus:outline-none"
+                className="bg-transparent text-white font-heading text-3xl font-bold tracking-tight tabular-nums w-full focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:rounded"
               />
             </div>
             <div className="bg-white/10 backdrop-blur rounded-2xl px-4 py-4 border border-white/10">

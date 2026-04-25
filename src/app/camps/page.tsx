@@ -191,7 +191,7 @@ export default function CampsPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,0,0,0.12),transparent_60%)]" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-16 sm:py-28 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red text-white text-xs font-bold uppercase tracking-[0.2em] px-6 py-2.5 rounded-full mb-6 font-[var(--font-chakra)] shadow-[0_4px_20px_rgba(204,0,0,0.4)]">
               Youth Basketball Camps

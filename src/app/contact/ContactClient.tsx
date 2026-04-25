@@ -88,7 +88,7 @@ function ContactPageInner() {
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <Image src={HERO_BG_IMAGE} alt="Inspire Courts AZ contact page" fill priority sizes="100vw" className="object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/80 to-navy/95" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-16 sm:py-28 lg:py-40">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16 sm:py-28 lg:py-40">
           <AnimateIn>
             <span className="inline-block bg-red/90 text-white text-xs font-bold uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-6 font-[var(--font-chakra)]">
               Get in Touch

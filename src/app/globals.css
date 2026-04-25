@@ -4,6 +4,11 @@
 :root {
   --color-brand-red: #CC0000;
   --color-brand-navy: #0B1D3A;
+  /* Header height — keep in sync with Header.tsx h-16 / lg:h-[72px] */
+  --header-h: 4rem; /* 64px on mobile */
+}
+@media (min-width: 1024px) {
+  :root { --header-h: 4.5rem; } /* 72px on desktop */
 }
 
 @theme inline {

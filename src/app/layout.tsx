@@ -117,7 +117,7 @@ export default function RootLayout({
           <ScrollProgress />
           <Header />
           <UnverifiedEmailBanner />
-          <main id="main-content" tabIndex={-1} className="flex-1 page-transition focus:outline-none">{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-1 page-transition focus:outline-none" style={{ paddingTop: "calc(var(--header-h) + env(safe-area-inset-top))" }}>{children}</main>
           <Footer />
           <MobileRegisterBar />
           <EditToolbar />

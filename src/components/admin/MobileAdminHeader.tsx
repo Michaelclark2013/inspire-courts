@@ -44,10 +44,10 @@ export default function MobileAdminHeader() {
 
   return (
     <header
-      className={`lg:hidden sticky top-0 z-40 bg-white transition-shadow ${
+      className={`lg:hidden sticky z-40 bg-white transition-shadow ${
         scrolled ? "shadow-sm border-b border-border" : "border-b border-transparent"
       }`}
-      style={{ paddingTop: "env(safe-area-inset-top)" }}
+      style={{ top: "calc(var(--header-h) + env(safe-area-inset-top))" }}
     >
       <div className="flex items-center h-14 px-3 gap-2">
         {isDashboard ? (

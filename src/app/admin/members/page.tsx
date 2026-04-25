@@ -130,7 +130,11 @@ export default function MembersPage() {
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Members
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p
+            className="text-text-secondary text-sm mt-1"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             {total} total · {members.filter((m) => m.status === "active").length} active
           </p>
         </div>
@@ -151,17 +155,23 @@ export default function MembersPage() {
       </div>
 
       {/* FILTERS */}
-      <div className="flex flex-wrap gap-2 mb-4 items-center">
+      <div className="flex flex-wrap gap-2 mb-4 items-center" role="search">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="w-3.5 h-3.5 text-text-secondary absolute left-2.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-text-secondary absolute left-2.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search name, email, phone…"
+            aria-label="Search members by name, email, or phone"
             className="w-full bg-off-white border border-border rounded-md pl-8 pr-3 py-1.5 text-sm"
           />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          aria-label="Filter by member status"
+          className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm"
+        >
           <option value="">All statuses</option>
           <option value="active">Active</option>
           <option value="trial">Trial</option>
@@ -169,7 +179,12 @@ export default function MembersPage() {
           <option value="past_due">Past Due</option>
           <option value="cancelled">Cancelled</option>
         </select>
-        <select value={planFilter} onChange={(e) => setPlanFilter(e.target.value)} className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm">
+        <select
+          value={planFilter}
+          onChange={(e) => setPlanFilter(e.target.value)}
+          aria-label="Filter by membership plan"
+          className="bg-off-white border border-border rounded-md px-3 py-1.5 text-sm"
+        >
           <option value="">All plans</option>
           {plans.map((p) => (
             <option key={p.id} value={p.id}>{p.name}</option>

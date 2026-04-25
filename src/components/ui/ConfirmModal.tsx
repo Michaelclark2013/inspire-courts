@@ -79,7 +79,7 @@ export default function ConfirmModal({
       {/* Modal */}
       <div
         ref={modalRef}
-        className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-slide-down"
+        className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6 animate-slide-down"
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="confirm-title"

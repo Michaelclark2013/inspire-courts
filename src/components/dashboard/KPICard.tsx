@@ -2,7 +2,6 @@
 
 import { type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AreaChart, Area, ResponsiveContainer } from "recharts";
 import CountUp from "@/components/ui/CountUp";
 
 interface KPICardProps {
@@ -11,11 +10,10 @@ interface KPICardProps {
   icon: LucideIcon;
   trend?: string;
   trendUp?: boolean;
-  sparklineData?: number[];
   valueColor?: string;
 }
 
-export default function KPICard({ title, value, icon: Icon, trend, trendUp, sparklineData, valueColor }: KPICardProps) {
+export default function KPICard({ title, value, icon: Icon, trend, trendUp, valueColor }: KPICardProps) {
   return (
     <div
       className="bg-white border border-light-gray shadow-sm rounded-xl p-3 lg:p-5 transition-all duration-200 hover:border-text-secondary/30 hover:shadow-md"
@@ -46,22 +44,6 @@ export default function KPICard({ title, value, icon: Icon, trend, trendUp, spar
         >
           {trend}
         </p>
-      )}
-      {sparklineData && sparklineData.length > 1 && (
-        <div className="mt-2 -mx-1">
-          <ResponsiveContainer width="100%" height={32}>
-            <AreaChart data={sparklineData.map((v, i) => ({ v, i }))}>
-              <Area
-                type="monotone"
-                dataKey="v"
-                stroke={trendUp !== false ? "#22C55E" : "#EF4444"}
-                fill={trendUp !== false ? "rgba(34,197,94,0.06)" : "rgba(239,68,68,0.06)"}
-                strokeWidth={1.5}
-                dot={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
       )}
     </div>
   );

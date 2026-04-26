@@ -34,11 +34,24 @@ export default function ChurnPage() {
   const [draftFor, setDraftFor] = useState<Row | null>(null);
   const [draft, setDraft] = useState<{ sms: string; email: { subject: string; body: string } } | null>(null);
 
+  const [loadError, setLoadError] = useState<string | null>(null);
   const load = useCallback(async () => {
     try {
       const url = tier === "all" ? "/api/admin/churn" : `/api/admin/churn?tier=${tier}`;
-      const res = await fetch(url, { cache: "no-store" });
-      if (res.ok) setData(await res.json());
+      // adminFetch redirects on 401; non-ok / throws surface to UI
+      // instead of leaving the page stuck on "Loading churn radar…"
+      const res = await adminFetch(url);
+      if (res.ok) {
+        setData(await res.json());
+        setLoadError(null);
+      } else {
+        const j = await res.json().catch(() => ({}));
+        setLoadError(j.error || `Couldn't load risk scores (${res.status}).`);
+      }
+    } catch (err) {
+      if ((err as Error)?.name !== "SessionExpiredError") {
+        setLoadError("Network error loading risk scores.");
+      }
     } finally {
       setLoading(false);
     }
@@ -81,7 +94,23 @@ export default function ChurnPage() {
     load();
   }
 
-  if (loading || !data) return <div className="p-8 text-text-muted">Loading churn radar…</div>;
+  if (loading) return <div className="p-8 text-text-muted">Loading churn radar…</div>;
+  if (!data) {
+    return (
+      <div className="p-8 max-w-md mx-auto">
+        <div className="bg-red/5 border border-red/20 text-red rounded-2xl p-6 text-center">
+          <p className="font-bold mb-1">Couldn&apos;t load risk scores</p>
+          <p className="text-sm">{loadError || "The endpoint returned no data."}</p>
+          <button
+            onClick={load}
+            className="mt-3 inline-flex items-center gap-1.5 bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-5xl mx-auto">

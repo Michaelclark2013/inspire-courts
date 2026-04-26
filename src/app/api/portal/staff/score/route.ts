@@ -6,7 +6,17 @@ import { games, gameScores } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
+import { parseJsonBody } from "@/lib/api-helpers";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const staffScoreSchema = z.object({
+  gameId: z.coerce.number().int().positive(),
+  homeScore: z.coerce.number().int().min(0).max(999),
+  awayScore: z.coerce.number().int().min(0).max(999),
+  quarter: z.string().max(20).optional().nullable(),
+  status: z.enum(["scheduled", "live", "final"]).optional().nullable(),
+});
 
 // POST /api/portal/staff/score
 // Body: { gameId, homeScore, awayScore, quarter?, status? }
@@ -23,25 +33,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const parsed = await parseJsonBody(request, staffScoreSchema);
+  if (!parsed.ok) return parsed.response;
+  const { gameId, homeScore, awayScore } = parsed.data;
+  const quarter = parsed.data.quarter ?? null;
+  const validStatus = parsed.data.status ?? null;
+
   try {
-    const body = await request.json();
-    const gameId = Number(body?.gameId);
-    const homeScore = Number(body?.homeScore);
-    const awayScore = Number(body?.awayScore);
-    const quarter = typeof body?.quarter === "string" ? body.quarter.slice(0, 20) : null;
-    const status = body?.status;
-
-    if (!Number.isInteger(gameId) || gameId <= 0) {
-      return NextResponse.json({ error: "gameId required" }, { status: 400 });
-    }
-    if (!Number.isFinite(homeScore) || homeScore < 0 || homeScore > 999) {
-      return NextResponse.json({ error: "Invalid home score" }, { status: 400 });
-    }
-    if (!Number.isFinite(awayScore) || awayScore < 0 || awayScore > 999) {
-      return NextResponse.json({ error: "Invalid away score" }, { status: 400 });
-    }
-    const validStatus = ["scheduled", "live", "final"].includes(status) ? status : null;
-
     const [before] = await db.select().from(games).where(eq(games.id, gameId)).limit(1);
     if (!before) return NextResponse.json({ error: "Game not found" }, { status: 404 });
 

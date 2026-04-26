@@ -6,6 +6,11 @@ import { db } from "@/lib/db";
 import { resetTokens, users } from "@/lib/db/schema";
 import { eq, lt } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email().max(254),
+});
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
@@ -22,22 +27,20 @@ export async function POST(request: Request) {
   }
 
   try {
-    let body: { email?: unknown };
+    let raw: unknown;
     try {
-      body = await request.json();
+      raw = await request.json();
     } catch {
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
-    const { email } = body;
-
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    const parsed = forgotPasswordSchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message ?? "Invalid email address" },
+        { status: 400 }
+      );
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(String(email))) {
-      return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
-    }
+    const { email } = parsed.data;
 
     const successResponse = NextResponse.json({
       success: true,

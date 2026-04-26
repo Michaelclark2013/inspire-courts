@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { UserCheck, Plus, AlertTriangle, Edit, Archive } from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 // Roster row shape returned by GET /api/admin/staff.
 type StaffRow = {
@@ -127,7 +128,7 @@ export default function RosterPage() {
       </div>
 
       {loading ? (
-        <div className="text-text-secondary text-sm">Loading roster…</div>
+        <SkeletonRows count={6} />
       ) : fetchError ? (
         <div className="bg-red/5 border border-red/20 rounded-lg p-4 text-red text-sm">
           Failed to load roster. Try refreshing.

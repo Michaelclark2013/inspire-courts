@@ -92,6 +92,10 @@ export default function AuditLogPage() {
     actorUserId: "",
     // Substring search on actor email — admins remember "sarah" not 17.
     actorEmail: "",
+    // Time lower bound — set by the quick-range chips (Last hour /
+    // Today / 24h / 7d). Stored as ISO so it round-trips into the URL
+    // and CSV export filter unchanged.
+    since: "",
   });
   const debouncedFilters = useDebouncedValue(filters, 300);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
@@ -215,16 +219,52 @@ export default function AuditLogPage() {
             />
           </label>
         </div>
-        {(filters.entityType || filters.entityId || filters.action || filters.actorUserId || filters.actorEmail) && (
-          <div className="mt-3 flex items-center gap-2">
+        {/* Quick time-range chips — incident triage shortcut. Each chip
+            sets `since` to a relative ISO; clicking the active one clears. */}
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted mr-1">When:</span>
+          {([
+            { key: "1h", label: "Last hour", ms: 60 * 60 * 1000 },
+            { key: "today", label: "Today", ms: -1 },
+            { key: "24h", label: "Last 24h", ms: 24 * 60 * 60 * 1000 },
+            { key: "7d", label: "Last 7 days", ms: 7 * 24 * 60 * 60 * 1000 },
+          ] as const).map((c) => {
+            const target = (() => {
+              if (c.ms === -1) {
+                const d = new Date();
+                d.setHours(0, 0, 0, 0);
+                return d.toISOString();
+              }
+              return new Date(Date.now() - c.ms).toISOString();
+            })();
+            // Active if since is set within ±60s of the target — chip
+            // targets shift each render, so an exact-match check would
+            // never light up.
+            const active = filters.since &&
+              Math.abs(new Date(filters.since).getTime() - new Date(target).getTime()) < 60_000;
+            return (
+              <button
+                key={c.key}
+                onClick={() => setFilters({ ...filters, since: active ? "" : target })}
+                className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                  active
+                    ? "bg-navy text-white border-navy"
+                    : "bg-white text-text-secondary border-border hover:border-navy hover:text-navy"
+                }`}
+              >
+                {c.label}
+              </button>
+            );
+          })}
+          {(filters.entityType || filters.entityId || filters.action || filters.actorUserId || filters.actorEmail || filters.since) && (
             <button
-              onClick={() => setFilters({ entityType: "", entityId: "", action: "", actorUserId: "", actorEmail: "" })}
-              className="text-xs text-text-secondary hover:text-navy underline"
+              onClick={() => setFilters({ entityType: "", entityId: "", action: "", actorUserId: "", actorEmail: "", since: "" })}
+              className="ml-auto text-xs text-text-secondary hover:text-navy underline"
             >
               Clear all filters
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {loading ? (

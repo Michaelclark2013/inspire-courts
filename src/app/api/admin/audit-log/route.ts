@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { auditLog } from "@/lib/db/schema";
-import { and, desc, eq, like, lt, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, gte, like, lt, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";
 import { withTiming } from "@/lib/timing";
@@ -22,6 +22,8 @@ const DEFAULT_LIMIT = 50;
 //   ?actorUserId=123
 //   ?limit=50 (max 200)
 //   ?before=<ISO timestamp>  (cursor for older-than pagination)
+//   ?since=<ISO timestamp>   (lower bound — audit-log incident triage:
+//                              "everything since the deploy at 14:00")
 //   ?format=csv              Download ALL matching rows (up to 10_000) as
 //                             CSV — bypasses the pagination cap for
 //                             compliance / export workflows. Ignores
@@ -43,6 +45,7 @@ export const GET = withTiming("admin.audit_log", async (request: NextRequest) =>
   const actorEmailRaw = sp.get("actorEmail");
   const limitRaw = sp.get("limit");
   const before = sp.get("before");
+  const since = sp.get("since");
 
   const limit = (() => {
     const n = Number(limitRaw);
@@ -68,6 +71,7 @@ export const GET = withTiming("admin.audit_log", async (request: NextRequest) =>
     filters.push(like(auditLog.actorEmail, `%${safe}%`));
   }
   if (before) filters.push(lt(auditLog.createdAt, before));
+  if (since) filters.push(gte(auditLog.createdAt, since));
 
   const format = sp.get("format");
 

@@ -181,14 +181,14 @@ export const ALL_ADMIN_PAGES: AdminPage[] = [
 // Page groups for the matrix UI. Mirrors the AdminButtonGrid sections
 // so the permissions view reads like the nav.
 export const PAGE_GROUPS: Array<{ heading: string; pages: AdminPage[] }> = [
-  { heading: "Overview", pages: ["overview", "search", "health"] },
+  { heading: "Overview", pages: ["overview", "owner", "search", "health"] },
   { heading: "Events", pages: ["tournaments", "teams", "players", "programs"] },
   { heading: "Game Day", pages: ["score_entry", "scores", "checkin"] },
-  { heading: "Staff", pages: ["roster", "staff_refs", "timeclock", "shifts", "payroll", "certifications", "time_off", "approvals"] },
-  { heading: "Members + Revenue", pages: ["members", "revenue", "leads", "prospects", "sponsors"] },
+  { heading: "Staff", pages: ["roster", "staff_refs", "scheduler", "timeclock", "shifts", "payroll", "certifications", "time_off", "approvals"] },
+  { heading: "Members + Revenue", pages: ["members", "billing", "churn", "inquiries", "workouts", "revenue", "leads", "prospects", "sponsors"] },
   { heading: "Facility", pages: ["resources", "equipment", "maintenance", "schools"] },
-  { heading: "Content & Comms", pages: ["announcements", "content", "files"] },
-  { heading: "Admin", pages: ["users", "audit_log", "analytics", "contacts", "portal"] },
+  { heading: "Content & Comms", pages: ["announcements", "content", "files", "inbox"] },
+  { heading: "Admin", pages: ["users", "audit_log", "analytics", "contacts", "integrations", "portal"] },
   { heading: "Personal", pages: ["my_schedule", "my_history"] },
 ];
 

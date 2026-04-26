@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
+import { adminFetch } from "@/lib/admin-fetch";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
@@ -29,7 +30,7 @@ export default function AdminWorkoutsPage() {
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(async () => {
-    const res = await fetch("/api/workouts", { cache: "no-store" });
+    const res = await adminFetch("/api/workouts", { cache: "no-store" });
     if (res.ok) {
       const json = await res.json();
       setList(json.workouts || []);
@@ -42,7 +43,7 @@ export default function AdminWorkoutsPage() {
     if (!form.name) return;
     setBusy(true);
     try {
-      await fetch("/api/workouts", {
+      await adminFetch("/api/workouts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

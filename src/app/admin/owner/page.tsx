@@ -12,6 +12,7 @@ import {
   ArrowRight,
   RefreshCw,
 } from "lucide-react";
+import { adminFetch } from "@/lib/admin-fetch";
 
 // Owner Mode — single screen, 5 numbers, refresh on focus.
 // This is the "check it from anywhere" surface. Mobile-first by design;
@@ -61,7 +62,7 @@ export default function OwnerPage() {
   const load = useCallback(async () => {
     setRefreshing(true);
     try {
-      const res = await fetch("/api/admin/owner/snapshot", { cache: "no-store" });
+      const res = await adminFetch("/api/admin/owner/snapshot", { cache: "no-store" });
       if (!res.ok) throw new Error("snapshot failed");
       const json = (await res.json()) as Snapshot;
       setData(json);

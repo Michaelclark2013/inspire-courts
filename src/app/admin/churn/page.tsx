@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, AlertTriangle, MessageSquare, Phone, Mail, RefreshCw, X } from "lucide-react";
+import { adminFetch } from "@/lib/admin-fetch";
 
 type Row = {
   id: number;
@@ -46,7 +47,7 @@ export default function ChurnPage() {
   async function recompute() {
     setRecomputing(true);
     try {
-      await fetch("/api/admin/churn", {
+      await adminFetch("/api/admin/churn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "recompute" }),
@@ -60,7 +61,7 @@ export default function ChurnPage() {
   async function openDraft(r: Row) {
     setDraftFor(r);
     setDraft(null);
-    const res = await fetch("/api/admin/churn", {
+    const res = await adminFetch("/api/admin/churn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "draft", memberId: r.memberId }),
@@ -70,7 +71,7 @@ export default function ChurnPage() {
 
   async function dismiss(r: Row) {
     if (!confirm(`Dismiss ${r.firstName} from this list for 14 days?`)) return;
-    await fetch("/api/admin/churn", {
+    await adminFetch("/api/admin/churn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "dismiss", memberId: r.memberId, days: 14 }),

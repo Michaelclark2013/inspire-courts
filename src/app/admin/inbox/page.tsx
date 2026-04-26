@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, MessageSquare, Send, RefreshCw } from "lucide-react";
+import { adminFetch } from "@/lib/admin-fetch";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Row = {
@@ -60,7 +61,7 @@ export default function InboxPage() {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/sms", { cache: "no-store" });
+      const res = await adminFetch("/api/admin/sms", { cache: "no-store" });
       if (res.ok) {
         const json = await res.json();
         const t = buildThreads(json.rows || []);
@@ -82,7 +83,7 @@ export default function InboxPage() {
     setSending(true);
     setSendError(null);
     try {
-      const res = await fetch("/api/admin/sms", {
+      const res = await adminFetch("/api/admin/sms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

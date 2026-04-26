@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus, Key, Webhook, Copy, Trash2 } from "lucide-react";
+import { adminFetch } from "@/lib/admin-fetch";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type ApiKey = { id: number; label: string; prefix: string; scopes: string; lastUsedAt: string | null; revokedAt: string | null; createdAt: string };
@@ -21,8 +22,8 @@ export default function IntegrationsPage() {
 
   const load = useCallback(async () => {
     const [kRes, wRes] = await Promise.all([
-      fetch("/api/admin/api-keys", { cache: "no-store" }),
-      fetch("/api/admin/webhooks", { cache: "no-store" }),
+      adminFetch("/api/admin/api-keys", { cache: "no-store" }),
+      adminFetch("/api/admin/webhooks", { cache: "no-store" }),
     ]);
     if (kRes.ok) setKeys((await kRes.json()).rows || []);
     if (wRes.ok) setHooks((await wRes.json()).rows || []);
@@ -33,7 +34,7 @@ export default function IntegrationsPage() {
 
   async function createKey() {
     if (!newKeyLabel) return;
-    const res = await fetch("/api/admin/api-keys", {
+    const res = await adminFetch("/api/admin/api-keys", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ label: newKeyLabel, scopes: newKeyScopes }),
@@ -54,7 +55,7 @@ export default function IntegrationsPage() {
 
   async function createHook() {
     if (!newWebhookUrl) return;
-    const res = await fetch("/api/admin/webhooks", {
+    const res = await adminFetch("/api/admin/webhooks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url: newWebhookUrl, events: newWebhookEvents }),

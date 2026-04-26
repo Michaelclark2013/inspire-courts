@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, Sparkles, Check } from "lucide-react";
+import { adminFetch } from "@/lib/admin-fetch";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Suggestion = {
@@ -29,7 +30,7 @@ export default function SchedulerPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/scheduler", { cache: "no-store" });
+      const res = await adminFetch("/api/admin/scheduler", { cache: "no-store" });
       if (res.ok) {
         const json = await res.json();
         setSuggestions(json.suggestions || []);
@@ -62,7 +63,7 @@ export default function SchedulerPage() {
     setMsg(null);
     try {
       const pairs = Array.from(picks.entries()).map(([shiftId, userId]) => ({ shiftId, userId }));
-      const res = await fetch("/api/admin/scheduler", {
+      const res = await adminFetch("/api/admin/scheduler", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pairs }),

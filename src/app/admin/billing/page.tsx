@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { DollarSign, AlertCircle, Calendar, Pause, RefreshCw, ArrowLeft } from "lucide-react";
+import { adminFetch } from "@/lib/admin-fetch";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Snapshot = {
@@ -51,7 +52,7 @@ export default function AdminBillingPage() {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/billing/snapshot", { cache: "no-store" });
+      const res = await adminFetch("/api/admin/billing/snapshot", { cache: "no-store" });
       if (res.ok) setData(await res.json());
     } finally {
       setLoading(false);

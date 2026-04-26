@@ -17,6 +17,7 @@ import {
   CheckSquare,
   Square as SquareIcon,
 } from "lucide-react";
+import { adminFetch } from "@/lib/admin-fetch";
 import { INQUIRY_CONFIGS } from "@/lib/inquiry-forms";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";

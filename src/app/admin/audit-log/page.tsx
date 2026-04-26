@@ -249,9 +249,47 @@ export default function AuditLogPage() {
                     {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-text-secondary mt-0.5 flex-shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-text-secondary mt-0.5 flex-shrink-0" />}
                     <div className="min-w-0 flex-1">
                       <div className="text-sm">
-                        <span className={`font-mono font-semibold ${actionTone(r.action)}`}>{r.action}</span>
+                        {/* Click action → filter to just this action.
+                            Same pattern as the actor cell below. */}
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => { e.stopPropagation(); setFilters({ ...filters, action: r.action }); }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setFilters({ ...filters, action: r.action });
+                            }
+                          }}
+                          className={`font-mono font-semibold ${actionTone(r.action)} hover:underline cursor-pointer focus-visible:outline-none focus-visible:underline`}
+                          title="Filter to this action"
+                        >
+                          {r.action}
+                        </span>
                         {r.entityType && (
-                          <span className="text-text-secondary"> · {r.entityType}{r.entityId ? `#${r.entityId}` : ""}</span>
+                          <span className="text-text-secondary">
+                            {" · "}
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setFilters({ ...filters, entityType: r.entityType, entityId: r.entityId ? String(r.entityId) : "" });
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setFilters({ ...filters, entityType: r.entityType, entityId: r.entityId ? String(r.entityId) : "" });
+                                }
+                              }}
+                              className="hover:text-navy hover:underline cursor-pointer focus-visible:outline-none focus-visible:underline"
+                              title="Filter to this entity"
+                            >
+                              {r.entityType}{r.entityId ? `#${r.entityId}` : ""}
+                            </span>
+                          </span>
                         )}
                       </div>
                       <div className="text-xs text-text-secondary mt-0.5 truncate">

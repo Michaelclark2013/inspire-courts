@@ -224,6 +224,8 @@ export default function CheckInDashboard({
         const json = await res.json().catch(() => null);
         const dbId = json?.checkin?.id as number | undefined;
         handleCheckInUpdate({ ...optimistic, pending: false });
+        // Audio confirmation — same chime as individual check-in.
+        import("@/lib/chime").then((m) => m.chimeSuccess()).catch(() => {});
         if (dbId) showUndo({ id: dbId, name: playerLabel, team: team.teamName });
         // Trigger a fresh fetch of teams so this team's status flips
         // to "checked in" without a full page reload.

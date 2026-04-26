@@ -112,6 +112,11 @@ export default function CheckInForm({
 
         if (res.ok) {
           triggerHaptic("light");
+          // Audio "ding" so front desk hears the confirm even with
+          // the gym at full volume. Web Audio fires from inside the
+          // submit-button click chain so autoplay policy is satisfied.
+          // Lazy-import keeps it out of the initial bundle.
+          import("@/lib/chime").then((m) => m.chimeSuccess()).catch(() => {});
           // Confirm optimistic entry
           onCheckInSuccess({ ...optimisticEntry, pending: false });
           // Hand the dashboard the persisted DB id so it can show

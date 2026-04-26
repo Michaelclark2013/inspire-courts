@@ -24,6 +24,7 @@ import {
   Clock,
 } from "lucide-react";
 import type { SiteContent, ContentSection } from "@/lib/content";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 const DRAFT_KEY = "cms-draft-v1";
 const TIMESTAMPS_KEY = "cms-timestamps-v1";
@@ -39,6 +40,7 @@ function timeAgo(iso: string): string {
 }
 
 export default function ContentEditorPage() {
+  useDocumentTitle("Site content");
   const { status } = useSession();
   const [content, setContent] = useState<SiteContent | null>(null);
   const [saving, setSaving] = useState(false);

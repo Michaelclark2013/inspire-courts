@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, Sparkles, Check } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Suggestion = {
   shiftId: number;
@@ -18,6 +19,7 @@ const fmtDT = (iso: string) =>
   new Date(iso).toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 
 export default function SchedulerPage() {
+  useDocumentTitle("Scheduler");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [picks, setPicks] = useState<Map<number, number>>(new Map());

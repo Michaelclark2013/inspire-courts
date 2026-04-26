@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Workout = {
   id: number;
@@ -15,6 +16,7 @@ type Workout = {
 };
 
 export default function AdminWorkoutsPage() {
+  useDocumentTitle("Workouts");
   const [list, setList] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);

@@ -12,6 +12,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { adminFetch } from "@/lib/admin-fetch";
 
 type AuditEntry = {
   id: number;
@@ -52,11 +53,23 @@ export default function SecurityPage() {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/audit-log?limit=50");
+      // Pull a wider window because we filter client-side to security
+      // actions only — 50 raw rows often had zero security events.
+      const res = await adminFetch("/api/admin/audit-log?limit=200");
       if (!res.ok) return;
       const data = await res.json();
-      const rows = Array.isArray(data) ? data : data?.rows || [];
-      setAudits(rows.filter((r: AuditEntry) => SECURITY_ACTIONS.some((a) => r.action.startsWith(a.split(".")[0]))));
+      // The audit-log API returns { data, items, total, ... }. We were
+      // reading data.rows which doesn't exist — that's why this feed
+      // was always empty. Fall back through both keys + raw array for
+      // safety.
+      const rows: AuditEntry[] = Array.isArray(data)
+        ? data
+        : (data?.data || data?.items || []);
+      setAudits(
+        rows.filter((r: AuditEntry) =>
+          SECURITY_ACTIONS.some((a) => r.action === a || r.action.startsWith(`${a.split(".")[0]}.`))
+        )
+      );
     } catch { /* ignore */ }
   }, []);
 
@@ -67,7 +80,7 @@ export default function SecurityPage() {
     setBumping(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/security/force-relogin", { method: "POST" });
+      const res = await adminFetch("/api/admin/security/force-relogin", { method: "POST" });
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
       setBumped(data.touched);

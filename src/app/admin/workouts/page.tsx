@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Trophy } from "lucide-react";
 import { adminFetch } from "@/lib/admin-fetch";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -119,16 +119,35 @@ export default function AdminWorkoutsPage() {
         </div>
       )}
 
-      <ul className="space-y-2">
-        {list.map((w) => (
-          <li key={w.id} className="bg-white border border-border rounded-xl p-3 flex items-center justify-between">
-            <div>
-              <p className="text-navy font-semibold">{w.name}</p>
-              <p className="text-xs text-text-muted">{w.category || "—"} · {w.scoreType} · {w.resultCount} results</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {list.length === 0 ? (
+        <div className="bg-off-white border border-border rounded-2xl p-8 text-center">
+          <Trophy className="w-10 h-10 text-text-muted mx-auto mb-3" />
+          <p className="text-navy font-bold mb-1">No workouts yet.</p>
+          <p className="text-text-muted text-sm max-w-md mx-auto">
+            Create benchmark WODs (&quot;Fran&quot;, &quot;Max free throws / min&quot;)
+            and members can post results from <code className="font-mono text-[11px] bg-white px-1 py-0.5 rounded">/portal/workouts</code>.
+            Leaderboards rank per workout — coaches use them as &quot;come back next
+            week and beat your number&quot; retention hooks.
+          </p>
+          <button
+            onClick={() => setCreating(true)}
+            className="mt-4 bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-4 py-2 rounded-lg text-sm"
+          >
+            Create your first workout
+          </button>
+        </div>
+      ) : (
+        <ul className="space-y-2">
+          {list.map((w) => (
+            <li key={w.id} className="bg-white border border-border rounded-xl p-3 flex items-center justify-between">
+              <div>
+                <p className="text-navy font-semibold">{w.name}</p>
+                <p className="text-xs text-text-muted">{w.category || "—"} · {w.scoreType} · {w.resultCount} results</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

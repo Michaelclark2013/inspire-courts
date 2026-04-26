@@ -87,7 +87,7 @@ export default function AdminBillingPage() {
         <ArrowLeft className="w-3.5 h-3.5" /> Admin Dashboard
       </Link>
 
-      <div className="mb-5">
+      <div className="mb-5 hidden md:block">
         <p className="text-text-muted text-[11px] uppercase tracking-[0.2em] mb-1">Revenue · Subscriptions</p>
         <h1 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-navy font-heading">Billing</h1>
       </div>

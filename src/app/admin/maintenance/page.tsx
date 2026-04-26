@@ -88,7 +88,7 @@ export default function MaintenancePage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div>
+        <div className="hidden md:block">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Maintenance
           </h1>
@@ -144,33 +144,33 @@ export default function MaintenancePage() {
                     <div className="text-[10px] text-text-secondary mt-1">
                       Opened {fmtDate(t.createdAt)}
                     </div>
-                    <div className="flex gap-1 mt-2 flex-wrap">
+                    <div className="flex gap-2 mt-2 flex-wrap">
                       {col === "open" && (
-                        <button onClick={() => updateStatus(t.id, "in_progress")} className="text-[10px] bg-cyan-50 text-cyan-700 rounded px-1.5 py-0.5 hover:bg-cyan-100">
+                        <button onClick={() => updateStatus(t.id, "in_progress")} className="text-xs bg-cyan-50 text-cyan-700 rounded px-3 py-2 min-h-[36px] hover:bg-cyan-100 font-semibold">
                           Start
                         </button>
                       )}
                       {col === "in_progress" && (
                         <>
-                          <button onClick={() => updateStatus(t.id, "waiting_vendor")} className="text-[10px] bg-violet-50 text-violet-700 rounded px-1.5 py-0.5 hover:bg-violet-100">
+                          <button onClick={() => updateStatus(t.id, "waiting_vendor")} className="text-xs bg-violet-50 text-violet-700 rounded px-3 py-2 min-h-[36px] hover:bg-violet-100 font-semibold">
                             Vendor
                           </button>
-                          <button onClick={() => updateStatus(t.id, "resolved")} className="text-[10px] bg-emerald-50 text-emerald-700 rounded px-1.5 py-0.5 hover:bg-emerald-100">
+                          <button onClick={() => updateStatus(t.id, "resolved")} className="text-xs bg-emerald-50 text-emerald-700 rounded px-3 py-2 min-h-[36px] hover:bg-emerald-100 font-semibold">
                             Resolve
                           </button>
                         </>
                       )}
                       {col === "waiting_vendor" && (
-                        <button onClick={() => updateStatus(t.id, "resolved")} className="text-[10px] bg-emerald-50 text-emerald-700 rounded px-1.5 py-0.5 hover:bg-emerald-100">
+                        <button onClick={() => updateStatus(t.id, "resolved")} className="text-xs bg-emerald-50 text-emerald-700 rounded px-3 py-2 min-h-[36px] hover:bg-emerald-100 font-semibold">
                           Resolve
                         </button>
                       )}
                       {col === "resolved" && (
-                        <button onClick={() => updateStatus(t.id, "closed")} className="text-[10px] bg-navy/10 text-navy/70 rounded px-1.5 py-0.5 hover:bg-navy/20">
+                        <button onClick={() => updateStatus(t.id, "closed")} className="text-xs bg-navy/10 text-navy/70 rounded px-3 py-2 min-h-[36px] hover:bg-navy/20 font-semibold">
                           Close
                         </button>
                       )}
-                      <button onClick={() => setEditing(t)} className="text-[10px] text-text-secondary hover:text-navy ml-auto">Edit</button>
+                      <button onClick={() => setEditing(t)} className="text-xs text-text-secondary hover:text-navy ml-auto px-3 py-2 min-h-[36px]">Edit</button>
                     </div>
                   </div>
                 ))}

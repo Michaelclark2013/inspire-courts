@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ChevronLeft, Menu, Bell, Search as SearchIcon } from "lucide-react";
+import { ChevronLeft, Bell, Search as SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 /**
@@ -98,13 +98,10 @@ export default function MobileAdminHeader() {
             <h1 className="flex-1 text-center text-sm font-bold uppercase tracking-wider text-navy truncate px-1">
               {title}
             </h1>
-            <Link
-              href="/admin"
-              aria-label="Admin dashboard"
-              className="w-10 h-10 flex items-center justify-center text-navy hover:bg-off-white rounded-full"
-            >
-              <Menu className="w-5 h-5" />
-            </Link>
+            {/* Spacer to keep title visually centered. The hamburger
+                that used to live here was redundant with the bottom
+                tab bar's "Home" + "More" controls. */}
+            <div className="w-10 h-10" aria-hidden="true" />
           </>
         )}
       </div>

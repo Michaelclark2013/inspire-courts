@@ -17,9 +17,9 @@ export default async function ScoresPage() {
   if (!isGoogleConfigured()) {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
-        <div className="mb-4 md:mb-8">
+        <div className="mb-4 md:mb-8 hidden md:block">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Game Scores</h1>
-          <p className="text-text-secondary text-sm mt-1 hidden md:block">Game Results from Google Sheets</p>
+          <p className="text-text-secondary text-sm mt-1">Game Results from Google Sheets</p>
         </div>
         <div className="bg-off-white border border-border rounded-xl p-5 text-center">
           <ClipboardList className="w-10 h-10 text-text-secondary mx-auto mb-3" aria-hidden="true" />

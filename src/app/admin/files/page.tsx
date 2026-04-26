@@ -98,7 +98,7 @@ export default async function FilesPage() {
 
   return (
     <div className="p-3 sm:p-6 lg:p-8">
-      <div className="mb-4 md:mb-8">
+      <div className="mb-4 md:mb-8 hidden md:block">
         <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           Files
         </h1>

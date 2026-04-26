@@ -15,7 +15,9 @@ export default function CheckInHeader({
 }: CheckInHeaderProps) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
-      <div>
+      {/* Title hidden on mobile — MobileAdminHeader already shows
+          "Check-In" in the sticky sub-header. */}
+      <div className="hidden md:block">
         <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           Game Day Check-In
         </h1>

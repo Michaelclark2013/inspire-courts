@@ -225,17 +225,17 @@ export default function TournamentManagePage() {
     <div className="p-3 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-4 md:mb-8 flex items-start justify-between gap-4">
-        <div>
+        <div className="hidden md:block">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Tournaments
           </h1>
-          <p className="text-text-secondary text-sm mt-1 hidden md:block">
+          <p className="text-text-secondary text-sm mt-1">
             Create tournaments, manage brackets, and run game day
           </p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+          className="md:ml-auto flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors min-h-[44px]"
         >
           {showForm ? (
             <X className="w-4 h-4" aria-hidden="true" />

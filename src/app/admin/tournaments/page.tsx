@@ -9,7 +9,7 @@ export default async function TournamentsPage() {
   if (!isNotionConfigured()) {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
-        <div className="mb-4 md:mb-8">
+        <div className="mb-4 md:mb-8 hidden md:block">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Tournaments</h1>
           <p className="text-text-secondary text-sm mt-1">Tournament Tracker — manage events and registration</p>
         </div>
@@ -49,7 +49,7 @@ export default async function TournamentsPage() {
   if (tournaments.length === 0) {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
-        <div className="mb-4 md:mb-8">
+        <div className="mb-4 md:mb-8 hidden md:block">
           <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Tournaments</h1>
           <p className="text-text-secondary text-sm mt-1">Tournament Tracker — manage events and registration</p>
         </div>
@@ -75,7 +75,7 @@ export default async function TournamentsPage() {
 
   return (
     <div className="p-3 sm:p-6 lg:p-8">
-      <div className="mb-4 md:mb-8">
+      <div className="mb-4 md:mb-8 hidden md:block">
         <h1 className="text-2xl font-bold uppercase tracking-tight text-navy">Tournaments</h1>
         <p className="text-text-secondary text-sm mt-1">Tournament Tracker — manage events and registration</p>
       </div>

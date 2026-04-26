@@ -114,13 +114,13 @@ export default function InboxPage() {
       </Link>
 
       <div className="mb-5 flex items-end justify-between">
-        <div>
+        <div className="hidden md:block">
           <p className="text-text-muted text-[11px] uppercase tracking-[0.2em] mb-1">Two-way SMS</p>
           <h1 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-navy font-heading">
             Inbox
           </h1>
         </div>
-        <button onClick={load} className="text-text-muted hover:text-navy text-xs flex items-center gap-1.5">
+        <button onClick={load} className="md:ml-auto text-text-muted hover:text-navy text-xs flex items-center gap-1.5 min-h-[44px] px-2">
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>

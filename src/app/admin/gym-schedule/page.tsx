@@ -180,7 +180,7 @@ export default function GymSchedulePage() {
       </Link>
 
       <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
+        <div className="hidden md:block">
           <p className="text-text-muted text-xs uppercase tracking-widest mb-1">Gym Calendar</p>
           <h1 className="text-navy text-2xl font-bold font-heading flex items-center gap-2">
             <Calendar className="w-6 h-6 text-red" aria-hidden="true" /> Gym Schedule

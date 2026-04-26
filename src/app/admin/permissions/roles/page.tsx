@@ -115,7 +115,7 @@ export default function RoleDefaultsPage() {
 
       {/* Matrix */}
       <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-3 sm:mx-0">
           <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-off-white border-b border-border">
               <tr>

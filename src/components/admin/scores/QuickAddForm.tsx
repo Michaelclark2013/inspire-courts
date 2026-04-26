@@ -4,6 +4,9 @@ import { memo } from "react";
 import { Plus, Loader2, X, AlertCircle } from "lucide-react";
 import type { CreateGameForm, TournamentOption } from "@/types/score-entry";
 
+const COURT_OPTIONS = ["Court 1", "Court 2", "Court 3", "Court 4", "Court 5", "Court 6", "Court 7"];
+const DIVISION_OPTIONS = ["8U", "9U", "10U", "11U", "12U", "13U", "14U", "15U", "16U", "17U"];
+
 function QuickAddFormImpl({
   form,
   setForm,
@@ -75,25 +78,31 @@ function QuickAddFormImpl({
           </div>
           <div>
             <label htmlFor="qa-division" className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Division</label>
-            <input
+            <select
               id="qa-division"
-              type="text"
               value={form.division}
               onChange={(e) => setForm({ ...form, division: e.target.value })}
-              className={inputCls}
-              placeholder="e.g. 14U"
-            />
+              className={`${inputCls} cursor-pointer`}
+            >
+              <option value="">— Select division —</option>
+              {DIVISION_OPTIONS.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label htmlFor="qa-court" className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Court</label>
-            <input
+            <select
               id="qa-court"
-              type="text"
               value={form.court}
               onChange={(e) => setForm({ ...form, court: e.target.value })}
-              className={inputCls}
-              placeholder="e.g. Court 1"
-            />
+              className={`${inputCls} cursor-pointer`}
+            >
+              <option value="">— Select court —</option>
+              {COURT_OPTIONS.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label htmlFor="qa-event" className="block text-navy/70 text-xs font-semibold uppercase tracking-wider mb-1.5">Event / Tournament</label>

@@ -17,11 +17,11 @@ export default async function RevenuePage() {
   if (!isGoogleConfigured()) {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
-        <div className="mb-4 md:mb-8">
+        <div className="mb-4 md:mb-8 hidden md:block">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Revenue
           </h1>
-          <p className="text-text-secondary text-sm mt-1 hidden md:block">
+          <p className="text-text-secondary text-sm mt-1">
             Mom Money &mdash; Revenue Tracking
           </p>
         </div>
@@ -111,11 +111,11 @@ export default async function RevenuePage() {
   if (transactions.length === 0) {
     return (
       <div className="p-3 sm:p-6 lg:p-8">
-        <div className="mb-4 md:mb-8">
+        <div className="mb-4 md:mb-8 hidden md:block">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Revenue
           </h1>
-          <p className="text-text-secondary text-sm mt-1 hidden md:block">
+          <p className="text-text-secondary text-sm mt-1">
             Mom Money &mdash; Revenue Tracking
           </p>
         </div>
@@ -159,11 +159,11 @@ export default async function RevenuePage() {
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 pb-[env(safe-area-inset-bottom)]">
-      <div className="mb-4 md:mb-8">
+      <div className="mb-4 md:mb-8 hidden md:block">
         <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
           Revenue
         </h1>
-        <p className="text-text-secondary text-sm mt-1 hidden md:block">
+        <p className="text-text-secondary text-sm mt-1">
           Mom Money &mdash; {transactions.length} entries
         </p>
       </div>

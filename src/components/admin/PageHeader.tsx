@@ -14,9 +14,12 @@ interface PageHeaderProps {
 export default function PageHeader({ title, subtitle, icon: Icon, action }: PageHeaderProps) {
   return (
     <div className="mb-4 md:mb-8 flex items-start justify-between gap-4 flex-wrap">
-      <div className="flex items-center gap-3">
+      {/* Title block hidden on mobile — MobileAdminHeader already shows
+          the page title in the sticky sub-header. Showing both reads
+          as overlap and wastes vertical space above the fold. */}
+      <div className="hidden md:flex items-center gap-3">
         {Icon && (
-          <div className="hidden md:flex w-10 h-10 bg-red/10 rounded-xl items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 bg-red/10 rounded-xl flex items-center justify-center flex-shrink-0">
             <Icon className="w-5 h-5 text-red" />
           </div>
         )}
@@ -25,7 +28,7 @@ export default function PageHeader({ title, subtitle, icon: Icon, action }: Page
             {title}
           </h1>
           {subtitle && (
-            <p className="text-text-secondary text-sm mt-0.5 hidden md:block">{subtitle}</p>
+            <p className="text-text-secondary text-sm mt-0.5">{subtitle}</p>
           )}
         </div>
       </div>

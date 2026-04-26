@@ -135,7 +135,7 @@ function PayrollPageInner() {
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div>
+        <div className="hidden md:block">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Payroll
           </h1>

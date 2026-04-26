@@ -120,10 +120,10 @@ export default async function AdminDashboard() {
   if (!configured) {
     return (
       <div
-        className="p-6 lg:p-8 pt-[max(env(safe-area-inset-top),1.5rem)]"
+        className="p-3 sm:p-6 lg:p-8"
         aria-labelledby="dashboard-heading"
       >
-        <header className="mb-8">
+        <header className="mb-8 hidden md:block">
           <h1
             id="dashboard-heading"
             className="text-2xl font-bold uppercase tracking-tight text-navy font-heading"

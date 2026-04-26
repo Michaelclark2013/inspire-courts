@@ -71,11 +71,30 @@ export async function middleware(request: NextRequest) {
   // Short-circuit CORS preflight on /api/admin and /api/portal before
   // touching the session store. Without this, every OPTIONS preflight
   // would 405 and the browser would refuse to issue the real request.
+  //
+  // Echo the request Origin only when it matches our own host (or the
+  // configured NEXTAUTH_URL). Wildcarding to "*" was harmless today
+  // because we don't set Allow-Credentials on this response, but a
+  // future change that did would have shipped a session-hijack vector.
   if (request.method === "OPTIONS" && pathname.startsWith("/api/")) {
+    const origin = request.headers.get("origin") ?? "";
+    const allowed = (() => {
+      if (!origin) return null;
+      try {
+        const reqHost = new URL(request.url).host;
+        const originHost = new URL(origin).host;
+        if (originHost === reqHost) return origin;
+        const configured = process.env.NEXTAUTH_URL;
+        if (configured && new URL(configured).host === originHost) return origin;
+      } catch {
+        // fall through
+      }
+      return null;
+    })();
     const res = new NextResponse(null, {
       status: 204,
       headers: {
-        "Access-Control-Allow-Origin": request.headers.get("origin") ?? "*",
+        ...(allowed ? { "Access-Control-Allow-Origin": allowed } : {}),
         "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
         "Access-Control-Allow-Headers":
           "Content-Type, Authorization, If-Match, If-None-Match, Idempotency-Key, X-Cron-Secret, X-Request-Id",

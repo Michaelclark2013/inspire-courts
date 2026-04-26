@@ -6,6 +6,7 @@ import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { logger } from "@/lib/logger";
+import { isRateLimited } from "@/lib/rate-limit";
 
 // GET /api/me/profile — read current user's own profile.
 export async function GET() {
@@ -134,6 +135,17 @@ export async function POST(request: NextRequest) {
   if (!Number.isInteger(uid) || uid <= 0) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  // Rate limit password-change attempts per user. Without this an
+  // attacker who pinned a session cookie can guess the current
+  // password unbounded — bcrypt.compare gates throughput but a few
+  // hundred attempts/minute is still survivable for weak passwords.
+  if (isRateLimited(`me-password:${uid}`, 5, 15 * 60 * 1000)) {
+    return NextResponse.json(
+      { error: "Too many password attempts. Try again in 15 minutes." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await request.json();
     if (body?.action !== "changePassword") {

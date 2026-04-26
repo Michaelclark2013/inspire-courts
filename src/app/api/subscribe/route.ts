@@ -76,7 +76,10 @@ export async function POST(req: NextRequest) {
       }
       }
     } else {
-      logger.info("Mailchimp not configured — email captured", { email: cleanEmail });
+      // Don't log the email itself — it's PII and we never use the
+      // log to recover the address. Log just enough to show the path
+      // is being hit so ops can confirm config issues.
+      logger.info("Mailchimp not configured — newsletter signup captured (no env vars set)");
     }
 
     return NextResponse.json({ success: true });

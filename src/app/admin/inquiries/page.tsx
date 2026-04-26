@@ -14,6 +14,8 @@ import {
   Search,
   Download,
   RefreshCw,
+  CheckSquare,
+  Square as SquareIcon,
 } from "lucide-react";
 import { INQUIRY_CONFIGS } from "@/lib/inquiry-forms";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -141,6 +143,14 @@ export default function InquiriesPage() {
     };
   }, [load]);
 
+  // Bulk selection — Set of inquiry ids the rep has multi-selected
+  // for batch status changes. Cleared on filter / search changes
+  // because the filtered set under their feet is shifting.
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+  // j/k keyboard nav cursor — index into the visible filtered list.
+  const [cursor, setCursor] = useState<number>(-1);
+
   // Client-side search across name/email/phone/sports/source.
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -150,6 +160,49 @@ export default function InquiriesPage() {
       return blob.includes(q);
     });
   }, [rows, search]);
+
+  // Reset bulk selection + cursor when filter/search shifts the visible set.
+  useEffect(() => {
+    setSelected(new Set());
+    setCursor(-1);
+  }, [filterStatus, filterKind, search]);
+
+  // Keyboard shortcuts: j/k navigate, Enter open, Esc close detail.
+  // Disabled while typing in an input (so search doesn't get hijacked).
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const target = e.target as HTMLElement | null;
+      const inField = !!target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT" || target.isContentEditable);
+      if (e.key === "Escape" && active) {
+        e.preventDefault();
+        setActive(null);
+        return;
+      }
+      if (inField) return;
+      if (e.key === "j") {
+        e.preventDefault();
+        setCursor((c) => Math.min(filtered.length - 1, c + 1));
+      } else if (e.key === "k") {
+        e.preventDefault();
+        setCursor((c) => Math.max(0, c - 1));
+      } else if (e.key === "Enter" && cursor >= 0 && filtered[cursor]) {
+        e.preventDefault();
+        openDetail(filtered[cursor]);
+      } else if (e.key === "x" && cursor >= 0 && filtered[cursor]) {
+        // Quick-toggle bulk selection on the cursor row.
+        e.preventDefault();
+        const id = filtered[cursor].id;
+        setSelected((prev) => {
+          const next = new Set(prev);
+          if (next.has(id)) next.delete(id); else next.add(id);
+          return next;
+        });
+      }
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtered, cursor, active]);
 
   async function loadNotes(id: number) {
     setActiveNotes([]);
@@ -163,6 +216,49 @@ export default function InquiriesPage() {
     setActive(r);
     setNote("");
     loadNotes(r.id);
+  }
+
+  // Toggle one row in the bulk-selection set.
+  function toggleSelect(id: number) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }
+
+  // Toggle every visible (filtered) row.
+  function toggleSelectAll() {
+    if (selected.size === filtered.length && filtered.length > 0) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(filtered.map((r) => r.id)));
+    }
+  }
+
+  // Apply the same status change to every selected row, sequentially.
+  // Sequential not parallel — failures are observable + don't all hit
+  // SLA-recompute at once. ~50ms overhead per row vs blasting 50 in
+  // parallel is a fair trade for traceability.
+  async function bulkStatus(status: InquiryRow["status"]) {
+    if (selected.size === 0) return;
+    if (!confirm(`Change ${selected.size} inquir${selected.size === 1 ? "y" : "ies"} to "${status}"?`)) return;
+    setBulkBusy(true);
+    try {
+      // Optimistic batch update.
+      setRows((prev) => prev.map((r) => (selected.has(r.id) ? { ...r, status } : r)));
+      for (const id of selected) {
+        await fetch(`/api/admin/inquiries/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        });
+      }
+      setSelected(new Set());
+      load(true);
+    } finally {
+      setBulkBusy(false);
+    }
   }
 
   // Optimistic patch — apply to UI immediately, revert on failure.
@@ -306,6 +402,35 @@ export default function InquiriesPage() {
         Showing {filtered.length} {filtered.length === 1 ? "inquiry" : "inquiries"}
       </p>
 
+      {/* Bulk action bar — visible only when selection > 0 */}
+      {selected.size > 0 && (
+        <div role="region" aria-label="Bulk actions" className="bg-navy text-white rounded-xl px-4 py-2.5 mb-3 flex items-center gap-3 flex-wrap">
+          <span className="text-xs font-bold uppercase tracking-wider">
+            {selected.size} selected
+          </span>
+          <button onClick={() => bulkStatus("contacted")} disabled={bulkBusy} className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded bg-amber-50 text-amber-700 disabled:opacity-50">
+            Mark contacted
+          </button>
+          <button onClick={() => bulkStatus("qualifying")} disabled={bulkBusy} className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded bg-blue-50 text-blue-700 disabled:opacity-50">
+            Qualifying
+          </button>
+          <button onClick={() => bulkStatus("won")} disabled={bulkBusy} className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded bg-emerald-50 text-emerald-700 disabled:opacity-50">
+            Won
+          </button>
+          <button onClick={() => bulkStatus("lost")} disabled={bulkBusy} className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded bg-text-muted/20 disabled:opacity-50">
+            Lost
+          </button>
+          <button onClick={() => setSelected(new Set())} className="ml-auto text-xs text-white/70 hover:text-white">
+            Clear
+          </button>
+        </div>
+      )}
+
+      {/* Keyboard help — single-line, always-visible cue. */}
+      <p className="text-[10px] text-text-muted mb-2 hidden sm:block">
+        Keyboard: <kbd className="bg-off-white border border-border rounded px-1">j</kbd>/<kbd className="bg-off-white border border-border rounded px-1">k</kbd> nav · <kbd className="bg-off-white border border-border rounded px-1">Enter</kbd> open · <kbd className="bg-off-white border border-border rounded px-1">x</kbd> select · <kbd className="bg-off-white border border-border rounded px-1">Esc</kbd> close
+      </p>
+
       {/* List */}
       {filtered.length === 0 ? (
         <div className="bg-white border border-border rounded-2xl p-10 text-center">
@@ -316,37 +441,71 @@ export default function InquiriesPage() {
           </p>
         </div>
       ) : (
-        <ul className="bg-white border border-border rounded-2xl shadow-sm divide-y divide-border overflow-hidden">
-          {filtered.map((r) => {
-            const overdue = r.status === "new" && r.slaDueAt && new Date(r.slaDueAt) < new Date();
-            return (
-              <li key={r.id}>
-                <button onClick={() => openDetail(r)} className="w-full text-left px-4 py-3 hover:bg-off-white flex items-center gap-3 flex-wrap focus-visible:outline-none focus-visible:bg-off-white">
-                  <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full border ${STATUS_TONES[r.status]}`}>
-                    {r.status}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm text-navy font-semibold truncate">
-                      {r.name}
-                      <span className="text-text-muted text-xs ml-2 font-normal">{getKindLabel(r.kind)}</span>
-                    </p>
-                    <p className="text-xs text-text-muted truncate">
-                      {r.phone || r.email || "—"}{r.sports ? ` · ${r.sports}` : ""}{r.source ? ` · ${r.source}` : ""}
-                    </p>
-                  </div>
-                  {overdue && (
-                    <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-red bg-red/5 px-2 py-0.5 rounded-full">
-                      <AlertCircle className="w-3 h-3" /> overdue
+        <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
+          {/* Select-all row */}
+          <button
+            onClick={toggleSelectAll}
+            className="w-full px-4 py-2 flex items-center gap-2 text-xs text-text-muted hover:bg-off-white border-b border-border focus-visible:outline-none focus-visible:bg-off-white"
+            aria-label={selected.size === filtered.length ? "Deselect all" : "Select all visible"}
+          >
+            {selected.size === filtered.length && filtered.length > 0 ? (
+              <CheckSquare className="w-3.5 h-3.5 text-navy" />
+            ) : (
+              <SquareIcon className="w-3.5 h-3.5" />
+            )}
+            <span>{selected.size === filtered.length && filtered.length > 0 ? "Deselect all" : "Select all visible"}</span>
+          </button>
+          <ul className="divide-y divide-border">
+            {filtered.map((r, i) => {
+              const overdue = r.status === "new" && r.slaDueAt && new Date(r.slaDueAt) < new Date();
+              const isSelected = selected.has(r.id);
+              const isCursor = i === cursor;
+              return (
+                <li
+                  key={r.id}
+                  className={`flex items-center gap-2 ${isCursor ? "bg-off-white ring-1 ring-inset ring-navy/30" : ""}`}
+                >
+                  <button
+                    onClick={() => toggleSelect(r.id)}
+                    aria-label={isSelected ? "Deselect" : "Select"}
+                    className="px-3 py-3 flex-shrink-0 hover:bg-off-white"
+                  >
+                    {isSelected ? (
+                      <CheckSquare className="w-4 h-4 text-navy" />
+                    ) : (
+                      <SquareIcon className="w-4 h-4 text-text-muted" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => openDetail(r)}
+                    className="flex-1 text-left px-2 py-3 hover:bg-off-white flex items-center gap-3 flex-wrap focus-visible:outline-none focus-visible:bg-off-white"
+                  >
+                    <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full border ${STATUS_TONES[r.status]}`}>
+                      {r.status}
                     </span>
-                  )}
-                  <span className="text-[10px] text-text-muted flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {fmtTime(r.createdAt)}
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-navy font-semibold truncate">
+                        {r.name}
+                        <span className="text-text-muted text-xs ml-2 font-normal">{getKindLabel(r.kind)}</span>
+                      </p>
+                      <p className="text-xs text-text-muted truncate">
+                        {r.phone || r.email || "—"}{r.sports ? ` · ${r.sports}` : ""}{r.source ? ` · ${r.source}` : ""}
+                      </p>
+                    </div>
+                    {overdue && (
+                      <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-red bg-red/5 px-2 py-0.5 rounded-full">
+                        <AlertCircle className="w-3 h-3" /> overdue
+                      </span>
+                    )}
+                    <span className="text-[10px] text-text-muted flex items-center gap-1 pr-2">
+                      <Clock className="w-3 h-3" /> {fmtTime(r.createdAt)}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
 
       {/* Detail drawer */}

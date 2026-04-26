@@ -62,6 +62,13 @@ export async function GET(
       overrides.map((o) => ({
         page: o.page as AdminPage,
         granted: o.granted,
+        // BUG-FIX: previously this mapping dropped expiresAt, which made
+        // effectivePermissions treat already-expired overrides as live.
+        // The matrix UI then showed stale grants/revokes that the
+        // middleware (which DOES pass expiresAt via canAccessWithOverrides)
+        // was correctly ignoring at request time → a confusing mismatch
+        // between what the admin saw and what the user actually had.
+        expiresAt: o.expiresAt,
       }))
     );
 

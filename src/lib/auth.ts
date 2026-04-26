@@ -221,9 +221,14 @@ export const authOptions: NextAuthOptions = {
         session.user.emailVerifiedAt = token.emailVerifiedAt ?? null;
         // Expose the per-user permission overrides so client code can
         // call canAccessWithOverrides() without a round-trip.
-        (session.user as { permissionOverrides?: Array<{ page: string; granted: boolean }> })
+        // expiresAt MUST be carried through — without it, expired
+        // overrides silently keep applying in the sidebar/grid filters
+        // even though middleware correctly ignores them. Mismatch shows
+        // up as ghost menu items the user can't actually click into.
+        type Override = { page: string; granted: boolean; expiresAt?: string | null };
+        (session.user as { permissionOverrides?: Override[] })
           .permissionOverrides =
-          (token as { permissionOverrides?: Array<{ page: string; granted: boolean }> })
+          (token as { permissionOverrides?: Override[] })
             .permissionOverrides || [];
       }
       return session;

@@ -174,7 +174,13 @@ export default function MyProfilePage() {
   if (error && !me) return <div className="p-8 text-red">{error}</div>;
   if (!me) return <div className="p-8 text-text-muted">Not found</div>;
 
-  const initials = me.name.split(" ").map((s) => s[0]).join("").slice(0, 2).toUpperCase();
+  // Guarded: if `me.name` is somehow null/empty (kiosk-created user, manual
+  // DB nulling), `.split` would throw and crash the whole profile page —
+  // making the form unreachable for the very user who needs it most.
+  const safeName = (me.name || "").trim();
+  const initials = safeName
+    ? safeName.split(/\s+/).map((s) => s[0]).join("").slice(0, 2).toUpperCase()
+    : "?";
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-full">
@@ -196,7 +202,7 @@ export default function MyProfilePage() {
           )}
           <div className="flex-1 min-w-0">
             <p className="text-white/50 text-[11px] uppercase tracking-[0.2em] mb-1">My Profile</p>
-            <h1 className="text-2xl sm:text-4xl font-bold font-heading tracking-tight">{me.name}</h1>
+            <h1 className="text-2xl sm:text-4xl font-bold font-heading tracking-tight">{safeName || "(no name)"}</h1>
             <p className="text-white/60 text-sm mt-1 flex items-center gap-2 flex-wrap">
               <Mail className="w-3.5 h-3.5" /> {me.email}
               <span className="bg-white/10 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">{me.role}</span>

@@ -225,7 +225,9 @@ export default function AdminSidebar() {
 
   // Respect per-user permission overrides too — so a revoked page
   // disappears from the sidebar immediately (not just the tile grid).
-  const permOverrides = (session?.user as { permissionOverrides?: Array<{ page: AdminPage; granted: boolean }> } | undefined)?.permissionOverrides;
+  // expiresAt MUST be in the session shape; without it, time-limited
+  // overrides keep showing nav entries that middleware blocks at request time.
+  const permOverrides = (session?.user as { permissionOverrides?: Array<{ page: AdminPage; granted: boolean; expiresAt?: string | null }> } | undefined)?.permissionOverrides;
 
   // The sidebar re-renders on every session poll. Memoize the eight
   // permission-filter passes so a no-op session refresh doesn't reallocate

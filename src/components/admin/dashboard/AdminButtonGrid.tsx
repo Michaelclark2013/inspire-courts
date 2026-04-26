@@ -224,7 +224,10 @@ function saveFavs(hrefs: string[]) {
 export default function AdminButtonGrid() {
   const { data: session } = useSession();
   const role = (session?.user?.role ?? "") as UserRole | "";
-  const overrides = (session?.user as { permissionOverrides?: Array<{ page: AdminPage; granted: boolean }> } | undefined)?.permissionOverrides;
+  // expiresAt is required so canAccessWithOverrides can ignore expired
+  // overrides — without it, time-limited grants/revokes don't fall off
+  // the tile grid even after their expiry passes.
+  const overrides = (session?.user as { permissionOverrides?: Array<{ page: AdminPage; granted: boolean; expiresAt?: string | null }> } | undefined)?.permissionOverrides;
 
   const [query, setQuery] = useState("");
   const [drillIn, setDrillIn] = useState<string | null>(null);

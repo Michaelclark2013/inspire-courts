@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Wallet, Plus, Users, Archive, Edit } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Plan = {
   id: number;
@@ -37,6 +38,7 @@ function fmtCents(c: number | null): string {
 }
 
 export default function MembershipPlansPage() {
+  useDocumentTitle("Membership plans");
   const { data: session, status } = useSession();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);

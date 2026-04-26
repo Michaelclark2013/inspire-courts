@@ -9,6 +9,7 @@ import {
   Users as UsersIcon,
   FileText,
 } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Team = {
   id: number;
@@ -21,6 +22,7 @@ type Team = {
 // tournament's registrations), write a subject + body, send → every
 // parent email on the roster + coach email get BCC'd.
 export default function BroadcastsPage() {
+  useDocumentTitle("Broadcasts");
   const [teams, setTeams] = useState<Team[]>([]);
   const [teamName, setTeamName] = useState<string>("");
   const [subject, setSubject] = useState<string>("");

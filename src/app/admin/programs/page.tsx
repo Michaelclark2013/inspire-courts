@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { GraduationCap, Plus, Calendar , ArrowRight } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Program = {
   id: number;
@@ -43,6 +44,7 @@ function fmtDate(iso: string | null): string {
 }
 
 export default function ProgramsPage() {
+  useDocumentTitle("Programs");
   const { data: session, status } = useSession();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);

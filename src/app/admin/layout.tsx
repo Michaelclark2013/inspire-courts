@@ -14,6 +14,11 @@ import dynamic from "next/dynamic";
 const CommandPalette = dynamic(() => import("@/components/admin/CommandPalette"));
 const ViewAsUserBanner = dynamic(() => import("@/components/admin/dashboard/ViewAsUserBanner"));
 
+// Hoist the inline style so we don't recreate the object every render.
+const adminMainStyle = {
+  paddingBottom: "calc(56px + env(safe-area-inset-bottom) + 16px)",
+};
+
 export const metadata = {
   title: "Admin Dashboard | Inspire Courts AZ",
   description: "Inspire Courts AZ admin dashboard — manage tournaments, scores, check-ins, revenue, and team operations.",
@@ -56,7 +61,7 @@ export default async function AdminLayout({
           <main
             id="admin-main"
             className="flex-1 min-w-0 overflow-x-hidden page-transition"
-            style={{ paddingBottom: "calc(56px + env(safe-area-inset-bottom) + 16px)" }}
+            style={adminMainStyle}
           >
             <ViewAsUserBanner />
             <MobileAdminHeader />

@@ -42,6 +42,11 @@ const chakra = Chakra_Petch({
   weight: ["600", "700"],
 });
 
+// Hoist the inline style so we don't recreate the object every render.
+const mainContentStyle = {
+  paddingTop: "calc(var(--header-h) + env(safe-area-inset-top))",
+};
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -119,7 +124,7 @@ export default function RootLayout({
           <ScrollProgress />
           <Header />
           <UnverifiedEmailBanner />
-          <main id="main-content" tabIndex={-1} className="flex-1 page-transition focus:outline-none" style={{ paddingTop: "calc(var(--header-h) + env(safe-area-inset-top))" }}>{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-1 page-transition focus:outline-none" style={mainContentStyle}>{children}</main>
           <Footer />
           <MobileRegisterBar />
           <EditToolbar />

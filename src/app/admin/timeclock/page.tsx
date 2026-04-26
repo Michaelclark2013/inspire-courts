@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Clock, CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type OnClockRow = {
   id: number;
@@ -50,6 +51,7 @@ function elapsedMinutes(sinceIso: string): number {
 }
 
 export default function TimeclockPage() {
+  useDocumentTitle("Timeclock");
   const { data: session, status } = useSession();
   const [onTheClock, setOnTheClock] = useState<OnClockRow[]>([]);
   const [pending, setPending] = useState<PendingRow[]>([]);

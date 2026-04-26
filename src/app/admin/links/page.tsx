@@ -1,4 +1,7 @@
 import { ExternalLink } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Quick links | Inspire Courts AZ" };
 
 const LINK_SECTIONS = [
   {

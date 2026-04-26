@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Calendar, Loader2, Radio, RefreshCw, PenLine } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Game = {
   id: number;
@@ -18,6 +19,7 @@ type Game = {
 };
 
 export default function MySchedulePage() {
+  useDocumentTitle("My schedule");
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);

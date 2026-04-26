@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { resetTokens, users } from "@/lib/db/schema";
@@ -34,11 +35,14 @@ export async function POST(request: Request) {
     }
     const { token, password } = parsed.data;
 
-    // Look up token in DB
+    // Reset tokens are stored by SHA-256 hash, so a DB read leak can't
+    // be used to reset passwords. Hash the incoming raw token and look
+    // up by the hash.
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
     const [tokenData] = await db
       .select()
       .from(resetTokens)
-      .where(eq(resetTokens.token, token))
+      .where(eq(resetTokens.token, tokenHash))
       .limit(1);
 
     if (!tokenData) {

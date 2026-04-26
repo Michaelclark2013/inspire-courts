@@ -64,16 +64,19 @@ export async function POST(request: Request) {
 
     const targetEmail = dbUser?.email || adminEmail!;
 
-    // Generate a secure token
+    // Generate a secure token. The raw token is what we email to the
+    // user; only its SHA-256 hash is persisted, so a DB read leak
+    // doesn't let attackers reset passwords for arbitrary users.
     const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
 
-    // Clean expired tokens and store new one in DB
+    // Clean expired tokens and store new hash in DB
     try {
       await db.delete(resetTokens).where(lt(resetTokens.expiresAt, new Date().toISOString()));
       await db.insert(resetTokens).values({
         email: targetEmail,
-        token,
+        token: tokenHash,
         expiresAt,
       });
     } catch (err) {

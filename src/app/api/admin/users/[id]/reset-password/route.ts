@@ -46,12 +46,15 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
 
     // Generate a secure token + 1-hour window (same as public flow).
+    // Only the SHA-256 hash is persisted — the raw token is what we
+    // email, and reset-password hashes the submitted value before lookup.
     const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
     // Prune expired tokens then insert fresh one.
     await db.delete(resetTokens).where(lt(resetTokens.expiresAt, new Date().toISOString()));
-    await db.insert(resetTokens).values({ email: target.email, token, expiresAt });
+    await db.insert(resetTokens).values({ email: target.email, token: tokenHash, expiresAt });
 
     // Fire-and-forget email via the same Gmail transport the public flow uses.
     const gmailUser = process.env.GMAIL_USER;

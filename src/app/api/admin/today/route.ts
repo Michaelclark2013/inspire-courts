@@ -11,13 +11,17 @@ import {
 } from "@/lib/db/schema";
 import { and, asc, eq, gte, lte, inArray } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { canAccess } from "@/lib/permissions";
 
 // GET /api/admin/today — compact "what's happening right now" roll-up
 // for the admin dashboard. Rentals out/returning today, gym events
 // today, live shifts, games today.
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || session.user.role !== "admin") {
+  // Today rollup powers the /admin overview dashboard. Staff +
+  // front_desk can both see overview, so use canAccess instead of
+  // hardcoded admin.
+  if (!session?.user?.role || !canAccess(session.user.role, "overview")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, MessageSquare, Send, RefreshCw } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Row = {
   id: number;
@@ -49,6 +50,7 @@ function buildThreads(rows: Row[]): Thread[] {
 }
 
 export default function InboxPage() {
+  useDocumentTitle("Inbox");
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<Thread | null>(null);

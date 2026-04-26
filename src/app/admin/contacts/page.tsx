@@ -1,6 +1,10 @@
 export const revalidate = 300;
 
+import type { Metadata } from "next";
 import NotionFallback from "@/components/dashboard/NotionFallback";
+
+export const metadata: Metadata = { title: "Contacts | Inspire Courts AZ" };
+
 import LeadsClient from "@/components/admin/LeadsClient";
 import { getChatLeads, getProperty, isNotionConfigured } from "@/lib/notion";
 import { formatDate } from "@/lib/utils";

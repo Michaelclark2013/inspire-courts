@@ -6,6 +6,7 @@ import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Download, ChevronDown, ChevronRight, Filter } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 // Static lists of every entity type and action emitted by recordAudit()
 // across the codebase. Drives the filter datalists for typeahead.
@@ -69,6 +70,7 @@ function actionTone(action: string): string {
 }
 
 export default function AuditLogPage() {
+  useDocumentTitle("Audit Log");
   const { data: session, status } = useSession();
   const [rows, setRows] = useState<AuditRow[]>([]);
   const [total, setTotal] = useState(0);

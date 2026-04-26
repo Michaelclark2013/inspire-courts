@@ -1,6 +1,10 @@
 export const revalidate = 300;
 
+import type { Metadata } from "next";
 import { Handshake, DollarSign, CheckCircle } from "lucide-react";
+
+export const metadata: Metadata = { title: "Sponsors | Inspire Courts AZ" };
+
 import KPICard from "@/components/dashboard/KPICard";
 import DataTable from "@/components/dashboard/DataTable";
 import StatusBadge from "@/components/dashboard/StatusBadge";

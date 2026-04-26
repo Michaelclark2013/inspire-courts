@@ -12,6 +12,7 @@ import { SELECT_CLASS } from "@/lib/form-styles";
 import { exportCSV } from "@/lib/export";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { adminFetch } from "@/lib/admin-fetch";
 
 type Lead = {
   timestamp: string;
@@ -53,7 +54,9 @@ export default function LeadsPage() {
     setLoading(true);
     setFetchError(false);
     try {
-      const res = await fetch("/api/admin/leads", { signal });
+      // adminFetch redirects to /admin/login on 401 instead of leaving
+      // the empty-state up. Same pattern as audit-log + inquiries.
+      const res = await adminFetch("/api/admin/leads", { signal });
       if (signal?.aborted) return;
       if (res.ok) {
         const data = await res.json();
@@ -286,8 +289,28 @@ export default function LeadsPage() {
                         {lead.interest || "—"}
                       </td>
                       <td className="px-3 py-3">
+                        {/* Click source pill → filter to just that source.
+                            Re-click clears. Same click-to-filter pattern as
+                            audit-log + inquiries. stopPropagation prevents
+                            the row click (which expands the lead row). */}
                         <span
-                          className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${SOURCE_STYLES[lead.source] || "bg-slate-100 text-slate-500"}`}
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const next = lead.source === sourceFilter ? "" : (lead.source || "");
+                            setSourceFilter(next);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const next = lead.source === sourceFilter ? "" : (lead.source || "");
+                              setSourceFilter(next);
+                            }
+                          }}
+                          title="Filter to this source"
+                          className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline ${SOURCE_STYLES[lead.source] || "bg-slate-100 text-slate-500"}`}
                         >
                           {lead.source || "Unknown"}
                         </span>

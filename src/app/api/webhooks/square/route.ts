@@ -41,7 +41,12 @@ export async function POST(request: NextRequest) {
   const signature = request.headers.get("x-square-hmacsha256-signature") || "";
   const url = request.url;
 
-  // Verify signature (skip if no key configured — dev/sandbox)
+  // Verify signature. In production we REFUSE to process unsigned
+  // webhooks: if SQUARE_WEBHOOK_SIGNATURE_KEY isn't set in prod, that's
+  // a partial-config deployment (access token without webhook key) —
+  // an attacker could otherwise POST a crafted body and flip registrations
+  // to "paid". In dev/sandbox we still allow unsigned for local testing
+  // but log loudly so a missing key in prod gets noticed.
   const sigKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
   if (sigKey) {
     const valid = await verifyWebhookSignature(body, signature, url);
@@ -51,8 +56,14 @@ export async function POST(request: NextRequest) {
       });
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
+  } else if (process.env.NODE_ENV === "production") {
+    logger.error("Square webhook hit production without SQUARE_WEBHOOK_SIGNATURE_KEY — refusing to process unsigned event");
+    return NextResponse.json(
+      { error: "Webhook not configured" },
+      { status: 503 }
+    );
   } else {
-    logger.warn("Square webhook received without SQUARE_WEBHOOK_SIGNATURE_KEY configured — signature not verified");
+    logger.warn("Square webhook received without SQUARE_WEBHOOK_SIGNATURE_KEY configured — signature not verified (dev only)");
   }
 
   let event: {

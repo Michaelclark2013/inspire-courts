@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload, ChevronUp, ChevronDown, MessageSquare } from "lucide-react";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -62,10 +62,13 @@ export default function MembersPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState("active");
-  const [planFilter, setPlanFilter] = useState("");
-  const [renewingSoon, setRenewingSoon] = useState(false);
-  const [q, setQ] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // Bookmarkable filters — same pattern as audit-log + inquiries + leads.
+  const [statusFilter, setStatusFilter] = useState(() => searchParams.get("status") || "active");
+  const [planFilter, setPlanFilter] = useState(() => searchParams.get("plan") || "");
+  const [renewingSoon, setRenewingSoon] = useState(() => searchParams.get("renewing") === "1");
+  const [q, setQ] = useState(() => searchParams.get("q") || "");
   const debouncedQ = useDebouncedValue(q, 300);
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Member | null>(null);
@@ -125,6 +128,17 @@ export default function MembersPage() {
   useEffect(() => {
     if (status === "authenticated") load();
   }, [status, load]);
+
+  // Sync filters into URL — bookmarkable + shareable.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (statusFilter && statusFilter !== "active") params.set("status", statusFilter);
+    if (planFilter) params.set("plan", planFilter);
+    if (renewingSoon) params.set("renewing", "1");
+    if (debouncedQ) params.set("q", debouncedQ);
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false });
+  }, [statusFilter, planFilter, renewingSoon, debouncedQ, router]);
 
   useEffect(() => {
     const currentAbort = abortRef;

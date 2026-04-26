@@ -1,6 +1,5 @@
 export const revalidate = 300;
 
-import { GraduationCap } from "lucide-react";
 import KPICard from "@/components/dashboard/KPICard";
 import DataTable from "@/components/dashboard/DataTable";
 import NotionFallback from "@/components/dashboard/NotionFallback";
@@ -71,9 +70,9 @@ export default async function SchoolsPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <KPICard title="Total Schools" value={schools.length.toString()} icon={GraduationCap} />
-        <KPICard title="States" value={[...new Set(schools.map((s) => s.state))].length.toString()} icon={GraduationCap} />
-        <KPICard title="Classifications" value={[...new Set(schools.map((s) => s.classification).filter((c) => c !== "—"))].length.toString()} icon={GraduationCap} />
+        <KPICard title="Total Schools" value={schools.length.toString()} iconName="graduation-cap" />
+        <KPICard title="States" value={[...new Set(schools.map((s) => s.state))].length.toString()} iconName="graduation-cap" />
+        <KPICard title="Classifications" value={[...new Set(schools.map((s) => s.classification).filter((c) => c !== "—"))].length.toString()} iconName="graduation-cap" />
       </div>
 
       <div className="bg-white border border-border rounded-xl p-5 shadow-sm">

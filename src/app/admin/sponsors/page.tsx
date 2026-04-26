@@ -1,7 +1,6 @@
 export const revalidate = 300;
 
 import type { Metadata } from "next";
-import { Handshake, DollarSign, CheckCircle } from "lucide-react";
 
 export const metadata: Metadata = { title: "Sponsors | Inspire Courts AZ" };
 
@@ -70,10 +69,12 @@ export default async function SponsorsPage() {
   const activeCount = sponsors.filter((s) => s.status === "Active").length;
   const totalValue = sponsors.reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
 
+  // iconName (not icon) — lucide function refs can't cross the RSC
+  // boundary into KPICard ("use client").
   const kpis = [
-    { title: "Total Sponsors", value: sponsors.length.toLocaleString(), icon: Handshake },
-    { title: "Active", value: activeCount.toLocaleString(), icon: CheckCircle },
-    { title: "Total Value", value: `$${totalValue.toLocaleString()}`, icon: DollarSign },
+    { title: "Total Sponsors", value: sponsors.length.toLocaleString(), iconName: "handshake" as const },
+    { title: "Active", value: activeCount.toLocaleString(), iconName: "check-circle" as const },
+    { title: "Total Value", value: `$${totalValue.toLocaleString()}`, iconName: "dollar" as const },
   ];
 
   const columns: {

@@ -1,19 +1,55 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
+import {
+  type LucideIcon,
+  Users,
+  DollarSign,
+  UserCheck,
+  ClipboardList,
+  Handshake,
+  CheckCircle,
+  GraduationCap,
+  Trophy,
+  Activity,
+  Calendar,
+  TrendingUp,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import CountUp from "@/components/ui/CountUp";
 
-interface KPICardProps {
+// Server components can't pass a LucideIcon function reference across
+// the RSC boundary ("Functions cannot be passed directly to Client
+// Components"). Instead they pass `iconName` and we resolve it here.
+// Client callers can keep passing `icon` directly — both supported.
+const ICON_MAP: Record<string, LucideIcon> = {
+  users: Users,
+  dollar: DollarSign,
+  "user-check": UserCheck,
+  "clipboard-list": ClipboardList,
+  handshake: Handshake,
+  "check-circle": CheckCircle,
+  "graduation-cap": GraduationCap,
+  trophy: Trophy,
+  activity: Activity,
+  calendar: Calendar,
+  "trending-up": TrendingUp,
+};
+
+export type KPIIconName = keyof typeof ICON_MAP;
+
+type KPICardProps = {
   title: string;
   value: string | number;
-  icon: LucideIcon;
   trend?: string;
   trendUp?: boolean;
   valueColor?: string;
-}
+} & (
+  | { icon: LucideIcon; iconName?: never }
+  | { iconName: KPIIconName | string; icon?: never }
+);
 
-export default function KPICard({ title, value, icon: Icon, trend, trendUp, valueColor }: KPICardProps) {
+export default function KPICard({ title, value, icon, iconName, trend, trendUp, valueColor }: KPICardProps) {
+  const Icon: LucideIcon = icon ?? ICON_MAP[iconName ?? ""] ?? Activity;
   return (
     <div
       className="bg-white border border-light-gray shadow-sm rounded-xl p-3 lg:p-5 transition-all duration-200 hover:border-text-secondary/30 hover:shadow-md"

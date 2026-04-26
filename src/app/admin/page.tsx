@@ -27,7 +27,6 @@ import WeeklyDigestCard from "@/components/admin/dashboard/WeeklyDigestCard";
 import OpsPulseSections from "@/components/admin/dashboard/OpsPulseSections";
 import { Suspense } from "react";
 const PushNotificationPrompt = dynamic(() => import("@/components/pwa/PushNotificationPrompt"));
-import { Users, DollarSign, UserCheck, ClipboardList } from "lucide-react";
 import {
   fetchSheetWithHeaders,
   getCol,
@@ -134,30 +133,34 @@ export default async function AdminDashboard() {
         recentGames: [] as Array<{ home: string; away: string; homeScore: string; awayScore: string; winner: string; division: string; court: string; time: string }>,
       };
 
+  // Lucide icon function refs can't cross the RSC boundary into
+  // KPICard ("use client") — pass the string name and let KPICard
+  // resolve it. (Was previously throwing "Functions cannot be passed
+  // directly to Client Components" on every /admin render.)
   const kpis = [
     {
       title: "Total Teams",
       value: data.totalTeams.toLocaleString(),
-      icon: Users,
+      iconName: "users" as const,
       trend: "Registered this season",
       trendUp: true,
     },
     {
       title: "Total Revenue",
       value: `$${data.totalRevenue.toLocaleString("en-US", { maximumFractionDigits: 0 })}`,
-      icon: DollarSign,
+      iconName: "dollar" as const,
       trend: "Cash + Card + Square",
       trendUp: true,
     },
     {
       title: "Players Checked In",
       value: data.totalPlayers.toLocaleString(),
-      icon: UserCheck,
+      iconName: "user-check" as const,
     },
     {
       title: "Games Recorded",
       value: data.totalGames.toLocaleString(),
-      icon: ClipboardList,
+      iconName: "clipboard-list" as const,
     },
   ];
 

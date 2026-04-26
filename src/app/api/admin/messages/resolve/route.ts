@@ -5,7 +5,7 @@ import { canAccess } from "@/lib/permissions";
 import { apiError } from "@/lib/api-helpers";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 // GET /api/admin/messages/resolve?email=foo@bar.com
 // Used by Message buttons on rows that only have an email (e.g.
@@ -24,10 +24,14 @@ export async function GET(req: NextRequest) {
   const [row] = await db
     .select({ id: users.id, name: users.name, role: users.role })
     .from(users)
-    // Email is unique on users, but not lower-cased there; do an exact
-    // match — most coaches sign up with the same email they're listed
-    // under.
-    .where(eq(users.email, email))
+    // Case-insensitive lookup — users.email isn't normalized at
+    // signup, and the contact email on a tournament registration
+    // might be "Sarah@x.com" while the user signed up as
+    // "sarah@x.com". An exact eq() match silently 404'd in that
+    // case and the button fell through to mailto, surprising the
+    // admin who'd just messaged the same user successfully from
+    // a different page.
+    .where(sql`lower(${users.email}) = ${email}`)
     .limit(1);
   if (!row) return apiError("No portal account for that email", 404);
   return NextResponse.json({ user: row });

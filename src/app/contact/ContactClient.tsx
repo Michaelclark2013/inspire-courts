@@ -293,9 +293,9 @@ function ContactPageInner() {
               <AnimateIn delay={200}>
                 <div className="space-y-8">
                   <div>
-                    <h3 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
+                    <h2 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
                       Location
-                    </h3>
+                    </h2>
                     <div className="flex gap-3 text-text-muted text-sm">
                       <MapPin className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <div>
@@ -307,9 +307,9 @@ function ContactPageInner() {
                   </div>
 
                   <div>
-                    <h3 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
+                    <h2 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
                       Phone
-                    </h3>
+                    </h2>
                     <div className="flex gap-3 text-text-muted text-sm">
                       <Phone className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <a
@@ -322,9 +322,9 @@ function ContactPageInner() {
                   </div>
 
                   <div>
-                    <h3 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
+                    <h2 className="text-navy font-bold text-xs uppercase tracking-widest mb-3 font-[var(--font-chakra)]">
                       Email
-                    </h3>
+                    </h2>
                     <div className="flex gap-3 text-text-muted text-sm">
                       <Mail className="w-5 h-5 text-red flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <a

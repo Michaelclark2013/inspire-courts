@@ -151,6 +151,15 @@ const JSON_LD = {
 // admin content edits propagate without rebuilding the whole site.
 export const revalidate = 3600;
 
+const BREADCRUMB_LD = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Facility", item: `${SITE_URL}/facility` },
+  ],
+};
+
 export default async function FacilityPage() {
   const page = await getPageContent("facility");
 
@@ -160,6 +169,10 @@ export default async function FacilityPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_LD) }}
       />
 
       {/* Hero — with booking CTA as the primary focus */}

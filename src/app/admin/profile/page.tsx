@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 import {
   User,
   ArrowLeft,
@@ -63,8 +64,13 @@ function prefOn(prefs: NotificationPrefs, path: string): boolean {
 }
 
 export default function MyProfilePage() {
+  const { status: sessionStatus } = useSession();
   const [me, setMe] = useState<Me | null>(null);
   const [loading, setLoading] = useState(true);
+  // Session-expired flag: API returned 401 even though we got past
+  // middleware. Render the dedicated re-auth screen instead of a raw
+  // error message, so the user has a one-click path back in.
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -88,7 +94,15 @@ export default function MyProfilePage() {
   const load = useCallback(async () => {
     try {
       setError(null);
-      const res = await fetch("/api/me/profile");
+      const res = await fetch("/api/me/profile", { cache: "no-store", credentials: "same-origin" });
+      if (res.status === 401) {
+        // Session is gone — middleware can't help here because it doesn't
+        // gate /api/me/*. Surface a clean re-auth UI instead of a stack
+        // trace; `?from=` lets login bounce them back here after sign-in.
+        setSessionExpired(true);
+        setLoading(false);
+        return;
+      }
       if (!res.ok) throw new Error(`load ${res.status}`);
       const data = (await res.json()) as Me;
       setMe(data);
@@ -170,7 +184,32 @@ export default function MyProfilePage() {
     } catch { /* noop */ }
   }
 
+  // useSession says we're not logged in → bounce to login immediately.
+  // Middleware should usually catch this for /admin/* but a stale session
+  // can race past — explicit redirect is the belt-and-suspenders.
+  if (sessionStatus === "unauthenticated") {
+    redirect("/admin/login?from=/admin/profile");
+  }
   if (loading) return <div className="p-8"><SkeletonRows count={5} /></div>;
+  if (sessionExpired) {
+    return (
+      <div className="p-8 max-w-md mx-auto">
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
+          <Lock className="w-10 h-10 text-amber-600 mx-auto mb-3" />
+          <h1 className="text-navy font-bold text-lg mb-1">Your session expired</h1>
+          <p className="text-text-muted text-sm mb-5">
+            For your security, you&apos;ll need to sign in again to view your profile.
+          </p>
+          <a
+            href="/admin/login?from=/admin/profile"
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
+          >
+            Sign in
+          </a>
+        </div>
+      </div>
+    );
+  }
   if (error && !me) return <div className="p-8 text-red">{error}</div>;
   if (!me) return <div className="p-8 text-text-muted">Not found</div>;
 

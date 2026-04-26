@@ -69,10 +69,14 @@ export default function LaunchStatusPage() {
     setSeedMsg(null);
     try {
       const res = await fetch(path, { method: "POST" });
-      const body = await res.json();
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSeedMsg(`${label} failed: ${body.error || `HTTP ${res.status}`}`);
+        return;
+      }
       setSeedMsg(`${label}: inserted ${body.inserted || 0}, skipped ${body.skipped || 0}.`);
       load();
-    } catch { setSeedMsg(`${label} failed`); }
+    } catch { setSeedMsg(`${label} failed: network error`); }
     finally { setSeedingKey(null); }
   }
 

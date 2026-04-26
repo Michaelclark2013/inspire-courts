@@ -359,21 +359,39 @@ export async function runBillingTick(): Promise<{
   let failed = 0;
   let cancelled = 0;
 
-  for (const sub of due) {
-    const wasRetry = sub.status === "past_due";
-    try {
-      const r = await chargeSubscription(sub.id);
+  // Bounded-parallel charge. Sequential `await` in a loop serialized
+  // every Square API call (~500ms each) — a daily tick with 100 subs
+  // approached Vercel's 60s cron timeout. 5 in flight stays well under
+  // Square's published per-app rate limit and cuts wall-clock by ~5×.
+  // Each charge owns its own subscription/invoice rows so there's no
+  // shared-state contention to worry about.
+  const CONCURRENCY = 5;
+  for (let i = 0; i < due.length; i += CONCURRENCY) {
+    const chunk = due.slice(i, i + CONCURRENCY);
+    const results = await Promise.all(
+      chunk.map(async (sub) => {
+        const wasRetry = sub.status === "past_due";
+        try {
+          const r = await chargeSubscription(sub.id);
+          return {
+            ok: r.ok,
+            wasRetry,
+            willCancel: !r.ok && sub.failedAttempts + 1 >= MAX_FAILED_ATTEMPTS,
+          };
+        } catch (err) {
+          logger.error("billing tick: charge threw", { subId: sub.id, error: String(err) });
+          return { ok: false, wasRetry, willCancel: false, threw: true };
+        }
+      })
+    );
+    for (const r of results) {
       if (r.ok) {
-        if (wasRetry) retried++;
+        if (r.wasRetry) retried++;
         else renewed++;
       } else {
         failed++;
-        // chargeSubscription auto-cancels at MAX_FAILED_ATTEMPTS.
-        if ((sub.failedAttempts + 1) >= MAX_FAILED_ATTEMPTS) cancelled++;
+        if (r.willCancel) cancelled++;
       }
-    } catch (err) {
-      logger.error("billing tick: charge threw", { subId: sub.id, error: String(err) });
-      failed++;
     }
   }
 

@@ -91,7 +91,10 @@ export const POST = withTiming("admin.equipment_movement.create", async (request
     const msg = (err as Error).message || "";
     if (msg === "not_found") return apiNotFound("Equipment not found");
     if (msg.startsWith("would_go_negative")) {
-      const current = msg.split(":")[1];
+      // would_go_negative:42 — split(':')[1] is undefined if the
+      // message ever lacks the colon, which produced "current:
+      // undefined" copy in the UI. Fall back to "unknown".
+      const current = msg.split(":")[1] || "unknown";
       return apiError(`On-hand would go below zero (current: ${current})`, 409);
     }
     logger.error("Failed to record movement", { error: String(err) });

@@ -3,6 +3,9 @@ import { promises as fs } from "fs";
 import path from "path";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { teams } from "@/lib/db/schema";
+import { and, eq } from "drizzle-orm";
 
 const LOGOS_JSON = path.join(process.cwd(), "data", "team-logos.json");
 const LOGOS_DIR = path.join(process.cwd(), "public", "images", "teams");
@@ -68,6 +71,23 @@ export async function POST(request: NextRequest) {
 
   if (!teamName) return NextResponse.json({ error: "teamName is required" }, { status: 400 });
   if (!file) return NextResponse.json({ error: "file is required" }, { status: 400 });
+
+  // Coach IDOR guard: a coach may only upload a logo for a team they
+  // own. Admin / staff / front_desk skip the ownership check.
+  if (session.user.role === "coach") {
+    const coachId = Number(session.user.id);
+    if (!Number.isInteger(coachId) || coachId <= 0) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const [match] = await db
+      .select({ id: teams.id })
+      .from(teams)
+      .where(and(eq(teams.coachUserId, coachId), eq(teams.name, teamName)))
+      .limit(1);
+    if (!match) {
+      return NextResponse.json({ error: "Not your team" }, { status: 403 });
+    }
+  }
 
   // Validate type
   if (!ALLOWED_TYPES.includes(file.type)) {

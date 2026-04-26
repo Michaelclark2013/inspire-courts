@@ -37,9 +37,14 @@ export async function POST(req: NextRequest) {
     const listId = process.env.MAILCHIMP_LIST_ID;
 
     if (apiKey && listId) {
-      // Extract data center from API key (the part after the last dash)
+      // Mailchimp keys are always `<key>-<datacenter>`. If the key is
+      // malformed there's no useful URL to call — return success-noop
+      // so the user still sees the friendly confirmation, and log so
+      // we can fix the env var.
       const dc = apiKey.split("-").pop();
-
+      if (!dc || dc === apiKey) {
+        logger.warn("subscribe: MAILCHIMP_API_KEY is missing the -<dc> suffix; skipping send");
+      } else {
       const res = await fetch(
         `https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members`,
         {
@@ -68,6 +73,7 @@ export async function POST(req: NextRequest) {
           { success: false, error: "Subscription failed. Please try again." },
           { status: 500 }
         );
+      }
       }
     } else {
       logger.info("Mailchimp not configured — email captured", { email: cleanEmail });

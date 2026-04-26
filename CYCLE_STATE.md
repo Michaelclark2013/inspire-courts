@@ -3,7 +3,7 @@
 **Branch:** `cycle/auto-improvements` — never push to main, never merge own PRs.
 **Mode:** Continuous 6-phase loop (1→2→3→4→5→6→1→…). Stop only when Mike types "stop".
 **Current cycle:** 5
-**Current phase:** 1 — UI (next iteration)
+**Current phase:** 3 — Admin Panel
 
 ## The 6 phases
 1. UI — Visual design, component polish, accessibility, responsive, loading/error states, brand consistency
@@ -28,9 +28,9 @@
 
 | Phase | Status | Report |
 |---|---|---|
-| 1 — UI | next | — |
-| 2 — Functionality | pending | — |
-| 3 — Admin | pending | — |
+| 1 — UI | done | [phase-1-2026-04-25-1907.md](cycle-reports/phase-1-2026-04-25-1907.md) |
+| 2 — Functionality | done | [phase-2-2026-04-25-1907.md](cycle-reports/phase-2-2026-04-25-1907.md) |
+| 3 — Admin | in progress | — |
 | 4 — Public | pending | — |
 | 5 — Marketing | pending | — |
 | 6 — Security | pending | — |

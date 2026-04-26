@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { exportCSV } from "@/lib/export";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Row = {
   booking: {
@@ -59,6 +60,7 @@ function fmtDate(iso: string): string {
 }
 
 export default function RentalsListPage() {
+  useDocumentTitle("Rentals");
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

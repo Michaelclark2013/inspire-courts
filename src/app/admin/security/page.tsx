@@ -11,6 +11,7 @@ import {
   Clock,
   Eye,
 } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type AuditEntry = {
   id: number;
@@ -43,6 +44,7 @@ function fmtRel(iso: string): string {
 }
 
 export default function SecurityPage() {
+  useDocumentTitle("Security");
   const [audits, setAudits] = useState<AuditEntry[]>([]);
   const [bumping, setBumping] = useState(false);
   const [bumped, setBumped] = useState<number | null>(null);

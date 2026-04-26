@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import PermissionActivityFeed from "@/components/admin/permissions/ActivityFeed";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type UserRow = {
   id: number;
@@ -47,6 +48,7 @@ const ROLE_LABELS: Record<UserRow["role"], string> = {
 };
 
 export default function PermissionsIndexPage() {
+  useDocumentTitle("Permissions");
   const [rows, setRows] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

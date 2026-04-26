@@ -88,6 +88,9 @@ export default function PermissionsDetailPage() {
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [history, setHistory] = useState<AuditEntry[] | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
+  // Surface load failures inside the history panel so it doesn't sit
+  // at "Loading…" forever on a 5xx.
+  const [historyError, setHistoryError] = useState<string | null>(null);
   const [copyOpen, setCopyOpen] = useState(false);
 
   const load = useCallback(async () => {
@@ -164,11 +167,17 @@ export default function PermissionsDetailPage() {
   }
 
   async function loadHistory() {
+    setHistoryError(null);
     try {
       const res = await adminFetch(`/api/admin/permissions/${userId}/history`);
-      if (res.ok) setHistory(await res.json());
+      if (res.ok) {
+        setHistory(await res.json());
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setHistoryError(data.error || `Couldn't load history (${res.status}).`);
+      }
     } catch {
-      /* ignore — just don't show history */
+      setHistoryError("Network error loading history.");
     }
   }
 
@@ -477,7 +486,7 @@ export default function PermissionsDetailPage() {
       )}
 
       {historyOpen && (
-        <HistoryPanel entries={history} onClose={() => setHistoryOpen(false)} />
+        <HistoryPanel entries={history} error={historyError} onRetry={loadHistory} onClose={() => setHistoryOpen(false)} />
       )}
       {copyOpen && (
         <CopyFromDialog
@@ -493,9 +502,13 @@ export default function PermissionsDetailPage() {
 
 function HistoryPanel({
   entries,
+  error,
+  onRetry,
   onClose,
 }: {
   entries: AuditEntry[] | null;
+  error: string | null;
+  onRetry: () => void;
   onClose: () => void;
 }) {
   function label(action: string): string {
@@ -539,7 +552,17 @@ function HistoryPanel({
           </button>
         </div>
         <div className="p-5">
-          {entries === null ? (
+          {error ? (
+            <div className="text-center py-8">
+              <p className="text-red text-sm font-semibold mb-3">{error}</p>
+              <button
+                onClick={onRetry}
+                className="inline-flex items-center gap-1.5 bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded"
+              >
+                Try again
+              </button>
+            </div>
+          ) : entries === null ? (
             <p className="text-text-muted text-sm text-center py-8">Loading…</p>
           ) : entries.length === 0 ? (
             <p className="text-text-muted text-sm text-center py-8">No permission changes yet for this user.</p>

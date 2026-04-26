@@ -75,11 +75,16 @@ const localBusinessSchema = {
   description:
     "Arizona's premier indoor basketball & volleyball facility. 7 regulation courts, game film available at tournaments. Home of OFF SZN HOOPS youth basketball tournaments.",
   url: SITE_URL,
+  // image is required by Google for LocalBusiness rich results.
+  // /opengraph-image is the dynamic OG generator; using it gives Google
+  // a 1200×630 facility image that matches what's used on social shares.
+  image: `${SITE_URL}/opengraph-image`,
   email: FACILITY_EMAIL,
   // E.164-normalized telephone — matches /contact's LocalBusiness block
   // so Google can merge the entities cleanly. Human-readable format
   // stays in the page body; this is for crawlers only.
   telephone: `+1${FACILITY_PHONE.replace(/\D/g, "")}`,
+  priceRange: "$$",
   address: {
     "@type": "PostalAddress",
     streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",

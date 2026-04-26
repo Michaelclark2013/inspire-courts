@@ -22,14 +22,32 @@ export default function IntegrationsPage() {
   const [revealedKey, setRevealedKey] = useState<string | null>(null);
   const [revealedSecret, setRevealedSecret] = useState<string | null>(null);
 
+  const [loadError, setLoadError] = useState<string | null>(null);
   const load = useCallback(async () => {
-    const [kRes, wRes] = await Promise.all([
-      adminFetch("/api/admin/api-keys", { cache: "no-store" }),
-      adminFetch("/api/admin/webhooks", { cache: "no-store" }),
-    ]);
-    if (kRes.ok) setKeys((await kRes.json()).rows || []);
-    if (wRes.ok) setHooks((await wRes.json()).rows || []);
-    setLoading(false);
+    try {
+      const [kRes, wRes] = await Promise.all([
+        adminFetch("/api/admin/api-keys", { cache: "no-store" }),
+        adminFetch("/api/admin/webhooks", { cache: "no-store" }),
+      ]);
+      const errors: string[] = [];
+      if (kRes.ok) {
+        setKeys((await kRes.json()).rows || []);
+      } else {
+        errors.push(`API keys ${kRes.status}`);
+      }
+      if (wRes.ok) {
+        setHooks((await wRes.json()).rows || []);
+      } else {
+        errors.push(`webhooks ${wRes.status}`);
+      }
+      setLoadError(errors.length > 0 ? `Couldn't load: ${errors.join(", ")}.` : null);
+    } catch (err) {
+      if ((err as Error)?.name !== "SessionExpiredError") {
+        setLoadError("Network error loading integrations.");
+      }
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -77,6 +95,22 @@ export default function IntegrationsPage() {
   }
 
   if (loading) return <div className="p-8"><SkeletonRows count={6} /></div>;
+  if (loadError && keys.length === 0 && hooks.length === 0) {
+    return (
+      <div className="p-8 max-w-md mx-auto">
+        <div className="bg-red/5 border border-red/20 text-red rounded-2xl p-6 text-center">
+          <p className="font-bold mb-1">Couldn&apos;t load integrations</p>
+          <p className="text-sm">{loadError}</p>
+          <button
+            onClick={load}
+            className="mt-3 inline-flex items-center gap-1.5 bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-4xl mx-auto">

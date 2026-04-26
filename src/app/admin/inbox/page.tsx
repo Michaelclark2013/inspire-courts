@@ -59,6 +59,7 @@ export default function InboxPage() {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
 
+  const [loadError, setLoadError] = useState<string | null>(null);
   const load = useCallback(async () => {
     try {
       const res = await adminFetch("/api/admin/sms", { cache: "no-store" });
@@ -66,10 +67,18 @@ export default function InboxPage() {
         const json = await res.json();
         const t = buildThreads(json.rows || []);
         setThreads(t);
+        setLoadError(null);
         if (active) {
           const updated = t.find((x) => x.phone === active.phone);
           if (updated) setActive(updated);
         }
+      } else {
+        const j = await res.json().catch(() => ({}));
+        setLoadError(j.error || `Couldn't load conversations (${res.status}).`);
+      }
+    } catch (err) {
+      if ((err as Error)?.name !== "SessionExpiredError") {
+        setLoadError("Network error loading conversations.");
       }
     } finally {
       setLoading(false);
@@ -107,6 +116,22 @@ export default function InboxPage() {
   }
 
   if (loading) return <div className="p-8 text-text-muted">Loading inbox…</div>;
+  if (loadError && threads.length === 0) {
+    return (
+      <div className="p-8 max-w-md mx-auto">
+        <div className="bg-red/5 border border-red/20 text-red rounded-2xl p-6 text-center">
+          <p className="font-bold mb-1">Couldn&apos;t load SMS conversations</p>
+          <p className="text-sm">{loadError}</p>
+          <button
+            onClick={load}
+            className="mt-3 inline-flex items-center gap-1.5 bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-6xl mx-auto">

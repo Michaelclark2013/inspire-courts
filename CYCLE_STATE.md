@@ -1,49 +1,52 @@
 # Cycle State
 
-**Branch:** `cycle/auto-improvements`
-**Current phase:** Rotation 2 · Phase 1 (UI) — next iteration
-**Iterations completed:** 7 (rotation 1 complete)
-**Last completed:** 2026-04-25 10:41 — Phase 7 (Code Quality & Engineering Excellence)
+**Branch:** `cycle/auto-improvements` — never push to main, never merge own PRs.
+**Mode:** Continuous 6-phase loop (1→2→3→4→5→6→1→…). Stop only when Mike types "stop".
+**Current cycle:** 5
+**Current phase:** 1 — UI (next iteration)
+
+## The 6 phases
+1. UI — Visual design, component polish, accessibility, responsive, loading/error states, brand consistency
+2. Functionality — Feature completeness, edge cases, performance, Core Web Vitals, integrations, validation
+3. Admin Panel — Workflow speed, bulk actions, data viz, reporting, role-based access, keyboard shortcuts
+4. Public Site — Conversion optimization, page speed, SEO, schema markup, CTAs, mobile experience
+5. Customer Acquisition & Marketing — SEO audit, content strategy, email capture, analytics, local SEO
+6. Security & Privacy — OWASP top 10, secrets, dependencies, CSP, auth hardening, rate limiting, PII
+
+## Per-iteration loop
+- **A. DISCOVER** — Run deep discovery for the phase. Write findings to `cycle-reports/phase-{N}-{date}.md` with current state, gaps, ranked P0/P1/P2.
+- **B. CHOOSE** — Pick 3–5 highest-impact tasks completable this iteration.
+- **C. ACT** — Implement. Commit each logical change.
+- **D. RECORD & ADVANCE** — Update cycle report and this file. Continue immediately.
 
 ## Cadence
-- All work on `cycle/auto-improvements`. Never commit to `main`.
-- Push to GitHub at most once per full **7-phase** rotation (after phase 7).
-- Production deploy via PR review → merge to main, max 1/day.
-- Open PR titled `Cycle [N] — [date]` after each rotation, summarizing all 7 phases.
-- **End-of-rotation email:** after phase 7 wraps, send rotation summary via Gmail MCP to `mikeyclark.240@gmail.com`.
+- Push to GitHub at most once per full 6-phase rotation (after phase 6).
+- Open PR titled `Cycle [N]` after rotation; never self-merge.
+- Pre-existing local edits = parallel agent work-in-progress; commit them into appropriate phase commits.
 
-## The 7 phases
-1. UI · 2. Functionality · 3. Admin Panel · 4. Public Site · 5. Customer Acquisition & Marketing · 6. Security & Privacy · 7. Code Quality & Engineering Excellence
+## Cycle 5 status
 
-## Rotation 1 status — COMPLETE
-1. UI ✅ (iter 1)
-2. Functionality ✅ (iter 2)
-3. Admin Panel ✅ (iter 3)
-4. Public Site ✅ (iter 4)
-5. Customer Acquisition & Marketing ✅ (iter 5)
-6. Security & Privacy ✅ (iter 6)
-7. Code Quality & Engineering Excellence ✅ (iter 7)
+| Phase | Status | Report |
+|---|---|---|
+| 1 — UI | next | — |
+| 2 — Functionality | pending | — |
+| 3 — Admin | pending | — |
+| 4 — Public | pending | — |
+| 5 — Marketing | pending | — |
+| 6 — Security | pending | — |
 
-## Rotation 2 status
-1. UI ← **next**
-2. Functionality
-3. Admin Panel
-4. Public Site
-5. Customer Acquisition & Marketing
-6. Security & Privacy
-7. Code Quality & Engineering Excellence
+## Open items needing Mike (BLOCKED)
+- `NEXT_PUBLIC_GOOGLE_REVIEW_URL` env var (still placeholder).
+- Square live keys (`SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID`, `SQUARE_ENVIRONMENT`, `SQUARE_WEBHOOK_SIGNATURE_KEY`) on Vercel for live payments.
 
-## Open items needing Mike
-- `NEXT_PUBLIC_GOOGLE_REVIEW_URL` env var (phase 5).
+## Log (Cycle 5+)
 
-## Log
+| Cycle | Phase | Date | Report | Pushed |
+|---|---|---|---|---|
 
-| Iter | Phase | Date | Report | Pushed | PR |
-|---|---|---|---|---|---|
-| 1 | 1 — UI | 2026-04-25 | [phase-1-2026-04-25-0953.md](cycle-reports/phase-1-2026-04-25-0953.md) | yes (manual merge by Mike) | — |
-| 2 | 2 — Functionality | 2026-04-25 | [phase-2-2026-04-25-1000.md](cycle-reports/phase-2-2026-04-25-1000.md) | yes (manual merge by Mike) | — |
-| 3 | 3 — Admin Panel | 2026-04-25 | [phase-3-2026-04-25-1008.md](cycle-reports/phase-3-2026-04-25-1008.md) | yes (manual merge by Mike) | — |
-| 4 | 4 — Public Site | 2026-04-25 | [phase-4-2026-04-25-1015.md](cycle-reports/phase-4-2026-04-25-1015.md) | yes (manual merge by Mike) | — |
-| 5 | 5 — Marketing | 2026-04-25 | [phase-5-2026-04-25-1023.md](cycle-reports/phase-5-2026-04-25-1023.md) | yes (manual merge by Mike) | — |
-| 6 | 6 — Security | 2026-04-25 | [phase-6-2026-04-25-1032.md](cycle-reports/phase-6-2026-04-25-1032.md) | no | — |
-| 7 | 7 — Code Quality | 2026-04-25 | [phase-7-2026-04-25-1041.md](cycle-reports/phase-7-2026-04-25-1041.md) | yes (rotation-1 merge) | — |
+## History
+Cycles 1–4 ran a 7-phase variant with direct-to-main commits under
+Mike's earlier authorization. Phase reports under `cycle-reports/`
+prefixed `phase-1-2026-04-25-*.md` through `phase-7-*.md`. The
+2026-04-25 directive switched to the 6-phase, branch-only regime
+above; numbering restarts at Cycle 5.

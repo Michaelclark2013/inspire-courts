@@ -8,6 +8,9 @@ import {
   SHEETS,
 } from "@/lib/google-sheets";
 import { formatDateShort } from "@/lib/utils";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Prospects | Inspire Courts AZ" };
 
 export const revalidate = 300;
 

@@ -7,6 +7,9 @@ import {
   isGoogleConfigured,
   SHEETS,
 } from "@/lib/google-sheets";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Game scores | Inspire Courts AZ" };
 
 export const revalidate = 300;
 

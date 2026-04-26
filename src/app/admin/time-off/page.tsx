@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Calendar, Check, X, Clock } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Request = {
   id: number;
@@ -31,6 +32,7 @@ const STATUS_STYLES: Record<string, string> = {
 function fmtDate(iso: string): string { try { return new Date(iso).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" }); } catch { return iso; } }
 
 export default function TimeOffAdminPage() {
+  useDocumentTitle("Time off");
   const { data: session, status } = useSession();
   const [filter, setFilter] = useState("pending");
   const [requests, setRequests] = useState<Request[]>([]);

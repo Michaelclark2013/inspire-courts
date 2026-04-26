@@ -81,7 +81,10 @@ export default function SecurityPage() {
     setError(null);
     try {
       const res = await adminFetch("/api/admin/security/force-relogin", { method: "POST" });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Failed (${res.status})`);
+      }
       const data = await res.json();
       setBumped(data.touched);
       load();

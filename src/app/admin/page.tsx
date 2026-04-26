@@ -115,58 +115,24 @@ async function getDashboardData() {
 }
 
 export default async function AdminDashboard() {
-  const configured = isGoogleConfigured();
-
-  if (!configured) {
-    return (
-      <div
-        className="p-3 sm:p-6 lg:p-8"
-        aria-labelledby="dashboard-heading"
-      >
-        <header className="mb-8 hidden md:block">
-          <h1
-            id="dashboard-heading"
-            className="text-2xl font-bold uppercase tracking-tight text-navy font-heading"
-          >
-            Dashboard
-          </h1>
-          <p className="text-text-secondary text-sm mt-1">
-            Inspire Courts AZ — Operations Overview
-          </p>
-        </header>
-
-        <section className="bg-white border border-light-gray shadow-sm rounded-xl p-8 text-center">
-          <div className="w-12 h-12 bg-red/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Activity className="w-6 h-6 text-red" aria-hidden="true" />
-          </div>
-          <h2 className="text-navy font-bold text-lg mb-2">
-            Connect Google Sheets
-          </h2>
-          <p className="text-text-secondary text-sm max-w-md mx-auto mb-6">
-            Add your Google service account credentials to load live data from
-            your Google Sheets — game scores, revenue, team registrations, and
-            more.
-          </p>
-          <div className="bg-off-white border border-light-gray rounded-xl p-4 text-left max-w-sm mx-auto font-mono text-xs text-text-secondary space-y-1">
-            <p className="text-red"># Add to .env.local</p>
-            <p>GOOGLE_SERVICE_ACCOUNT_EMAIL=...</p>
-            <p>GOOGLE_PRIVATE_KEY=&quot;-----BEGIN PRIVATE KEY...&quot;</p>
-          </div>
-          <p className="text-text-secondary text-xs mt-4">
-            Then share each Google Sheet with your service account email.
-          </p>
-          <p className="mt-6 text-text-secondary text-xs">
-            Meanwhile, your DB-powered dashboard still works below.
-          </p>
-          <div className="mt-6">
-            <AdminDashboardClient />
-          </div>
-        </section>
-      </div>
-    );
-  }
-
-  const data = await getDashboardData();
+  // Google Sheets is optional. When unconfigured, the dashboard still
+  // renders with zeros for the Sheets-derived KPIs — the admin landing
+  // is now navigation-first ("show every menu option") so KPIs are
+  // secondary. Removed the previous "Connect Google Sheets" gate that
+  // hid the entire dashboard until creds were set.
+  const data = isGoogleConfigured()
+    ? await getDashboardData()
+    : {
+        totalTeams: 0,
+        totalRevenue: 0,
+        totalCash: 0,
+        totalCard: 0,
+        totalSquare: 0,
+        totalPlayers: 0,
+        totalGames: 0,
+        divisionCounts: {} as Record<string, number>,
+        recentGames: [] as Array<{ home: string; away: string; homeScore: string; awayScore: string; winner: string; division: string; court: string; time: string }>,
+      };
 
   const kpis = [
     {

@@ -230,7 +230,6 @@ export default function AdminButtonGrid() {
   const overrides = (session?.user as { permissionOverrides?: Array<{ page: AdminPage; granted: boolean; expiresAt?: string | null }> } | undefined)?.permissionOverrides;
 
   const [query, setQuery] = useState("");
-  const [drillIn, setDrillIn] = useState<string | null>(null);
   const [favHrefs, setFavHrefs] = useState<string[]>([]);
 
   useEffect(() => { setFavHrefs(loadFavs()); }, []);
@@ -273,8 +272,6 @@ export default function AdminButtonGrid() {
     .filter((v): v is { tile: Tile; cat: Category } => !!v);
 
   const visibleQuickActions = QUICK_ACTIONS.filter((t) => canAccessWithOverrides(role as UserRole, t.page, overrides));
-
-  const activeCategory = drillIn ? visibleCategories.find((c) => c.key === drillIn) : null;
 
   return (
     <div className="space-y-5">
@@ -354,100 +351,38 @@ export default function AdminButtonGrid() {
             </div>
           )}
 
-          {/* 6 category cards */}
-          <div>
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <Settings className="w-4 h-4 text-text-muted" />
-              <h2 className="text-navy font-bold text-xs uppercase tracking-widest">Categories</h2>
-            </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-              {visibleCategories.map((c) => {
-                const tint = TINT[c.tint];
-                return (
-                  <button
-                    key={c.key}
-                    onClick={() => { setDrillIn(c.key); void triggerHaptic("light"); }}
-                    className={`group bg-white border border-border rounded-2xl p-4 text-left shadow-sm transition-all hover:shadow-md active:scale-[0.98] ${tint.ringHover}`}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className={`w-12 h-12 rounded-2xl ${tint.iconBg} flex items-center justify-center`}>
-                        <c.icon className={`w-6 h-6 ${tint.iconFg}`} aria-hidden={true} />
-                      </div>
-                      <span className={`w-1 h-10 rounded-full ${tint.bar}`} aria-hidden="true" />
-                    </div>
-                    <p className="text-navy font-bold text-base leading-tight">{c.label}</p>
-                    <p className="text-text-muted text-xs mt-0.5 line-clamp-1">{c.blurb}</p>
-                    <div className="flex items-center justify-between mt-3">
-                      <span className="text-text-muted text-[10px] uppercase tracking-widest font-bold">
-                        {c.tiles.length} tools
-                      </span>
-                      <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-navy" />
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Drill-down sheet — bottom sheet on mobile, centered card on desktop */}
-          {activeCategory && (
-            <div
-              className="fixed inset-0 z-[80] bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4"
-              onClick={() => setDrillIn(null)}
-            >
-              <div
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-[92vh] overflow-y-auto"
-              >
-                <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl ${TINT[activeCategory.tint].iconBg} flex items-center justify-center flex-shrink-0`}>
-                      <activeCategory.icon className={`w-5 h-5 ${TINT[activeCategory.tint].iconFg}`} />
-                    </div>
-                    <div className="min-w-0">
-                      <h2 className="text-navy font-bold text-lg font-heading leading-tight truncate">{activeCategory.label}</h2>
-                      <p className="text-text-muted text-xs truncate">{activeCategory.blurb}</p>
-                    </div>
+          {/* All tools — flat grid grouped by section header. The
+              previous drill-down design hid 40+ tiles behind 6 cards;
+              user feedback: "show all menu options at once." Now every
+              accessible tile is one tap away on the overview. */}
+          {visibleCategories.map((c) => {
+            const tint = TINT[c.tint];
+            return (
+              <div key={c.key}>
+                <div className="flex items-center gap-2 mb-3 px-1">
+                  <div className={`w-7 h-7 rounded-lg ${tint.iconBg} flex items-center justify-center`}>
+                    <c.icon className={`w-4 h-4 ${tint.iconFg}`} aria-hidden={true} />
                   </div>
-                  <button
-                    onClick={() => setDrillIn(null)}
-                    aria-label="Close"
-                    className="text-text-muted hover:text-navy p-2 -mr-2 rounded-lg"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+                  <h2 className="text-navy font-bold text-xs uppercase tracking-widest">{c.label}</h2>
+                  <span className="text-text-muted text-[10px] uppercase tracking-widest font-bold ml-auto">
+                    {c.tiles.length}
+                  </span>
                 </div>
-                <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {activeCategory.tiles.map((tile) => (
-                    <Link
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {c.tiles.map((tile) => (
+                    <TileCard
                       key={tile.href}
-                      href={tile.href}
-                      onClick={() => { void triggerHaptic("light"); setDrillIn(null); }}
-                      className="group flex items-center gap-3 bg-off-white hover:bg-white border border-transparent hover:border-border rounded-xl p-3 transition-all active:scale-[0.98]"
-                    >
-                      <div className={`w-10 h-10 rounded-xl ${TINT[activeCategory.tint].iconBg} flex items-center justify-center flex-shrink-0`}>
-                        <tile.icon className={`w-5 h-5 ${TINT[activeCategory.tint].iconFg}`} aria-hidden={true} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-navy font-bold text-sm leading-tight truncate">{tile.label}</p>
-                        <p className="text-text-muted text-xs truncate">{tile.desc}</p>
-                      </div>
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); e.preventDefault(); toggleFav(tile.href); }}
-                          aria-label={favHrefs.includes(tile.href) ? "Unfavorite" : "Favorite"}
-                          className="p-1 rounded hover:bg-border"
-                        >
-                          <Star className={`w-4 h-4 ${favHrefs.includes(tile.href) ? "text-amber-500 fill-amber-500" : "text-text-muted/40"}`} />
-                        </button>
-                        <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-navy" />
-                      </div>
-                    </Link>
+                      tile={tile}
+                      tint={c.tint}
+                      favored={favHrefs.includes(tile.href)}
+                      onToggleFav={() => toggleFav(tile.href)}
+                    />
                   ))}
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })}
+
         </>
       )}
     </div>

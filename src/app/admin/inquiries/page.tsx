@@ -587,6 +587,16 @@ export default function InquiriesPage() {
                   Lost
                 </button>
               </div>
+              {/* Re-open path: rep mis-clicked Won/Lost (or the lead
+                  came back). Without this they had to edit the DB. */}
+              {(active.status === "won" || active.status === "lost") && (
+                <button
+                  onClick={() => patch(active.id, { status: "new" })}
+                  className="w-full bg-navy hover:bg-navy/90 text-white font-bold uppercase tracking-wider text-xs py-2 rounded-lg"
+                >
+                  ↺ Re-open as new
+                </button>
+              )}
               <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}

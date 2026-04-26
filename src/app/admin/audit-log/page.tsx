@@ -18,6 +18,8 @@ const KNOWN_ENTITY_TYPES = [
   "staff_availability", "staff_certification", "staff_profile", "team", "time_entry",
   "time_off_request", "tournament", "tournament_registration", "tournament_team",
   "user", "user_permission", "waiver",
+  // Cycle 1+2 entities
+  "subscription", "inquiry", "api_key", "webhook_subscription",
 ] as const;
 
 const KNOWN_ACTIONS = [
@@ -34,6 +36,14 @@ const KNOWN_ACTIONS = [
   "permission.template_applied", "program.archived", "program.created",
   "program.updated", "program_registration.cancelled", "program_registration.created",
   "program_session.created",
+  // Cycle 1+2 actions — surfaced so the autocomplete suggests these
+  // when the auditor types into the action filter input.
+  "subscription.charged", "subscription.cancelled", "subscription.manual_charge",
+  "inquiry.updated",
+  "scheduler.auto_assigned",
+  "api_key.created", "api_key.revoked",
+  "webhook.created", "webhook.deleted",
+  "permission.granted", "permission.revoked",
 ] as const;
 
 type AuditRow = {

@@ -116,7 +116,7 @@ export default function MaintenancePage() {
           <p className="text-navy font-semibold">No active tickets — everything&apos;s humming.</p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
           {(["open", "in_progress", "waiting_vendor", "resolved"] as const).map((col) => (
             <div key={col} className="bg-off-white border border-border rounded-xl p-3">
               <h2 className="text-xs uppercase tracking-wide text-text-secondary font-bold mb-3">

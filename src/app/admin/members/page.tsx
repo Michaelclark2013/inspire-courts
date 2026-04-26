@@ -498,9 +498,11 @@ function MemberModal({
       onKeyDown={(e) => { if (e.key === "Escape") onClose(); }}
       tabIndex={-1}
     >
-      <div className="bg-white rounded-xl border border-border shadow-sm w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-bold text-navy mb-4">{isEdit ? "Edit Member" : "New Member"}</h2>
-        <div className="space-y-3 text-sm">
+      <div className="bg-white rounded-xl border border-border shadow-sm w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="px-6 pt-6">
+          <h2 className="text-lg font-bold text-navy mb-4">{isEdit ? "Edit Member" : "New Member"}</h2>
+        </div>
+        <div className="space-y-3 text-sm overflow-y-auto px-6 pb-2 flex-1">
           <div className="grid grid-cols-2 gap-3">
             <label className="block">
               <span className="block text-xs text-text-secondary mb-1">First Name <span className="text-red">*</span></span>
@@ -584,7 +586,7 @@ function MemberModal({
           </label>
           {err && <div className="text-red text-xs">{err}</div>}
         </div>
-        <div className="mt-5 flex justify-end gap-2">
+        <div className="border-t border-border px-6 py-4 flex justify-end gap-2 bg-white rounded-b-xl">
           <button onClick={onClose} className="px-3 py-1.5 text-sm text-text-secondary hover:text-navy">Cancel</button>
           <button onClick={save} disabled={saving} className="px-4 py-1.5 bg-navy text-white rounded-md text-sm hover:bg-navy/90 disabled:opacity-50">
             {saving ? "Saving…" : "Save"}

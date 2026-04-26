@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   TrendingUp,
   Search,
@@ -41,10 +42,13 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 export default function LeadsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [sourceFilter, setSourceFilter] = useState("");
+  // Bookmarkable filters — same pattern as audit-log + inquiries.
+  const [search, setSearch] = useState(() => searchParams.get("q") || "");
+  const [sourceFilter, setSourceFilter] = useState(() => searchParams.get("source") || "");
   const [expandedLead, setExpandedLead] = useState<number | null>(null);
   const [fetchError, setFetchError] = useState(false);
 
@@ -76,6 +80,15 @@ export default function LeadsPage() {
     fetchLeads(controller.signal);
     return () => controller.abort();
   }, [fetchLeads]);
+
+  // Sync filters into URL for bookmarkable views.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (search) params.set("q", search);
+    if (sourceFilter) params.set("source", sourceFilter);
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false });
+  }, [search, sourceFilter, router]);
 
   const sources = [...new Set(leads.map((l) => l.source).filter(Boolean))];
 

@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect, useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus, Users, Calendar, CheckCircle2 } from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Session = {
   id: number;
@@ -104,7 +105,7 @@ export default function ProgramDetailPage() {
       </div>
 
       {loading ? (
-        <div className="text-text-secondary text-sm">Loading…</div>
+        <SkeletonRows count={4} />
       ) : sessions.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <Calendar className="w-10 h-10 text-text-secondary mx-auto mb-3" />

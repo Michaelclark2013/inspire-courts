@@ -2,8 +2,19 @@
 
 **Branch:** `cycle/auto-improvements` — never push to main, never merge own PRs.
 **Mode:** Continuous 6-phase loop (1→2→3→4→5→6→1→…). Stop only when Mike types "stop".
-**Current cycle:** 7 — rotation complete, push pending.
-**Next:** Cycle 8 Phase 1 (UI).
+**Current cycle:** 8
+**Current phase:** 1 — UI (in progress)
+
+## Cycle 8 status
+
+| Phase | Status | Report |
+|---|---|---|
+| 1 — UI | done | [phase-1-2026-04-25-2030.md](cycle-reports/phase-1-2026-04-25-2030.md) |
+| 2 — Functionality | pending | — |
+| 3 — Admin | pending | — |
+| 4 — Public | pending | — |
+| 5 — Marketing | pending | — |
+| 6 — Security | pending | — |
 
 ## Cycle 7 status
 

@@ -260,15 +260,36 @@ export default function InquiriesPage() {
     if (selected.size === 0) return;
     if (!confirm(`Change ${selected.size} inquir${selected.size === 1 ? "y" : "ies"} to "${status}"?`)) return;
     setBulkBusy(true);
+    setLoadError(null);
     try {
       // Optimistic batch update.
       setRows((prev) => prev.map((r) => (selected.has(r.id) ? { ...r, status } : r)));
-      for (const id of selected) {
-        await fetch(`/api/admin/inquiries/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
-        });
+      // Fire the PATCHes in parallel — sequential await blew up to
+      // selected.size × roundtrip-time and made bulk transitions on
+      // 20+ rows feel like the page had hung. Promise.allSettled so
+      // one bad row doesn't abort the rest.
+      const ids = Array.from(selected);
+      const results = await Promise.allSettled(
+        ids.map((id) =>
+          fetch(`/api/admin/inquiries/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status }),
+          }).then(async (res) => {
+            if (!res.ok) {
+              const data = await res.json().catch(() => ({}));
+              throw new Error(data.error || `HTTP ${res.status}`);
+            }
+            return res;
+          })
+        )
+      );
+      const failed = results.filter((r) => r.status === "rejected").length;
+      if (failed > 0) {
+        // Surface partial failure so admin doesn't trust the optimistic
+        // update. load(true) re-fetches so the rows that didn't update
+        // pop back to their real status.
+        setLoadError(`${failed} of ${results.length} updates failed. Reloading current state…`);
       }
       setSelected(new Set());
       load(true);

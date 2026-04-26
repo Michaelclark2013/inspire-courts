@@ -147,9 +147,17 @@ export default function PermissionsDetailPage() {
   async function resetAll() {
     if (!confirm("Clear all custom overrides for this user?")) return;
     setSavingKey("__all__");
+    setError(null);
     try {
-      await adminFetch(`/api/admin/permissions/${userId}`, { method: "DELETE" });
+      const res = await adminFetch(`/api/admin/permissions/${userId}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || `Couldn't reset overrides (${res.status}).`);
+        return;
+      }
       await load();
+    } catch {
+      setError("Network error resetting overrides.");
     } finally {
       setSavingKey(null);
     }
@@ -167,12 +175,15 @@ export default function PermissionsDetailPage() {
   async function viewAs() {
     setSavingKey("__viewas__");
     try {
-      const res = await fetch("/api/admin/permissions/view-as", {
+      const res = await adminFetch("/api/admin/permissions/view-as", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),
       });
-      if (!res.ok) throw new Error("Failed to enter preview");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Failed to enter preview (${res.status})`);
+      }
       // Send them to /admin so they can poke around as the target user.
       router.push("/admin");
       router.refresh();

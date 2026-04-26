@@ -71,7 +71,7 @@ export default function EmailSignup({ variant = "light" }: EmailSignupProps) {
       </p>
       <p
         className={`text-sm mb-8 max-w-md mx-auto ${
-          isDark ? "text-white/50" : "text-text-muted/70"
+          isDark ? "text-white/75" : "text-text-muted"
         }`}
       >
         Tournament announcements, schedule drops, and Inspire Courts news. No spam.

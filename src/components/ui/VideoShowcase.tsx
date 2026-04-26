@@ -71,7 +71,7 @@ export default function VideoShowcase({
         <div className="text-center mt-8">
           <button
             onClick={() => setExpanded(!expanded)}
-            className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider transition-all font-[var(--font-chakra)] ${
+            className={`inline-flex items-center gap-2 px-6 py-3 min-h-[44px] rounded-full text-sm font-bold uppercase tracking-wider transition-all font-[var(--font-chakra)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2 ${
               isDark
                 ? "bg-white/[0.08] hover:bg-white/[0.14] text-white/80 hover:text-white"
                 : "bg-navy/[0.06] hover:bg-navy/[0.10] text-navy/70 hover:text-navy"

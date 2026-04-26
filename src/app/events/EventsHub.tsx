@@ -262,15 +262,21 @@ export default function EventsHub({
       {/* ─── Sticky Tab Navigation ─── */}
       <div className="sticky top-[72px] z-30 bg-white border-b border-light-gray shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide -mb-px">
+          <div
+            role="tablist"
+            aria-label="Events sections"
+            className="flex items-center gap-1 overflow-x-auto scrollbar-hide -mb-px"
+          >
             {TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
+                  role="tab"
+                  aria-selected={isActive}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-3 py-3 lg:px-5 lg:py-4 text-xs lg:text-sm font-bold uppercase tracking-normal lg:tracking-wide whitespace-nowrap border-b-2 transition-colors ${
+                  className={`flex items-center gap-2 px-3 py-3 lg:px-5 lg:py-4 text-xs lg:text-sm font-bold uppercase tracking-normal lg:tracking-wide whitespace-nowrap border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 ${
                     isActive
                       ? "border-red text-red"
                       : "border-transparent text-text-muted hover:text-navy hover:border-navy/20"

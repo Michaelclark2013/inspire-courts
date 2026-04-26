@@ -38,6 +38,10 @@ export default function TimeOffAdminPage() {
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<number | null>(null);
+  // Surface PATCH failures (404 stale row, 500, network) instead of
+  // silently doing nothing — admins were clicking Approve, watching
+  // the spinner clear, and assuming it worked.
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -50,16 +54,24 @@ export default function TimeOffAdminPage() {
 
   async function decide(id: number, next: "approved" | "denied") {
     setBusy(id);
+    setActionError(null);
     try {
       let denialReason: string | null = null;
       if (next === "denied") {
         denialReason = prompt("Reason for denial (optional):") || null;
       }
-      await fetch("/api/admin/time-off", {
+      const res = await fetch("/api/admin/time-off", {
         method: "PATCH", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status: next, denialReason }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setActionError(data.error || `Couldn't ${next} request (${res.status}).`);
+        return;
+      }
       await load();
+    } catch {
+      setActionError("Network error. Try again.");
     } finally { setBusy(null); }
   }
 
@@ -86,6 +98,13 @@ export default function TimeOffAdminPage() {
           ))}
         </div>
       </div>
+
+      {actionError && (
+        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
+          <p className="text-navy text-sm font-semibold">{actionError}</p>
+          <button onClick={() => setActionError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
+        </div>
+      )}
 
       {loading ? (
         <SkeletonRows count={4} />

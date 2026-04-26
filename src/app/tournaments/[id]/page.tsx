@@ -76,8 +76,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           name: "Inspire Courts AZ",
           address: {
             "@type": "PostalAddress",
+            streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
             addressLocality: "Gilbert",
             addressRegion: "AZ",
+            postalCode: "85233",
             addressCountry: "US",
           },
         },
@@ -89,12 +91,30 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       }
     : null;
 
+  const breadcrumbLd = t?.name
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Tournaments", item: `${SITE_URL}/tournaments` },
+          { "@type": "ListItem", position: 3, name: t.name, item: `${SITE_URL}/tournaments/${tournamentId}` },
+        ],
+      }
+    : null;
+
   return (
     <>
       {jsonLd && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      {breadcrumbLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
         />
       )}
       <TournamentClient />

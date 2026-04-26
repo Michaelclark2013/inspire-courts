@@ -5,7 +5,7 @@ import {
   members,
   memberRiskScores,
 } from "@/lib/db/schema";
-import { and, asc, eq, isNotNull, lte } from "drizzle-orm";
+import { and, asc, eq, gt, isNotNull, lte } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { sendSms, interpolate } from "@/lib/sms";
 import { sendBroadcastEmail } from "@/lib/notify";
@@ -154,14 +154,20 @@ export async function runJourneyTick(): Promise<{
         skipped++;
       }
 
-      // Advance cursor — pull all steps in order, find the one after current.
-      const allSteps = await db
+      // Advance cursor — fetch only the next step (smallest ordering
+      // strictly greater than the current one). Avoids pulling every
+      // step in the journey on every tick.
+      const [next] = await db
         .select()
         .from(journeySteps)
-        .where(eq(journeySteps.journeyId, e.journeyId))
-        .orderBy(asc(journeySteps.ordering));
-      const idx = allSteps.findIndex((s) => s.ordering === e.nextStepOrdering);
-      const next = idx >= 0 ? allSteps[idx + 1] : null;
+        .where(
+          and(
+            eq(journeySteps.journeyId, e.journeyId),
+            gt(journeySteps.ordering, e.nextStepOrdering)
+          )
+        )
+        .orderBy(asc(journeySteps.ordering))
+        .limit(1);
 
       if (next) {
         await db

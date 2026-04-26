@@ -3,15 +3,15 @@
 **Branch:** `cycle/auto-improvements` — never push to main, never merge own PRs.
 **Mode:** Continuous 6-phase loop (1→2→3→4→5→6→1→…). Stop only when Mike types "stop".
 **Current cycle:** 7
-**Current phase:** 2 — Functionality
+**Current phase:** 3 — Admin Panel
 
 ## Cycle 7 status
 
 | Phase | Status | Report |
 |---|---|---|
 | 1 — UI | done | [phase-1-2026-04-25-2010.md](cycle-reports/phase-1-2026-04-25-2010.md) |
-| 2 — Functionality | in progress | — |
-| 3 — Admin | pending | — |
+| 2 — Functionality | done | [phase-2-2026-04-25-2010.md](cycle-reports/phase-2-2026-04-25-2010.md) |
+| 3 — Admin | in progress | — |
 | 4 — Public | pending | — |
 | 5 — Marketing | pending | — |
 | 6 — Security | pending | — |

@@ -186,18 +186,28 @@ export default function SecurityPage() {
         ) : (
           <ul className="divide-y divide-border max-h-96 overflow-y-auto">
             {audits.map((a) => (
-              <li key={a.id} className="px-5 py-2.5 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-off-white flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-3.5 h-3.5 text-text-muted" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-navy text-sm font-semibold truncate">
-                    <span className="font-mono text-[11px] text-text-muted">{a.action}</span>
-                  </p>
-                  <p className="text-text-muted text-[11px] flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {fmtRel(a.createdAt)} · {a.actorEmail || "system"} · {a.entityType}
-                  </p>
-                </div>
+              <li key={a.id}>
+                {/* Link to /admin/audit-log doesn't pre-fill filters
+                    (the page reads from local state, not URL) but at
+                    least lands the admin on the full log where they
+                    can inspect the diff. Keep cursor pointer + hover
+                    so it's discoverably clickable. */}
+                <Link
+                  href="/admin/audit-log"
+                  className="px-5 py-2.5 flex items-center gap-3 hover:bg-off-white"
+                >
+                  <div className="w-8 h-8 rounded-full bg-off-white flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-3.5 h-3.5 text-text-muted" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-navy text-sm font-semibold truncate">
+                      <span className="font-mono text-[11px] text-text-muted">{a.action}</span>
+                    </p>
+                    <p className="text-text-muted text-[11px] flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {fmtRel(a.createdAt)} · {a.actorEmail || "system"} · {a.entityType}
+                    </p>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>

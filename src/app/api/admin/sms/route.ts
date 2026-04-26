@@ -8,6 +8,7 @@ import { sendSms } from "@/lib/sms";
 import { logger } from "@/lib/logger";
 import { parseJsonBody } from "@/lib/api-helpers";
 import { isRateLimited } from "@/lib/rate-limit";
+import { canAccess } from "@/lib/permissions";
 import { z } from "zod";
 
 const smsSendSchema = z.object({
@@ -19,7 +20,11 @@ const smsSendSchema = z.object({
 // GET /api/admin/sms — recent SMS conversations (last 100).
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") {
+  // Use canAccess('inbox') instead of hardcoded admin so front_desk
+  // (which the permissions matrix grants inbox access to) can also
+  // read + send. Per-user overrides are honored at the layout level
+  // where the matrix UI lives.
+  if (!session?.user?.role || !canAccess(session.user.role, "inbox")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const rows = await db
@@ -44,15 +49,19 @@ export async function GET() {
 // POST /api/admin/sms { to, body, memberId? } — admin sends ad-hoc SMS.
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") {
+  // Use canAccess('inbox') instead of hardcoded admin so front_desk
+  // (which the permissions matrix grants inbox access to) can also
+  // read + send. Per-user overrides are honored at the layout level
+  // where the matrix UI lives.
+  if (!session?.user?.role || !canAccess(session.user.role, "inbox")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  // Per-admin send cap. Each Twilio outbound costs real money; a
-  // compromised admin session or runaway client loop could rack up
-  // a bill before anyone notices. 30 sends/min/admin is generous for
+  // Per-user send cap. Each Twilio outbound costs real money; a
+  // compromised session or runaway client loop could rack up
+  // a bill before anyone notices. 30 sends/min/user is generous for
   // legit ad-hoc replies but bounds the worst case at ~$0.30/min.
-  const adminId = session.user.id || "anon";
-  if (isRateLimited(`admin-sms:${adminId}`, 30, 60_000)) {
+  const senderId = session.user.id || "anon";
+  if (isRateLimited(`admin-sms:${senderId}`, 30, 60_000)) {
     return NextResponse.json(
       { error: "SMS rate limit hit (30/min). Slow down." },
       { status: 429, headers: { "Retry-After": "60" } }

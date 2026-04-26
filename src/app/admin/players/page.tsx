@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import { UserCheck, UsersRound, Trophy } from "lucide-react";
 import PageHeader from "@/components/admin/PageHeader";
 import PlayersSheetClient from "@/components/admin/PlayersSheetClient";
+
+export const metadata: Metadata = { title: "Players | Inspire Courts AZ" };
+
 import {
   fetchSheetWithHeaders,
   getCol,

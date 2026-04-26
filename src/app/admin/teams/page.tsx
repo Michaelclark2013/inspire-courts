@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import { Users, ImageIcon, Trophy } from "lucide-react";
 import Link from "next/link";
 import TeamsSheetClient from "@/components/admin/TeamsSheetClient";
+
+export const metadata: Metadata = { title: "Teams | Inspire Courts AZ" };
+
 import {
   fetchSheetWithHeaders,
   getCol,

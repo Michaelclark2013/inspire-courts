@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import { UserCheck } from "lucide-react";
 import PageHeader from "@/components/admin/PageHeader";
 import StaffSheetClient from "@/components/admin/StaffSheetClient";
+
+export const metadata: Metadata = { title: "Staff & Refs | Inspire Courts AZ" };
+
 import {
   fetchSheetWithHeaders,
   getCol,

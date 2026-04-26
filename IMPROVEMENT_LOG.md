@@ -575,6 +575,15 @@
 - `ErrorBanner` shared component.
 - 7 admin pages migrated from inline duplicated banner JSX → `<ErrorBanner>`.
 
+### Additional fixes (later in same loop)
+- **api-keys + webhook + expense + gym-event DELETE silent no-op** — drizzle returned 0 rows affected without erroring on missing rows, returning 200 OK. SELECT-first + 404 + cleaner audit log.
+- **Cycle 1+2 endpoints bypassed permission overrides** — 6 endpoints (api-keys, webhooks, owner/snapshot, billing/snapshot, churn, scheduler) hardcoded role==='admin', so the permissions matrix UI's per-user grants silently 401'd at the API. Migrated to canAccess(role, page).
+- **SMS API was admin-only despite matrix promising front_desk access** — fixed to canAccess('inbox').
+- **URL-driven audit-log filters** — bookmarkable + shareable; security page event rows now link to `/admin/audit-log?action=…` for incident triage.
+- **Audit-log empty-state Clear-filters CTA**.
+- **Security event rows clickable** to full audit log.
+- **Verify-email resend silent on 429** — admin/profile.
+
 ### Build + Tests
 - ✅ PASS — `npm run build` clean (269 pages, 0 TypeScript errors)
 - ✅ PASS — `npx vitest run` 209 tests across 15 files (added 3 new csvBody tests)

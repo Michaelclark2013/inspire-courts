@@ -21,6 +21,10 @@ export default function IntegrationsPage() {
   const [newWebhookEvents, setNewWebhookEvents] = useState("*");
   const [revealedKey, setRevealedKey] = useState<string | null>(null);
   const [revealedSecret, setRevealedSecret] = useState<string | null>(null);
+  // Mutation feedback — covers create-key/create-hook/revoke/delete.
+  // Cleared on next mutation. Without this a 500 on revoke leaves the
+  // key visible and the admin assumes it's revoked.
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const [loadError, setLoadError] = useState<string | null>(null);
   const load = useCallback(async () => {
@@ -63,13 +67,23 @@ export default function IntegrationsPage() {
       const json = await res.json();
       setRevealedKey(json.key);
       setNewKeyLabel("");
+      setActionError(null);
       load();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setActionError(data.error || `Couldn't create API key (${res.status}).`);
     }
   }
 
   async function revokeKey(id: number) {
     if (!confirm("Revoke this API key? Existing integrations will stop working immediately.")) return;
-    await fetch(`/api/admin/api-keys?id=${id}`, { method: "DELETE" });
+    setActionError(null);
+    const res = await adminFetch(`/api/admin/api-keys?id=${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setActionError(data.error || `Couldn't revoke API key (${res.status}).`);
+      return;
+    }
     load();
   }
 
@@ -84,13 +98,23 @@ export default function IntegrationsPage() {
       const json = await res.json();
       setRevealedSecret(json.secret);
       setNewWebhookUrl("");
+      setActionError(null);
       load();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setActionError(data.error || `Couldn't create webhook (${res.status}).`);
     }
   }
 
   async function deleteHook(id: number) {
     if (!confirm("Delete this webhook?")) return;
-    await fetch(`/api/admin/webhooks?id=${id}`, { method: "DELETE" });
+    setActionError(null);
+    const res = await adminFetch(`/api/admin/webhooks?id=${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setActionError(data.error || `Couldn't delete webhook (${res.status}).`);
+      return;
+    }
     load();
   }
 
@@ -127,6 +151,13 @@ export default function IntegrationsPage() {
           API keys for external apps + webhook subscriptions for real-time event delivery.
         </p>
       </div>
+
+      {actionError && (
+        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
+          <p className="text-navy text-sm font-semibold">{actionError}</p>
+          <button onClick={() => setActionError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
+        </div>
+      )}
 
       {/* Reveal modals */}
       {revealedKey && <SecretReveal label="Your new API key" value={revealedKey} note="Copy this now — it won't be shown again." onClose={() => setRevealedKey(null)} />}

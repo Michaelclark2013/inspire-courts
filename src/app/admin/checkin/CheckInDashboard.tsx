@@ -83,21 +83,30 @@ export default function CheckInDashboard({
   );
 
   // ---------- memoized filtered teams ----------
+  // "Unpaid only" filter — front desk uses this to chase teams for
+  // payment at the door before tip-off.
+  const [unpaidOnly, setUnpaidOnly] = useState(false);
+
   const filteredTeams = useMemo(() => {
     return teams.filter((t) => {
       if (filterStatus === "checked" && !t.hasCheckedIn) return false;
       if (filterStatus === "not" && t.hasCheckedIn) return false;
+      if (unpaidOnly && t.isPaid) return false;
       if (debouncedSearch) {
         const q = debouncedSearch.toLowerCase();
+        // Search now covers checked-in players too — front desk gets
+        // asked "is Jane Smith here?" and scanning roster cells beats
+        // hunting through every team's expand panel.
         return (
           t.teamName.toLowerCase().includes(q) ||
           t.coach.toLowerCase().includes(q) ||
-          t.division.toLowerCase().includes(q)
+          t.division.toLowerCase().includes(q) ||
+          t.checkedInPlayers.some((p) => p.toLowerCase().includes(q))
         );
       }
       return true;
     });
-  }, [teams, filterStatus, debouncedSearch]);
+  }, [teams, filterStatus, unpaidOnly, debouncedSearch]);
 
   // ---------- memoized stats ----------
   const confirmedCount = useMemo(
@@ -263,6 +272,21 @@ export default function CheckInDashboard({
               filterStatus={filterStatus}
               onFilterChange={setFilterStatus}
             />
+            {/* Unpaid-only chip — toggles a third filter axis without
+                cluttering the SearchBar control. Surfaces teams that
+                still owe at the door. */}
+            <button
+              type="button"
+              onClick={() => setUnpaidOnly((v) => !v)}
+              aria-pressed={unpaidOnly}
+              className={`text-[11px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1 ${
+                unpaidOnly
+                  ? "bg-amber-50 text-amber-700 border-amber-300"
+                  : "bg-white text-text-muted border-border hover:border-amber-300 hover:text-amber-700"
+              }`}
+            >
+              Unpaid only
+            </button>
           </div>
 
           <div className="max-h-[600px] overflow-y-auto divide-y divide-border overscroll-contain">

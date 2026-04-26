@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus, Key, Webhook, Copy, Trash2 } from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type ApiKey = { id: number; label: string; prefix: string; scopes: string; lastUsedAt: string | null; revokedAt: string | null; createdAt: string };
 type WebhookSub = { id: number; url: string; events: string; active: boolean; lastDeliveryStatus: number | null; failureCount: number; createdAt: string };
@@ -72,7 +73,7 @@ export default function IntegrationsPage() {
     load();
   }
 
-  if (loading) return <div className="p-8 text-text-muted">Loading…</div>;
+  if (loading) return <div className="p-8"><SkeletonRows count={6} /></div>;
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-4xl mx-auto">

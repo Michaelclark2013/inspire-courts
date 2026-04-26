@@ -20,6 +20,7 @@ import {
   BellRing,
 } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type NotificationPrefs = {
   email?: { announcements?: boolean; gameReminders?: boolean; weekly?: boolean };
@@ -169,7 +170,7 @@ export default function MyProfilePage() {
     } catch { /* noop */ }
   }
 
-  if (loading) return <div className="p-8 text-text-muted">Loading…</div>;
+  if (loading) return <div className="p-8"><SkeletonRows count={5} /></div>;
   if (error && !me) return <div className="p-8 text-red">{error}</div>;
   if (!me) return <div className="p-8 text-text-muted">Not found</div>;
 

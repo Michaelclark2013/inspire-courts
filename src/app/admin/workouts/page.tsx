@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Workout = {
   id: number;
@@ -52,7 +53,7 @@ export default function AdminWorkoutsPage() {
     }
   }
 
-  if (loading) return <div className="p-8 text-text-muted">Loading…</div>;
+  if (loading) return <div className="p-8"><SkeletonRows count={6} /></div>;
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-3xl mx-auto">

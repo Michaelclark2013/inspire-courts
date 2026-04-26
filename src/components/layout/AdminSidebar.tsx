@@ -44,6 +44,12 @@ import {
   Plane,
   Package,
   Rocket,
+  Star,
+  Activity,
+  Banknote,
+  Sparkles,
+  Zap,
+  Inbox,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { canAccessWithOverrides, ROLE_LABELS, type AdminPage } from "@/lib/permissions";
@@ -123,6 +129,7 @@ const STAFF_OPS: NavItem[] = [
   // used to; /admin/ops is the new at-a-glance board.
   { href: "/admin/ops", label: "Ops Dashboard", icon: LayoutDashboard, page: "overview" },
   { href: "/admin/roster", label: "Staff Roster", icon: IdCard, page: "roster" },
+  { href: "/admin/scheduler", label: "AI Scheduler", icon: Sparkles, page: "scheduler" },
   { href: "/admin/timeclock", label: "Time Clock", icon: Clock, page: "timeclock" },
   { href: "/admin/shifts", label: "Shifts", icon: CalendarDays, page: "shifts" },
   { href: "/admin/payroll", label: "Payroll", icon: Wallet, page: "payroll" },
@@ -144,9 +151,15 @@ const MEMBER_OPS: NavItem[] = [
   { href: "/admin/membership-plans", label: "Plans", icon: Wallet, page: "members" },
   { href: "/admin/programs", label: "Programs & Camps", icon: GraduationCapIcon, page: "programs" },
   { href: "/admin/waivers", label: "Waivers", icon: FileEdit, page: "members" },
+  { href: "/admin/workouts", label: "Workouts", icon: Trophy, page: "workouts" },
+  { href: "/admin/churn", label: "Churn Radar", icon: Activity, page: "churn" },
+  { href: "/admin/inbox", label: "SMS Inbox", icon: Megaphone, page: "inbox" },
+  { href: "/admin/inquiries", label: "Inquiries", icon: Inbox, page: "inquiries" },
 ];
 
 const FINANCE: NavItem[] = [
+  { href: "/admin/owner", label: "Owner Mode", icon: Star, page: "owner" },
+  { href: "/admin/billing", label: "Billing", icon: Banknote, page: "billing" },
   { href: "/admin/revenue", label: "Revenue", icon: DollarSign, page: "revenue" },
   { href: "/admin/prospects", label: "Prospects", icon: TrendingUp, page: "prospects" },
   { href: "/admin/leads", label: "Prospect Pipeline", icon: TrendingUp, page: "leads" },
@@ -156,10 +169,13 @@ const FINANCE: NavItem[] = [
 const ADMIN_SECTION: NavItem[] = [
   { href: "/admin/approvals", label: "Approvals", icon: Shield, page: "approvals" },
   { href: "/admin/users", label: "User Accounts", icon: Shield, page: "users" },
+  { href: "/admin/permissions", label: "Permissions", icon: Shield, page: "users" },
+  { href: "/admin/search", label: "Global Search", icon: Search, page: "search" },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone, page: "announcements" },
   { href: "/admin/schools", label: "Schools", icon: GraduationCap, page: "schools" },
   { href: "/admin/content", label: "Content Editor", icon: FileEdit, page: "content" },
   { href: "/admin/files", label: "Files & Drive", icon: FolderOpen, page: "files" },
+  { href: "/admin/integrations", label: "Integrations", icon: Zap, page: "integrations" },
   { href: "/admin/reports", label: "Reports", icon: BarChart3, page: "analytics" },
   { href: "/admin/analytics", label: "GA Analytics", icon: BarChart3, page: "analytics" },
   { href: "/admin/audit-log", label: "Audit Log", icon: History, page: "audit_log" },

@@ -74,6 +74,8 @@ export default function MyProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  // Inline resend-verification feedback — replaces alert().
+  const [resendMsg, setResendMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   // Form state mirrors the editable subset of fields.
   const [form, setForm] = useState({
@@ -178,18 +180,20 @@ export default function MyProfilePage() {
   }
 
   async function resendVerification() {
+    setResendMsg(null);
     try {
       const res = await fetch("/api/auth/verify-email/resend", { method: "POST" });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         // Resend has rate-limit + already-verified branches we want
-        // surfaced — silent success on a 429 was misleading.
-        alert(data.error || `Couldn't send (${res.status}). Try again in a moment.`);
+        // surfaced. Inline next to the button via resendMsg state
+        // (was previously alert() — jarring + steals focus).
+        setResendMsg({ ok: false, text: data.error || `Couldn't send (${res.status}). Try again in a moment.` });
         return;
       }
-      alert("Verification email sent (check your inbox).");
+      setResendMsg({ ok: true, text: "Sent — check your inbox." });
     } catch {
-      alert("Network error. Try again.");
+      setResendMsg({ ok: false, text: "Network error. Try again." });
     }
   }
 
@@ -262,6 +266,18 @@ export default function MyProfilePage() {
                 <button onClick={resendVerification} className="bg-amber-500/30 hover:bg-amber-500/50 text-amber-100 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
                   Resend verification
                 </button>
+              )}
+              {resendMsg && (
+                <span
+                  role="status"
+                  className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    resendMsg.ok
+                      ? "bg-emerald-500/30 text-emerald-100"
+                      : "bg-red/40 text-white"
+                  }`}
+                >
+                  {resendMsg.text}
+                </span>
               )}
             </p>
           </div>

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { games, gameScores } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 // GET /api/scores/live/[gameId]
 // Public read-only endpoint so the spectator page can poll every 3s.
@@ -11,6 +12,17 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ gameId: string }> }
 ) {
+  // Spectator page polls every 3s = 20 req/min. The CDN handles most
+  // of this via Cache-Control max-age=2, but a single bad actor can
+  // still pile origin requests. 60/min/IP is comfortable headroom
+  // and stops a runaway script from drilling the DB.
+  const ip = getClientIp(_req);
+  if (isRateLimited(`scores-live:${ip}`, 60, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": "10" } }
+    );
+  }
   try {
     const { gameId: idStr } = await params;
     const gameId = Number(idStr);

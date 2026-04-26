@@ -1,9 +1,21 @@
 import { NextResponse } from "next/server";
 import { fetchTournamentSchedule, tournamentToEventData } from "@/lib/google-sheets";
 import { logger } from "@/lib/logger";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 // GET /api/tournaments/schedule — public tournament schedule from Google Sheets
-export async function GET() {
+export async function GET(request: Request) {
+  // Cap origin hits per IP. CDN handles most reads (s-maxage=300),
+  // but Google Sheets has a daily quota and a single noisy script
+  // could burn it.
+  const ip = getClientIp(request);
+  if (isRateLimited(`tournaments-schedule:${ip}`, 30, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": "30" } }
+    );
+  }
+
   // Graceful fallback: if API key is not set, return empty data with a helpful flag
   if (!process.env.GOOGLE_SHEETS_API_KEY) {
     return NextResponse.json(

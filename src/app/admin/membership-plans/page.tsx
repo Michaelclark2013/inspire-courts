@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Wallet, Plus, Users, Archive, Edit } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Plan = {
@@ -96,12 +97,7 @@ export default function MembershipPlansPage() {
         </div>
       </div>
 
-      {archiveError && (
-        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
-          <p className="text-navy text-sm font-semibold">{archiveError}</p>
-          <button onClick={() => setArchiveError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
-        </div>
-      )}
+      <ErrorBanner message={archiveError} onDismiss={() => setArchiveError(null)} />
 
       {loading ? (
         <SkeletonRows count={4} />

@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Calendar, Check, X, Clock } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Request = {
@@ -99,12 +100,7 @@ export default function TimeOffAdminPage() {
         </div>
       </div>
 
-      {actionError && (
-        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
-          <p className="text-navy text-sm font-semibold">{actionError}</p>
-          <button onClick={() => setActionError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
-        </div>
-      )}
+      <ErrorBanner message={actionError} onDismiss={() => setActionError(null)} />
 
       {loading ? (
         <SkeletonRows count={4} />

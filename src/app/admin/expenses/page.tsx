@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { exportCSV } from "@/lib/export";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Expense = {
@@ -219,12 +220,7 @@ export default function ExpensesPage() {
         ))}
       </div>
 
-      {deleteError && (
-        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
-          <p className="text-navy text-sm font-semibold">{deleteError}</p>
-          <button onClick={() => setDeleteError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
-        </div>
-      )}
+      <ErrorBanner message={deleteError} onDismiss={() => setDeleteError(null)} />
 
       {/* List */}
       {loading ? (

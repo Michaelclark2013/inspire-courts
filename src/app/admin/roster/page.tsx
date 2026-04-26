@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { UserCheck, Plus, AlertTriangle, Edit, Archive } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
 // Roster row shape returned by GET /api/admin/staff.
 type StaffRow = {
@@ -141,12 +142,7 @@ export default function RosterPage() {
         </div>
       </div>
 
-      {termError && (
-        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
-          <p className="text-navy text-sm font-semibold">{termError}</p>
-          <button onClick={() => setTermError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
-        </div>
-      )}
+      <ErrorBanner message={termError} onDismiss={() => setTermError(null)} />
 
       {loading ? (
         <SkeletonRows count={6} />

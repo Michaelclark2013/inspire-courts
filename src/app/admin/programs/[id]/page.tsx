@@ -6,6 +6,7 @@ import { redirect, useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus, Users, Calendar, CheckCircle2 } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
 type Session = {
   id: number;
@@ -107,12 +108,7 @@ export default function ProgramDetailPage() {
         </button>
       </div>
 
-      {actionError && (
-        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
-          <p className="text-navy text-sm font-semibold">{actionError}</p>
-          <button onClick={() => setActionError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
-        </div>
-      )}
+      <ErrorBanner message={actionError} onDismiss={() => setActionError(null)} />
 
       {loading ? (
         <SkeletonRows count={4} />

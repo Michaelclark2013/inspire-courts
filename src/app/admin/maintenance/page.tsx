@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { Wrench, Plus, AlertTriangle } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
 type Ticket = {
   id: number;
@@ -125,12 +126,7 @@ export default function MaintenancePage() {
         </div>
       </div>
 
-      {statusError && (
-        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
-          <p className="text-navy text-sm font-semibold">{statusError}</p>
-          <button onClick={() => setStatusError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
-        </div>
-      )}
+      <ErrorBanner message={statusError} onDismiss={() => setStatusError(null)} />
 
       {loading ? (
         <SkeletonRows count={5} />

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Plus, Key, Webhook, Copy, Trash2 } from "lucide-react";
 import { adminFetch } from "@/lib/admin-fetch";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type ApiKey = { id: number; label: string; prefix: string; scopes: string; lastUsedAt: string | null; revokedAt: string | null; createdAt: string };
@@ -152,12 +153,7 @@ export default function IntegrationsPage() {
         </p>
       </div>
 
-      {actionError && (
-        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
-          <p className="text-navy text-sm font-semibold">{actionError}</p>
-          <button onClick={() => setActionError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
-        </div>
-      )}
+      <ErrorBanner message={actionError} onDismiss={() => setActionError(null)} />
 
       {/* Reveal modals */}
       {revealedKey && <SecretReveal label="Your new API key" value={revealedKey} note="Copy this now — it won't be shown again." onClose={() => setRevealedKey(null)} />}

@@ -8,6 +8,8 @@ import {
   safeJsonParse,
   azMonthStartIso,
   csvCell,
+  csvBody,
+  UTF8_BOM,
 } from "./api-helpers";
 
 describe("api-helpers / apiError", () => {
@@ -236,5 +238,22 @@ describe("api-helpers / csvCell — formula-injection guard", () => {
     expect(csvCell("alice@example.com")).toBe('"alice@example.com"');
     expect(csvCell("2026-01-01")).toBe('"2026-01-01"');
     expect(csvCell("10 wins")).toBe('"10 wins"');
+  });
+});
+
+describe("api-helpers / csvBody — Excel-compat envelope", () => {
+  it("prepends UTF-8 BOM and joins rows with CRLF", () => {
+    const out = csvBody(['"a","b"', '"1","2"']);
+    expect(out).toBe(`${UTF8_BOM}"a","b"\r\n"1","2"`);
+  });
+
+  it("renders a single row without a trailing terminator", () => {
+    const out = csvBody(['"only"']);
+    expect(out).toBe(`${UTF8_BOM}"only"`);
+  });
+
+  it("UTF8_BOM is the literal U+FEFF code point", () => {
+    expect(UTF8_BOM).toBe("﻿");
+    expect(UTF8_BOM.length).toBe(1);
   });
 });

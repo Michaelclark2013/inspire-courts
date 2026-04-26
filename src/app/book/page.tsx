@@ -53,9 +53,22 @@ const RELATED_PAGES = [
   },
 ];
 
+const bookBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Book", item: `${SITE_URL}/book` },
+  ],
+};
+
 export default function BookPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(bookBreadcrumbLd) }}
+      />
       {/* Hero */}
       <section className="relative min-h-[60vh] lg:min-h-[70vh] flex items-center overflow-hidden">
         <Image

@@ -105,12 +105,25 @@ const PROGRAM_INCLUDES = [
   "Recruiting guidance & exposure events",
 ];
 
+const prepBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Inspire Prep", item: `${SITE_URL}/prep` },
+  ],
+};
+
 export default function PrepPage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(prepSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(prepBreadcrumbLd) }}
       />
       {/* Hero */}
       <section className="relative min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center overflow-hidden">

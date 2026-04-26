@@ -72,6 +72,12 @@ const localBusinessJsonLd = {
       closes: "22:00",
     },
   ],
+  // Schema.org-recommended fields for LocalBusiness — these power the
+  // "$$" indicator on Google's knowledge panel and the payment icons
+  // on the local pack listing.
+  priceRange: "$$",
+  paymentAccepted: "Cash, Credit Card, Debit Card",
+  currenciesAccepted: "USD",
 };
 
 const contactBreadcrumbLd = {

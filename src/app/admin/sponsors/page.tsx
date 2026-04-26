@@ -5,8 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = { title: "Sponsors | Inspire Courts AZ" };
 
 import KPICard from "@/components/dashboard/KPICard";
-import DataTable from "@/components/dashboard/DataTable";
-import StatusBadge from "@/components/dashboard/StatusBadge";
+import SponsorsTable, { type Sponsor } from "@/components/admin/SponsorsTable";
 import NotionFallback from "@/components/dashboard/NotionFallback";
 import { getAllSponsors, getProperty, isNotionConfigured } from "@/lib/notion";
 import { formatCurrency } from "@/lib/utils";
@@ -38,17 +37,6 @@ export default async function SponsorsPage() {
     );
   }
 
-  interface Sponsor {
-    company: string;
-    contact: string;
-    status: string;
-    tier: string;
-    amount: string | number;
-    amountDisplay: string;
-    event: string;
-    startDate: string;
-  }
-
   const sponsors: Sponsor[] = data.map((s: Record<string, unknown>) => ({
     company: getProperty(s, "Company") || getProperty(s, "Name") || "—",
     contact: getProperty(s, "Contact") || getProperty(s, "Contact Name") || "—",
@@ -77,24 +65,6 @@ export default async function SponsorsPage() {
     { title: "Total Value", value: `$${totalValue.toLocaleString()}`, iconName: "dollar" as const },
   ];
 
-  const columns: {
-    key: keyof Sponsor & string;
-    label: string;
-    render?: (val: Sponsor[keyof Sponsor], row: Sponsor) => React.ReactNode;
-  }[] = [
-    { key: "company", label: "Company" },
-    { key: "contact", label: "Contact" },
-    {
-      key: "status",
-      label: "Status",
-      render: (val) => <StatusBadge status={String(val ?? "")} />,
-    },
-    { key: "tier", label: "Tier" },
-    { key: "amountDisplay", label: "Amount" },
-    { key: "event", label: "Event" },
-    { key: "startDate", label: "Start Date" },
-  ];
-
   return (
     <div className="p-3 sm:p-6 lg:p-8">
       <div className="mb-4 md:mb-8">
@@ -109,7 +79,7 @@ export default async function SponsorsPage() {
       </div>
 
       <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
-        <DataTable columns={columns} data={sponsors} searchKey="company" searchPlaceholder="Search sponsors..." />
+        <SponsorsTable sponsors={sponsors} />
       </div>
     </div>
   );

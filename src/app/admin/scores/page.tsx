@@ -14,23 +14,11 @@ export const metadata: Metadata = { title: "Game scores | Inspire Courts AZ" };
 export const revalidate = 300;
 
 export default async function ScoresPage() {
-  if (!isGoogleConfigured()) {
-    return (
-      <div className="p-3 sm:p-6 lg:p-8">
-        <div className="mb-4 md:mb-8 hidden md:block">
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Game Scores</h1>
-          <p className="text-text-secondary text-sm mt-1">Game Results from Google Sheets</p>
-        </div>
-        <div className="bg-off-white border border-border rounded-xl p-5 text-center">
-          <ClipboardList className="w-10 h-10 text-text-secondary mx-auto mb-3" aria-hidden="true" />
-          <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
-          <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>
-        </div>
-      </div>
-    );
-  }
-
-  const { rows } = await fetchSheetWithHeaders(SHEETS.gameScores);
+  // Sheets is optional. When unconfigured the page renders with empty
+  // rows so the admin nav stays usable end-to-end.
+  const { rows } = isGoogleConfigured()
+    ? await fetchSheetWithHeaders(SHEETS.gameScores)
+    : { rows: [] as Record<string, string>[] };
 
   const HOME_COLS = ["Home Team", "Home", "Team 1", "Team A"];
   const AWAY_COLS = ["Away Team", "Away", "Team 2", "Team B"];

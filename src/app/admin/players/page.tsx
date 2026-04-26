@@ -98,23 +98,12 @@ async function loadTournamentPlayers(): Promise<{
 export default async function PlayersPage() {
   const { activeTournament, recentCheckins } = await loadTournamentPlayers();
 
-  if (!isGoogleConfigured()) {
-    return (
-      <div className="p-3 sm:p-6 lg:p-8">
-        <div className="mb-4 md:mb-8 hidden md:block">
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Players</h1>
-          <p className="text-text-secondary text-sm mt-1">Player Check-In from Google Sheets</p>
-        </div>
-        <div className="bg-off-white border border-border rounded-xl p-5 text-center">
-          <UserCheck className="w-10 h-10 text-text-secondary mx-auto mb-3" aria-hidden="true" />
-          <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
-          <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>
-        </div>
-      </div>
-    );
-  }
-
-  const { rows } = await fetchSheetWithHeaders(SHEETS.playerCheckIn);
+  // Sheets is optional. When unconfigured the page renders with the
+  // tournament-scoped DB check-ins (loaded above) and empty Sheets
+  // history so the admin can still see who's checked in today.
+  const { rows } = isGoogleConfigured()
+    ? await fetchSheetWithHeaders(SHEETS.playerCheckIn)
+    : { rows: [] as Record<string, string>[] };
 
   const PLAYER_COLS = ["Player Name", "Player", "First Name", "Full Name", "Name"];
   const LAST_COLS = ["Last Name", "Last"];

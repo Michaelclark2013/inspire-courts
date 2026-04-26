@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, AlertTriangle, MessageSquare, Phone, Mail, RefreshCw, X } from "lucide-react";
 import { adminFetch } from "@/lib/admin-fetch";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Row = {
   id: number;
@@ -25,6 +26,7 @@ type Row = {
 type Resp = { rows: Row[]; mrrAtRisk: number };
 
 export default function ChurnPage() {
+  useDocumentTitle("Churn Radar");
   const [data, setData] = useState<Resp | null>(null);
   const [loading, setLoading] = useState(true);
   const [tier, setTier] = useState<"all" | "high" | "medium" | "low">("high");

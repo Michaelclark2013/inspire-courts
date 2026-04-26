@@ -5,11 +5,13 @@ import Link from "next/link";
 import { ArrowLeft, Plus, Key, Webhook, Copy, Trash2 } from "lucide-react";
 import { adminFetch } from "@/lib/admin-fetch";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type ApiKey = { id: number; label: string; prefix: string; scopes: string; lastUsedAt: string | null; revokedAt: string | null; createdAt: string };
 type WebhookSub = { id: number; url: string; events: string; active: boolean; lastDeliveryStatus: number | null; failureCount: number; createdAt: string };
 
 export default function IntegrationsPage() {
+  useDocumentTitle("Integrations");
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [hooks, setHooks] = useState<WebhookSub[]>([]);
   const [loading, setLoading] = useState(true);

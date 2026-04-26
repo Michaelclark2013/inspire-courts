@@ -78,9 +78,9 @@ export function PortalAnnouncements({ announcements }: { announcements: Announce
             type="button"
             onClick={() => dismiss(a.id)}
             aria-label={`Dismiss announcement: ${a.title}`}
-            className="absolute top-2 right-2 p-1 rounded-md text-amber-600/70 hover:text-amber-700 hover:bg-amber-100 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
+            className="absolute top-1 right-1 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md text-amber-600/70 hover:text-amber-700 hover:bg-amber-100 transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none"
           >
-            <X className="w-3.5 h-3.5" aria-hidden="true" />
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       ))}

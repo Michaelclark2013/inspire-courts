@@ -56,7 +56,7 @@ export default function CheckboxGroup({
             type="button"
             onClick={() => onChange([...options])}
             disabled={allSelected}
-            className="text-[11px] font-semibold text-red hover:text-red-hover disabled:text-text-muted/40 disabled:cursor-default transition-colors uppercase tracking-wide"
+            className="text-[11px] font-semibold text-red hover:text-red-hover disabled:text-text-muted/30 disabled:hover:text-text-muted/30 disabled:cursor-default transition-colors uppercase tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 rounded"
           >
             Select All
           </button>
@@ -65,7 +65,7 @@ export default function CheckboxGroup({
             type="button"
             onClick={() => onChange([])}
             disabled={noneSelected}
-            className="text-[11px] font-semibold text-red hover:text-red-hover disabled:text-text-muted/40 disabled:cursor-default transition-colors uppercase tracking-wide"
+            className="text-[11px] font-semibold text-red hover:text-red-hover disabled:text-text-muted/30 disabled:hover:text-text-muted/30 disabled:cursor-default transition-colors uppercase tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 rounded"
           >
             Clear All
           </button>

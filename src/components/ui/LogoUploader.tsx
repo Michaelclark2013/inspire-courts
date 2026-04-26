@@ -128,7 +128,7 @@ export default function LogoUploader({
                   <h3 className="text-navy font-bold text-sm uppercase tracking-wider">Team Logo</h3>
                   <p className="text-text-secondary text-xs mt-0.5 truncate max-w-[200px]">{teamName}</p>
                 </div>
-                <button onClick={handleClose} aria-label="Close" className="text-text-muted hover:text-navy transition-colors p-1">
+                <button onClick={handleClose} aria-label="Close" className="text-text-muted hover:text-navy transition-colors p-2 min-w-[44px] min-h-[44px] -mt-2 -mr-2 flex items-center justify-center rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red">
                   <X className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
@@ -144,10 +144,10 @@ export default function LogoUploader({
                   />
                   <button
                     onClick={reset}
-                    className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+                    className="absolute top-2 right-2 w-9 h-9 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-black/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     aria-label="Remove image"
                   >
-                    <X className="w-3.5 h-3.5" aria-hidden="true" />
+                    <X className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               ) : (

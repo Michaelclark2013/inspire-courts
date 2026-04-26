@@ -24,7 +24,7 @@ export default function ExportBar({
       <button
         type="button"
         onClick={() => window.print()}
-        className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider px-3 py-2 rounded-lg bg-off-white hover:bg-navy/[0.06] border border-light-gray transition-colors"
+        className="inline-flex items-center gap-1.5 text-text-muted hover:text-navy text-xs font-semibold uppercase tracking-wider px-3 py-2 rounded-lg bg-off-white hover:bg-navy/[0.06] border border-light-gray transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1"
       >
         <Printer className="w-3.5 h-3.5" aria-hidden="true" />
         Print / PDF

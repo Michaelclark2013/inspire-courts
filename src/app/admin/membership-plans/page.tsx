@@ -45,6 +45,8 @@ export default function MembershipPlansPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Plan | null>(null);
   const [showArchived, setShowArchived] = useState(false);
+  // Archive errors — silent failures left the plan visible and active.
+  const [archiveError, setArchiveError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -94,6 +96,13 @@ export default function MembershipPlansPage() {
         </div>
       </div>
 
+      {archiveError && (
+        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
+          <p className="text-navy text-sm font-semibold">{archiveError}</p>
+          <button onClick={() => setArchiveError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
+        </div>
+      )}
+
       {loading ? (
         <SkeletonRows count={4} />
       ) : visible.length === 0 ? (
@@ -140,8 +149,18 @@ export default function MembershipPlansPage() {
                 {p.active && (
                   <button onClick={async () => {
                     if (!confirm(`Archive "${p.name}"? Existing members stay on it but no new signups.`)) return;
-                    await fetch(`/api/admin/membership-plans?id=${p.id}`, { method: "DELETE" });
-                    load();
+                    setArchiveError(null);
+                    try {
+                      const res = await fetch(`/api/admin/membership-plans?id=${p.id}`, { method: "DELETE" });
+                      if (!res.ok) {
+                        const data = await res.json().catch(() => ({}));
+                        setArchiveError(data.error || `Couldn't archive (${res.status}).`);
+                        return;
+                      }
+                      load();
+                    } catch {
+                      setArchiveError("Network error. Try again.");
+                    }
                   }} className="text-xs text-text-secondary hover:text-red border border-border rounded-md px-2 py-1.5">
                     <Archive className="w-3 h-3" />
                   </button>

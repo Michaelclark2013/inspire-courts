@@ -78,6 +78,9 @@ export default function RosterPage() {
     "active"
   );
   const [editing, setEditing] = useState<StaffRow | null>(null);
+  // Termination errors — silent failure left the staffer visible and
+  // active.
+  const [termError, setTermError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -137,6 +140,13 @@ export default function RosterPage() {
           </a>
         </div>
       </div>
+
+      {termError && (
+        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
+          <p className="text-navy text-sm font-semibold">{termError}</p>
+          <button onClick={() => setTermError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
+        </div>
+      )}
 
       {loading ? (
         <SkeletonRows count={6} />
@@ -231,8 +241,18 @@ export default function RosterPage() {
                       <button
                         onClick={async () => {
                           if (!confirm(`Terminate ${r.name}? (soft delete — history kept)`)) return;
-                          await fetch(`/api/admin/staff?userId=${r.userId}`, { method: "DELETE" });
-                          load();
+                          setTermError(null);
+                          try {
+                            const res = await fetch(`/api/admin/staff?userId=${r.userId}`, { method: "DELETE" });
+                            if (!res.ok) {
+                              const data = await res.json().catch(() => ({}));
+                              setTermError(data.error || `Couldn't terminate (${res.status}).`);
+                              return;
+                            }
+                            load();
+                          } catch {
+                            setTermError("Network error. Try again.");
+                          }
                         }}
                         className="inline-flex items-center gap-1 text-text-secondary hover:text-red text-xs"
                       >

@@ -5,7 +5,7 @@ import {
   members,
   memberRiskScores,
 } from "@/lib/db/schema";
-import { and, asc, eq, gt, isNotNull, lte } from "drizzle-orm";
+import { and, asc, eq, gt, inArray, isNotNull, lte } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { sendSms, interpolate } from "@/lib/sms";
 import { sendBroadcastEmail } from "@/lib/notify";
@@ -73,6 +73,25 @@ export async function runJourneyTick(): Promise<{
       )
     );
 
+  // Pre-batch member + risk-score lookups. Per-enrollment selects turn
+  // into 2N round-trips for what's really 2 queries — for a typical
+  // tick with 100+ due enrollments the savings dominate the loop.
+  const memberIds = Array.from(new Set(due.map((e) => e.memberId)));
+  const memberById = new Map<number, typeof members.$inferSelect>();
+  const riskByMember = new Map<number, number | null>();
+  if (memberIds.length > 0) {
+    const ms = await db.select().from(members).where(inArray(members.id, memberIds));
+    for (const m of ms) memberById.set(m.id, m);
+    const rs = await db
+      .select({
+        memberId: memberRiskScores.memberId,
+        daysSinceLastVisit: memberRiskScores.daysSinceLastVisit,
+      })
+      .from(memberRiskScores)
+      .where(inArray(memberRiskScores.memberId, memberIds));
+    for (const r of rs) riskByMember.set(r.memberId, r.daysSinceLastVisit);
+  }
+
   let fired = 0;
   let skipped = 0;
   let completed = 0;
@@ -108,8 +127,8 @@ export async function runJourneyTick(): Promise<{
         continue;
       }
 
-      // Fetch member context for interpolation.
-      const [m] = await db.select().from(members).where(eq(members.id, e.memberId)).limit(1);
+      // Member + risk context come from the pre-batched maps.
+      const m = memberById.get(e.memberId);
       if (!m) {
         await db
           .update(journeyEnrollments)
@@ -119,16 +138,10 @@ export async function runJourneyTick(): Promise<{
         continue;
       }
 
-      const [risk] = await db
-        .select({ daysSinceLastVisit: memberRiskScores.daysSinceLastVisit })
-        .from(memberRiskScores)
-        .where(eq(memberRiskScores.memberId, m.id))
-        .limit(1);
-
       const ctx: Record<string, string | number | null> = {
         firstName: m.firstName,
         lastName: m.lastName,
-        daysSinceLastVisit: risk?.daysSinceLastVisit ?? null,
+        daysSinceLastVisit: riskByMember.get(m.id) ?? null,
       };
       const body = interpolate(step.body, ctx);
 

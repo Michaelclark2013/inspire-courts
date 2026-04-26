@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import {
   DollarSign, Users, TrendingUp, TrendingDown, Trophy, Truck,
   Wallet, RefreshCw} from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Report = {
   asOf: string;
@@ -57,7 +58,7 @@ export default function ReportsPage() {
 
   if (status === "loading") return null;
   if (status === "unauthenticated" || session?.user?.role !== "admin") redirect("/admin/login");
-  if (loading || !report) return <div className="p-6 text-text-secondary">Loading reports…</div>;
+  if (loading || !report) return <div className="p-6"><SkeletonRows count={6} /></div>;
 
   const r = report;
   const mrrAnnualized = r.revenue.mrrCents * 12;

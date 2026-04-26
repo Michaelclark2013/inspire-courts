@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { INQUIRY_CONFIGS } from "@/lib/inquiry-forms";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type InquiryRow = {
   id: number;
@@ -210,7 +211,7 @@ export default function InquiriesPage() {
     return p.toString();
   })()}`;
 
-  if (loading) return <div className="p-8 text-text-muted">Loading inquiries…</div>;
+  if (loading) return <div className="p-8"><SkeletonRows count={6} /></div>;
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-6xl mx-auto">

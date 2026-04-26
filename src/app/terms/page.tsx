@@ -12,9 +12,22 @@ export const metadata: Metadata = {
 
 const LAST_UPDATED = "April 2026";
 
+const termsBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Terms", item: `${SITE_URL}/terms` },
+  ],
+};
+
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-off-white py-12 md:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(termsBreadcrumbLd) }}
+      />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href="/"

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Plane, Plus, Calendar, X } from "lucide-react";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
 type Request = {
   id: number;
@@ -30,6 +31,7 @@ export default function StaffTimeOffPage() {
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -42,8 +44,18 @@ export default function StaffTimeOffPage() {
 
   async function cancel(id: number) {
     if (!confirm("Cancel this time-off request?")) return;
-    await fetch(`/api/portal/staff/time-off?id=${id}`, { method: "DELETE" });
-    load();
+    setCancelError(null);
+    try {
+      const res = await fetch(`/api/portal/staff/time-off?id=${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setCancelError(data.error || `Couldn't cancel (${res.status}).`);
+        return;
+      }
+      load();
+    } catch {
+      setCancelError("Network error. Try again.");
+    }
   }
 
   if (status === "loading") return null;
@@ -64,6 +76,8 @@ export default function StaffTimeOffPage() {
             <Plus className="w-4 h-4" /> Request
           </button>
         </div>
+
+        <ErrorBanner message={cancelError} onDismiss={() => setCancelError(null)} />
 
         {loading ? (
           <div className="text-text-secondary text-sm">Loading…</div>

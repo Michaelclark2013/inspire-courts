@@ -179,9 +179,18 @@ export default function MyProfilePage() {
 
   async function resendVerification() {
     try {
-      await fetch("/api/auth/verify-email/resend", { method: "POST" });
+      const res = await fetch("/api/auth/verify-email/resend", { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        // Resend has rate-limit + already-verified branches we want
+        // surfaced — silent success on a 429 was misleading.
+        alert(data.error || `Couldn't send (${res.status}). Try again in a moment.`);
+        return;
+      }
       alert("Verification email sent (check your inbox).");
-    } catch { /* noop */ }
+    } catch {
+      alert("Network error. Try again.");
+    }
   }
 
   // useSession says we're not logged in → bounce to login immediately.

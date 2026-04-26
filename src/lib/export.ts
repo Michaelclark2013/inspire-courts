@@ -25,10 +25,16 @@ export function exportCSV(
   headers: string[],
   rows: string[][]
 ) {
-  const csvContent = [
-    headers.map(escapeCsvValue).join(","),
-    ...rows.map((row) => row.map(escapeCsvValue).join(",")),
-  ].join("\n");
+  // RFC 4180 specifies CRLF row delimiters. UTF-8 BOM lets Excel
+  // auto-detect the encoding when the file is double-clicked —
+  // without it, accented characters in user-supplied content render
+  // as mojibake. Same envelope as the server-side csvBody helper.
+  const csvContent =
+    "﻿" +
+    [
+      headers.map(escapeCsvValue).join(","),
+      ...rows.map((row) => row.map(escapeCsvValue).join(",")),
+    ].join("\r\n");
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);

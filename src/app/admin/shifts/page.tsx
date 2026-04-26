@@ -476,8 +476,18 @@ function AssignModal({
   }
 
   async function removeAssignment(assignmentId: number) {
-    await fetch(`/api/admin/shifts/assign?id=${assignmentId}`, { method: "DELETE" });
-    onSaved();
+    setErr("");
+    try {
+      const res = await fetch(`/api/admin/shifts/assign?id=${assignmentId}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setErr(data.error || `Couldn't remove assignment (${res.status}).`);
+        return;
+      }
+      onSaved();
+    } catch {
+      setErr("Network error. Try again.");
+    }
   }
 
   return (

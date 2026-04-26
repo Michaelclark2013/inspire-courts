@@ -51,6 +51,7 @@ export default function CertificationsPage() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Cert | null>(null);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -70,8 +71,18 @@ export default function CertificationsPage() {
   useEffect(() => { if (status === "authenticated") load(); }, [status, load]);
 
   async function verify(id: number) {
-    await fetch(`/api/admin/certifications?id=${id}`, { method: "PATCH" });
-    load();
+    setVerifyError(null);
+    try {
+      const res = await fetch(`/api/admin/certifications?id=${id}`, { method: "PATCH" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setVerifyError(data.error || `Couldn't verify cert (${res.status}).`);
+        return;
+      }
+      load();
+    } catch {
+      setVerifyError("Network error. Try again.");
+    }
   }
 
   if (status === "loading") return null;
@@ -103,6 +114,13 @@ export default function CertificationsPage() {
           </button>
         </div>
       </div>
+
+      {verifyError && (
+        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
+          <p className="text-navy text-sm font-semibold">{verifyError}</p>
+          <button onClick={() => setVerifyError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
+        </div>
+      )}
 
       {loading ? (
         <SkeletonRows count={5} />

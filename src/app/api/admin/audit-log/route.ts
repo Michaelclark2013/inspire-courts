@@ -132,7 +132,11 @@ export const GET = withTiming("admin.audit_log", async (request: NextRequest) =>
             .join(",")
         ),
       ];
-      return new NextResponse(lines.join("\n"), {
+      // RFC 4180 specifies CRLF row delimiters, and a UTF-8 BOM lets
+      // Excel auto-detect the encoding (without it, accented chars in
+      // entity names render as mojibake when admins double-click the
+      // download).
+      return new NextResponse("﻿" + lines.join("\r\n"), {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="audit-log-${new Date().toISOString().slice(0, 10)}.csv"`,

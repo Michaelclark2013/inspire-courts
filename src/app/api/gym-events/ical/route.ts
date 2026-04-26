@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { db } from "@/lib/db";
 import { gymEvents } from "@/lib/db/schema";
 import { and, gte } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+
+// Constant-time string compare so an attacker can't extract the
+// token bit-by-bit by measuring response timings. Returns false when
+// the buffers differ in length (timingSafeEqual throws otherwise).
+function safeEquals(a: string, b: string): boolean {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ab.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ab, bb);
+}
 
 // GET /api/gym-events/ical?token=...
 // Public-ish iCal feed so admins + staff can subscribe in Apple / Google
@@ -41,7 +52,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("token") || "";
   const expected = process.env.GYM_CAL_TOKEN || process.env.NEXTAUTH_SECRET || "";
-  if (!expected || token !== expected.slice(0, 32)) {
+  if (!expected || !safeEquals(token, expected.slice(0, 32))) {
     return new NextResponse("Forbidden", { status: 403 });
   }
 

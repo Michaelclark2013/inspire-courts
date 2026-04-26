@@ -255,7 +255,31 @@ export default function AuditLogPage() {
                         )}
                       </div>
                       <div className="text-xs text-text-secondary mt-0.5 truncate">
-                        {r.actorEmail || `user#${r.actorUserId ?? "?"}`} ({r.actorRole || "?"})
+                        {/* Click-to-filter: tapping the actor cell narrows
+                            the list to just that actor. Faster than typing
+                            their email into the filter input. */}
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (r.actorEmail) setFilters({ ...filters, actorEmail: r.actorEmail, actorUserId: "" });
+                            else if (r.actorUserId) setFilters({ ...filters, actorUserId: String(r.actorUserId), actorEmail: "" });
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              if (r.actorEmail) setFilters({ ...filters, actorEmail: r.actorEmail, actorUserId: "" });
+                              else if (r.actorUserId) setFilters({ ...filters, actorUserId: String(r.actorUserId), actorEmail: "" });
+                            }
+                          }}
+                          className="hover:text-navy hover:underline cursor-pointer focus-visible:outline-none focus-visible:underline"
+                          title="Filter to this actor"
+                        >
+                          {r.actorEmail || `user#${r.actorUserId ?? "?"}`}
+                        </span>
+                        {" "}({r.actorRole || "?"})
                         {r.actorIp && <> · {r.actorIp}</>}
                       </div>
                     </div>

@@ -153,7 +153,12 @@ export default function RosterPage() {
         setFeedback({ type: "success", message: `${name} removed from roster` });
         fetchRoster();
       } else {
-        setFeedback({ type: "error", message: `Failed to remove ${name}` });
+        // Surface the API error reason — most importantly
+        // 'Roster locked' (after first game starts) and
+        // 'Player has played, must be deactivated instead' so the
+        // coach knows why their click didn't work.
+        const data = await res.json().catch(() => ({}));
+        setFeedback({ type: "error", message: data.error || `Failed to remove ${name} (${res.status})` });
       }
     } catch {
       setFeedback({ type: "error", message: `Failed to remove ${name}. Check your connection.` });

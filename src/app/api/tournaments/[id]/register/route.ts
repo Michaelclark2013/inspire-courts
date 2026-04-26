@@ -213,7 +213,26 @@ export async function POST(request: NextRequest, { params }: Params) {
       checkoutUrl,
     });
   } catch (err) {
-    logger.error("Square checkout link error", { error: String(err) });
+    const errMsg = String(err);
+    logger.error("Square checkout link error", { error: errMsg, regId: reg.id });
+    // Persist the Square failure on the registration so admins reviewing
+    // pending rows later can see *why* the link couldn't be generated
+    // without paging through server logs. Truncated to keep the column
+    // bounded.
+    try {
+      await db
+        .update(tournamentRegistrations)
+        .set({
+          notes: `Square checkout failed: ${errMsg.slice(0, 280)}`,
+          updatedAt: new Date().toISOString(),
+        })
+        .where(eq(tournamentRegistrations.id, reg.id));
+    } catch (dbErr) {
+      logger.warn("could not stamp registration notes after Square failure", {
+        regId: reg.id,
+        error: String(dbErr),
+      });
+    }
     return NextResponse.json({
       registrationId: reg.id,
       status: "pending",

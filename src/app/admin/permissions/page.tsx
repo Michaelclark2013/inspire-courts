@@ -18,6 +18,7 @@ import {
 import PermissionActivityFeed from "@/components/admin/permissions/ActivityFeed";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { adminFetch } from "@/lib/admin-fetch";
 
 type UserRow = {
   id: number;
@@ -60,12 +61,19 @@ export default function PermissionsIndexPage() {
   const load = useCallback(async () => {
     try {
       setError(null);
-      const res = await fetch("/api/admin/permissions");
-      if (!res.ok) throw new Error(`load ${res.status}`);
+      // adminFetch redirects on 401; non-ok throws fall to setError.
+      const res = await adminFetch("/api/admin/permissions");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Couldn't load users (${res.status})`);
+      }
       const data = await res.json();
       setRows(data.users || []);
     } catch (err) {
-      setError((err as Error).message);
+      // SessionExpiredError already redirected us; ignore here.
+      if ((err as Error)?.name !== "SessionExpiredError") {
+        setError((err as Error).message);
+      }
     } finally {
       setLoading(false);
     }

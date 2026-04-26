@@ -135,13 +135,21 @@ export default function AnnouncementsAdminPage() {
   async function togglePin(a: Announcement) {
     if (pendingId !== null) return;
     setPendingId(a.id);
+    setError(null);
     try {
-      await fetch("/api/admin/announcements", {
+      const res = await fetch("/api/admin/announcements", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: a.id, title: a.title, body: a.body, pinned: !a.pinned }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || `Couldn't toggle pin (${res.status}).`);
+        return;
+      }
       await load();
+    } catch {
+      setError("Network error. Try again.");
     } finally {
       setPendingId(null);
     }
@@ -151,9 +159,17 @@ export default function AnnouncementsAdminPage() {
     if (pendingId !== null) return;
     if (!confirm(`Delete "${a.title}"?`)) return;
     setPendingId(a.id);
+    setError(null);
     try {
-      await fetch(`/api/admin/announcements?id=${a.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/announcements?id=${a.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || `Couldn't delete announcement (${res.status}).`);
+        return;
+      }
       await load();
+    } catch {
+      setError("Network error. Try again.");
     } finally {
       setPendingId(null);
     }

@@ -67,6 +67,9 @@ export default function ExpensesPage() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState<string>("all");
   const [composerOpen, setComposerOpen] = useState(false);
+  // Surface delete failures — silent no-op leaves the row visible and
+  // admin assumes it deleted.
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useDocumentTitle(
     data ? `Expenses (${data.rows.length})` : "Expenses"
@@ -85,8 +88,18 @@ export default function ExpensesPage() {
 
   async function remove(e: Expense) {
     if (!confirm(`Delete "${e.description}"?`)) return;
-    await fetch(`/api/admin/expenses?id=${e.id}`, { method: "DELETE" });
-    load();
+    setDeleteError(null);
+    try {
+      const res = await fetch(`/api/admin/expenses?id=${e.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setDeleteError(data.error || `Couldn't delete expense (${res.status}).`);
+        return;
+      }
+      load();
+    } catch {
+      setDeleteError("Network error. Try again.");
+    }
   }
 
   function exportCsv() {
@@ -205,6 +218,13 @@ export default function ExpensesPage() {
           </button>
         ))}
       </div>
+
+      {deleteError && (
+        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
+          <p className="text-navy text-sm font-semibold">{deleteError}</p>
+          <button onClick={() => setDeleteError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
+        </div>
+      )}
 
       {/* List */}
       {loading ? (

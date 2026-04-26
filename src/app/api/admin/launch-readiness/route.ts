@@ -48,9 +48,25 @@ export async function GET() {
     // Cron
     CRON_SECRET: !!process.env.CRON_SECRET,
 
-    // Email
+    // Email — Resend preferred, Gmail SMTP is fallback
+    RESEND_API_KEY: !!process.env.RESEND_API_KEY,
+    RESEND_FROM_EMAIL: !!process.env.RESEND_FROM_EMAIL,
     GMAIL_USER: !!process.env.GMAIL_USER,
     GMAIL_APP_PASSWORD: !!process.env.GMAIL_APP_PASSWORD,
+
+    // Twilio — two-way SMS + journey automation
+    TWILIO_ACCOUNT_SID: !!process.env.TWILIO_ACCOUNT_SID,
+    TWILIO_AUTH_TOKEN: !!process.env.TWILIO_AUTH_TOKEN,
+    TWILIO_PHONE_NUMBER: !!process.env.TWILIO_PHONE_NUMBER,
+
+    // Geofenced clock-in
+    FACILITY_GEOFENCE_LAT: !!process.env.FACILITY_GEOFENCE_LAT,
+    FACILITY_GEOFENCE_LNG: !!process.env.FACILITY_GEOFENCE_LNG,
+    FACILITY_GEOFENCE_RADIUS_M: !!process.env.FACILITY_GEOFENCE_RADIUS_M,
+
+    // Marketing
+    INQUIRY_NOTIFY_EMAIL: !!process.env.INQUIRY_NOTIFY_EMAIL,
+    NEXT_PUBLIC_GOOGLE_REVIEW_URL: !!process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL,
 
     // Analytics
     NEXT_PUBLIC_GA_ID:

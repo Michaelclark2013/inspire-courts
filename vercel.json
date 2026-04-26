@@ -32,6 +32,10 @@
     {
       "path": "/api/admin/cron/inquiry-sla-tick",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/coach-roster-reminder",
+      "schedule": "0 17 * * *"
     }
   ]
 }

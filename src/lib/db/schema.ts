@@ -94,10 +94,34 @@ export const players = sqliteTable("players", {
   division: text("division"),
   jerseyNumber: text("jersey_number"),
   memberSince: text("member_since"), // Year they started playing with us
+  // ── Eligibility fields (added 2026-04-26) ─────────────────────────
+  // ISO YYYY-MM-DD birth date — drives age-group eligibility
+  // (e.g. 12U on a tournament with Aug 31 cutoff). Nullable so the
+  // existing roster doesn't break; the check-in flow now nags coaches
+  // to fill it in.
+  birthDate: text("birth_date"),
+  // School grade as a free-text string ("8th", "10th", "Varsity").
+  // Informational today; some divisions key off grade not age and we
+  // surface it on the roster page next to the eligibility chip.
+  grade: text("grade"),
+  // Denormalized waiver-on-file flag so the check-in path doesn't
+  // need a JOIN against `waivers` on every player. Updated by the
+  // waiver submit + cron expiry job.
+  waiverOnFile: integer("waiver_on_file", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  // Mug shot captured at first check-in (front camera). Lets staff
+  // verify identity on subsequent check-ins, esp. for older divisions
+  // where age fraud has consequences. Stored as a base64 data URL
+  // (capped client-side ~150KB) OR external https:// URL.
+  photoUrl: text("photo_url"),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => [
+  index("players_team_idx").on(table.teamId),
+  index("players_parent_idx").on(table.parentUserId),
+]);
 
 // ── Games ───────────────────────────────────────────────────────────────────
 
@@ -191,6 +215,10 @@ export const tournaments = sqliteTable("tournaments", {
   registrationOpen: integer("registration_open", { mode: "boolean" }).default(false),
   requireWaivers: integer("require_waivers", { mode: "boolean" }).default(true),
   requirePayment: integer("require_payment", { mode: "boolean" }).default(true),
+  // Hours-before-startDate when the roster freezes. Adds after the
+  // lock require admin approval (anti-ringer / league integrity).
+  // Default 24h matches the most common league rule.
+  rosterLockHoursBefore: integer("roster_lock_hours_before").notNull().default(24),
   description: text("description"), // tournament rules / info
   createdBy: integer("created_by").references(() => users.id),
   createdAt: text("created_at")
@@ -306,12 +334,36 @@ export const checkins = sqliteTable("checkins", {
     .notNull()
     .default("checkin"),
   checkedInBy: integer("checked_in_by").references(() => users.id),
+  // ── FK columns (added 2026-04-26) ─────────────────────────────────
+  // Nullable so legacy rows + walk-on check-ins (player not yet in
+  // roster) still write. Modern check-ins from /portal/checkin and
+  // /checkin always populate both — that's how we build per-player
+  // history and per-tournament rollups.
+  playerId: integer("player_id").references(() => players.id, {
+    onDelete: "set null",
+  }),
+  tournamentId: integer("tournament_id").references(() => tournaments.id, {
+    onDelete: "set null",
+  }),
+  // How the check-in arrived — distinguishes the new self-service QR
+  // flow from coach-driven and admin-driven entries. Useful for
+  // analytics ("80% of check-ins are self-service") and for support
+  // ("coach says they checked in but I don't see it" → look for
+  // source=qr).
+  source: text("source", { enum: ["qr", "coach", "admin", "kiosk"] }),
+  // True when the check-in landed AFTER the team's first scheduled
+  // game time on this tournament day. Computed at insert time so
+  // tournament rules (auto-forfeit, late-fee) can act on it without
+  // a re-derivation pass.
+  isLate: integer("is_late", { mode: "boolean" }).notNull().default(false),
   timestamp: text("timestamp")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
 }, (table) => [
   index("checkins_team_idx").on(table.teamName),
   index("checkins_timestamp_idx").on(table.timestamp),
+  index("checkins_player_idx").on(table.playerId),
+  index("checkins_tournament_idx").on(table.tournamentId),
 ]);
 
 // ── Waivers ─────────────────────────────────────────────────────────────────

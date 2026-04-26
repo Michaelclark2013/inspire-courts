@@ -11,6 +11,8 @@ import {
 
 type TeamRow = {
   id: number;
+  teamId: number | null;
+  tournamentId: number | null;
   teamName: string;
   coachName: string;
   division: string | null;
@@ -39,8 +41,10 @@ export default function CheckinQRPage() {
       if (!res.ok) return;
       const data = await res.json();
       setTeams(
-        (data.teams || []).map((t: TeamRow & { teamName: string }) => ({
+        (data.teams || []).map((t: TeamRow & { teamName: string; teamId?: number; tournamentId?: number }) => ({
           id: t.id,
+          teamId: t.teamId ?? null,
+          tournamentId: t.tournamentId ?? null,
           teamName: t.teamName,
           coachName: t.coachName,
           division: t.division,
@@ -108,7 +112,14 @@ export default function CheckinQRPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 print:grid-cols-3 print:gap-2">
           {filtered.map((t) => {
-            const url = `${origin}/admin/checkin?team=${encodeURIComponent(t.teamName)}`;
+            // New self-service URL: /checkin?t=<tournamentId>&team=<teamId>&teamName=<name>
+            // Falls back to teamName-only when we don't have IDs (legacy
+            // sheet-only data). Auth-required, role-aware on the page.
+            const params = new URLSearchParams();
+            if (t.tournamentId) params.set("t", String(t.tournamentId));
+            if (t.teamId) params.set("team", String(t.teamId));
+            params.set("teamName", t.teamName);
+            const url = `${origin}/checkin?${params.toString()}`;
             return (
               <article key={t.id} className="bg-white border border-border rounded-2xl p-5 flex flex-col items-center text-center print:break-inside-avoid">
                 <p className="text-navy font-bold text-sm leading-tight truncate w-full">{t.teamName}</p>

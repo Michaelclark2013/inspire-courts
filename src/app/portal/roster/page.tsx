@@ -23,6 +23,8 @@ import Link from "next/link";
 import { usePortalView } from "@/components/portal/PortalViewContext";
 import ExportBar from "@/components/ui/ExportBar";
 import { exportCSV } from "@/lib/export";
+import { EligibilityChip } from "@/components/portal/EligibilityChip";
+import type { EligibilityResult } from "@/lib/eligibility";
 
 type Player = {
   id: number;
@@ -30,6 +32,17 @@ type Player = {
   jerseyNumber: string | null;
   division: string | null;
   memberSince: string | null;
+  birthDate: string | null;
+  grade: string | null;
+  waiverOnFile: boolean;
+  photoUrl: string | null;
+  eligibility?: EligibilityResult;
+};
+
+type RosterConflict = {
+  kind: "duplicate_jersey" | "duplicate_name" | "cross_team";
+  message: string;
+  playerIds: number[];
 };
 
 type Team = {
@@ -50,8 +63,10 @@ export default function RosterPage() {
   const [error, setError] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ name: "", jerseyNumber: "" });
+  const [form, setForm] = useState({ name: "", jerseyNumber: "", birthDate: "", grade: "" });
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [conflicts, setConflicts] = useState<RosterConflict[]>([]);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const { confirm, modalProps } = useConfirm();
   const [sortField, setSortField] = useState<SortField>("name");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -76,6 +91,7 @@ export default function RosterPage() {
         const data = await res.json();
         setTeam(data.team);
         setRoster(data.players);
+        setConflicts(Array.isArray(data.conflicts) ? data.conflicts : []);
         // Fetch logo for this team (also guarded by signal so unmount aborts it)
         if (data.team?.name) {
           fetch(`/api/teams/logo?teamName=${encodeURIComponent(data.team.name)}`, { signal })
@@ -113,7 +129,7 @@ export default function RosterPage() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        setForm({ name: "", jerseyNumber: "" });
+        setForm({ name: "", jerseyNumber: "", birthDate: "", grade: "" });
         setShowAdd(false);
         setFeedback({ type: "success", message: `${form.name} added to roster` });
         fetchRoster();
@@ -213,13 +229,16 @@ export default function RosterPage() {
             </div>
           </div>
           {isCoach && team && (
-            <button
-              onClick={() => setShowAdd(!showAdd)}
-              className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
-            >
-              <Plus className="w-4 h-4" aria-hidden="true" />
-              Add Player
-            </button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-shrink-0">
+              <ImportRosterButton onImported={fetchRoster} setFeedback={setFeedback} />
+              <button
+                onClick={() => setShowAdd(!showAdd)}
+                className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+              >
+                <Plus className="w-4 h-4" aria-hidden="true" />
+                Add Player
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -240,11 +259,30 @@ export default function RosterPage() {
         </div>
       )}
 
+      {/* Conflicts banner — shows duplicate jersey #s, duplicate names */}
+      {conflicts.length > 0 && (
+        <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="flex-1">
+              <p className="text-amber-800 text-sm font-semibold">
+                Roster conflict{conflicts.length === 1 ? "" : "s"}
+              </p>
+              <ul className="mt-1 text-xs text-amber-700 space-y-0.5">
+                {conflicts.map((c, i) => (
+                  <li key={i}>• {c.message}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add player form */}
       {showAdd && (
         <div className="bg-white border border-light-gray rounded-xl p-6 mb-6">
-          <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-4 sm:items-end">
-            <div className="flex-1">
+          <form onSubmit={handleAdd} className="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:items-end">
+            <div className="sm:col-span-5">
               <label htmlFor="roster-name" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Player Name
               </label>
@@ -258,7 +296,7 @@ export default function RosterPage() {
                 placeholder="First Last"
               />
             </div>
-            <div className="w-full sm:w-32">
+            <div className="sm:col-span-2">
               <label htmlFor="roster-jersey" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Jersey #
               </label>
@@ -271,16 +309,45 @@ export default function RosterPage() {
                 placeholder="#"
               />
             </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="roster-dob" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Birth Date
+              </label>
+              <input
+                id="roster-dob"
+                type="date"
+                value={form.birthDate}
+                onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
+                title="Required for age divisions (8U, 10U, 12U, etc.)"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="roster-grade" className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Grade
+              </label>
+              <input
+                id="roster-grade"
+                type="text"
+                value={form.grade}
+                onChange={(e) => setForm({ ...form, grade: e.target.value })}
+                placeholder="8th"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-4 py-3 text-navy text-sm focus:outline-none focus:border-red focus-visible:ring-2 focus-visible:ring-red"
+              />
+            </div>
             <button
               type="submit"
               disabled={saving}
               aria-busy={saving}
-              className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors w-full sm:w-auto"
+              className="sm:col-span-1 flex items-center justify-center gap-2 bg-red hover:bg-red-hover disabled:opacity-40 text-white px-3 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors w-full"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
-              Add Player
+              <span className="sr-only sm:not-sr-only">Add</span>
             </button>
           </form>
+          <p className="text-text-muted text-[11px] mt-2">
+            Birth date drives age-group eligibility. Add it now to avoid front-desk delays at check-in.
+          </p>
         </div>
       )}
 
@@ -342,6 +409,9 @@ export default function RosterPage() {
                       </button>
                     </th>
                     <th scope="col" className="text-left px-6 py-3 font-semibold">Division</th>
+                    <th scope="col" className="text-left px-6 py-3 font-semibold">Eligibility</th>
+                    <th scope="col" className="text-left px-6 py-3 font-semibold">DOB / Grade</th>
+                    <th scope="col" className="text-left px-6 py-3 font-semibold">Waiver</th>
                     {isCoach && <th scope="col" className="px-6 py-3"></th>}
                   </tr>
                 </thead>
@@ -356,8 +426,36 @@ export default function RosterPage() {
                         {p.memberSince && <span className="ml-2"><LoyaltyBadge memberSince={p.memberSince} /></span>}
                       </td>
                       <td className="px-6 py-4 text-text-muted">{p.division || "—"}</td>
+                      <td className="px-6 py-4">
+                        <EligibilityChip result={p.eligibility} />
+                      </td>
+                      <td className="px-6 py-4 text-text-muted text-xs">
+                        {p.birthDate || <span className="italic">—</span>}
+                        {p.grade && <span className="ml-1 text-navy/60">· {p.grade}</span>}
+                      </td>
+                      <td className="px-6 py-4">
+                        {p.waiverOnFile ? (
+                          <span className="inline-flex items-center gap-1 text-emerald-700 text-xs font-semibold">
+                            <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" /> On file
+                          </span>
+                        ) : (
+                          <Link
+                            href="/portal/waiver"
+                            className="inline-flex items-center gap-1 text-red text-xs font-semibold hover:underline"
+                          >
+                            <XCircle className="w-3.5 h-3.5" aria-hidden="true" /> Sign
+                          </Link>
+                        )}
+                      </td>
                       {isCoach && (
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                          <button
+                            onClick={() => setEditingPlayer(p)}
+                            aria-label={`Edit ${p.name}`}
+                            className="text-text-muted hover:text-navy text-xs font-semibold mr-3"
+                          >
+                            Edit
+                          </button>
                           <button
                             onClick={() => handleRemove(p.id, p.name)}
                             disabled={deletingId === p.id}
@@ -380,7 +478,258 @@ export default function RosterPage() {
           )}
         </div>
       )}
+
+      {editingPlayer && (
+        <EditPlayerModal
+          player={editingPlayer}
+          onClose={() => setEditingPlayer(null)}
+          onSaved={() => {
+            setEditingPlayer(null);
+            setFeedback({ type: "success", message: "Player updated" });
+            fetchRoster();
+          }}
+          onError={(msg) => setFeedback({ type: "error", message: msg })}
+        />
+      )}
+
       <ConfirmModal {...modalProps} />
+    </div>
+  );
+}
+
+// ── Import roster from previous event ──────────────────────────────
+function ImportRosterButton({
+  onImported,
+  setFeedback,
+}: {
+  onImported: () => void;
+  setFeedback: (f: { type: "success" | "error"; message: string }) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [teams, setTeams] = useState<Array<{ id: number; name: string; division: string | null; season: string | null; playerCount: number }>>([]);
+  const [loading, setLoading] = useState(false);
+  const [importing, setImporting] = useState<number | null>(null);
+
+  async function load() {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/portal/roster/import");
+      if (res.ok) {
+        const d = await res.json();
+        setTeams(d.teams || []);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function doImport(fromTeamId: number) {
+    setImporting(fromTeamId);
+    try {
+      const res = await fetch("/api/portal/roster/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fromTeamId }),
+      });
+      const d = await res.json();
+      if (res.ok) {
+        setFeedback({
+          type: "success",
+          message: `Imported ${d.imported}, skipped ${d.skipped} existing`,
+        });
+        setOpen(false);
+        onImported();
+      } else {
+        setFeedback({ type: "error", message: d.error || "Import failed" });
+      }
+    } finally {
+      setImporting(null);
+    }
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          setOpen(true);
+          void load();
+        }}
+        className="flex items-center gap-2 bg-white border border-border hover:border-navy/40 text-navy px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
+        title="Reuse a roster from a previous event"
+      >
+        Import
+      </button>
+      {open && (
+        <div
+          className="fixed inset-0 z-[80] bg-black/50 flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setOpen(false);
+          }}
+        >
+          <div className="bg-white rounded-xl w-full max-w-md p-5">
+            <h2 className="text-navy text-lg font-bold mb-1">Import roster</h2>
+            <p className="text-text-muted text-xs mb-4">
+              Pick a previous team to copy players from. Existing names are skipped.
+            </p>
+            {loading ? (
+              <div className="flex items-center gap-2 text-text-muted text-sm py-4">
+                <Loader2 className="w-4 h-4 animate-spin" /> Loading…
+              </div>
+            ) : teams.length === 0 ? (
+              <p className="text-text-muted text-sm py-4 text-center">
+                No previous teams to import from.
+              </p>
+            ) : (
+              <ul className="space-y-2 max-h-72 overflow-y-auto">
+                {teams.map((t) => (
+                  <li key={t.id} className="border border-border rounded-lg p-3 flex items-center gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-navy truncate">{t.name}</p>
+                      <p className="text-xs text-text-muted">
+                        {t.division || "—"}{t.season ? ` · ${t.season}` : ""} · {t.playerCount} players
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => doImport(t.id)}
+                      disabled={importing != null}
+                      className="px-3 py-2 rounded-lg bg-red hover:bg-red-hover disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider"
+                    >
+                      {importing === t.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Import"}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="text-right mt-4">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="text-text-muted text-sm hover:text-navy"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── Edit player modal ──────────────────────────────────────────────
+// Backfill DOB / grade / jersey on existing roster rows. Used by the
+// pencil-icon "Edit" link in the roster table.
+function EditPlayerModal({
+  player,
+  onClose,
+  onSaved,
+  onError,
+}: {
+  player: Player;
+  onClose: () => void;
+  onSaved: () => void;
+  onError: (msg: string) => void;
+}) {
+  const [name, setName] = useState(player.name);
+  const [jerseyNumber, setJersey] = useState(player.jerseyNumber || "");
+  const [birthDate, setBirthDate] = useState(player.birthDate || "");
+  const [grade, setGrade] = useState(player.grade || "");
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const res = await fetch("/api/portal/roster", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: player.id, name, jerseyNumber, birthDate, grade }),
+      });
+      if (res.ok) {
+        onSaved();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        onError(data.error || "Failed to update player");
+      }
+    } catch {
+      onError("Network error updating player");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[80] bg-black/50 flex items-center justify-center p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="bg-white rounded-xl w-full max-w-md p-6">
+        <h2 className="text-navy text-lg font-bold mb-4">Edit Player</h2>
+        <form onSubmit={handleSave} className="space-y-3">
+          <div>
+            <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full bg-off-white border border-light-gray rounded-lg px-3 py-2 text-navy text-sm focus:outline-none focus:border-red"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1">Jersey #</label>
+              <input
+                type="text"
+                value={jerseyNumber}
+                onChange={(e) => setJersey(e.target.value)}
+                className="w-full bg-off-white border border-light-gray rounded-lg px-3 py-2 text-navy text-sm focus:outline-none focus:border-red"
+              />
+            </div>
+            <div>
+              <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1">Grade</label>
+              <input
+                type="text"
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                placeholder="8th"
+                className="w-full bg-off-white border border-light-gray rounded-lg px-3 py-2 text-navy text-sm focus:outline-none focus:border-red"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-text-muted text-xs font-semibold uppercase tracking-wider mb-1">Birth Date</label>
+            <input
+              type="date"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              className="w-full bg-off-white border border-light-gray rounded-lg px-3 py-2 text-navy text-sm focus:outline-none focus:border-red"
+            />
+            <p className="text-text-muted text-[10px] mt-1">Age divisions (8U, 10U, 12U…) are validated against this.</p>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-3 py-2 rounded-lg text-sm font-semibold text-text-muted hover:bg-off-white"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="inline-flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-semibold"
+            >
+              {saving && <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />}
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

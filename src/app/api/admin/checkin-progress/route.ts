@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { tournaments, tournamentRegistrations, checkins } from "@/lib/db/schema";
+import { tournaments, tournamentRegistrations, checkins, teams as teamsTable } from "@/lib/db/schema";
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
@@ -67,6 +67,23 @@ export async function GET(request: Request) {
       .orderBy(asc(tournamentRegistrations.teamName));
 
     const teamNames = regs.map((r) => r.teamName);
+
+    // Match each registration's teamName to a teams.id so the QR
+    // generator can build /checkin?t=<tid>&team=<teamId> URLs that
+    // route the new self-service check-in flow correctly.
+    let teamIdByName: Record<string, number> = {};
+    if (teamNames.length > 0) {
+      const teamRows = await db
+        .select({ id: teamsTable.id, name: teamsTable.name })
+        .from(teamsTable);
+      teamIdByName = Object.fromEntries(
+        teamRows
+          .filter((t) =>
+            teamNames.some((n) => n.toLowerCase() === t.name.toLowerCase()),
+          )
+          .map((t) => [t.name.toLowerCase(), t.id]),
+      );
+    }
     let counts: Record<string, number> = {};
     let latestByTeam: Record<string, string> = {};
 
@@ -104,6 +121,8 @@ export async function GET(request: Request) {
         checkedIn >= minPlayers;
       return {
         id: r.id,
+        teamId: teamIdByName[r.teamName.toLowerCase()] ?? null,
+        tournamentId: tournament!.id,
         teamName: r.teamName,
         division: r.division,
         coachName: r.coachName,

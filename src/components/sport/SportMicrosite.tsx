@@ -260,6 +260,27 @@ export function SportMicrosite({ config }: { config: SportConfig }) {
           </p>
         </div>
       </section>
+
+      {/* Mobile-only sticky inquire CTA — sport microsites are long
+          (hero → stats → pitch → 6 program tiles → 4 FAQs → cross-link
+          → bottom CTA), and on mobile the only visible CTA scrolls
+          off-screen for most of the read. Sticky bar keeps the primary
+          conversion action one tap away the entire time. Hidden on
+          desktop because the in-flow CTAs are always visible at sane
+          viewport heights. */}
+      <div
+        className="md:hidden fixed inset-x-0 bottom-0 z-40 px-3 pb-3"
+        style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+      >
+        <Link
+          href={`/inquire/${config.hero.primaryCta.slug}?source=${config.slug}-stickymobile`}
+          className="bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-4 min-h-[52px] rounded-2xl shadow-lg shadow-red/30 inline-flex items-center justify-center gap-2 text-sm w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
+          aria-label={`${config.hero.primaryCta.label} for ${config.name}`}
+        >
+          {config.hero.primaryCta.label}
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
     </main>
   );
 }

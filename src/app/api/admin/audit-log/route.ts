@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { auditLog } from "@/lib/db/schema";
-import { and, desc, eq, lt, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, like, lt, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";
 import { withTiming } from "@/lib/timing";
@@ -40,6 +40,7 @@ export const GET = withTiming("admin.audit_log", async (request: NextRequest) =>
   const entityId = sp.get("entityId");
   const action = sp.get("action");
   const actorUserIdRaw = sp.get("actorUserId");
+  const actorEmailRaw = sp.get("actorEmail");
   const limitRaw = sp.get("limit");
   const before = sp.get("before");
 
@@ -58,6 +59,13 @@ export const GET = withTiming("admin.audit_log", async (request: NextRequest) =>
     if (Number.isFinite(actorUserId) && actorUserId > 0) {
       filters.push(eq(auditLog.actorUserId, actorUserId));
     }
+  }
+  if (actorEmailRaw) {
+    // Substring LIKE so admins can filter by partial email — they
+    // type "sarah" and find every action by sarah@inspirecourts.com.
+    // Escape SQL LIKE wildcards in the user input first.
+    const safe = actorEmailRaw.slice(0, 100).replace(/[\\%_]/g, "\\$&");
+    filters.push(like(auditLog.actorEmail, `%${safe}%`));
   }
   if (before) filters.push(lt(auditLog.createdAt, before));
 

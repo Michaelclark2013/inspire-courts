@@ -90,6 +90,8 @@ export default function AuditLogPage() {
     entityId: "",
     action: "",
     actorUserId: "",
+    // Substring search on actor email — admins remember "sarah" not 17.
+    actorEmail: "",
   });
   const debouncedFilters = useDebouncedValue(filters, 300);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
@@ -196,19 +198,27 @@ export default function AuditLogPage() {
             </datalist>
           </label>
           <label className="block">
-            <span className="block text-xs text-text-secondary mb-1">Actor User ID</span>
+            <span className="block text-xs text-text-secondary mb-1">Actor email or ID</span>
             <input
-              value={filters.actorUserId}
-              onChange={(e) => setFilters({ ...filters, actorUserId: e.target.value })}
-              placeholder="1"
+              value={filters.actorEmail || filters.actorUserId}
+              onChange={(e) => {
+                const v = e.target.value;
+                // If they type digits-only, treat as ID; otherwise as email substring.
+                if (v && /^\d+$/.test(v)) {
+                  setFilters({ ...filters, actorUserId: v, actorEmail: "" });
+                } else {
+                  setFilters({ ...filters, actorEmail: v, actorUserId: "" });
+                }
+              }}
+              placeholder="sarah@inspire… or 1"
               className="w-full bg-off-white border border-border rounded px-2 py-1.5 text-sm"
             />
           </label>
         </div>
-        {(filters.entityType || filters.entityId || filters.action || filters.actorUserId) && (
+        {(filters.entityType || filters.entityId || filters.action || filters.actorUserId || filters.actorEmail) && (
           <div className="mt-3 flex items-center gap-2">
             <button
-              onClick={() => setFilters({ entityType: "", entityId: "", action: "", actorUserId: "" })}
+              onClick={() => setFilters({ entityType: "", entityId: "", action: "", actorUserId: "", actorEmail: "" })}
               className="text-xs text-text-secondary hover:text-navy underline"
             >
               Clear all filters

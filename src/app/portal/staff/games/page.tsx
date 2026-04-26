@@ -71,7 +71,10 @@ export default function StaffGamesPage() {
   const load = useCallback(async () => {
     try {
       const res = await fetch("/api/portal/staff/my-games");
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Couldn't load games (${res.status})`);
+      }
       const data = await res.json();
       setGames(data.games || []);
       setError(null);

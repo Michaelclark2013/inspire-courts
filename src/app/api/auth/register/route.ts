@@ -10,6 +10,7 @@ import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
 import {
   generateVerifyToken,
+  hashVerifyToken,
   verifyTokenExpiryIso,
   verifyUrlFor,
 } from "@/lib/email-verification";
@@ -97,7 +98,9 @@ export async function POST(request: NextRequest) {
       phone: sanitizedPhone,
       photoUrl: photoUrl ? photoUrl.slice(0, 500) : null,
       approved: !needsApproval,
-      emailVerifyToken: verifyToken,
+      // DB stores only the SHA-256 hash; the raw verifyToken still
+      // travels to the user via email below.
+      emailVerifyToken: hashVerifyToken(verifyToken),
       emailVerifyExpiresAt: verifyExpiresAt,
     });
 

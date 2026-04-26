@@ -9,6 +9,7 @@ import { logger } from "@/lib/logger";
 import { sendVerificationEmail } from "@/lib/notify";
 import {
   generateVerifyToken,
+  hashVerifyToken,
   verifyTokenExpiryIso,
   verifyUrlFor,
 } from "@/lib/email-verification";
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
     await db
       .update(users)
       .set({
-        emailVerifyToken: token,
+        emailVerifyToken: hashVerifyToken(token),
         emailVerifyExpiresAt: expiresAt,
         updatedAt: new Date().toISOString(),
       })

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+import { hashVerifyToken } from "@/lib/email-verification";
 import { logger } from "@/lib/logger";
 
 // Email-verification endpoint — port of OFF SZN R780 (Prisma → Drizzle).
@@ -50,6 +51,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // The DB stores SHA-256 hashes, not raw tokens — hash the incoming
+    // value before lookup so a users-table read leak can't be used to
+    // mark accounts verified or hijack pending registrations.
+    const tokenHash = hashVerifyToken(rawToken);
     const [user] = await db
       .select({
         id: users.id,
@@ -58,7 +63,7 @@ export async function POST(req: NextRequest) {
         emailVerifyExpiresAt: users.emailVerifyExpiresAt,
       })
       .from(users)
-      .where(eq(users.emailVerifyToken, rawToken))
+      .where(eq(users.emailVerifyToken, tokenHash))
       .limit(1);
 
     // Generic message to avoid leaking whether the token existed.

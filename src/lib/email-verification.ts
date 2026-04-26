@@ -24,6 +24,14 @@ export function generateVerifyToken(): string {
   return crypto.randomBytes(TOKEN_BYTES).toString("hex");
 }
 
+// SHA-256 hash of the token. The DB stores only the hash; the raw
+// token is what we email and what comes back via ?token=. This way a
+// users-table read leak doesn't let an attacker mark arbitrary
+// accounts as verified or hijack pending-verification users.
+export function hashVerifyToken(token: string): string {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
+
 export function verifyUrlFor(token: string): string {
   return `${SITE_URL}/verify-email?token=${encodeURIComponent(token)}`;
 }

@@ -94,7 +94,22 @@ const localBusinessSchema = {
     "https://www.instagram.com/inspirecourts",
     "https://www.youtube.com/@AZFinestMixtape",
   ],
-  sport: ["Basketball", "Volleyball", "Futsal", "Jiu-Jitsu"],
+  sport: ["Basketball", "Volleyball", "Pickleball", "Futsal", "Jiu-Jitsu"],
+  // Daily 6am–10pm — matches the LocalBusiness block on /contact and the
+  // hours surfaced elsewhere on the site. Adding it here lets the
+  // homepage drive the knowledge-panel hours instead of forcing Google
+  // to merge from /contact.
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [
+        "Monday", "Tuesday", "Wednesday", "Thursday",
+        "Friday", "Saturday", "Sunday",
+      ],
+      opens: "06:00",
+      closes: "22:00",
+    },
+  ],
   amenityFeature: [
     { "@type": "LocationFeatureSpecification", name: "Indoor Courts", value: true },
     { "@type": "LocationFeatureSpecification", name: "Air Conditioning", value: true },

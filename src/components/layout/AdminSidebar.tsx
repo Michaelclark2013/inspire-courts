@@ -189,9 +189,16 @@ const PERSONAL: NavItem[] = [
   { href: "/admin/my-history", label: "My Work History", icon: History, page: "my_history" },
 ];
 
-// Primary tabs shown in the mobile bottom bar (5 max)
+// Primary tabs shown in the mobile bottom bar — filtered by role at
+// runtime, so this list is the union across roles. Mobile shows up
+// to 5 visible tabs + a More button.
+//
+// my_schedule is included so staff/ref get a useful primary tab
+// (their other bottom-bar pages are minimal — without it, refs
+// landed on a bottom bar with just "More").
 const BOTTOM_TABS: NavItem[] = [
   { href: "/admin", label: "Home", icon: LayoutDashboard, page: "overview" },
+  { href: "/admin/my-schedule", label: "Schedule", icon: Calendar, page: "my_schedule" },
   { href: "/admin/scores/enter", label: "Scores", icon: ClipboardList, page: "score_entry" },
   { href: "/admin/checkin", label: "Check-In", icon: UserCheck, page: "checkin" },
   { href: "/admin/tournaments/manage", label: "Events", icon: Trophy, page: "tournaments" },

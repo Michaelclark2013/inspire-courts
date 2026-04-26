@@ -29,9 +29,22 @@ export const metadata: Metadata = {
   },
 };
 
+const galleryBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Gallery", item: `${SITE_URL}/gallery` },
+  ],
+};
+
 export default function GalleryPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(galleryBreadcrumbLd) }}
+      />
       {/* Hero */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         <Image

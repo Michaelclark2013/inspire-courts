@@ -3,7 +3,7 @@
 **Branch:** `cycle/auto-improvements` — never push to main, never merge own PRs.
 **Mode:** Continuous 6-phase loop (1→2→3→4→5→6→1→…). Stop only when Mike types "stop".
 **Current cycle:** 6
-**Current phase:** 5 — Customer Acquisition & Marketing
+**Current phase:** 6 — Security & Privacy
 
 ## The 6 phases
 1. UI — Visual design, component polish, accessibility, responsive, loading/error states, brand consistency
@@ -32,8 +32,8 @@
 | 2 — Functionality | done | [phase-2-2026-04-25-1935.md](cycle-reports/phase-2-2026-04-25-1935.md) |
 | 3 — Admin | done | [phase-3-2026-04-25-1935.md](cycle-reports/phase-3-2026-04-25-1935.md) |
 | 4 — Public | done | [phase-4-2026-04-25-1935.md](cycle-reports/phase-4-2026-04-25-1935.md) |
-| 5 — Marketing | in progress | — |
-| 6 — Security | pending | — |
+| 5 — Marketing | done | [phase-5-2026-04-25-1935.md](cycle-reports/phase-5-2026-04-25-1935.md) |
+| 6 — Security | in progress | — |
 
 ## Cycle 5 status — DONE (pushed 2026-04-25)
 

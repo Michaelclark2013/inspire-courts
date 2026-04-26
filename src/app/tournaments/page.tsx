@@ -256,6 +256,15 @@ async function TournamentList() {
     );
   }
 
+  const tournamentsBreadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Tournaments", item: `${SITE_URL}/tournaments` },
+    ],
+  };
+
   return (
     <>
       {eventSchema && (
@@ -264,6 +273,10 @@ async function TournamentList() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema) }}
         />
       )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(tournamentsBreadcrumbLd) }}
+      />
       <section
         id="tournaments"
         className="max-w-5xl mx-auto px-4 py-12 lg:py-16 scroll-mt-20"

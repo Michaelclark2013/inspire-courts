@@ -76,7 +76,10 @@ const localBusinessSchema = {
     "Arizona's premier indoor basketball & volleyball facility. 7 regulation courts, game film available at tournaments. Home of OFF SZN HOOPS youth basketball tournaments.",
   url: SITE_URL,
   email: FACILITY_EMAIL,
-  telephone: FACILITY_PHONE,
+  // E.164-normalized telephone — matches /contact's LocalBusiness block
+  // so Google can merge the entities cleanly. Human-readable format
+  // stays in the page body; this is for crawlers only.
+  telephone: `+1${FACILITY_PHONE.replace(/\D/g, "")}`,
   address: {
     "@type": "PostalAddress",
     streetAddress: "1090 N Fiesta Blvd, Ste 101 & 102",
@@ -129,7 +132,7 @@ const organizationSchema = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/inspire-athletics-logo.png`,
   email: FACILITY_EMAIL,
-  telephone: FACILITY_PHONE,
+  telephone: `+1${FACILITY_PHONE.replace(/\D/g, "")}`,
   sameAs: [
     "https://www.instagram.com/inspirecourts",
     "https://www.youtube.com/@AZFinestMixtape",

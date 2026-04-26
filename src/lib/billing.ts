@@ -125,7 +125,7 @@ export async function chargeSubscription(subscriptionId: number): Promise<{
       .update(invoices)
       .set({ status: "failed", failureCode: "NO_PAYMENT_METHOD", failureMessage: "No card on file" })
       .where(eq(invoices.id, invoice.id));
-    await markPastDue(sub.id, sub.failedAttempts + 1);
+    await markPastDue(sub.id, sub.memberId, sub.failedAttempts + 1);
     return { ok: false, invoiceId: invoice.id, failureCode: "NO_PAYMENT_METHOD" };
   }
 
@@ -147,7 +147,7 @@ export async function chargeSubscription(subscriptionId: number): Promise<{
       .update(invoices)
       .set({ status: "failed", failureCode: "PAYMENT_METHOD_MISSING", failureMessage: "Saved card not found" })
       .where(eq(invoices.id, invoice.id));
-    await markPastDue(sub.id, sub.failedAttempts + 1);
+    await markPastDue(sub.id, sub.memberId, sub.failedAttempts + 1);
     return { ok: false, invoiceId: invoice.id, failureCode: "PAYMENT_METHOD_MISSING" };
   }
 
@@ -215,7 +215,7 @@ export async function chargeSubscription(subscriptionId: number): Promise<{
     })
     .where(eq(invoices.id, invoice.id));
 
-  await markPastDue(sub.id, sub.failedAttempts + 1);
+  await markPastDue(sub.id, sub.memberId, sub.failedAttempts + 1);
 
   return { ok: false, invoiceId: invoice.id, failureCode: result.failureCode };
 }
@@ -275,7 +275,7 @@ export async function cancelSubscription(subscriptionId: number, reason?: string
 
 // ── Internal ─────────────────────────────────────────────────────────
 
-async function markPastDue(subscriptionId: number, attempt: number): Promise<void> {
+async function markPastDue(subscriptionId: number, memberId: number, attempt: number): Promise<void> {
   const now = new Date().toISOString();
   // Decide retry vs cancel.
   if (attempt >= MAX_FAILED_ATTEMPTS) {
@@ -297,29 +297,26 @@ async function markPastDue(subscriptionId: number, attempt: number): Promise<voi
     })
     .where(eq(subscriptions.id, subscriptionId));
 
-  // Surface to member.
-  const [sub] = await db.select().from(subscriptions).where(eq(subscriptions.id, subscriptionId)).limit(1);
-  if (sub) {
-    await db
-      .update(members)
-      .set({ status: "past_due", updatedAt: now })
-      .where(eq(members.id, sub.memberId));
-    // Send dunning email — best-effort, don't throw.
+  // Surface to member, and dunning email — caller passed memberId so we
+  // skip the redundant subscription re-select that previously lived here.
+  const [m] = await db
+    .update(members)
+    .set({ status: "past_due", updatedAt: now })
+    .where(eq(members.id, memberId))
+    .returning();
+  if (m?.email) {
     try {
-      const [m] = await db.select().from(members).where(eq(members.id, sub.memberId)).limit(1);
-      if (m?.email) {
-        await sendBroadcastEmail({
-          recipients: [m.email],
-          subject: "Your Inspire Courts payment didn't go through",
-          html: `<p>Hi ${m.firstName},</p>
-            <p>We tried to charge your card on file for your membership and it didn't go through.
-            We'll automatically retry in a few days, but to keep your membership active you can
-            update your payment method right now.</p>
-            <p><a href="${process.env.NEXTAUTH_URL || ""}/portal/billing">Update payment method →</a></p>
-            <p>If you've recently changed cards, this is the most likely fix.</p>
-            <p>Thanks,<br/>Inspire Courts AZ</p>`,
-        });
-      }
+      await sendBroadcastEmail({
+        recipients: [m.email],
+        subject: "Your Inspire Courts payment didn't go through",
+        html: `<p>Hi ${m.firstName},</p>
+          <p>We tried to charge your card on file for your membership and it didn't go through.
+          We'll automatically retry in a few days, but to keep your membership active you can
+          update your payment method right now.</p>
+          <p><a href="${process.env.NEXTAUTH_URL || ""}/portal/billing">Update payment method →</a></p>
+          <p>If you've recently changed cards, this is the most likely fix.</p>
+          <p>Thanks,<br/>Inspire Courts AZ</p>`,
+      });
     } catch (err) {
       logger.warn("dunning email failed", { error: String(err), subId: subscriptionId });
     }

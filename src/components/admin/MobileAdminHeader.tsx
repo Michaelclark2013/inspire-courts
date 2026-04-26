@@ -4,32 +4,28 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { ChevronLeft, Bell, Search as SearchIcon } from "lucide-react";
-import { useEffect, useState } from "react";
 
 /**
- * Unified mobile-only top bar for the entire /admin surface.
+ * Mobile-only top bar for the entire /admin surface. Renders in normal
+ * document flow (not sticky) so it always pushes content down and
+ * never overlaps the page header/buttons. The bottom tab bar handles
+ * persistent navigation; this just provides the page title + back
+ * arrow at the top of each scroll.
  *
  * On desktop (lg+) the sidebar is the nav chrome, so this renders
- * nothing. On mobile it's the single fixed element at the top:
+ * nothing.
  *   - /admin landing page → greeting + bell + avatar
- *   - every other admin page → back arrow + page title + menu
+ *   - every other admin page → back arrow + page title
  *
- * Previously two separate components (MobileAdminHeader and
- * MobileDashboardHeader) rendered here and created a stacking /
- * overlap bug. This merges them into one.
+ * Previously this was `sticky`, but combined with the parent main's
+ * `overflow-x: hidden` + `page-transition` transform, sticky was
+ * trapping in a transformed coordinate space on iOS Safari and
+ * floating over the page's own header buttons.
  */
 export default function MobileAdminHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 4);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const isDashboard = pathname === "/admin";
   const title = titleFromPath(pathname);
@@ -43,12 +39,7 @@ export default function MobileAdminHeader() {
   const greeting = h < 12 ? "Morning" : h < 17 ? "Afternoon" : "Evening";
 
   return (
-    <header
-      className={`lg:hidden sticky z-40 bg-white transition-shadow ${
-        scrolled ? "shadow-sm border-b border-border" : "border-b border-transparent"
-      }`}
-      style={{ top: "calc(var(--header-h) + env(safe-area-inset-top))" }}
-    >
+    <header className="lg:hidden bg-white border-b border-border">
       <div className="flex items-center h-14 px-3 gap-2">
         {isDashboard ? (
           <>

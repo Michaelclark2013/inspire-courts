@@ -186,10 +186,7 @@ export default async function AdminDashboard() {
   });
 
   return (
-    <div
-      className="p-3 sm:p-6 lg:p-8 max-w-full"
-      aria-labelledby="dashboard-heading"
-    >
+    <div className="p-3 sm:p-6 lg:p-8 max-w-full">
       {/* Mobile PWA install nudge (dismissable, once per device) */}
       <InstallPrompt />
 

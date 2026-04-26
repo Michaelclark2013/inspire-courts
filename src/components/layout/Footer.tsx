@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Mail, Phone, Trophy, ExternalLink } from "lucide-react";
 import {
   FACILITY_EMAIL,
@@ -53,6 +54,14 @@ const PROGRAM_LINKS = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+  // Suppress the public marketing footer on logged-in app surfaces.
+  // Admin and portal use their own chrome (sidebar / bottom-tab bar);
+  // showing the public CTA banner, social links, and "Register Now"
+  // here would just be noise (and overlap the in-app bottom nav).
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/portal")) {
+    return null;
+  }
   return (
     <footer className="bg-navy text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -1,9 +1,16 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { trackConversion } from "@/lib/analytics";
 
 export default function MobileRegisterBar() {
+  const pathname = usePathname();
+  // Public-facing CTA — suppress on logged-in surfaces (admin + portal)
+  // where it both makes no sense and overlaps the in-app bottom tab bar.
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/portal")) {
+    return null;
+  }
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 backdrop-blur-md border-t border-light-gray p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.1)]" role="complementary" aria-label="Tournament registration">
       <a

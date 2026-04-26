@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -195,6 +196,16 @@ export default function AdminSidebar() {
       return false;
     }
   });
+  // Portal target — the mobile bottom tab bar must escape the root
+  // layout's `<main className="page-transition">`. That ancestor uses
+  // `transform` for its fade-in animation, which makes it the
+  // containing block for any `position: fixed` descendant — so the
+  // tab bar would otherwise float inside page content instead of
+  // pinning to the viewport. Mounting to document.body sidesteps that.
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
   const { data: session } = useSession();
   const role = (session?.user?.role || "admin") as UserRole;
 
@@ -529,7 +540,9 @@ export default function AdminSidebar() {
         </div>
       </aside>
 
-      {/* ── Mobile bottom tab bar ──────────────────────────────────────────── */}
+      {/* ── Mobile bottom tab bar (portaled to body) ─────────────────────── */}
+      {portalReady && createPortal(
+      <>
       <nav
         className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-light-gray flex items-stretch"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
@@ -773,6 +786,8 @@ export default function AdminSidebar() {
           </div>
         </>
       )}
+      </>,
+      document.body)}
     </>
   );
 }

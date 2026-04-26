@@ -71,8 +71,11 @@ export default function ScoreEntryPage() {
       const res = await fetch("/api/admin/scores", { signal: ctrl.signal });
       if (!mountedRef.current) return;
       if (res.ok) {
-        const data = await res.json();
-        setGameList(data);
+        const body = await res.json();
+        // API now returns { data, total, page, limit, totalPages }; tolerate
+        // a bare array for safety in case the route ever rolls back.
+        const list: Game[] = Array.isArray(body) ? body : (body?.data ?? []);
+        setGameList(list);
         setErrors((e) => ({ ...e, games: false }));
       } else {
         setErrors((e) => ({ ...e, games: true }));
@@ -311,9 +314,11 @@ export default function ScoreEntryPage() {
   return (
     <div className="p-3 sm:p-6 lg:p-8 overscroll-none max-w-full">
       <Breadcrumbs />
-      {/* Header */}
-      <div className="mb-4 md:mb-8 flex items-start justify-between gap-4 flex-wrap">
-        <div>
+      {/* Header — title + description hidden on mobile because the
+          MobileAdminHeader already renders "Score Entry" at the top
+          of the screen, and showing both reads as overlap. */}
+      <div className="mb-4 md:mb-8 flex items-start justify-between gap-3 md:gap-4 flex-wrap">
+        <div className="hidden md:block">
           <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
             Score Entry
           </h1>
@@ -321,7 +326,7 @@ export default function ScoreEntryPage() {
             Create games and enter live scores
           </p>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap w-full md:w-auto">
           <CourtFilter value={courtFilter} onChange={setCourtFilter} options={courtOptions} />
           <TournamentFilter
             value={tournamentFilter}
@@ -332,7 +337,7 @@ export default function ScoreEntryPage() {
             type="button"
             onClick={() => setShowForm(!showForm)}
             aria-expanded={showForm}
-            className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none min-h-[44px]"
+            className="flex items-center justify-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-red focus-visible:outline-none min-h-[44px] flex-1 md:flex-initial"
           >
             {showForm ? <X className="w-4 h-4" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
             {showForm ? "Cancel" : "New Game"}
@@ -514,8 +519,8 @@ export default function ScoreEntryPage() {
           )}
 
           {gameList.length === 0 && (
-            <div className="text-center py-16 text-text-muted bg-white border border-border rounded-xl">
-              <Trophy className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden />
+            <div className="flex flex-col items-center justify-center text-center px-6 py-12 text-text-muted bg-white border border-border rounded-xl min-h-[40vh]">
+              <Trophy className="w-8 h-8 mb-3 opacity-40" aria-hidden />
               <p className="text-sm font-semibold text-navy mb-1">No games yet today.</p>
               <p className="text-xs mb-4">Create one above to start entering scores.</p>
               <button

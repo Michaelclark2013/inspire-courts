@@ -112,12 +112,41 @@ export default function MobileAdminHeader() {
   );
 }
 
+// Friendly titles for nested admin routes. Keeps the mobile sub-header
+// in sync with what humans expect to read (e.g. /admin/scores/enter →
+// "Score Entry", not "Scores" — which used to duplicate the page's own
+// h1 and read as visually overlapping content).
+const TITLE_OVERRIDES: Record<string, string> = {
+  "scores/enter": "Score Entry",
+  "tournaments/manage": "Tournaments",
+  "scheduler": "Scheduler",
+  "checkin": "Check-In",
+  "checkin/qr": "Kiosk QR",
+  "my-schedule": "My Schedule",
+  "my-history": "My History",
+  "time-off": "Time Off",
+  "audit-log": "Audit Log",
+  "membership-plans": "Plans",
+  "launch-readiness": "Launch Readiness",
+};
+
 function titleFromPath(path: string): string {
   const trimmed = path.replace(/^\/admin\/?/, "").replace(/\/$/, "");
   if (!trimmed) return "Admin";
-  const segments = trimmed.split("/").filter((s) => !/^\d+$/.test(s) && s.length > 0);
-  const first = segments[0] || "Admin";
-  return first
+  // Drop numeric/UUID-looking segments so /admin/tournaments/42 → "Tournaments"
+  const segments = trimmed
+    .split("/")
+    .filter((s) => !/^\d+$/.test(s) && !/^[a-f0-9-]{8,}$/i.test(s) && s.length > 0);
+  if (segments.length === 0) return "Admin";
+  // Try increasingly-specific keys: e.g. ["scores","enter"] → "scores/enter",
+  // then "scores".
+  for (let i = segments.length; i > 0; i--) {
+    const key = segments.slice(0, i).join("/");
+    if (TITLE_OVERRIDES[key]) return TITLE_OVERRIDES[key];
+  }
+  // Fallback: last meaningful segment, title-cased.
+  const last = segments[segments.length - 1];
+  return last
     .split("-")
     .map((w) => (w.length > 0 ? w[0].toUpperCase() + w.slice(1) : w))
     .join(" ");

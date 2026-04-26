@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { subscriptions, invoices, members } from "@/lib/db/schema";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { canAccess } from "@/lib/permissions";
 
 // GET /api/admin/billing/snapshot — overview dashboard data.
 function startOfMonth(): string {
@@ -16,7 +17,7 @@ function startOfMonth(): string {
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") {
+  if (!session?.user?.role || !canAccess(session.user.role, "billing")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

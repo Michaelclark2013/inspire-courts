@@ -7,6 +7,7 @@ import { desc, eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
 import { recordAudit } from "@/lib/audit";
 import { parseJsonBody } from "@/lib/api-helpers";
+import { canAccess } from "@/lib/permissions";
 import { z } from "zod";
 
 const webhookCreateSchema = z.object({
@@ -16,14 +17,14 @@ const webhookCreateSchema = z.object({
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.role || !canAccess(session.user.role, "integrations")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const rows = await db.select().from(webhookSubscriptions).orderBy(desc(webhookSubscriptions.createdAt));
   return NextResponse.json({ rows });
 }
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.role || !canAccess(session.user.role, "integrations")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const parsed = await parseJsonBody(request, webhookCreateSchema);
   if (!parsed.ok) return parsed.response;
   const body = parsed.data;
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.role || !canAccess(session.user.role, "integrations")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const id = Number(request.nextUrl.searchParams.get("id"));
   if (!Number.isInteger(id) || id <= 0) return NextResponse.json({ error: "id required" }, { status: 400 });
   // Confirm the row exists so a typo'd id returns 404 instead of a

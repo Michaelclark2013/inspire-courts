@@ -13,6 +13,7 @@ import {
 } from "@/lib/db/schema";
 import { and, eq, gte, lte, sql, ne } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { canAccess } from "@/lib/permissions";
 
 // GET /api/admin/owner/snapshot
 // Owner-mode single-screen dashboard. Returns the 5 numbers that matter
@@ -40,7 +41,7 @@ function daysFromNow(n: number): string {
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") {
+  if (!session?.user?.role || !canAccess(session.user.role, "owner")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

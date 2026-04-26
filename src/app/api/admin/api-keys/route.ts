@@ -8,6 +8,7 @@ import { generateApiKey } from "@/lib/api-auth";
 import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
 import { parseJsonBody } from "@/lib/api-helpers";
+import { canAccess } from "@/lib/permissions";
 import { z } from "zod";
 
 const apiKeyCreateSchema = z.object({
@@ -18,7 +19,7 @@ const apiKeyCreateSchema = z.object({
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.role || !canAccess(session.user.role, "integrations")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const rows = await db
     .select({
       id: apiKeys.id,
@@ -37,7 +38,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.role || !canAccess(session.user.role, "integrations")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const parsed = await parseJsonBody(request, apiKeyCreateSchema);
   if (!parsed.ok) return parsed.response;
   const body = parsed.data;
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.role || !canAccess(session.user.role, "integrations")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const id = Number(request.nextUrl.searchParams.get("id"));
   if (!Number.isInteger(id) || id <= 0) return NextResponse.json({ error: "id required" }, { status: 400 });
   // Look up first so we can 404 vs blind-update no-op (which used to

@@ -6,11 +6,12 @@ import { memberRiskScores, members, subscriptions } from "@/lib/db/schema";
 import { and, desc, eq, gte, isNull, or, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { draftWinbackMessage, recomputeAllRiskScores } from "@/lib/churn";
+import { canAccess } from "@/lib/permissions";
 
 // GET /api/admin/churn?tier=high|medium|low — admin-only at-risk list.
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") {
+  if (!session?.user?.role || !canAccess(session.user.role, "churn")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const tier = request.nextUrl.searchParams.get("tier");
@@ -70,7 +71,7 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/churn { action: "recompute" | "draft", memberId? }
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") {
+  if (!session?.user?.role || !canAccess(session.user.role, "churn")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = await request.json().catch(() => ({}));

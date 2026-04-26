@@ -5,6 +5,7 @@ import { suggestAssignments, applyAssignments } from "@/lib/scheduler";
 import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
 import { parseJsonBody } from "@/lib/api-helpers";
+import { canAccess } from "@/lib/permissions";
 import { z } from "zod";
 
 const schedulerApplySchema = z.object({
@@ -22,7 +23,7 @@ const schedulerApplySchema = z.object({
 // POST /api/admin/scheduler { pairs: [{shiftId, userId}] } — apply
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") {
+  if (!session?.user?.role || !canAccess(session.user.role, "scheduler")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const sp = request.nextUrl.searchParams;
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") {
+  if (!session?.user?.role || !canAccess(session.user.role, "scheduler")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const parsed = await parseJsonBody(request, schedulerApplySchema);

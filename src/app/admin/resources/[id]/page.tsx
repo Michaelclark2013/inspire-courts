@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import {
   Truck,
   ArrowLeft,
@@ -323,10 +324,15 @@ function DamageTab({ vehicleId, rows, onChange }: { vehicleId: number; rows: Dam
   const [open, setOpen] = useState(false);
   const [f, setF] = useState({ severity: "cosmetic", description: "", location: "", repairCostCents: "" });
   const [busy, setBusy] = useState(false);
+  // Inline error pill — replaces alert() on save + markRepaired and
+  // gives the save flow proper feedback (it previously caught the
+  // throw without surfacing anything).
+  const [actionError, setActionError] = useState<string | null>(null);
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
+    setActionError(null);
     try {
       const toCents = (v: string) => v ? Math.round(Number(v) * 100) : null;
       const res = await fetch(`/api/admin/fleet/${vehicleId}/damage`, {
@@ -334,24 +340,31 @@ function DamageTab({ vehicleId, rows, onChange }: { vehicleId: number; rows: Dam
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...f, repairCostCents: toCents(f.repairCostCents) }),
       });
-      if (!res.ok) throw new Error("save failed");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setActionError(data.error || `Couldn't save (${res.status}).`);
+        return;
+      }
       setF({ severity: "cosmetic", description: "", location: "", repairCostCents: "" });
       setOpen(false);
       onChange();
+    } catch {
+      setActionError("Network error. Try again.");
     } finally { setBusy(false); }
   }
 
   async function markRepaired(damageId: number) {
+    setActionError(null);
     try {
       const res = await fetch(`/api/admin/fleet/${vehicleId}/damage?damageId=${damageId}`, { method: "PATCH" });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || `Couldn't mark damage repaired (${res.status}).`);
+        setActionError(data.error || `Couldn't mark damage repaired (${res.status}).`);
         return;
       }
       onChange();
     } catch {
-      alert("Network error. Try again.");
+      setActionError("Network error. Try again.");
     }
   }
 
@@ -360,6 +373,7 @@ function DamageTab({ vehicleId, rows, onChange }: { vehicleId: number; rows: Dam
       <button onClick={() => setOpen(!open)} className="bg-red hover:bg-red-hover text-white rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
         <Plus className="w-3.5 h-3.5" /> Report Damage
       </button>
+      <ErrorBanner message={actionError} onDismiss={() => setActionError(null)} />
       {open && (
         <form onSubmit={save} className="bg-white border border-border rounded-2xl shadow-sm p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <select value={f.severity} onChange={(e) => setF({ ...f, severity: e.target.value })} className={ipt}>

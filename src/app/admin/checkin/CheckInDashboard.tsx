@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Users, Undo2, X } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type {
@@ -124,14 +125,39 @@ export default function CheckInDashboard({
     [checkedInTeamCount, totalTeams, totalPlayerCheckins, confirmedCount]
   );
 
-  // ---------- refresh (debounced) ----------
+  // ---------- refresh (soft, no full page reload) ----------
+  const router = useRouter();
   const handleRefresh = useCallback(() => {
     if (isRefreshing) return;
     setIsRefreshing(true);
-    // Clear any existing timer
     if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
-    window.location.reload();
-  }, [isRefreshing]);
+    // router.refresh() re-runs the server component (re-fetching teams
+    // from Sheets/DB) without unmounting the client tree — recent
+    // check-ins, search query, expanded team, undo snackbar, audio
+    // context all survive. Way kinder than window.location.reload().
+    router.refresh();
+    // Brief refresh-state flash so the spinner has visible feedback
+    // even when the actual server roundtrip is faster than perception.
+    refreshTimerRef.current = setTimeout(() => setIsRefreshing(false), 800);
+  }, [isRefreshing, router]);
+
+  // Auto-refresh every 60s when the tab is visible. Game-day check-in
+  // needs the team list current; reps shouldn't have to remember to
+  // hit refresh every minute. Pauses on hidden tabs to avoid traffic
+  // for a kiosk left open overnight.
+  useEffect(() => {
+    const tick = () => {
+      if (document.visibilityState === "visible") {
+        router.refresh();
+      }
+    };
+    const id = setInterval(tick, 60_000);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", tick);
+    };
+  }, [router]);
 
   // Cleanup timer on unmount. Copy the ref value into the effect
   // scope so the cleanup sees the value that was current when the

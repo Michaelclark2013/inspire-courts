@@ -318,14 +318,26 @@ export default function InquiriesPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error("patch failed");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        // Note submissions vanishing silently was a real "did I just
+        // lose my note?" UX bug — surface via the existing loadError
+        // banner. Keep the typed note in the textarea so the rep can
+        // retry.
+        setLoadError(data.error || `Couldn't save (${res.status}). Your draft is still in the box.`);
+        // Revert optimistic UI.
+        setRows((prev) => prev.map((r) => (r.id === id ? before : r)));
+        if (active && active.id === id) setActive(before);
+        return;
+      }
+      setLoadError(null);
       setNote("");
       // Refresh notes if drawer open
       if (active && active.id === id) loadNotes(id);
       // Background refresh of list to pull updated row + new SLA-induced note rows.
       load(true);
     } catch {
-      // Revert on failure.
+      setLoadError("Network error. Your draft is still in the box.");
       setRows((prev) => prev.map((r) => (r.id === id ? before : r)));
       if (active && active.id === id) setActive(before);
     }

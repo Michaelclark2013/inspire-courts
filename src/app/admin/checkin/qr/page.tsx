@@ -34,11 +34,20 @@ export default function CheckinQRPage() {
   const [teams, setTeams] = useState<TeamRow[]>([]);
   const [search, setSearch] = useState("");
   const [origin, setOrigin] = useState("");
+  // Distinguish 'genuinely no teams' from 'fetch failed' so the empty
+  // state isn't ambiguous when an admin loads the QR grid before
+  // tournaments are seeded vs. when the API hiccupped.
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
+    setLoadError(null);
     try {
       const res = await fetch("/api/admin/checkin-progress");
-      if (!res.ok) return;
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setLoadError(data.error || `Couldn't load teams (${res.status}).`);
+        return;
+      }
       const data = await res.json();
       setTeams(
         (data.teams || []).map((t: TeamRow & { teamName: string; teamId?: number; tournamentId?: number }) => ({
@@ -51,7 +60,9 @@ export default function CheckinQRPage() {
           playerCount: t.playerCount,
         }))
       );
-    } catch { /* ignore */ }
+    } catch {
+      setLoadError("Network error.");
+    }
   }, []);
 
   useEffect(() => {
@@ -105,7 +116,18 @@ export default function CheckinQRPage() {
         />
       </div>
 
-      {filtered.length === 0 ? (
+      {loadError ? (
+        <div className="bg-red/5 border border-red/20 rounded-2xl p-8 text-center">
+          <p className="text-navy font-bold mb-1">Couldn&apos;t load teams</p>
+          <p className="text-text-muted text-sm mb-4">{loadError}</p>
+          <button
+            onClick={load}
+            className="inline-flex items-center gap-1.5 bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded"
+          >
+            Try again
+          </button>
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="bg-white border border-border rounded-2xl p-10 text-center text-text-muted">
           No registered teams yet.
         </div>

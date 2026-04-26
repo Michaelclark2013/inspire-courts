@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import PermissionActivityFeed from "@/components/admin/permissions/ActivityFeed";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type UserRow = {
   id: number;
@@ -174,7 +175,7 @@ export default function PermissionsIndexPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white border border-border rounded-2xl p-10 text-center text-text-muted">Loading…</div>
+        <SkeletonRows count={6} />
       ) : error ? (
         <div className="bg-red/10 border border-red/20 rounded-2xl p-6 text-red text-sm">{error}</div>
       ) : filtered.length === 0 ? (

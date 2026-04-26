@@ -13,6 +13,7 @@ import {
   Edit3,
   ShieldCheck,
 } from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type PageEntry = { page: string; granted: boolean };
 
@@ -106,7 +107,7 @@ export default function TemplatesPage() {
       </section>
 
       {loading ? (
-        <div className="bg-white border border-border rounded-2xl p-10 text-center text-text-muted">Loading…</div>
+        <SkeletonRows count={4} />
       ) : error ? (
         <div className="bg-red/10 border border-red/20 rounded-2xl p-6 text-red text-sm">{error}</div>
       ) : rows.length === 0 ? (

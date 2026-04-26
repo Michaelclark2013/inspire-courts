@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import {
   Megaphone,
   Plus,
@@ -233,7 +234,7 @@ export default function AnnouncementsAdminPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white border border-border rounded-2xl p-10 text-center text-text-muted">Loading…</div>
+        <SkeletonRows count={5} />
       ) : error ? (
         <div className="bg-red/10 border border-red/20 rounded-2xl p-6 text-red text-sm">{error}</div>
       ) : visible.length === 0 ? (

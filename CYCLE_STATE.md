@@ -2,8 +2,8 @@
 
 **Branch:** `cycle/auto-improvements` — never push to main, never merge own PRs.
 **Mode:** Continuous 6-phase loop (1→2→3→4→5→6→1→…). Stop only when Mike types "stop".
-**Current cycle:** 5 — rotation complete, push to GitHub + open PR.
-**Next:** Cycle 6 Phase 1 (UI).
+**Current cycle:** 6
+**Current phase:** 2 — Functionality
 
 ## The 6 phases
 1. UI — Visual design, component polish, accessibility, responsive, loading/error states, brand consistency
@@ -24,7 +24,18 @@
 - Open PR titled `Cycle [N]` after rotation; never self-merge.
 - Pre-existing local edits = parallel agent work-in-progress; commit them into appropriate phase commits.
 
-## Cycle 5 status
+## Cycle 6 status
+
+| Phase | Status | Report |
+|---|---|---|
+| 1 — UI | done | [phase-1-2026-04-25-1935.md](cycle-reports/phase-1-2026-04-25-1935.md) |
+| 2 — Functionality | in progress | — |
+| 3 — Admin | pending | — |
+| 4 — Public | pending | — |
+| 5 — Marketing | pending | — |
+| 6 — Security | pending | — |
+
+## Cycle 5 status — DONE (pushed 2026-04-25)
 
 | Phase | Status | Report |
 |---|---|---|

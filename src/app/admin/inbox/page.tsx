@@ -54,6 +54,7 @@ export default function InboxPage() {
   const [active, setActive] = useState<Thread | null>(null);
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -77,8 +78,9 @@ export default function InboxPage() {
   async function send() {
     if (!active || !reply.trim()) return;
     setSending(true);
+    setSendError(null);
     try {
-      await fetch("/api/admin/sms", {
+      const res = await fetch("/api/admin/sms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -87,8 +89,15 @@ export default function InboxPage() {
           memberId: active.memberId,
         }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setSendError(data?.error || `Send failed (${res.status}). Try again.`);
+        return;
+      }
       setReply("");
       await load();
+    } catch {
+      setSendError("Network issue. Reply not sent — try again.");
     } finally {
       setSending(false);
     }
@@ -174,21 +183,30 @@ export default function InboxPage() {
                   </div>
                 ))}
               </div>
-              <div className="p-3 border-t border-border flex gap-2">
-                <input
-                  value={reply}
-                  onChange={(e) => setReply(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && send()}
-                  placeholder="Type a reply…"
-                  className="flex-1 bg-off-white border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
-                />
-                <button
-                  onClick={send}
-                  disabled={!reply.trim() || sending}
-                  className="bg-navy hover:bg-navy/90 disabled:opacity-50 text-white px-4 py-2 rounded-xl flex items-center gap-1.5 text-sm font-bold"
-                >
-                  <Send className="w-4 h-4" />
-                </button>
+              <div className="border-t border-border">
+                {sendError && (
+                  <div className="px-3 pt-2 text-red text-xs" role="alert" aria-live="assertive">
+                    {sendError}
+                  </div>
+                )}
+                <div className="p-3 flex gap-2">
+                  <input
+                    value={reply}
+                    onChange={(e) => { setReply(e.target.value); if (sendError) setSendError(null); }}
+                    onKeyDown={(e) => e.key === "Enter" && send()}
+                    placeholder="Type a reply…"
+                    className="flex-1 bg-off-white border border-border rounded-xl px-3 py-2 min-h-[44px] text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
+                  />
+                  <button
+                    onClick={send}
+                    disabled={!reply.trim() || sending}
+                    aria-busy={sending}
+                    aria-label="Send reply"
+                    className="bg-navy hover:bg-navy/90 disabled:opacity-50 text-white px-4 py-2 min-h-[44px] min-w-[44px] rounded-xl flex items-center gap-1.5 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
+                  >
+                    <Send className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </>
           )}

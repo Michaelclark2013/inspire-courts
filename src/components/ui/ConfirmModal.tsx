@@ -83,7 +83,7 @@ export default function ConfirmModal({
           Escape, the Close button, and the Cancel button. Marking it
           aria-hidden so screen readers skip the empty div. */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-backdrop-in"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-backdrop-in cursor-pointer"
         onClick={onCancel}
         aria-hidden="true"
       />

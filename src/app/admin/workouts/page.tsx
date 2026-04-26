@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Plus, Trophy } from "lucide-react";
 import { adminFetch } from "@/lib/admin-fetch";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Workout = {
@@ -21,6 +22,7 @@ export default function AdminWorkoutsPage() {
   const [list, setList] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -54,15 +56,23 @@ export default function AdminWorkoutsPage() {
   async function create() {
     if (!form.name) return;
     setBusy(true);
+    setCreateError(null);
     try {
-      await adminFetch("/api/workouts", {
+      const res = await adminFetch("/api/workouts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setCreateError(data.error || `Couldn't create workout (${res.status}).`);
+        return;
+      }
       setForm({ name: "", description: "", scoreType: "time", category: "" });
       setCreating(false);
       load();
+    } catch {
+      setCreateError("Network error. Try again.");
     } finally {
       setBusy(false);
     }
@@ -146,6 +156,8 @@ export default function AdminWorkoutsPage() {
           </div>
         </div>
       )}
+
+      <ErrorBanner message={createError} onDismiss={() => setCreateError(null)} />
 
       {list.length === 0 ? (
         <div className="bg-off-white border border-border rounded-2xl p-8 text-center">

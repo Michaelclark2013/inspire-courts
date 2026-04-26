@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   X,
 } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 // Global admin search hits a single fan-out endpoint and renders results
 // grouped by entity type. Each result row is a deep link into the
@@ -64,6 +65,7 @@ type SearchResults = {
 };
 
 export default function AdminSearchPage() {
+  useDocumentTitle("Global Search");
   const { data: session, status } = useSession();
   const [q, setQ] = useState("");
   const [data, setData] = useState<SearchResults | null>(null);

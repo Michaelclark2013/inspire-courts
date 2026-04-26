@@ -1,9 +1,27 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import { SITE_URL } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { tournaments } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import TournamentClient from "./TournamentClient";
+
+// Dedupe the tournament fetch between generateMetadata and the page
+// body — Next runs both in the same request, so React's cache() turns
+// two queries into one.
+const getTournament = cache(async (id: number) => {
+  if (!Number.isInteger(id) || id <= 0) return null;
+  try {
+    const [t] = await db
+      .select()
+      .from(tournaments)
+      .where(eq(tournaments.id, id))
+      .limit(1);
+    return t ?? null;
+  } catch {
+    return null;
+  }
+});
 
 export async function generateMetadata({
   params,
@@ -15,21 +33,10 @@ export async function generateMetadata({
   let title = "Tournament | Inspire Courts AZ";
   let description = "Tournament details, divisions, schedule, and registration at Inspire Courts AZ.";
 
-  if (Number.isInteger(tournamentId) && tournamentId > 0) {
-    try {
-      const [t] = await db
-        .select({ name: tournaments.name, description: tournaments.description })
-        .from(tournaments)
-        .where(eq(tournaments.id, tournamentId))
-        .limit(1);
-      if (t?.name) {
-        title = `${t.name} | Inspire Courts AZ`;
-        if (t.description) description = t.description.slice(0, 160);
-      }
-    } catch {
-      // Fall back to generic metadata if the DB lookup fails — we don't want
-      // metadata generation to break the page render.
-    }
+  const t = await getTournament(tournamentId);
+  if (t?.name) {
+    title = `${t.name} | Inspire Courts AZ`;
+    if (t.description) description = t.description.slice(0, 160);
   }
 
   return {
@@ -51,48 +58,36 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const tournamentId = Number(id);
 
   // SportsEvent JSON-LD — emitted server-side so crawlers see it on
-  // first paint. Falls back gracefully if the tournament can't be
-  // found / DB is down (the page itself still renders via the client).
-  let jsonLd: object | null = null;
-  if (Number.isInteger(tournamentId) && tournamentId > 0) {
-    try {
-      const [t] = await db
-        .select()
-        .from(tournaments)
-        .where(eq(tournaments.id, tournamentId))
-        .limit(1);
-      if (t?.name) {
-        jsonLd = {
-          "@context": "https://schema.org",
-          "@type": "SportsEvent",
-          name: t.name,
-          description: t.description || `${t.name} at Inspire Courts AZ`,
-          url: `${SITE_URL}/tournaments/${tournamentId}`,
-          startDate: t.startDate,
-          endDate: t.endDate || t.startDate,
-          eventStatus: "https://schema.org/EventScheduled",
-          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-          location: {
-            "@type": "Place",
-            name: "Inspire Courts AZ",
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: "Gilbert",
-              addressRegion: "AZ",
-              addressCountry: "US",
-            },
+  // first paint. Cached lookup is shared with generateMetadata.
+  const t = await getTournament(tournamentId);
+  const jsonLd: object | null = t?.name
+    ? {
+        "@context": "https://schema.org",
+        "@type": "SportsEvent",
+        name: t.name,
+        description: t.description || `${t.name} at Inspire Courts AZ`,
+        url: `${SITE_URL}/tournaments/${tournamentId}`,
+        startDate: t.startDate,
+        endDate: t.endDate || t.startDate,
+        eventStatus: "https://schema.org/EventScheduled",
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        location: {
+          "@type": "Place",
+          name: "Inspire Courts AZ",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Gilbert",
+            addressRegion: "AZ",
+            addressCountry: "US",
           },
-          organizer: {
-            "@type": "SportsOrganization",
-            name: "Inspire Courts AZ",
-            url: SITE_URL,
-          },
-        };
+        },
+        organizer: {
+          "@type": "SportsOrganization",
+          name: "Inspire Courts AZ",
+          url: SITE_URL,
+        },
       }
-    } catch {
-      // DB unavailable — skip JSON-LD, page still renders.
-    }
-  }
+    : null;
 
   return (
     <>

@@ -89,7 +89,26 @@ export async function PATCH(
       }
     }
     if (body.assignedTo !== undefined) {
-      update.assignedTo = body.assignedTo != null ? Number(body.assignedTo) : null;
+      if (body.assignedTo == null) {
+        update.assignedTo = null;
+      } else {
+        const targetId = Number(body.assignedTo);
+        // Verify the user exists and is active before assigning — keeps
+        // the audit trail honest and prevents pointing at deleted/never-
+        // existed user IDs.
+        const [target] = await db
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.id, targetId))
+          .limit(1);
+        if (!target) {
+          return NextResponse.json(
+            { error: "assignedTo: user not found" },
+            { status: 400 }
+          );
+        }
+        update.assignedTo = targetId;
+      }
     }
     if (body.closeReason !== undefined) update.closeReason = body.closeReason;
 

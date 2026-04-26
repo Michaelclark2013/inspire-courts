@@ -25,7 +25,7 @@ import {
 // ?format=csv|gusto|quickbooks on a single period streams the CSV.
 export const GET = withTiming("admin.payroll", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "payroll")) {
     return apiError("Unauthorized", 401);
   }
 
@@ -90,7 +90,7 @@ export const GET = withTiming("admin.payroll", async (request: NextRequest) => {
 
 export const POST = withTiming("admin.payroll.create", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "payroll")) {
     return apiError("Unauthorized", 401);
   }
 
@@ -132,7 +132,7 @@ export const POST = withTiming("admin.payroll.create", async (request: NextReque
 // set automatically on the locked transition; paid timestamp on paid.
 export const PUT = withTiming("admin.payroll.update", async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.role || !canAccess(session.user.role, "tournaments")) {
+  if (!session?.user?.role || !canAccess(session.user.role, "payroll")) {
     return apiError("Unauthorized", 401);
   }
 

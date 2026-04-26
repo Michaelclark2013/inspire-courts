@@ -408,9 +408,9 @@ export default function EquipmentPage() {
         <div className="bg-white border border-border rounded-2xl p-10 text-center">
           <Package className="w-10 h-10 text-text-muted mx-auto mb-3" aria-hidden="true" />
           <p className="text-navy font-bold mb-1">
-            {data?.items.length === 0 ? "No inventory yet" : "No items match"}
+            {data?.items.length === 0 ? "No inventory yet" : "No items match your filters"}
           </p>
-          {data?.items.length === 0 && (
+          {data?.items.length === 0 ? (
             <>
               <p className="text-text-muted text-sm mb-4">Add your first inventory item — toilet paper, scoreboards, anything.</p>
               <button
@@ -419,6 +419,20 @@ export default function EquipmentPage() {
               >
                 <Plus className="w-3.5 h-3.5" /> Add Item
               </button>
+            </>
+          ) : (
+            <>
+              <p className="text-text-muted text-sm mb-4">
+                {filter !== "all" || search ? "Try a different category, search, or clear filters." : "Try a different search."}
+              </p>
+              {(filter !== "all" || search) && (
+                <button
+                  onClick={() => { setFilter("all"); setSearch(""); }}
+                  className="inline-flex items-center gap-2 bg-navy hover:bg-navy-dark text-white rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider"
+                >
+                  Clear filters
+                </button>
+              )}
             </>
           )}
         </div>

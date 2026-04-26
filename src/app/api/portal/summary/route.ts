@@ -48,8 +48,16 @@ export async function GET() {
 
     if (allGames.length > 0) {
       const gameIds = allGames.map((g) => g.id);
+      // Narrow projection — only the three fields we actually display.
+      // Avoids pulling notes/replay/blob columns we never read.
       const allScores = await db
-        .select()
+        .select({
+          gameId: gameScores.gameId,
+          homeScore: gameScores.homeScore,
+          awayScore: gameScores.awayScore,
+          quarter: gameScores.quarter,
+          updatedAt: gameScores.updatedAt,
+        })
         .from(gameScores)
         .where(inArray(gameScores.gameId, gameIds))
         .orderBy(desc(gameScores.updatedAt));
@@ -133,35 +141,32 @@ export async function GET() {
     status: string;
   }> = [];
   try {
-    const regs = await db
-      .select()
+    // Single LEFT JOIN replaces the previous "fetch regs, collect ids,
+    // fetch tournaments, build a map" two-roundtrip dance.
+    const rows = await db
+      .select({
+        id: tournamentRegistrations.id,
+        tournamentId: tournamentRegistrations.tournamentId,
+        teamName: tournamentRegistrations.teamName,
+        division: tournamentRegistrations.division,
+        paymentStatus: tournamentRegistrations.paymentStatus,
+        status: tournamentRegistrations.status,
+        tournamentName: tournaments.name,
+        tournamentDate: tournaments.startDate,
+      })
       .from(tournamentRegistrations)
+      .leftJoin(tournaments, eq(tournamentRegistrations.tournamentId, tournaments.id))
       .where(eq(tournamentRegistrations.coachEmail, email));
-    if (regs.length > 0) {
-      const tIds = [...new Set(regs.map((r) => r.tournamentId))];
-      const tRows = await db
-        .select({
-          id: tournaments.id,
-          name: tournaments.name,
-          startDate: tournaments.startDate,
-        })
-        .from(tournaments)
-        .where(inArray(tournaments.id, tIds));
-      const tMap = new Map(tRows.map((t) => [t.id, t]));
-      enrichedRegs = regs.map((r) => {
-        const t = tMap.get(r.tournamentId);
-        return {
-          id: r.id,
-          tournamentId: r.tournamentId,
-          tournamentName: t?.name ?? "Unknown",
-          tournamentDate: t?.startDate ?? "",
-          teamName: r.teamName,
-          division: r.division,
-          paymentStatus: r.paymentStatus,
-          status: r.status,
-        };
-      });
-    }
+    enrichedRegs = rows.map((r) => ({
+      id: r.id,
+      tournamentId: r.tournamentId,
+      tournamentName: r.tournamentName ?? "Unknown",
+      tournamentDate: r.tournamentDate ?? "",
+      teamName: r.teamName,
+      division: r.division,
+      paymentStatus: r.paymentStatus,
+      status: r.status,
+    }));
   } catch {
     // leave empty
   }

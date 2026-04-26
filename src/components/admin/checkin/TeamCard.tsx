@@ -1,21 +1,25 @@
 "use client";
 
 import { memo } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, CheckCheck } from "lucide-react";
 import type { TeamStatus } from "@/types/checkin";
 
 interface TeamCardProps {
   team: TeamStatus;
   isExpanded: boolean;
+  isBulkChecking?: boolean;
   onToggle: () => void;
   onQuickCheckIn: (teamName: string, division: string) => void;
+  onTeamCheckIn?: (team: TeamStatus) => void;
 }
 
 function TeamCardInner({
   team,
   isExpanded,
+  isBulkChecking,
   onToggle,
   onQuickCheckIn,
+  onTeamCheckIn,
 }: TeamCardProps) {
   return (
     <div>
@@ -66,6 +70,28 @@ function TeamCardInner({
           />
         </div>
       </button>
+
+      {/* "Mark entire team here" — visible whenever the team hasn't
+          been checked in yet. One tap when the coach says "we're all
+          here." Posts a single team-marker check-in attributed to the
+          coach so the audit trail keeps a real human name on the row.
+          Front desk can still expand + add individual players after. */}
+      {!team.hasCheckedIn && onTeamCheckIn && (
+        <div className="px-5 pb-2 -mt-1">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onTeamCheckIn(team);
+            }}
+            disabled={isBulkChecking}
+            aria-label={`Mark entire ${team.teamName} team as here`}
+            className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-50 text-emerald-700 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-1"
+          >
+            <CheckCheck className="w-3.5 h-3.5" />
+            {isBulkChecking ? "Marking…" : "Mark entire team here"}
+          </button>
+        </div>
+      )}
 
       {/* Expanded: show checked-in players */}
       {isExpanded && (

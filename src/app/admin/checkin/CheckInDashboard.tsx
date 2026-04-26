@@ -144,6 +144,57 @@ export default function CheckInDashboard({
     [expandedTeam]
   );
 
+  // ---------- bulk team check-in ----------
+  // Single tap when the coach says "everyone is here." Records a
+  // check-in row attributed to the coach so the audit trail keeps a
+  // real human name. Front desk can still expand + add individual
+  // players afterward for fuller per-player records.
+  const [bulkTeamId, setBulkTeamId] = useState<string | null>(null);
+  const handleTeamCheckIn = useCallback(
+    async (team: typeof teams[number]) => {
+      if (bulkTeamId) return;
+      setBulkTeamId(team.teamName);
+      const id = crypto.randomUUID();
+      const now = new Date();
+      const playerLabel = team.coach && team.coach !== "—"
+        ? `${team.coach} (entire team)`
+        : `${team.teamName} (entire team)`;
+      const optimistic: RecentCheckin = {
+        name: playerLabel,
+        team: team.teamName,
+        time: now.toLocaleTimeString(),
+        at: now.toISOString(),
+        id,
+        pending: true,
+      };
+      handleCheckInUpdate(optimistic);
+      try {
+        const res = await fetch("/api/admin/checkin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            playerName: playerLabel,
+            teamName: team.teamName,
+            division: team.division,
+          }),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          // Roll back optimistic entry on failure.
+          handleCheckInUpdate({ ...optimistic, id, pending: false, name: `❌ ${playerLabel} — ${data.error || "failed"}` });
+          return;
+        }
+        handleCheckInUpdate({ ...optimistic, pending: false });
+        // Trigger a fresh fetch of teams so this team's status flips
+        // to "checked in" without a full page reload.
+        await handleRefresh();
+      } finally {
+        setBulkTeamId(null);
+      }
+    },
+    [bulkTeamId, handleCheckInUpdate, handleRefresh]
+  );
+
   // ---------- empty state message ----------
   const emptyMessage = useMemo(() => {
     if (teams.length === 0)
@@ -194,8 +245,10 @@ export default function CheckInDashboard({
                   key={team.teamName}
                   team={team}
                   isExpanded={expandedTeam === team.teamName}
+                  isBulkChecking={bulkTeamId === team.teamName}
                   onToggle={() => handleToggleTeam(team.teamName)}
                   onQuickCheckIn={handleQuickCheckIn}
+                  onTeamCheckIn={handleTeamCheckIn}
                 />
               ))
             )}

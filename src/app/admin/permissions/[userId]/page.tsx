@@ -17,6 +17,8 @@ import {
   Eye,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { adminFetch } from "@/lib/admin-fetch";
+import { PAGE_GROUPS as CENTRAL_PAGE_GROUPS, PAGE_LABELS } from "@/lib/permissions";
 
 // Page list mirrors AdminPage in lib/permissions.ts
 type AdminPage = string;
@@ -64,92 +66,16 @@ const ROLE_STYLES: Record<User["role"], string> = {
   parent: "bg-purple-50 text-purple-700",
 };
 
-// Page groups — mirror lib/permissions PAGE_GROUPS so matrix reads
-// like the admin nav.
-const PAGE_GROUPS: Array<{ heading: string; pages: Array<{ key: AdminPage; label: string }> }> = [
-  {
-    heading: "Overview",
-    pages: [
-      { key: "overview", label: "Dashboard overview" },
-      { key: "search", label: "Global search" },
-      { key: "health", label: "System health" },
-    ],
-  },
-  {
-    heading: "Events",
-    pages: [
-      { key: "tournaments", label: "Tournaments" },
-      { key: "teams", label: "Teams" },
-      { key: "players", label: "Players database" },
-      { key: "programs", label: "Programs" },
-    ],
-  },
-  {
-    heading: "Game Day",
-    pages: [
-      { key: "score_entry", label: "Enter scores" },
-      { key: "scores", label: "Game scores" },
-      { key: "checkin", label: "Team check-in" },
-    ],
-  },
-  {
-    heading: "Staff",
-    pages: [
-      { key: "roster", label: "Staff roster" },
-      { key: "staff_refs", label: "Staff & refs" },
-      { key: "timeclock", label: "Time clock" },
-      { key: "shifts", label: "Shift board" },
-      { key: "payroll", label: "Payroll" },
-      { key: "certifications", label: "Certifications" },
-      { key: "time_off", label: "Time off" },
-      { key: "approvals", label: "Pending approvals" },
-    ],
-  },
-  {
-    heading: "Members + Revenue",
-    pages: [
-      { key: "members", label: "Members" },
-      { key: "revenue", label: "Revenue" },
-      { key: "leads", label: "Leads pipeline" },
-      { key: "prospects", label: "Prospects pipeline" },
-      { key: "sponsors", label: "Sponsors" },
-    ],
-  },
-  {
-    heading: "Facility",
-    pages: [
-      { key: "resources", label: "Rental fleet" },
-      { key: "equipment", label: "Inventory" },
-      { key: "maintenance", label: "Maintenance" },
-      { key: "schools", label: "Schools" },
-    ],
-  },
-  {
-    heading: "Content & Comms",
-    pages: [
-      { key: "announcements", label: "Announcements" },
-      { key: "content", label: "Content editor" },
-      { key: "files", label: "Files & drive" },
-    ],
-  },
-  {
-    heading: "Admin",
-    pages: [
-      { key: "users", label: "User accounts" },
-      { key: "audit_log", label: "Audit log" },
-      { key: "analytics", label: "GA analytics" },
-      { key: "contacts", label: "Contacts" },
-      { key: "portal", label: "Portal switcher" },
-    ],
-  },
-  {
-    heading: "Personal",
-    pages: [
-      { key: "my_schedule", label: "My schedule" },
-      { key: "my_history", label: "My history" },
-    ],
-  },
-];
+// Page groups + labels are now sourced from lib/permissions.ts so a
+// new page added there shows up in the matrix UI without a parallel
+// edit. Previously this file kept a stale local copy that was missing
+// every cycle 1+2 page (owner, billing, churn, inquiries, workouts,
+// scheduler, inbox, integrations).
+const PAGE_GROUPS: Array<{ heading: string; pages: Array<{ key: AdminPage; label: string }> }> =
+  CENTRAL_PAGE_GROUPS.map((g) => ({
+    heading: g.heading,
+    pages: g.pages.map((p) => ({ key: p as string, label: PAGE_LABELS[p] })),
+  }));
 
 export default function PermissionsDetailPage() {
   const params = useParams<{ userId: string }>();
@@ -168,7 +94,7 @@ export default function PermissionsDetailPage() {
     if (!userId) return;
     try {
       setError(null);
-      const res = await fetch(`/api/admin/permissions/${userId}`);
+      const res = await adminFetch(`/api/admin/permissions/${userId}`);
       if (!res.ok) throw new Error(`load ${res.status}`);
       setData(await res.json());
     } catch (err) {
@@ -188,7 +114,7 @@ export default function PermissionsDetailPage() {
     if (!data) return;
     setSavingKey(page);
     try {
-      const res = await fetch(`/api/admin/permissions/${userId}`, {
+      const res = await adminFetch(`/api/admin/permissions/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -222,7 +148,7 @@ export default function PermissionsDetailPage() {
     if (!confirm("Clear all custom overrides for this user?")) return;
     setSavingKey("__all__");
     try {
-      await fetch(`/api/admin/permissions/${userId}`, { method: "DELETE" });
+      await adminFetch(`/api/admin/permissions/${userId}`, { method: "DELETE" });
       await load();
     } finally {
       setSavingKey(null);
@@ -231,7 +157,7 @@ export default function PermissionsDetailPage() {
 
   async function loadHistory() {
     try {
-      const res = await fetch(`/api/admin/permissions/${userId}/history`);
+      const res = await adminFetch(`/api/admin/permissions/${userId}/history`);
       if (res.ok) setHistory(await res.json());
     } catch {
       /* ignore — just don't show history */
@@ -260,7 +186,7 @@ export default function PermissionsDetailPage() {
   async function copyFrom(sourceUserId: number, replace: boolean) {
     setSavingKey("__copy__");
     try {
-      const res = await fetch(`/api/admin/permissions/${userId}/copy-from`, {
+      const res = await adminFetch(`/api/admin/permissions/${userId}/copy-from`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sourceUserId, replace }),

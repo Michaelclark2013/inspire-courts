@@ -7,6 +7,7 @@ import { desc, eq } from "drizzle-orm";
 import { sendSms } from "@/lib/sms";
 import { logger } from "@/lib/logger";
 import { parseJsonBody } from "@/lib/api-helpers";
+import { isRateLimited } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const smsSendSchema = z.object({
@@ -45,6 +46,17 @@ export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  // Per-admin send cap. Each Twilio outbound costs real money; a
+  // compromised admin session or runaway client loop could rack up
+  // a bill before anyone notices. 30 sends/min/admin is generous for
+  // legit ad-hoc replies but bounds the worst case at ~$0.30/min.
+  const adminId = session.user.id || "anon";
+  if (isRateLimited(`admin-sms:${adminId}`, 30, 60_000)) {
+    return NextResponse.json(
+      { error: "SMS rate limit hit (30/min). Slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
   }
   const parsed = await parseJsonBody(request, smsSendSchema);
   if (!parsed.ok) return parsed.response;

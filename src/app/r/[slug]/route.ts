@@ -3,17 +3,29 @@ import { db } from "@/lib/db";
 import { shortLinks } from "@/lib/db/schema";
 import { and, eq, gte, isNull, or, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 // GET /r/[slug] — branded short-link redirect with click tracking.
 // Used for SMS blasts, QR codes on flyers, paid-channel landing-page
 // shorteners. Front desk can mint these from /admin/short-links (UI
 // not yet built — admin can insert rows directly for now).
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
   const now = new Date().toISOString();
+
+  // Rate-limit per IP. The redirect itself is harmless, but the click
+  // counter feeds attribution analytics — without a limit a single bot
+  // could inflate the count and ruin campaign performance reporting.
+  const ip = getClientIp(request);
+  if (isRateLimited(`shortlink:${ip}`, 60, 60_000)) {
+    return new NextResponse("Too many requests", {
+      status: 429,
+      headers: { "Retry-After": "60" },
+    });
+  }
 
   try {
     const [link] = await db

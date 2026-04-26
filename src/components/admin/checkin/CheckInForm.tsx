@@ -135,6 +135,9 @@ export default function CheckInForm({
           setTimeout(() => setSuccess(false), 2000);
         } else {
           triggerHaptic("warning");
+          // Audio fail-cue so front desk hears it didn't go through
+          // even if their eyes are on the next person in line.
+          import("@/lib/chime").then((m) => m.chimeFail()).catch(() => {});
           const data = await res.json().catch(() => ({}));
           setCheckInError(
             data.error || "Check-in failed -- please try again"

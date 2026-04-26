@@ -98,6 +98,9 @@ export async function DELETE(request: NextRequest) {
     if (!Number.isInteger(id) || id <= 0) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
+    // 404 on missing instead of silent no-op delete.
+    const [existing] = await db.select({ id: gymEvents.id }).from(gymEvents).where(eq(gymEvents.id, id)).limit(1);
+    if (!existing) return NextResponse.json({ error: "Event not found" }, { status: 404 });
     await db.delete(gymEvents).where(eq(gymEvents.id, id));
     return NextResponse.json({ ok: true });
   } catch (err) {

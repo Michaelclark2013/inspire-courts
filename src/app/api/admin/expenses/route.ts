@@ -127,6 +127,10 @@ export async function DELETE(request: NextRequest) {
     if (!Number.isInteger(id) || id <= 0) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
+    // Confirm the row exists so a typo'd id returns 404 instead of a
+    // silently-successful no-op delete.
+    const [existing] = await db.select({ id: expenses.id }).from(expenses).where(eq(expenses.id, id)).limit(1);
+    if (!existing) return NextResponse.json({ error: "Expense not found" }, { status: 404 });
     await db.delete(expenses).where(eq(expenses.id, id));
     return NextResponse.json({ ok: true });
   } catch (err) {

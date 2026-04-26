@@ -9,7 +9,7 @@ import {
   equipment,
   auditLog,
 } from "@/lib/db/schema";
-import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, lte, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
 // GET /api/admin/ops-alerts

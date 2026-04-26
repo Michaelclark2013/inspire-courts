@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { games, gameScores, shifts, shiftAssignments, users } from "@/lib/db/schema";
-import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, lte } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
 // GET /api/portal/staff/my-games

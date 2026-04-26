@@ -6,7 +6,7 @@ import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { sendSms } from "@/lib/sms";
 import { sendBroadcastEmail } from "@/lib/notify";
 import { fireWebhookEvent } from "@/lib/api-auth";
-import { getInquiryConfigByKind, INQUIRY_CONFIGS } from "@/lib/inquiry-forms";
+import { getInquiryConfigByKind } from "@/lib/inquiry-forms";
 import { escapeHtml } from "@/lib/utils";
 
 // POST /api/inquire — public endpoint; no auth.

@@ -13,8 +13,6 @@ import { logger } from "@/lib/logger";
 // Subscribe via:  webcal://<host>/api/gym-events/ical?token=XXX
 // iOS Calendar + Google Calendar both support webcal://.
 
-const DEFAULT_WINDOW_DAYS = 90;
-
 function escapeICS(v: string): string {
   return v
     .replace(/\\/g, "\\\\")

@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ShieldCheck,
   ShieldPlus,
   ShieldMinus,
   ArrowLeft,

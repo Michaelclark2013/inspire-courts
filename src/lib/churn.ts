@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { members, memberVisits, memberRiskScores } from "@/lib/db/schema";
-import { eq, gte, sql } from "drizzle-orm";
+import { gte, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
 // ── Churn scoring engine ─────────────────────────────────────────────

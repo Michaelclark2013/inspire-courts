@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
-  Download,
   Copy,
   Sparkles,
 } from "lucide-react";
@@ -92,7 +91,6 @@ export default function LaunchStatusPage() {
   const all = Object.values(data.env).flat();
   const totalPresent = all.filter((c) => c.present).length;
   const totalChecks = all.length;
-  const envPercent = Math.round((totalPresent / totalChecks) * 100);
 
   const seedItems = [
     { key: "adminUsers", label: "Admin account", count: data.seed.adminUsers, ready: data.rollup.hasAdmin, href: "/admin/users" },

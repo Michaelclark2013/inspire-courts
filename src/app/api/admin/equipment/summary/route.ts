@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { equipment, equipmentStockMovements } from "@/lib/db/schema";
-import { and, eq, gte, sql, desc } from "drizzle-orm";
+import { eq, gte, sql, desc } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
 // GET /api/admin/equipment/summary — roll-ups for the inventory dashboard.

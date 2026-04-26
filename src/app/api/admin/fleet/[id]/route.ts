@@ -8,7 +8,7 @@ import {
   resourceMaintenance,
   resourceDamage,
 } from "@/lib/db/schema";
-import { and, eq, desc, gte } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
 // GET /api/admin/fleet/[id] — full vehicle dossier: vehicle row, all

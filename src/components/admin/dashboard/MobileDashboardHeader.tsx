@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Bell, Menu, User } from "lucide-react";
+import { Bell, User } from "lucide-react";
 
 // Mobile-only condensed sticky header for /admin. Think of it as the
 // "app bar" — a greeting + notification bell + profile avatar that

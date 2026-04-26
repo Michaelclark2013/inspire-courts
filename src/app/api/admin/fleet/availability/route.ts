@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { resources, resourceBookings } from "@/lib/db/schema";
-import { and, eq, gte, lte, ne, inArray, or, lt, gt } from "drizzle-orm";
+import { and, eq, ne, inArray, lt, gt } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
 // GET /api/admin/fleet/availability?start=ISO&end=ISO[&excludeBookingId=N]

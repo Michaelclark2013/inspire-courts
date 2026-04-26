@@ -126,7 +126,6 @@ export default function PermissionsIndexPage() {
             >
               Role Defaults
             </Link>
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API route, not a page */}
             <a
               href="/api/admin/permissions/export"
               download

@@ -6,7 +6,6 @@ import {
   tournamentRegistrations,
   tournaments,
   checkins,
-  users,
 } from "@/lib/db/schema";
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";

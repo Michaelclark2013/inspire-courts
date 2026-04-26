@@ -14,7 +14,7 @@ import {
   tournamentRegistrations,
   checkins,
 } from "@/lib/db/schema";
-import { desc, inArray, gte } from "drizzle-orm";
+import { desc, inArray } from "drizzle-orm";
 
 export const revalidate = 60;
 

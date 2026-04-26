@@ -9,7 +9,7 @@ import {
   games,
   resources,
 } from "@/lib/db/schema";
-import { and, eq, gte, sql, inArray } from "drizzle-orm";
+import { and, eq, gte, sql } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 
 // GET /api/admin/stats

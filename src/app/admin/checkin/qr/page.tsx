@@ -6,7 +6,6 @@ import {
   QrCode,
   ArrowLeft,
   Printer,
-  Download,
   Search,
 } from "lucide-react";
 

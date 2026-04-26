@@ -83,7 +83,6 @@ export default function OpsAlertsCard() {
           subtitle={`${data.expiringCerts.length} expiring or expired`}
           href="/admin/certifications"
           icon={<BadgeCheck className="w-4 h-4 text-amber-600" />}
-          tone="amber"
         >
           <ul className="divide-y divide-border">
             {data.expiringCerts.slice(0, 5).map((c) => {
@@ -129,7 +128,6 @@ export default function OpsAlertsCard() {
           subtitle={`${data.todaysBirthdays.length} member${data.todaysBirthdays.length === 1 ? "" : "s"}`}
           href="/admin/members"
           icon={<Cake className="w-4 h-4 text-purple-600" />}
-          tone="purple"
         >
           <ul className="divide-y divide-border">
             {data.todaysBirthdays.map((m) => (
@@ -157,7 +155,6 @@ export default function OpsAlertsCard() {
           subtitle={`${data.lowStock.length} below threshold`}
           href="/admin/equipment?filter=reorder"
           icon={<Package className="w-4 h-4 text-red" />}
-          tone="red"
         >
           <ul className="divide-y divide-border">
             {data.lowStock.slice(0, 5).map((i) => (
@@ -184,7 +181,6 @@ export default function OpsAlertsCard() {
           subtitle={`Last ${data.recentAudits.length} admin actions`}
           href="/admin/audit-log"
           icon={<History className="w-4 h-4 text-blue-600" />}
-          tone="blue"
         >
           <ul className="divide-y divide-border">
             {data.recentAudits.slice(0, 5).map((a) => (
@@ -212,14 +208,12 @@ function Panel({
   subtitle,
   href,
   icon,
-  tone,
   children,
 }: {
   title: string;
   subtitle: string;
   href: string;
   icon: React.ReactNode;
-  tone: "amber" | "red" | "blue" | "purple";
   children: React.ReactNode;
 }) {
   return (

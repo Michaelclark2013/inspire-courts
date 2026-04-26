@@ -8,9 +8,7 @@ import {
   ArrowLeft,
   Wrench,
   Shield,
-  Calendar,
   Plus,
-  Gauge,
   DollarSign,
   AlertTriangle,
 } from "lucide-react";

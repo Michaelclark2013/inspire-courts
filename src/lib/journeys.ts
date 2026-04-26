@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import {
-  journeys,
   journeySteps,
   journeyEnrollments,
   members,

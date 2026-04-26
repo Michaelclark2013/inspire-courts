@@ -11,6 +11,8 @@ export default function robots(): MetadataRoute.Robots {
           "/admin/", "/portal/", "/api/",
           "/login", "/register", "/forgot-password", "/reset-password",
           "/verify-email", "/offline",
+          "/r/", // Branded short links — not content, just redirects.
+          "/leave-a-review", // Campaign destination, not a search target.
           "/_next/static/", "/_next/image/",
         ],
       },

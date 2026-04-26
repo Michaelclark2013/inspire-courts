@@ -48,8 +48,22 @@ export default async function InquirePage({
   const config = getInquiryConfig(slug);
   if (!config) notFound();
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Inquire", item: `${SITE_URL}/inquire` },
+      { "@type": "ListItem", position: 3, name: config.title, item: `${SITE_URL}/inquire/${slug}` },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-off-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       {/* Hero */}
       <section className="bg-navy text-white">
         <div className="max-w-5xl mx-auto px-4 py-12 sm:py-16">

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Calendar, Check, X, Clock } from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Request = {
   id: number;
@@ -85,7 +86,7 @@ export default function TimeOffAdminPage() {
       </div>
 
       {loading ? (
-        <div className="text-text-secondary text-sm">Loading…</div>
+        <SkeletonRows count={4} />
       ) : requests.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <Calendar className="w-10 h-10 text-text-secondary mx-auto mb-3" />

@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { GraduationCap, Plus, Calendar , ArrowRight } from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Program = {
   id: number;
@@ -92,7 +93,7 @@ export default function ProgramsPage() {
       </div>
 
       {loading ? (
-        <div className="text-text-secondary text-sm">Loading…</div>
+        <SkeletonRows count={4} />
       ) : programs.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <GraduationCap className="w-10 h-10 text-text-secondary mx-auto mb-3" />

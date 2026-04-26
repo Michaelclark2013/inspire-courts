@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -79,11 +80,17 @@ function fmtTime(iso: string): string {
 
 export default function InquiriesPage() {
   useDocumentTitle("Inquiries");
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [rows, setRows] = useState<InquiryRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState<string>("open");
-  const [filterKind, setFilterKind] = useState<string>("");
-  const [search, setSearch] = useState("");
+  // Filters initialize from URL params so the page is bookmarkable
+  // and shareable — same pattern as audit-log. Drop a Slack link
+  // /admin/inquiries?kind=basketball&q=instagram and the recipient
+  // lands on the exact filtered view.
+  const [filterStatus, setFilterStatus] = useState<string>(() => searchParams.get("status") || "open");
+  const [filterKind, setFilterKind] = useState<string>(() => searchParams.get("kind") || "");
+  const [search, setSearch] = useState(() => searchParams.get("q") || "");
   const [active, setActive] = useState<InquiryRow | null>(null);
   const [activeNotes, setActiveNotes] = useState<NoteRow[]>([]);
   const [note, setNote] = useState("");
@@ -143,6 +150,18 @@ export default function InquiriesPage() {
   useEffect(() => {
     load(false);
   }, [load]);
+
+  // Sync filter state into URL so back/forward + sharing work.
+  // router.replace (not push) so the URL just reflects current state
+  // without trapping the user in a deep history of filter tweaks.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filterStatus && filterStatus !== "open") params.set("status", filterStatus);
+    if (filterKind) params.set("kind", filterKind);
+    if (search) params.set("q", search);
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false });
+  }, [filterStatus, filterKind, search, router]);
 
   // Auto-refresh every 30s when tab visible. Live pipeline feel.
   useEffect(() => {

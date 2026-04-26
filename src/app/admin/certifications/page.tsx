@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { IdCard, Plus , CheckCircle2 , ExternalLink } from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type Cert = {
   id: number;
@@ -104,7 +105,7 @@ export default function CertificationsPage() {
       </div>
 
       {loading ? (
-        <div className="text-text-secondary text-sm">Loading…</div>
+        <SkeletonRows count={5} />
       ) : certs.length === 0 ? (
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <IdCard className="w-10 h-10 text-text-secondary mx-auto mb-3" />

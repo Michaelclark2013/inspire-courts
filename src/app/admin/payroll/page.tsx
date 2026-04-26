@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Download,
   AlertCircle} from "lucide-react";
+import { SkeletonRows } from "@/components/ui/SkeletonCard";
 
 type PayPeriod = {
   id: number;
@@ -200,7 +201,7 @@ function PayrollPageInner() {
           {/* ROLLUP PANEL */}
           <div>
             {loading ? (
-              <div className="text-text-secondary text-sm">Loading rollup…</div>
+              <SkeletonRows count={4} />
             ) : !rollup ? (
               <div className="text-text-secondary text-sm">
                 Select a period to see the rollup.

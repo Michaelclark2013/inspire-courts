@@ -596,8 +596,9 @@ export default function TournamentManagePage() {
               </div>
             </div>
 
-            {/* Submit — sticky bar on long forms */}
-            <div className="sticky bottom-0 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 bg-white/95 backdrop-blur-sm border-t border-border flex items-center gap-4">
+            {/* Submit — sticky bar on long forms. On mobile, offset
+                upward to clear the bottom tab bar (56px + safe-area). */}
+            <div className="sticky bottom-[calc(56px+env(safe-area-inset-bottom))] lg:bottom-0 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 bg-white/95 backdrop-blur-sm border-t border-border flex items-center gap-4">
               <button
                 type="submit"
                 disabled={saving}

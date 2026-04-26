@@ -503,7 +503,7 @@ function MemberModal({
           <h2 className="text-lg font-bold text-navy mb-4">{isEdit ? "Edit Member" : "New Member"}</h2>
         </div>
         <div className="space-y-3 text-sm overflow-y-auto px-6 pb-2 flex-1">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <label className="block">
               <span className="block text-xs text-text-secondary mb-1">First Name <span className="text-red">*</span></span>
               <input required autoFocus value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
@@ -559,12 +559,12 @@ function MemberModal({
               <span className="block text-xs text-text-secondary mb-1">Next Renewal</span>
               <input type="date" value={form.nextRenewalAt} onChange={(e) => setForm({ ...form, nextRenewalAt: e.target.value })} className="w-full bg-off-white border border-border rounded px-2 py-1.5" />
             </label>
-            <label className="inline-flex items-center gap-2 col-span-2">
+            <label className="inline-flex items-center gap-2 sm:col-span-2">
               <input type="checkbox" checked={form.autoRenew} onChange={(e) => setForm({ ...form, autoRenew: e.target.checked })} />
               <span className="text-xs text-text-secondary">Auto-renew</span>
             </label>
             {form.status === "paused" && (
-              <label className="block col-span-2">
+              <label className="block sm:col-span-2">
                 <span className="block text-xs text-text-secondary mb-1">
                   Pause until (auto-reactivates)
                 </span>

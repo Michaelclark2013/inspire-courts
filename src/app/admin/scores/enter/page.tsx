@@ -396,7 +396,7 @@ export default function ScoreEntryPage() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-20 md:bottom-6 right-6 z-80 flex items-center gap-3 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl"
+          className="fixed bottom-[calc(56px+env(safe-area-inset-bottom)+12px)] md:bottom-6 right-6 z-80 flex items-center gap-3 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl"
         >
           <Check className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           <span className="text-sm font-semibold">{createSuccess}</span>
@@ -414,7 +414,7 @@ export default function ScoreEntryPage() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-80 flex items-center gap-2 bg-navy text-white px-4 py-2.5 rounded-full shadow-xl"
+          className="fixed bottom-[calc(56px+env(safe-area-inset-bottom)+12px)] md:bottom-6 left-1/2 -translate-x-1/2 z-80 flex items-center gap-2 bg-navy text-white px-4 py-2.5 rounded-full shadow-xl"
         >
           <Check className="w-4 h-4" aria-hidden="true" />
           <span className="text-xs font-semibold uppercase tracking-wider">{scoreSuccess}</span>

@@ -143,7 +143,7 @@ function QuickAddFormImpl({
             </button>
           </div>
         </div>
-        <div className="md:hidden sticky bottom-20 -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-border">
+        <div className="md:hidden sticky bottom-[calc(56px+env(safe-area-inset-bottom)+8px)] -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-border">
           <button
             type="submit"
             disabled={saving}

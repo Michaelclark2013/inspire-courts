@@ -446,7 +446,7 @@ function Composer({
             <textarea required value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} rows={4} className={`${ipt} resize-none`} placeholder="Details for the community..." />
           </Field>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Priority">
               <select value={f.priority} onChange={(e) => setF({ ...f, priority: e.target.value as Priority })} className={ipt}>
                 <option value="normal">Normal</option>
@@ -473,7 +473,7 @@ function Composer({
             </select>
           </Field>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Schedule Publish At">
               <input type="datetime-local" value={f.scheduledPublishAt} onChange={(e) => setF({ ...f, scheduledPublishAt: e.target.value })} className={ipt} />
             </Field>
@@ -489,7 +489,7 @@ function Composer({
             </div>
           </Field>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="CTA Button Label">
               <input value={f.ctaLabel} onChange={(e) => setF({ ...f, ctaLabel: e.target.value })} className={ipt} placeholder="View schedule" />
             </Field>

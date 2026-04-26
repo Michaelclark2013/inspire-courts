@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { inquiries, users } from "@/lib/db/schema";
+import { csvBody, csvCell } from "@/lib/api-helpers";
 import { and, desc, eq, ne, sql } from "drizzle-orm";
 import { canAccess } from "@/lib/permissions";
 import { logger } from "@/lib/logger";
@@ -54,20 +55,14 @@ export async function GET(request: NextRequest) {
       const headers = [
         "id", "kind", "status", "name", "email", "phone", "sports",
         "source", "createdAt", "slaDueAt", "firstTouchAt", "assignedTo",
-      ].join(",");
-      const escape = (v: unknown) => {
-        const s = v === null || v === undefined ? "" : String(v);
-        return s.includes(",") || s.includes("\"") || s.includes("\n")
-          ? `"${s.replace(/"/g, '""')}"`
-          : s;
-      };
+      ].map(csvCell).join(",");
       const lines = rows.map((r) =>
         [r.id, r.kind, r.status, r.name, r.email, r.phone, r.sports, r.source,
          r.createdAt, r.slaDueAt, r.firstTouchAt, r.assignedName ?? r.assignedTo]
-          .map(escape)
+          .map(csvCell)
           .join(",")
       );
-      const csv = [headers, ...lines].join("\n");
+      const csv = csvBody([headers, ...lines]);
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",

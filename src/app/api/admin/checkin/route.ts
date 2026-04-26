@@ -14,7 +14,7 @@ import { logger } from "@/lib/logger";
 import { timestampAZ } from "@/lib/utils";
 import { lookupIdempotent, storeIdempotent } from "@/lib/idempotency";
 import { checkinSchema } from "@/lib/schemas";
-import { parseJsonBody, csvCell } from "@/lib/api-helpers";
+import { parseJsonBody, csvCell, csvBody } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
@@ -65,7 +65,7 @@ export const GET = withTiming("admin.checkin.list", async (request: NextRequest)
             .join(",")
         ),
       ];
-      return new NextResponse(lines.join("\n"), {
+      return new NextResponse(csvBody(lines), {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="checkins-${new Date().toISOString().slice(0, 10)}.csv"`,

@@ -7,6 +7,7 @@ import { and, desc, eq, gte, like, lt, sql, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { canAccess } from "@/lib/permissions";
 import { withTiming } from "@/lib/timing";
+import { csvCell, csvBody } from "@/lib/api-helpers";
 
 // Cap how many rows a single request can pull regardless of ?limit — keeps
 // a malicious or buggy client from dumping the entire log in one hit.
@@ -109,12 +110,12 @@ export const GET = withTiming("admin.audit_log", async (request: NextRequest) =>
         "beforeJson",
         "afterJson",
       ];
-      const cell = (v: unknown) => {
-        const s = v == null ? "" : String(v);
-        return `"${s.replace(/"/g, '""')}"`;
-      };
+      // csvCell + csvBody (in lib/api-helpers) keep this download
+      // Excel-compat: formula-injection prefix on cells, CRLF row
+      // terminators, and a UTF-8 BOM. Same helpers used by every
+      // other admin CSV endpoint.
       const lines = [
-        header.map(cell).join(","),
+        header.map(csvCell).join(","),
         ...csvRows.map((r) =>
           [
             r.id,
@@ -128,15 +129,11 @@ export const GET = withTiming("admin.audit_log", async (request: NextRequest) =>
             r.beforeJson,
             r.afterJson,
           ]
-            .map(cell)
+            .map(csvCell)
             .join(",")
         ),
       ];
-      // RFC 4180 specifies CRLF row delimiters, and a UTF-8 BOM lets
-      // Excel auto-detect the encoding (without it, accented chars in
-      // entity names render as mojibake when admins double-click the
-      // download).
-      return new NextResponse("﻿" + lines.join("\r\n"), {
+      return new NextResponse(csvBody(lines), {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="audit-log-${new Date().toISOString().slice(0, 10)}.csv"`,

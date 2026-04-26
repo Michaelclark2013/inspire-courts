@@ -13,7 +13,7 @@ import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { withTiming } from "@/lib/timing";
 import { registrationCreateSchema, registrationUpdateSchema } from "@/lib/schemas";
-import { parseJsonBody, csvCell } from "@/lib/api-helpers";
+import { parseJsonBody, csvCell, csvBody } from "@/lib/api-helpers";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -145,7 +145,7 @@ export const GET = withTiming("admin.registrations.list", async (request: NextRe
         r.notes,
         r.createdAt,
       ]);
-      const csv = [header.map(csvCell).join(","), ...rows.map((r) => r.map(csvCell).join(","))].join("\n");
+      const csv = csvBody([header.map(csvCell).join(","), ...rows.map((r) => r.map(csvCell).join(","))]);
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",

@@ -165,6 +165,22 @@ export function csvCell(v: unknown): string {
 }
 
 /**
+ * UTF-8 BOM. Prepend to CSV bodies so Excel auto-detects the encoding
+ * when admins double-click the download — without it, accented chars
+ * and emoji in user-supplied content render as mojibake.
+ */
+export const UTF8_BOM = "﻿";
+
+/**
+ * Join already-comma-joined row strings with RFC 4180 CRLF terminators
+ * and prepend the UTF-8 BOM. Use this for every CSV NextResponse body
+ * so all admin downloads stay Excel-compatible.
+ */
+export function csvBody(rows: string[]): string {
+  return UTF8_BOM + rows.join("\r\n");
+}
+
+/**
  * Returns the ISO timestamp of midnight on the first of the current
  * Arizona month. Business lives in Phoenix (America/Phoenix, UTC−07:00,
  * no DST). Using this everywhere we partition data by "this month"

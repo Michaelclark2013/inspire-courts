@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { users, userPermissions } from "@/lib/db/schema";
 import { asc } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { csvBody, csvCell } from "@/lib/api-helpers";
 import {
   ALL_ADMIN_PAGES,
   canAccess,
@@ -66,10 +67,10 @@ export async function GET() {
           return effective ? "yes" : "no";
         }),
       ];
-      return cells.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",");
+      return cells.map(csvCell).join(",");
     });
 
-    const csv = [header.map((h) => `"${h}"`).join(","), ...lines].join("\n");
+    const csv = csvBody([header.map(csvCell).join(","), ...lines]);
 
     return new NextResponse(csv, {
       status: 200,

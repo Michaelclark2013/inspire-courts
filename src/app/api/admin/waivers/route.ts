@@ -8,7 +8,7 @@ import { desc, eq, and, gte, isNotNull, lt, lte, type SQL } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { waiverSignSchema } from "@/lib/schemas";
-import { parseJsonBody, apiError, csvCell } from "@/lib/api-helpers";
+import { parseJsonBody, apiError, csvCell, csvBody } from "@/lib/api-helpers";
 import { withTiming } from "@/lib/timing";
 import { getClientIp } from "@/lib/rate-limit";
 
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
             .join(",")
         ),
       ];
-      return new NextResponse(lines.join("\n"), {
+      return new NextResponse(csvBody(lines), {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="waivers-${new Date().toISOString().slice(0, 10)}.csv"`,

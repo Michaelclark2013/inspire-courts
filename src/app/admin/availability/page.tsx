@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Calendar, Plus, X } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
 type Window = {
   id: number;
@@ -27,6 +28,7 @@ export default function AvailabilityPage() {
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [userFilter, setUserFilter] = useState("");
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -45,8 +47,18 @@ export default function AvailabilityPage() {
   useEffect(() => { if (status === "authenticated") load(); }, [status, load]);
 
   async function remove(id: number) {
-    await fetch(`/api/admin/staff-availability?id=${id}`, { method: "DELETE" });
-    load();
+    setActionError(null);
+    try {
+      const res = await fetch(`/api/admin/staff-availability?id=${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setActionError(data.error || `Couldn't remove window (${res.status}).`);
+        return;
+      }
+      load();
+    } catch {
+      setActionError("Network error. Try again.");
+    }
   }
 
   if (status === "loading") return null;
@@ -80,6 +92,8 @@ export default function AvailabilityPage() {
           </button>
         </div>
       </div>
+
+      <ErrorBanner message={actionError} onDismiss={() => setActionError(null)} />
 
       {loading ? (
         <SkeletonRows count={4} />

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Send, Check } from "lucide-react";
 import type { InquiryConfig, InquiryField } from "@/lib/inquiry-forms";
 import { trackConversion, trackEvent } from "@/lib/analytics";
+import { getAttribution } from "@/lib/attribution";
 import { FACILITY_PHONE } from "@/lib/constants";
 
 type FieldValue = string | string[] | number;
@@ -25,14 +26,19 @@ export function InquiryForm({ config, source }: { config: InquiryConfig; source?
   }>({});
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    setAttribution({
-      utmSource: params.get("utm_source") || undefined,
-      utmMedium: params.get("utm_medium") || undefined,
-      utmCampaign: params.get("utm_campaign") || undefined,
-      referrer: document.referrer || undefined,
-    });
+    // Prefer the centralized first-touch attribution. A visitor who
+    // came in via /basketball?utm_source=instagram and then browsed
+    // to /inquire/training keeps the Instagram attribution; URL params
+    // alone would lose it. See src/lib/attribution.ts.
+    const a = getAttribution();
+    if (a) {
+      setAttribution({
+        utmSource: a.utmSource,
+        utmMedium: a.utmMedium,
+        utmCampaign: a.utmCampaign,
+        referrer: a.referrer,
+      });
+    }
   }, []);
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(false);

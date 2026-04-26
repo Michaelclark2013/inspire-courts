@@ -18,6 +18,7 @@ const ScrollProgress = dynamic(() => import("@/components/ui/ScrollProgress"));
 const InstallPrompt = dynamic(() => import("@/components/pwa/InstallPrompt").then(m => ({ default: m.InstallPrompt })));
 const UpdatePrompt = dynamic(() => import("@/components/pwa/UpdatePrompt").then(m => ({ default: m.UpdatePrompt })));
 const GoogleAnalytics = dynamic(() => import("@/components/analytics/GoogleAnalytics"));
+const AttributionTracker = dynamic(() => import("@/components/analytics/AttributionTracker").then((m) => ({ default: m.AttributionTracker })));
 const MetaPixel = dynamic(() => import("@/components/analytics/MetaPixel"));
 const CookieConsent = dynamic(() => import("@/components/layout/CookieConsent"));
 const UnverifiedEmailBanner = dynamic(
@@ -128,6 +129,11 @@ export default function RootLayout({
           <Footer />
           <MobileRegisterBar />
           <EditToolbar />
+          {/* AttributionTracker also reads useSearchParams — same Suspense
+              treatment. Captures first-touch utm on every navigation. */}
+          <Suspense fallback={null}>
+            <AttributionTracker />
+          </Suspense>
           {/* GoogleAnalytics uses useSearchParams — must be Suspense-wrapped */}
           <Suspense fallback={null}>
             <GoogleAnalytics />

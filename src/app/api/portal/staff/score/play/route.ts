@@ -20,6 +20,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const uid = Number(session.user.id);
+  // Plays are attributed to the recording user (recordedBy). Refuse
+  // nameless accounts so every play is traceable to a real person.
+  if (!session.user?.name || !String(session.user.name).trim()) {
+    return NextResponse.json(
+      { error: "Your account is missing a name. Update your profile before scoring." },
+      { status: 400 }
+    );
+  }
 
   try {
     const body = await request.json();

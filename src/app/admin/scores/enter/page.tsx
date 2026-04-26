@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { Plus, Play, CheckCircle2, Trophy, X, Check, AlertCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { Plus, Play, CheckCircle2, Trophy, X, Check, AlertCircle, UserCircle2 } from "lucide-react";
 import type {
   Game,
   ScoreFormState,
@@ -20,6 +21,8 @@ import { useOfflineSync } from "@/hooks/useOfflineSync";
 import Breadcrumbs from "@/components/admin/Breadcrumbs";
 
 export default function ScoreEntryPage() {
+  const { data: session } = useSession();
+  const scorerName = session?.user?.name?.trim();
   const [gameList, setGameList] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -344,6 +347,31 @@ export default function ScoreEntryPage() {
           </button>
         </div>
       </div>
+
+      {/* Scorekeeper attribution banner — every save stamps gameScores.updatedBy
+          with the logged-in user. Surface their name so reps see the audit trail
+          is real, and so a teammate sharing a station can spot a wrong session. */}
+      {scorerName ? (
+        <div
+          role="status"
+          className="mb-3 inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm rounded-lg px-3 py-2"
+        >
+          <UserCircle2 className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+          <span>
+            Logged in as <b>{scorerName}</b> — every score you save is recorded under your name.
+          </span>
+        </div>
+      ) : (
+        <div
+          role="alert"
+          className="mb-3 bg-red/5 border border-red/20 text-red text-xs sm:text-sm rounded-lg px-3 py-2"
+        >
+          <AlertCircle className="w-4 h-4 inline mr-1" aria-hidden="true" />
+          Your account has no name on file — score entry is blocked. Update your profile (
+          <a href="/admin/profile" className="underline font-bold">Admin → Profile</a>
+          ) to enable scoring.
+        </div>
+      )}
 
       {/* Offline banner — score changes queue to IndexedDB and flush on
           reconnect. Shown whenever the browser reports offline OR there

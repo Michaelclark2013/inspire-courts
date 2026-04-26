@@ -272,6 +272,18 @@ async function updateGameScore(request: NextRequest) {
     return apiError("Unauthorized", 401);
   }
 
+  // Score entry must be attributable to a NAMED human. Every score row
+  // is signed by `updatedBy` (user id), but the user-facing audit ("Sarah
+  // logged the final score") relies on users.name. Rejecting nameless
+  // accounts at write time prevents kiosk-imported / placeholder users
+  // from posting scores no one can be held accountable for.
+  if (!session.user?.name || !String(session.user.name).trim()) {
+    return apiError(
+      "Your account is missing a name. Update your profile (Admin → Profile) before entering scores.",
+      400
+    );
+  }
+
   const parsed = await parseJsonBody(request, scoreUpdateSchema);
   if (!parsed.ok) return parsed.response;
   const { gameId, homeScore, awayScore, quarter, status } = parsed.data;

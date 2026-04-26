@@ -32,6 +32,13 @@ export async function POST(request: NextRequest) {
   if (!Number.isInteger(uid) || uid <= 0) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  // Score rows must carry a named human as the scorekeeper-of-record.
+  if (!session.user?.name || !String(session.user.name).trim()) {
+    return NextResponse.json(
+      { error: "Your account is missing a name. Update your profile before scoring." },
+      { status: 400 }
+    );
+  }
 
   const parsed = await parseJsonBody(request, staffScoreSchema);
   if (!parsed.ok) return parsed.response;

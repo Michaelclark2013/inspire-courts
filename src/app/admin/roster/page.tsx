@@ -114,7 +114,7 @@ export default function RosterPage() {
             DB-backed roster. Pay rates, classifications, YTD totals.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
@@ -124,6 +124,17 @@ export default function RosterPage() {
             <option value="on_leave">On Leave</option>
             <option value="terminated">Terminated</option>
           </select>
+          {/* Add Staff: deep-links to /admin/users where new accounts get
+              created + roles assigned. Once a user with role staff/ref/
+              front_desk exists + is approved, the staff_profile row is
+              created from the user-detail screen. */}
+          <a
+            href="/admin/users?role=staff"
+            className="bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-3 py-2 rounded-md text-sm flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
+            title="Create or invite a new staff member"
+          >
+            + Add Staff
+          </a>
         </div>
       </div>
 

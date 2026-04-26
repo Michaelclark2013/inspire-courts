@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { UserCheck, Plus, AlertTriangle, Edit, Archive } from "lucide-react";
+import Link from "next/link";
+import { UserCheck, Plus, AlertTriangle, Edit, Archive, MessageSquare } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
@@ -227,6 +228,13 @@ export default function RosterPage() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
+                    <Link
+                      href={`/admin/messages?to=${r.userId}`}
+                      className="inline-flex items-center gap-1 text-navy hover:text-red text-xs mr-2"
+                      title={`Message ${r.name}`}
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" /> Message
+                    </Link>
                     <button
                       onClick={() => setEditing(r)}
                       className="inline-flex items-center gap-1 text-navy hover:text-red text-xs mr-2"

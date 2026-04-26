@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Users, ImageIcon, Trophy } from "lucide-react";
 import Link from "next/link";
 import TeamsSheetClient from "@/components/admin/TeamsSheetClient";
+import { MessageByEmailButton } from "@/components/admin/MessageByEmailButton";
 
 export const metadata: Metadata = { title: "Teams | Inspire Courts AZ" };
 
@@ -264,6 +265,14 @@ function TeamsPageShell({
                       {r.coachEmail}
                       {r.coachPhone ? ` · ${r.coachPhone}` : ""}
                     </div>
+                    {r.coachEmail && (
+                      <div className="mt-2">
+                        <MessageByEmailButton
+                          email={r.coachEmail}
+                          fallbackSubject={`Re: ${r.teamName}`}
+                        />
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -278,6 +287,7 @@ function TeamsPageShell({
                       <th className="text-left px-2 py-2 font-semibold">Division</th>
                       <th className="text-left px-2 py-2 font-semibold">Status</th>
                       <th className="text-left px-2 py-2 font-semibold">Payment</th>
+                      <th className="text-right px-2 py-2 font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -297,6 +307,14 @@ function TeamsPageShell({
                         </td>
                         <td className="px-2 py-2">
                           <PaymentBadge status={r.paymentStatus} />
+                        </td>
+                        <td className="px-2 py-2 text-right">
+                          {r.coachEmail && (
+                            <MessageByEmailButton
+                              email={r.coachEmail}
+                              fallbackSubject={`Re: ${r.teamName}`}
+                            />
+                          )}
                         </td>
                       </tr>
                     ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
@@ -50,7 +50,9 @@ import {
   Sparkles,
   Zap,
   Inbox,
+  MessageSquare,
 } from "lucide-react";
+import { adminFetch } from "@/lib/admin-fetch";
 import { cn } from "@/lib/utils";
 import { canAccessWithOverrides, ROLE_LABELS, type AdminPage } from "@/lib/permissions";
 import type { UserRole } from "@/types/next-auth";
@@ -65,6 +67,10 @@ type NavItem = {
 // Pages that show a notification dot (pending items likely exist).
 const BADGE_PAGES = new Set<AdminPage>(["approvals", "announcements"]);
 
+// Pages that surface a numeric unread count fetched from a dedicated
+// endpoint. Different from BADGE_PAGES which only show a static dot.
+const COUNT_BADGE_PAGES = new Set<AdminPage>(["messages"]);
+
 // Lifted out of AdminSidebar so React doesn't treat it as a new
 // component identity on every parent render (the React 19 checker
 // errored with "Cannot create components during render" when this
@@ -73,12 +79,15 @@ function SidebarLink({
   item,
   active,
   collapsed,
+  unreadCount = 0,
 }: {
   item: NavItem;
   active: boolean;
   collapsed: boolean;
+  unreadCount?: number;
 }) {
   const showBadge = BADGE_PAGES.has(item.page) && !active;
+  const showCount = COUNT_BADGE_PAGES.has(item.page) && unreadCount > 0;
   return (
     <Link
       href={item.href}
@@ -100,8 +109,28 @@ function SidebarLink({
             aria-label="Has pending items"
           />
         )}
+        {showCount && collapsed && (
+          <span
+            className="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 bg-red text-white text-[9px] font-bold rounded-full ring-2 ring-white inline-flex items-center justify-center"
+            aria-label={`${unreadCount} unread`}
+          >
+            {unreadCount > 9 ? "9+" : unreadCount}
+          </span>
+        )}
       </span>
-      {!collapsed && item.label}
+      {!collapsed && (
+        <span className="flex items-center gap-1.5 flex-1 min-w-0">
+          <span className="truncate">{item.label}</span>
+          {showCount && (
+            <span
+              className="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full bg-red text-white text-[10px] font-bold flex-shrink-0"
+              aria-label={`${unreadCount} unread`}
+            >
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </span>
+      )}
     </Link>
   );
 }
@@ -167,6 +196,7 @@ const FINANCE: NavItem[] = [
 ];
 
 const ADMIN_SECTION: NavItem[] = [
+  { href: "/admin/messages", label: "Messages", icon: MessageSquare, page: "messages" },
   { href: "/admin/approvals", label: "Approvals", icon: Shield, page: "approvals" },
   { href: "/admin/users", label: "User Accounts", icon: Shield, page: "users" },
   { href: "/admin/permissions", label: "Permissions", icon: Shield, page: "users" },
@@ -231,6 +261,26 @@ export default function AdminSidebar() {
   }, []);
   const { data: session } = useSession();
   const role = (session?.user?.role || "admin") as UserRole;
+
+  // Poll unread DM count for the messages badge. Uses canAccessWithOverrides
+  // to avoid hitting the endpoint for roles that can't see Messages anyway.
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const refreshUnread = useCallback(async () => {
+    try {
+      const res = await adminFetch("/api/admin/messages/unread-count");
+      if (!res.ok) return;
+      const data = (await res.json()) as { count?: number };
+      if (typeof data.count === "number") setUnreadMessages(data.count);
+    } catch {
+      /* network errors are non-fatal — badge just stays at last count */
+    }
+  }, []);
+  useEffect(() => {
+    if (!session?.user) return;
+    void refreshUnread();
+    const t = setInterval(() => void refreshUnread(), 30_000);
+    return () => clearInterval(t);
+  }, [refreshUnread, session?.user, pathname]);
 
   function toggleCollapsed() {
     setCollapsed((prev) => {
@@ -454,7 +504,13 @@ export default function AdminSidebar() {
               )}
               <div className="space-y-0.5">
                 {visibleAdmin.map((item) => (
-                  <SidebarLink key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} />
+                  <SidebarLink
+                    key={item.href}
+                    item={item}
+                    active={isActive(item.href)}
+                    collapsed={collapsed}
+                    unreadCount={item.page === "messages" ? unreadMessages : 0}
+                  />
                 ))}
               </div>
             </div>
@@ -759,6 +815,7 @@ export default function AdminSidebar() {
                         item={item}
                         active={isActive(item.href)}
                         onClose={() => setShowMore(false)}
+                        unreadCount={item.page === "messages" ? unreadMessages : 0}
                       />
                     ))}
                   </div>
@@ -825,11 +882,14 @@ function MoreLink({
   item,
   active,
   onClose,
+  unreadCount = 0,
 }: {
   item: NavItem;
   active: boolean;
   onClose: () => void;
+  unreadCount?: number;
 }) {
+  const showCount = COUNT_BADGE_PAGES.has(item.page) && unreadCount > 0;
   return (
     <Link
       href={item.href}
@@ -842,7 +902,15 @@ function MoreLink({
       )}
     >
       <item.icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-      <span className="truncate">{item.label}</span>
+      <span className="truncate flex-1">{item.label}</span>
+      {showCount && (
+        <span
+          className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full bg-red text-white text-[10px] font-bold flex-shrink-0"
+          aria-label={`${unreadCount} unread`}
+        >
+          {unreadCount > 99 ? "99+" : unreadCount}
+        </span>
+      )}
     </Link>
   );
 }

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload, ChevronUp, ChevronDown } from "lucide-react";
+import { Users, Plus, Search, CheckCircle2, AlertTriangle, Pause, Upload, ChevronUp, ChevronDown, MessageSquare } from "lucide-react";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
@@ -359,7 +359,24 @@ export default function MembersPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs text-text-secondary">{fmtDate(m.lastVisitAt)}</td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                      {m.userId ? (
+                        <Link
+                          href={`/admin/messages?to=${m.userId}`}
+                          className="inline-flex items-center gap-1 text-xs text-navy hover:text-red mr-2"
+                          title={`In-app message ${m.firstName}`}
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" /> Message
+                        </Link>
+                      ) : m.phone ? (
+                        <Link
+                          href={`/admin/inbox?phone=${encodeURIComponent(m.phone)}`}
+                          className="inline-flex items-center gap-1 text-xs text-navy hover:text-red mr-2"
+                          title="Member has no portal account — falls back to SMS"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" /> SMS
+                        </Link>
+                      ) : null}
                       <button
                         onClick={() => setEditing(m)}
                         className="text-xs text-navy hover:text-red"

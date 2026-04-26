@@ -2250,3 +2250,74 @@ export const shortLinks = sqliteTable("short_links", {
   index("short_links_slug_idx").on(table.slug),
   index("short_links_active_idx").on(table.active),
 ]);
+
+// ── In-app Direct Messages ───────────────────────────────────────────
+// Threaded DMs between any two user accounts. Used by:
+//   • Staff↔staff coordination (front desk, refs, admin, etc.)
+//   • Admin → coach / parent (portal-role users)
+//
+// Members without a user account fall back to SMS via the existing
+// sms_messages table — the admin UI links straight to /admin/inbox
+// for those rows. No silent dual-write.
+//
+// Group threads aren't modeled — every conversation is exactly two
+// participants. If we add team broadcast later it'll be a separate
+// table because the read-receipt + ordering semantics differ.
+
+export const conversations = sqliteTable("conversations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // Stamp on every message insert so the thread list can sort by
+  // recency without scanning messages. Initialized to createdAt.
+  lastMessageAt: text("last_message_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  // Denormalized last message preview — cheap thread-list rendering
+  // without an extra correlated subquery per row.
+  lastMessagePreview: text("last_message_preview"),
+  lastMessageSenderId: integer("last_message_sender_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("conversations_last_msg_idx").on(table.lastMessageAt),
+]);
+
+export const conversationParticipants = sqliteTable("conversation_participants", {
+  conversationId: integer("conversation_id")
+    .notNull()
+    .references(() => conversations.id, { onDelete: "cascade" }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  // Last time this user opened the thread — newer messages with
+  // createdAt > lastReadAt count as unread.
+  lastReadAt: text("last_read_at"),
+  joinedAt: text("joined_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("conv_participants_conv_idx").on(table.conversationId),
+  index("conv_participants_user_idx").on(table.userId),
+]);
+
+export const messages = sqliteTable("messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  conversationId: integer("conversation_id")
+    .notNull()
+    .references(() => conversations.id, { onDelete: "cascade" }),
+  senderUserId: integer("sender_user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("messages_conv_idx").on(table.conversationId, table.createdAt),
+  index("messages_sender_idx").on(table.senderUserId),
+]);

@@ -83,7 +83,8 @@ export type AdminPage =
   | "scheduler"
   | "workouts"
   | "integrations"
-  | "inquiries";
+  | "inquiries"
+  | "messages";
 
 export const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
@@ -164,6 +165,10 @@ export const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   // Inquiries pipeline — admin + front desk (front desk handles first
   // touch on most inquiries; admin sees the funnel).
   inquiries: ["admin", "front_desk"],
+  // In-app DMs. Every admin-side role can use it for staff coordination.
+  // Admin can also message coaches/parents (portal users), so the
+  // recipient picker honors the broader scope at the API layer.
+  messages: ["admin", "staff", "ref", "front_desk"],
 };
 
 // All admin pages, in display order. Used by the permissions matrix UI.
@@ -176,6 +181,7 @@ export const ALL_ADMIN_PAGES: AdminPage[] = [
   "resources", "payroll", "members", "certifications", "maintenance",
   "programs", "time_off", "equipment", "owner", "billing", "churn",
   "inbox", "journeys", "scheduler", "workouts", "integrations", "inquiries",
+  "messages",
 ];
 
 // Page groups for the matrix UI. Mirrors the AdminButtonGrid sections
@@ -187,7 +193,7 @@ export const PAGE_GROUPS: Array<{ heading: string; pages: AdminPage[] }> = [
   { heading: "Staff", pages: ["roster", "staff_refs", "scheduler", "timeclock", "shifts", "payroll", "certifications", "time_off", "approvals"] },
   { heading: "Members + Revenue", pages: ["members", "billing", "churn", "inquiries", "workouts", "revenue", "leads", "prospects", "sponsors"] },
   { heading: "Facility", pages: ["resources", "equipment", "maintenance", "schools"] },
-  { heading: "Content & Comms", pages: ["announcements", "content", "files", "inbox"] },
+  { heading: "Content & Comms", pages: ["announcements", "content", "files", "inbox", "messages"] },
   { heading: "Admin", pages: ["users", "audit_log", "analytics", "contacts", "integrations", "portal"] },
   { heading: "Personal", pages: ["my_schedule", "my_history"] },
 ];
@@ -239,6 +245,7 @@ export const PAGE_LABELS: Record<AdminPage, string> = {
   workouts: "Workouts",
   integrations: "Integrations",
   inquiries: "Inquiries",
+  messages: "Direct Messages",
 };
 
 // Role-based default access check. Kept for all call sites that

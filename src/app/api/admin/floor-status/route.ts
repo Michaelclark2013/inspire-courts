@@ -67,9 +67,19 @@ export async function GET() {
     // Build per-court status. Courts 1..7 is the facility layout
     // (CR: hardcoded in tournaments/manage). Front-end can pass the
     // list explicitly later.
+    //
+    // Index the source arrays into Maps once instead of running three
+    // .find() scans per court — for 7 courts that's 21 linear scans
+    // shrinking to constant-time lookups.
     const COURTS = ["Court 1", "Court 2", "Court 3", "Court 4", "Court 5", "Court 6", "Court 7"];
+    const liveByCourt = new Map(liveGames.map((g) => [g.court, g] as const));
+    const nextByCourt = new Map(upcomingGames.map((g) => [g.court, g] as const));
+    const blockerByCourt = new Map<string, (typeof todayEvents)[number]>();
+    for (const e of todayEvents) {
+      if (e.location) blockerByCourt.set(e.location.toLowerCase(), e);
+    }
     const courtStatus = COURTS.map((court) => {
-      const live = liveGames.find((g) => g.court === court);
+      const live = liveByCourt.get(court);
       if (live) {
         return {
           court,
@@ -78,7 +88,7 @@ export async function GET() {
           gameId: live.id,
         };
       }
-      const next = upcomingGames.find((g) => g.court === court);
+      const next = nextByCourt.get(court);
       if (next) {
         return {
           court,
@@ -88,10 +98,7 @@ export async function GET() {
           gameId: next.id,
         };
       }
-      // Maintenance / closure via gym_events with matching location text.
-      const blocker = todayEvents.find(
-        (e) => e.location && court.toLowerCase() === e.location.toLowerCase()
-      );
+      const blocker = blockerByCourt.get(court.toLowerCase());
       if (blocker) {
         return {
           court,

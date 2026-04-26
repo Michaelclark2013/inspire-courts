@@ -100,9 +100,12 @@ export async function POST(request: NextRequest) {
       return !complete;
     });
 
-    let sent = 0;
     const missing: Array<{ teamName: string; email: string; gaps: string[] }> = [];
-    for (const r of incomplete) {
+    // Build the per-team gap list once, then fire all the emails in
+    // parallel. Sequential await on a 30-team tournament was ~30s of
+    // wall time; Promise.allSettled cuts it to one round-trip and
+    // keeps a single bad address from short-circuiting the batch.
+    const sends = incomplete.map((r) => {
       const checkedIn = counts[r.teamName] || 0;
       const gaps: string[] = [];
       if (!r.rosterSubmitted) gaps.push("Roster not submitted");
@@ -112,28 +115,28 @@ export async function POST(request: NextRequest) {
 
       missing.push({ teamName: r.teamName, email: r.coachEmail, gaps });
 
-      // Fire-and-forget email. Ignore errors so one bad address doesn't
-      // block the batch; admin sees sent vs missing count. Coach name +
-      // team name + tournament name are escaped before interpolation
-      // so a name like `<img onerror>` can't render in the recipient's
-      // mail client.
-      try {
-        const result = await sendBroadcastEmail({
-          recipients: [r.coachEmail],
-          subject: `Action needed: ${tournament.name} check-in (${r.teamName})`,
-          html: `
-            <p>Hi ${escapeHtml(r.coachName || "Coach")},</p>
-            <p>Our records show ${escapeHtml(r.teamName)} hasn't completed the check-in process for <strong>${escapeHtml(tournament.name)}</strong>. Outstanding items:</p>
-            <ul>${gaps.map((g) => `<li>${escapeHtml(g)}</li>`).join("")}</ul>
-            <p>Please sign into the coach portal to finish check-in, or reply to this email if you need help.</p>
-            <p>Thanks,<br/>Inspire Courts</p>
-          `,
+      // Coach name + team name + tournament name are escaped before
+      // interpolation so a name like `<img onerror>` can't render in
+      // the recipient's mail client.
+      return sendBroadcastEmail({
+        recipients: [r.coachEmail],
+        subject: `Action needed: ${tournament.name} check-in (${r.teamName})`,
+        html: `
+          <p>Hi ${escapeHtml(r.coachName || "Coach")},</p>
+          <p>Our records show ${escapeHtml(r.teamName)} hasn't completed the check-in process for <strong>${escapeHtml(tournament.name)}</strong>. Outstanding items:</p>
+          <ul>${gaps.map((g) => `<li>${escapeHtml(g)}</li>`).join("")}</ul>
+          <p>Please sign into the coach portal to finish check-in, or reply to this email if you need help.</p>
+          <p>Thanks,<br/>Inspire Courts</p>
+        `,
+      })
+        .then((result) => (result.sent > 0 ? 1 : 0))
+        .catch((err) => {
+          logger.warn("check-in nudge email failed", { error: String(err), to: r.coachEmail });
+          return 0;
         });
-        if (result.sent > 0) sent++;
-      } catch (err) {
-        logger.warn("check-in nudge email failed", { error: String(err), to: r.coachEmail });
-      }
-    }
+    });
+    const results = await Promise.allSettled(sends);
+    const sent = results.reduce((acc, r) => acc + (r.status === "fulfilled" ? r.value : 0), 0);
 
     await recordAudit({
       session,

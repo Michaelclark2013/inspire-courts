@@ -99,6 +99,11 @@ export default function OwnerPage() {
 
   const { mrr, members, checkins, redFlags } = data;
   const trendUp = members.netDelta >= 0;
+  // First-run / empty-state: a fresh install has no members + no
+  // check-ins. The hero numbers all show 0, which can read as "broken"
+  // instead of "nobody's signed up yet." Surface a soft starter card
+  // pointing the owner at the right next step.
+  const isEmpty = members.active === 0 && members.newThisMonth === 0 && checkins.today === 0;
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-5xl mx-auto">
@@ -119,6 +124,20 @@ export default function OwnerPage() {
           Refresh
         </button>
       </div>
+
+      {/* First-run: zeros are accurate but unhelpful without context.
+          Tell the owner what's still empty + where to start. */}
+      {isEmpty && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-5 mb-3">
+          <p className="text-sm font-bold mb-1">No data yet — that&apos;s expected.</p>
+          <p className="text-sm">
+            The five numbers fill in as members sign up and check in. Start by{" "}
+            <Link href="/admin/members" className="underline font-semibold">adding members</Link>
+            {" "}or wiring inquiries to convert leads via{" "}
+            <Link href="/admin/inquiries" className="underline font-semibold">/admin/inquiries</Link>.
+          </p>
+        </div>
+      )}
 
       {/* Top row — MRR + Members net delta. Mobile stacks; desktop side-by-side. */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">

@@ -187,13 +187,12 @@ export default function SecurityPage() {
           <ul className="divide-y divide-border max-h-96 overflow-y-auto">
             {audits.map((a) => (
               <li key={a.id}>
-                {/* Link to /admin/audit-log doesn't pre-fill filters
-                    (the page reads from local state, not URL) but at
-                    least lands the admin on the full log where they
-                    can inspect the diff. Keep cursor pointer + hover
-                    so it's discoverably clickable. */}
+                {/* Link pre-fills the audit-log action filter via URL
+                    params (the page reads them on mount). Click any
+                    security event row to land on a pre-filtered view
+                    of every other instance of the same action. */}
                 <Link
-                  href="/admin/audit-log"
+                  href={`/admin/audit-log?action=${encodeURIComponent(a.action)}`}
                   className="px-5 py-2.5 flex items-center gap-3 hover:bg-off-white"
                 >
                   <div className="w-8 h-8 rounded-full bg-off-white flex items-center justify-center flex-shrink-0">

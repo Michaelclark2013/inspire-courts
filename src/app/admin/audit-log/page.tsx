@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { Download, ChevronDown, ChevronRight, Filter, AlertTriangle } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { adminFetch } from "@/lib/admin-fetch";
@@ -83,22 +83,40 @@ function actionTone(action: string): string {
 export default function AuditLogPage() {
   useDocumentTitle("Audit Log");
   const { data: session, status } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [rows, setRows] = useState<AuditRow[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    entityType: "",
-    entityId: "",
-    action: "",
-    actorUserId: "",
+  // Filters initialize from URL params so the audit log is bookmarkable
+  // and shareable — drop a link in Slack like
+  // /admin/audit-log?action=permission.granted&since=…
+  // and the recipient lands on the exact filtered view.
+  const [filters, setFilters] = useState(() => ({
+    entityType: searchParams.get("entityType") || "",
+    entityId: searchParams.get("entityId") || "",
+    action: searchParams.get("action") || "",
+    actorUserId: searchParams.get("actorUserId") || "",
     // Substring search on actor email — admins remember "sarah" not 17.
-    actorEmail: "",
+    actorEmail: searchParams.get("actorEmail") || "",
     // Time lower bound — set by the quick-range chips (Last hour /
     // Today / 24h / 7d). Stored as ISO so it round-trips into the URL
     // and CSV export filter unchanged.
-    since: "",
-  });
+    since: searchParams.get("since") || "",
+  }));
   const debouncedFilters = useDebouncedValue(filters, 300);
+
+  // Sync filter changes back to the URL (replace not push so browser
+  // back works as expected — the URL just reflects current state).
+  useEffect(() => {
+    const params = new URLSearchParams();
+    for (const [k, v] of Object.entries(debouncedFilters)) {
+      if (v) params.set(k, v);
+    }
+    const qs = params.toString();
+    const url = qs ? `?${qs}` : window.location.pathname;
+    router.replace(url, { scroll: false });
+  }, [debouncedFilters, router]);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
   // loadError surfaces a banner when the API returns 5xx — without
   // it the page just sat empty and the admin couldn't tell whether

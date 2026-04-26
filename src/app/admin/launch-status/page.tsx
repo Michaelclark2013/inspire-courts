@@ -54,12 +54,23 @@ export default function LaunchStatusPage() {
   const [data, setData] = useState<Data | null>(null);
   const [seedingKey, setSeedingKey] = useState<string | null>(null);
   const [seedMsg, setSeedMsg] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/launch-status");
-      if (res.ok) setData(await res.json());
-    } catch { /* ignore */ }
+      if (res.ok) {
+        setData(await res.json());
+        setLoadError(null);
+      } else {
+        // Without a banner the page sat at "Loading launch status…"
+        // forever on a 5xx. Now we tell the admin what went wrong.
+        const data = await res.json().catch(() => ({}));
+        setLoadError(data.error || `Couldn't load launch status (${res.status}).`);
+      }
+    } catch {
+      setLoadError("Network error loading launch status.");
+    }
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -90,7 +101,25 @@ export default function LaunchStatusPage() {
     setTimeout(() => setSeedMsg(null), 3000);
   }
 
-  if (!data) return <div className="p-8 text-text-muted">Loading launch status…</div>;
+  if (!data) {
+    if (loadError) {
+      return (
+        <div className="p-8 max-w-md mx-auto">
+          <div className="bg-red/5 border border-red/20 text-red rounded-2xl p-6 text-center">
+            <p className="font-bold mb-1">Couldn&apos;t load launch status</p>
+            <p className="text-sm">{loadError}</p>
+            <button
+              onClick={load}
+              className="mt-3 inline-flex items-center gap-1.5 bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return <div className="p-8 text-text-muted">Loading launch status…</div>;
+  }
 
   const all = Object.values(data.env).flat();
   const totalPresent = all.filter((c) => c.present).length;

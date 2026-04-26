@@ -63,7 +63,10 @@ export default function OwnerPage() {
     setRefreshing(true);
     try {
       const res = await adminFetch("/api/admin/owner/snapshot", { cache: "no-store" });
-      if (!res.ok) throw new Error("snapshot failed");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Snapshot failed (${res.status})`);
+      }
       const json = (await res.json()) as Snapshot;
       setData(json);
       setError(null);

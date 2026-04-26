@@ -85,7 +85,7 @@ export default function MembershipPlansPage() {
             Show archived
           </label>
           <button onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1 bg-navy text-white rounded-md px-3 py-1.5 text-sm hover:bg-navy/90">
+            className="inline-flex items-center gap-1 bg-navy text-white rounded-md px-3 py-1.5 text-sm hover:bg-navy/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1">
             <Plus className="w-4 h-4" /> New Plan
           </button>
         </div>
@@ -131,7 +131,7 @@ export default function MembershipPlansPage() {
               </div>
               <div className="mt-3 flex gap-1">
                 <button onClick={() => setEditing(p)}
-                  className="flex-1 inline-flex items-center justify-center gap-1 text-xs border border-border rounded-md py-1.5 hover:bg-off-white text-navy">
+                  className="flex-1 inline-flex items-center justify-center gap-1 text-xs border border-border rounded-md py-1.5 hover:bg-off-white text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1">
                   <Edit className="w-3 h-3" /> Edit
                 </button>
                 {p.active && (
@@ -238,8 +238,8 @@ function PlanModal({ plan, onClose, onSaved }: { plan: Plan | null; onClose: () 
           {err && <div className="text-red text-xs">{err}</div>}
         </div>
         <div className="mt-5 flex justify-end gap-2">
-          <button onClick={onClose} className="px-3 py-1.5 text-sm text-text-secondary hover:text-navy">Cancel</button>
-          <button onClick={save} disabled={saving} className="px-4 py-1.5 bg-navy text-white rounded-md text-sm hover:bg-navy/90 disabled:opacity-50">
+          <button onClick={onClose} className="px-3 py-1.5 text-sm text-text-secondary hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 rounded">Cancel</button>
+          <button onClick={save} disabled={saving} className="px-4 py-1.5 bg-navy text-white rounded-md text-sm hover:bg-navy/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1">
             {saving ? "Saving…" : "Save"}
           </button>
         </div>

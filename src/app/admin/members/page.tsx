@@ -587,8 +587,8 @@ function MemberModal({
           {err && <div className="text-red text-xs">{err}</div>}
         </div>
         <div className="border-t border-border px-6 py-4 flex justify-end gap-2 bg-white rounded-b-xl">
-          <button onClick={onClose} className="px-3 py-1.5 text-sm text-text-secondary hover:text-navy">Cancel</button>
-          <button onClick={save} disabled={saving} className="px-4 py-1.5 bg-navy text-white rounded-md text-sm hover:bg-navy/90 disabled:opacity-50">
+          <button onClick={onClose} className="px-3 py-1.5 text-sm text-text-secondary hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 rounded">Cancel</button>
+          <button onClick={save} disabled={saving} className="px-4 py-1.5 bg-navy text-white rounded-md text-sm hover:bg-navy/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1">
             {saving ? "Saving…" : "Save"}
           </button>
         </div>

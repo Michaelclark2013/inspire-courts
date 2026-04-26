@@ -295,7 +295,10 @@ function ScoringPanel({ game, onRefresh }: { game: Game; onRefresh: () => void }
     setError(null);
     try {
       const res = await fetch(`/api/portal/staff/score/play?id=${last.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Undo failed");
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Undo failed (${res.status})`);
+      }
       const data = await res.json();
       setHomeScore(data.homeScore);
       setAwayScore(data.awayScore);

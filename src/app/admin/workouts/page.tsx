@@ -29,13 +29,25 @@ export default function AdminWorkoutsPage() {
   });
   const [busy, setBusy] = useState(false);
 
+  const [loadError, setLoadError] = useState<string | null>(null);
   const load = useCallback(async () => {
-    const res = await adminFetch("/api/workouts", { cache: "no-store" });
-    if (res.ok) {
-      const json = await res.json();
-      setList(json.workouts || []);
+    try {
+      const res = await adminFetch("/api/workouts", { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json();
+        setList(json.workouts || []);
+        setLoadError(null);
+      } else {
+        const j = await res.json().catch(() => ({}));
+        setLoadError(j.error || `Couldn't load workouts (${res.status}).`);
+      }
+    } catch (err) {
+      if ((err as Error)?.name !== "SessionExpiredError") {
+        setLoadError("Network error loading workouts.");
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
   useEffect(() => { load(); }, [load]);
 
@@ -57,6 +69,22 @@ export default function AdminWorkoutsPage() {
   }
 
   if (loading) return <div className="p-8"><SkeletonRows count={6} /></div>;
+  if (loadError && list.length === 0) {
+    return (
+      <div className="p-8 max-w-md mx-auto">
+        <div className="bg-red/5 border border-red/20 text-red rounded-2xl p-6 text-center">
+          <p className="font-bold mb-1">Couldn&apos;t load workouts</p>
+          <p className="text-sm">{loadError}</p>
+          <button
+            onClick={load}
+            className="mt-3 inline-flex items-center gap-1.5 bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-3xl mx-auto">

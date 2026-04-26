@@ -26,6 +26,7 @@ export default function SchedulerPage() {
   const [picks, setPicks] = useState<Map<number, number>>(new Map());
   const [applying, setApplying] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -34,12 +35,20 @@ export default function SchedulerPage() {
       if (res.ok) {
         const json = await res.json();
         setSuggestions(json.suggestions || []);
+        setLoadError(null);
         // Pre-pick the top candidate per shift.
         const initial = new Map<number, number>();
         for (const s of json.suggestions) {
           if (s.candidates[0]) initial.set(s.shiftId, s.candidates[0].userId);
         }
         setPicks(initial);
+      } else {
+        const j = await res.json().catch(() => ({}));
+        setLoadError(j.error || `Couldn't compute suggestions (${res.status}).`);
+      }
+    } catch (err) {
+      if ((err as Error)?.name !== "SessionExpiredError") {
+        setLoadError("Network error computing suggestions.");
       }
     } finally {
       setLoading(false);
@@ -78,6 +87,22 @@ export default function SchedulerPage() {
   }
 
   if (loading) return <div className="p-8 text-text-muted">Computing suggestions…</div>;
+  if (loadError && suggestions.length === 0) {
+    return (
+      <div className="p-8 max-w-md mx-auto">
+        <div className="bg-red/5 border border-red/20 text-red rounded-2xl p-6 text-center">
+          <p className="font-bold mb-1">Couldn&apos;t compute scheduler suggestions</p>
+          <p className="text-sm">{loadError}</p>
+          <button
+            onClick={load}
+            className="mt-3 inline-flex items-center gap-1.5 bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-5xl mx-auto">

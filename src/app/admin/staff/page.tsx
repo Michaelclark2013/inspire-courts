@@ -16,35 +16,19 @@ import { formatDateShort } from "@/lib/utils";
 export const revalidate = 300;
 
 export default async function StaffPage() {
-  if (!isGoogleConfigured()) {
-    return (
-      <div className="p-3 sm:p-6 lg:p-8">
-        <div className="mb-4 md:mb-8">
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">
-            Staff & Refs
-          </h1>
-          <p className="text-text-secondary text-sm mt-1 hidden md:block">
-            Staff Check-Out & Ref Check-Out from Google Sheets
-          </p>
-        </div>
-        <div className="bg-off-white border border-border rounded-xl p-5 text-center">
-          <UserCheck className="w-10 h-10 text-text-secondary mx-auto mb-3" aria-hidden="true" />
-          <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
-          <p className="text-text-secondary text-sm">
-            Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local
-          </p>
-        </div>
-      </div>
-    );
+  // Sheets is optional. Page renders with empty rows when unconfigured;
+  // primary admin nav stays usable end-to-end.
+  let staffData: { rows: Record<string, string>[]; headers: string[] } = { rows: [], headers: [] };
+  let refData: { rows: Record<string, string>[]; headers: string[] } = { rows: [], headers: [] };
+  if (isGoogleConfigured()) {
+    // Use allSettled so one failing sheet doesn't crash the whole page
+    const results = await Promise.allSettled([
+      fetchSheetWithHeaders(SHEETS.staffCheckOut),
+      fetchSheetWithHeaders(SHEETS.refCheckOut),
+    ]);
+    if (results[0].status === "fulfilled") staffData = results[0].value;
+    if (results[1].status === "fulfilled") refData = results[1].value;
   }
-
-  // Use allSettled so one failing sheet doesn't crash the whole page
-  const results = await Promise.allSettled([
-    fetchSheetWithHeaders(SHEETS.staffCheckOut),
-    fetchSheetWithHeaders(SHEETS.refCheckOut),
-  ]);
-  const staffData = results[0].status === "fulfilled" ? results[0].value : { rows: [], headers: [] };
-  const refData = results[1].status === "fulfilled" ? results[1].value : { rows: [], headers: [] };
 
   const NAME_COLS = ["Name", "Full Name", "Staff Name", "Employee Name"];
   const ROLE_COLS = ["Role", "Job", "Position", "Title", "Job Title"];

@@ -15,23 +15,10 @@ export const metadata: Metadata = { title: "Prospects | Inspire Courts AZ" };
 export const revalidate = 300;
 
 export default async function ProspectsPage() {
-  if (!isGoogleConfigured()) {
-    return (
-      <div className="p-3 sm:p-6 lg:p-8">
-        <div className="mb-4 md:mb-8">
-          <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-navy font-heading">Prospects</h1>
-          <p className="text-text-secondary text-sm mt-1 hidden md:block">Team Prospect Pipeline</p>
-        </div>
-        <div className="bg-off-white border border-border rounded-xl p-5 text-center">
-          <TrendingUp className="w-10 h-10 text-text-secondary mx-auto mb-3" aria-hidden="true" />
-          <p className="text-navy font-semibold mb-1">Google Sheets not connected</p>
-          <p className="text-text-secondary text-sm">Add GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY to .env.local</p>
-        </div>
-      </div>
-    );
-  }
-
-  const { rows } = await fetchSheetWithHeaders(SHEETS.prospectPipeline);
+  // Sheets is optional. Page renders with empty rows when unconfigured.
+  const { rows } = isGoogleConfigured()
+    ? await fetchSheetWithHeaders(SHEETS.prospectPipeline)
+    : { rows: [] as Record<string, string>[] };
 
   const TEAM_COLS = ["Team Name", "Team", "Club", "Organization", "School"];
   const COACH_COLS = ["Coach", "Head Coach", "Contact", "Coach Name"];

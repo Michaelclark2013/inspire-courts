@@ -26,9 +26,22 @@ export const metadata: Metadata = {
   },
 };
 
+const scoresBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Scores", item: `${SITE_URL}/scores` },
+  ],
+};
+
 export default function ScoresPage() {
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(scoresBreadcrumbLd) }}
+      />
       {/* Hero */}
       <section className="relative py-16 sm:py-28 lg:py-36 overflow-hidden">
         <Image

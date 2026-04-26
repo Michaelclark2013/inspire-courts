@@ -35,11 +35,24 @@ export const metadata: Metadata = {
 // in admin propagate quickly while still benefiting from edge cache.
 export const revalidate = 300;
 
+const scheduleBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Schedule", item: `${SITE_URL}/schedule` },
+  ],
+};
+
 export default async function SchedulePage() {
   const page = await getPageContent("schedule");
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(scheduleBreadcrumbLd) }}
+      />
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         <Image src="/images/courts-bg.jpg" alt="Inspire Courts AZ tournament schedules and brackets" fill priority sizes="100vw" className="object-cover object-center" />

@@ -99,6 +99,24 @@ export default function AdminBillingPage() {
         </div>
       )}
 
+      {/* First-run / empty-state — no subscriptions of any status yet.
+          Renders zeros below this banner; banner explains the next step. */}
+      {data.counts.active === 0 &&
+        data.counts.pastDue === 0 &&
+        data.counts.trialing === 0 &&
+        data.counts.paused === 0 && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-5 mb-5">
+            <p className="text-sm font-bold mb-1">No subscriptions yet.</p>
+            <p className="text-sm">
+              Recurring billing fires once members are on a plan. Start by{" "}
+              <Link href="/admin/membership-plans" className="underline font-semibold">setting up a plan</Link>{" "}
+              and then{" "}
+              <Link href="/admin/members" className="underline font-semibold">attaching members</Link>{" "}
+              to it. Daily renewals run via the billing-tick cron.
+            </p>
+          </div>
+        )}
+
       {/* Top stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         <Card label="MRR" value={fmt$(data.mrr.cents)} sub={`${data.counts.active} active`} tone="emerald" icon={<DollarSign className="w-4 h-4" />} />

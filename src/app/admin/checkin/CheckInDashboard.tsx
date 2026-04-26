@@ -87,6 +87,7 @@ export default function CheckInDashboard({
   // "Unpaid only" filter — front desk uses this to chase teams for
   // payment at the door before tip-off.
   const [unpaidOnly, setUnpaidOnly] = useState(false);
+  const unpaidCount = useMemo(() => teams.filter((t) => !t.isPaid).length, [teams]);
 
   const filteredTeams = useMemo(() => {
     return teams.filter((t) => {
@@ -307,13 +308,21 @@ export default function CheckInDashboard({
               type="button"
               onClick={() => setUnpaidOnly((v) => !v)}
               aria-pressed={unpaidOnly}
-              className={`text-[11px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1 ${
+              disabled={unpaidCount === 0}
+              className={`inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-full border transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1 ${
                 unpaidOnly
                   ? "bg-amber-50 text-amber-700 border-amber-300"
                   : "bg-white text-text-muted border-border hover:border-amber-300 hover:text-amber-700"
               }`}
             >
               Unpaid only
+              {unpaidCount > 0 && (
+                <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold ${
+                  unpaidOnly ? "bg-amber-700 text-white" : "bg-amber-100 text-amber-700"
+                }`}>
+                  {unpaidCount}
+                </span>
+              )}
             </button>
           </div>
 

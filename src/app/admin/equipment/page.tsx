@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { exportCSV } from "@/lib/export";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Item = {
@@ -128,6 +129,10 @@ export default function EquipmentPage() {
   // Track per-row in-flight movements so the buttons can disable themselves
   // and the row can show a subtle pending state until the refetch completes.
   const [pendingItemIds, setPendingItemIds] = useState<Set<number>>(new Set());
+  // Movement errors — without this, click +1 / -1 on the inventory
+  // tile and a 5xx silently leaves the count stale. Bad story for an
+  // inventory log used for reorder alerts.
+  const [moveError, setMoveError] = useState<string | null>(null);
 
   useDocumentTitle(
     data?.totals.needsReorder
@@ -153,12 +158,20 @@ export default function EquipmentPage() {
       return next;
     });
     try {
-      await fetch("/api/admin/equipment/movement", {
+      const res = await fetch("/api/admin/equipment/movement", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ equipmentId: item.id, type, delta }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setMoveError(data.error || `Couldn't record movement (${res.status}).`);
+        return;
+      }
+      setMoveError(null);
       await load();
+    } catch {
+      setMoveError("Network error. Try again.");
     } finally {
       setPendingItemIds((prev) => {
         const next = new Set(prev);
@@ -400,6 +413,8 @@ export default function EquipmentPage() {
           </ul>
         </div>
       )}
+
+      <ErrorBanner message={moveError} onDismiss={() => setMoveError(null)} />
 
       {/* Item grid */}
       {loading ? (

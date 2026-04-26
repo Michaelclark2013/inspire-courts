@@ -85,7 +85,7 @@ export type AdminPage =
   | "integrations"
   | "inquiries";
 
-const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
+export const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   overview: ["admin", "staff", "front_desk"],
   teams: ["admin"],
   scores: ["admin", "staff", "front_desk"],

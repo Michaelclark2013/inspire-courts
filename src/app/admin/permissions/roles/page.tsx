@@ -8,11 +8,12 @@ import {
   X,
   Shield,
 } from "lucide-react";
+import { PAGE_ACCESS, PAGE_GROUPS as CENTRAL_PAGE_GROUPS, PAGE_LABELS } from "@/lib/permissions";
 
-// Mirrors PAGE_ACCESS in lib/permissions.ts. Duplicated here because
-// this is a read-only reference view and we want it client-renderable
-// without pulling the whole permissions module (which is fine to pull,
-// but keeping it inline keeps this a quick reference card page).
+// Sources from lib/permissions so this reference card stays in sync
+// when new admin pages ship. The previous local forks of PAGE_ACCESS,
+// PAGE_GROUPS, and PAGE_LABELS were stale by every cycle 1+2 page —
+// roles reference card silently omitted owner/billing/churn/etc.
 
 const ROLES = ["admin", "staff", "ref", "front_desk", "coach", "parent"] as const;
 type Role = typeof ROLES[number];
@@ -35,62 +36,15 @@ const ROLE_STYLES: Record<Role, string> = {
   parent: "bg-purple-50 text-purple-700",
 };
 
-// Exact mirror of PAGE_ACCESS in lib/permissions.ts.
-const PAGE_ACCESS: Record<string, Role[]> = {
-  overview: ["admin", "staff", "front_desk"],
-  teams: ["admin"],
-  scores: ["admin", "staff", "front_desk"],
-  score_entry: ["admin", "staff"],
-  players: ["admin", "front_desk"],
-  checkin: ["admin", "front_desk"],
-  staff_refs: ["admin", "front_desk"],
-  revenue: ["admin"],
-  prospects: ["admin"],
-  files: ["admin", "front_desk"],
-  analytics: ["admin"],
-  contacts: ["admin"],
-  tournaments: ["admin"],
-  sponsors: ["admin"],
-  schools: ["admin"],
-  content: ["admin"],
-  users: ["admin"],
-  portal: ["admin"],
-  my_schedule: ["staff", "ref", "front_desk"],
-  my_history: ["staff", "ref"],
-  announcements: ["admin"],
-  leads: ["admin"],
-  approvals: ["admin"],
-  audit_log: ["admin"],
-  search: ["admin"],
-  health: ["admin"],
-  roster: ["admin"],
-  timeclock: ["admin", "front_desk"],
-  shifts: ["admin"],
-  resources: ["admin"],
-  payroll: ["admin"],
-  members: ["admin", "front_desk"],
-  certifications: ["admin"],
-  maintenance: ["admin", "front_desk", "staff"],
-  programs: ["admin", "front_desk"],
-  time_off: ["admin"],
-  equipment: ["admin", "front_desk", "staff"],
-};
-
-const PAGE_GROUPS: Array<{ heading: string; pages: Array<{ key: string; label: string }> }> = [
-  { heading: "Overview", pages: [{ key: "overview", label: "Dashboard" }, { key: "search", label: "Search" }, { key: "health", label: "Health" }] },
-  { heading: "Events", pages: [{ key: "tournaments", label: "Tournaments" }, { key: "teams", label: "Teams" }, { key: "players", label: "Players" }, { key: "programs", label: "Programs" }] },
-  { heading: "Game Day", pages: [{ key: "score_entry", label: "Score Entry" }, { key: "scores", label: "Scores" }, { key: "checkin", label: "Check-in" }] },
-  { heading: "Staff", pages: [{ key: "roster", label: "Roster" }, { key: "staff_refs", label: "Staff & Refs" }, { key: "timeclock", label: "Time Clock" }, { key: "shifts", label: "Shifts" }, { key: "payroll", label: "Payroll" }, { key: "certifications", label: "Certifications" }, { key: "time_off", label: "Time Off" }, { key: "approvals", label: "Approvals" }] },
-  { heading: "Members + Revenue", pages: [{ key: "members", label: "Members" }, { key: "revenue", label: "Revenue" }, { key: "leads", label: "Leads" }, { key: "prospects", label: "Prospects" }, { key: "sponsors", label: "Sponsors" }] },
-  { heading: "Facility", pages: [{ key: "resources", label: "Fleet" }, { key: "equipment", label: "Equipment" }, { key: "maintenance", label: "Maintenance" }, { key: "schools", label: "Schools" }] },
-  { heading: "Content & Comms", pages: [{ key: "announcements", label: "Announcements" }, { key: "content", label: "Content" }, { key: "files", label: "Files" }] },
-  { heading: "Admin", pages: [{ key: "users", label: "Users" }, { key: "audit_log", label: "Audit Log" }, { key: "analytics", label: "Analytics" }, { key: "contacts", label: "Contacts" }, { key: "portal", label: "Portal" }] },
-  { heading: "Personal", pages: [{ key: "my_schedule", label: "My Schedule" }, { key: "my_history", label: "My History" }] },
-];
+const PAGE_GROUPS: Array<{ heading: string; pages: Array<{ key: string; label: string }> }> =
+  CENTRAL_PAGE_GROUPS.map((g) => ({
+    heading: g.heading,
+    pages: g.pages.map((p) => ({ key: p as string, label: PAGE_LABELS[p] })),
+  }));
 
 export default function RoleDefaultsPage() {
   function has(role: Role, page: string): boolean {
-    return (PAGE_ACCESS[page] || []).includes(role);
+    return ((PAGE_ACCESS as Record<string, Role[]>)[page] || []).includes(role);
   }
 
   return (

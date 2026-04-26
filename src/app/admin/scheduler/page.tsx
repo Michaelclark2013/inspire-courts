@@ -77,12 +77,18 @@ export default function SchedulerPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pairs }),
       });
-      const json = await res.json();
-      setMsg(`Applied ${json.applied} assignment${json.applied === 1 ? "" : "s"} ✓`);
-      await load();
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setMsg(`Failed: ${json.error || `HTTP ${res.status}`}`);
+      } else {
+        setMsg(`Applied ${json.applied} assignment${json.applied === 1 ? "" : "s"} ✓`);
+        await load();
+      }
+    } catch {
+      setMsg("Network error. Try again.");
     } finally {
       setApplying(false);
-      setTimeout(() => setMsg(null), 4000);
+      setTimeout(() => setMsg(null), 6000);
     }
   }
 

@@ -81,14 +81,22 @@ export default function AdminBillingPage() {
       const res = await fetch(`/api/admin/billing/subscriptions/${subscriptionId}/charge`, {
         method: "POST",
       });
-      const json = await res.json();
-      setMsg(json.ok ? "Charged successfully ✓" : `Failed: ${json.failureCode || "unknown"}`);
+      const json = await res.json().catch(() => ({}));
+      // Distinguish "API returned a structured failure" (401/500/etc)
+      // from "Square declined the card" (200 + ok:false). Both end up
+      // as messages but the former gets the API-supplied error string.
+      if (!res.ok) {
+        setMsg(`Failed: ${json.error || `HTTP ${res.status}`}`);
+      } else {
+        setMsg(json.ok ? "Charged successfully ✓" : `Declined: ${json.failureCode || "unknown"}`);
+      }
       load();
     } catch {
       setMsg("Network error");
     } finally {
       setBusy(false);
-      setTimeout(() => setMsg(null), 4000);
+      // Decline messages stay longer — they need to be read.
+      setTimeout(() => setMsg(null), 6000);
     }
   }
 

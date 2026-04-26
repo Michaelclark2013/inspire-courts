@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import {
   ChevronLeft,
   Loader2,
@@ -48,6 +49,7 @@ export default function RegistrationsPage() {
   const [fetchError, setFetchError] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [form, setForm] = useState({
     teamName: "",
     coachName: "",
@@ -84,18 +86,27 @@ export default function RegistrationsPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+    setCreateError(null);
     try {
       const res = await fetch(`/api/admin/tournaments/${id}/registrations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error("Failed to create registration");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        // Inline banner replaces alert() — alert stole focus and lost
+        // the form state if the user just dismissed it without
+        // reading. The banner sits above the form so it's visible
+        // while the rep edits and resubmits.
+        setCreateError(data.error || `Couldn't create registration (${res.status}).`);
+        return;
+      }
       setForm({ teamName: "", coachName: "", coachEmail: "", division: "", paymentStatus: "waived", notes: "" });
       setShowForm(false);
       fetchRegs();
     } catch {
-      alert("Failed to create registration. Please try again.");
+      setCreateError("Network error. Try again.");
     } finally {
       setSaving(false);
     }
@@ -189,6 +200,7 @@ export default function RegistrationsPage() {
       {showForm && (
         <div className="bg-white border border-border shadow-sm rounded-xl p-6 mb-6">
           <h2 className="text-navy font-bold text-sm uppercase tracking-wider mb-4">Add Walk-In / Comp</h2>
+          <ErrorBanner message={createError} onDismiss={() => setCreateError(null)} />
           <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <input
               type="text"

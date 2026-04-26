@@ -5,8 +5,9 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { Download, ChevronDown, ChevronRight, Filter } from "lucide-react";
+import { Download, ChevronDown, ChevronRight, Filter, AlertTriangle } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { adminFetch } from "@/lib/admin-fetch";
 
 // Static lists of every entity type and action emitted by recordAudit()
 // across the codebase. Drives the filter datalists for typeahead.
@@ -99,6 +100,10 @@ export default function AuditLogPage() {
   });
   const debouncedFilters = useDebouncedValue(filters, 300);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
+  // loadError surfaces a banner when the API returns 5xx — without
+  // it the page just sat empty and the admin couldn't tell whether
+  // their filters had no matches or the request actually failed.
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -108,16 +113,22 @@ export default function AuditLogPage() {
       for (const [k, v] of Object.entries(debouncedFilters)) {
         if (v) params.set(k, v);
       }
-      const res = await fetch(`/api/admin/audit-log?${params}`, { signal });
+      // adminFetch auto-redirects to /admin/login on 401 — so we only
+      // have to handle 5xx + network here.
+      const res = await adminFetch(`/api/admin/audit-log?${params}`, { signal });
       if (signal?.aborted) return;
       if (res.ok) {
         const json = await res.json();
         setRows(json.data || []);
         setTotal(json.total || 0);
+        setLoadError(null);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setLoadError(data.error || `Couldn't load audit log (${res.status}).`);
       }
     } catch (e) {
       if ((e as Error)?.name === "AbortError") return;
-      throw e;
+      setLoadError("Network error. Check your connection and try again.");
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
@@ -266,6 +277,21 @@ export default function AuditLogPage() {
           )}
         </div>
       </div>
+
+      {loadError && !loading && (
+        <div className="bg-red/5 border border-red/30 rounded-xl p-4 mb-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-red flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-navy font-semibold text-sm">{loadError}</p>
+            <button
+              onClick={() => load()}
+              className="mt-2 inline-flex items-center gap-1 bg-white border border-border text-navy rounded-md px-3 py-1 text-xs font-semibold hover:bg-off-white"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <SkeletonRows count={8} />

@@ -19,6 +19,7 @@ import PermissionActivityFeed from "@/components/admin/permissions/ActivityFeed"
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { adminFetch } from "@/lib/admin-fetch";
+import { ALL_ADMIN_PAGES } from "@/lib/permissions";
 
 type UserRow = {
   id: number;
@@ -331,15 +332,10 @@ function BulkDialog({
     money_only: { label: "Revenue view", pages: ["revenue", "leads", "prospects"] },
   };
 
-  const ALL_PAGES = [
-    "overview", "teams", "scores", "score_entry", "players", "checkin",
-    "tournaments", "programs", "roster", "timeclock", "shifts", "payroll",
-    "certifications", "time_off", "approvals", "members", "revenue",
-    "leads", "prospects", "sponsors", "resources", "equipment",
-    "maintenance", "schools", "announcements", "content", "files",
-    "users", "audit_log", "analytics", "contacts", "portal",
-    "my_schedule", "my_history", "staff_refs", "search", "health",
-  ];
+  // Source from lib/permissions so bulk-grant covers every page —
+  // the previous local list was missing every cycle 1+2 page (owner,
+  // billing, churn, inquiries, workouts, scheduler, inbox, integrations).
+  const ALL_PAGES: string[] = ALL_ADMIN_PAGES.slice();
 
   function applyPreset(key: string) {
     setPreset(key);

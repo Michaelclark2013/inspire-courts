@@ -122,7 +122,12 @@ export default function IntegrationsPage() {
           </button>
         </div>
         {keys.length === 0 ? (
-          <p className="text-text-muted text-sm">No API keys yet.</p>
+          <p className="text-text-muted text-sm">
+            No API keys yet. Generate one above to give a Zapier / external
+            app access to <code className="font-mono text-[11px] bg-off-white px-1 py-0.5 rounded">/api/v1/*</code>.
+            Keys are sha256-hashed in storage; the plaintext shows ONCE on
+            creation. Per-key rate limit: 60 req/min.
+          </p>
         ) : (
           <ul className="divide-y divide-border -mx-2">
             {keys.map((k) => (
@@ -167,7 +172,11 @@ export default function IntegrationsPage() {
           </button>
         </div>
         {hooks.length === 0 ? (
-          <p className="text-text-muted text-sm">No webhook subscriptions.</p>
+          <p className="text-text-muted text-sm">
+            No webhook subscriptions. Add a URL above and we&apos;ll POST signed
+            event payloads (HMAC-SHA256 in <code className="font-mono text-[11px] bg-off-white px-1 py-0.5 rounded">X-Inspire-Signature</code>)
+            for events like <code className="font-mono text-[11px] bg-off-white px-1 py-0.5 rounded">inquiry.created</code>.
+          </p>
         ) : (
           <ul className="divide-y divide-border -mx-2">
             {hooks.map((h) => (

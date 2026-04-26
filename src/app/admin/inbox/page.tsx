@@ -132,7 +132,17 @@ export default function InboxPage() {
           {threads.length === 0 ? (
             <div className="p-6 text-center text-text-muted text-sm">
               <MessageSquare className="w-10 h-10 mx-auto mb-2 opacity-40" />
-              No conversations yet.
+              <p className="font-bold text-navy mb-1">No conversations yet.</p>
+              <p className="text-xs leading-relaxed">
+                Inbound texts to your Twilio number land here.{" "}
+                <Link href="/admin/launch-readiness" className="underline">
+                  Confirm Twilio is configured
+                </Link>{" "}
+                and point your number&apos;s webhook at{" "}
+                <code className="bg-off-white px-1 py-0.5 rounded font-mono text-[10px] break-all">
+                  /api/webhooks/twilio
+                </code>.
+              </p>
             </div>
           ) : (
             <ul className="divide-y divide-border">

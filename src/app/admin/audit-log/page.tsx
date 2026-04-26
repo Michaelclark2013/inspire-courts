@@ -299,7 +299,17 @@ export default function AuditLogPage() {
         <div className="bg-off-white border border-border rounded-xl p-8 text-center">
           <Filter className="w-10 h-10 text-text-secondary mx-auto mb-3" />
           <p className="text-navy font-semibold">No audit entries match.</p>
-          <p className="text-text-secondary text-sm mt-1">Clear filters to see all.</p>
+          <p className="text-text-secondary text-sm mt-1">
+            Clear filters to see all.
+          </p>
+          {(filters.entityType || filters.entityId || filters.action || filters.actorUserId || filters.actorEmail || filters.since) && (
+            <button
+              onClick={() => setFilters({ entityType: "", entityId: "", action: "", actorUserId: "", actorEmail: "", since: "" })}
+              className="mt-4 inline-flex items-center gap-1 bg-navy text-white rounded-md px-3 py-1.5 text-xs font-bold uppercase tracking-wider hover:bg-navy/90"
+            >
+              Clear filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="bg-white border border-border rounded-xl divide-y divide-border">

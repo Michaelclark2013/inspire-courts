@@ -18,6 +18,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { EligibilityChip } from "@/components/portal/EligibilityChip";
+import { SignaturePad, type SignaturePadHandle } from "@/components/waiver/SignaturePad";
 import type { EligibilityResult } from "@/lib/eligibility";
 
 type RosterPlayer = {
@@ -32,6 +33,7 @@ type RosterPlayer = {
   parentUserId: number | null;
   eligibility: EligibilityResult;
   checkedIn: boolean;
+  priorDayCheckin?: boolean;
 };
 
 type Context = {
@@ -79,6 +81,12 @@ function CheckinInner() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [showWalkin, setShowWalkin] = useState(false);
   const [geoStatus, setGeoStatus] = useState<"idle" | "checking" | "ok" | "outside" | "denied">("idle");
+  const [attestation, setAttestation] = useState<{
+    id: number;
+    signedByName: string;
+    attestedAt: string;
+  } | null>(null);
+  const [showAttest, setShowAttest] = useState(false);
 
   const load = useCallback(async () => {
     if (!tournamentId) return;
@@ -106,6 +114,24 @@ function CheckinInner() {
   useEffect(() => {
     if (status === "authenticated") void load();
   }, [load, status]);
+
+  // Look up existing attestation any time the team/tournament changes.
+  useEffect(() => {
+    if (!ctx?.team?.id || !ctx?.tournament?.id) return;
+    void (async () => {
+      try {
+        const res = await fetch(
+          `/api/checkin/attestation?t=${ctx.tournament.id}&team=${ctx.team.id}`,
+        );
+        if (res.ok) {
+          const d = await res.json();
+          setAttestation(d.attestation || null);
+        }
+      } catch {
+        /* non-fatal */
+      }
+    })();
+  }, [ctx?.team?.id, ctx?.tournament?.id]);
 
   // Geofence soft-check — runs once on mount if config present.
   useEffect(() => {
@@ -266,6 +292,41 @@ function CheckinInner() {
         </div>
       )}
 
+      {/* Coach attestation — visible to coaches once at least one
+          player is checked in, hidden after the coach signs. */}
+      {ctx.role === "coach" && checkedInCount > 0 && (
+        <div className="mb-4">
+          {attestation ? (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0 mt-0.5" />
+              <div className="text-xs text-emerald-800">
+                <p className="font-semibold">Roster signed by {attestation.signedByName}</p>
+                <p className="text-emerald-700/80">
+                  {new Date(attestation.attestedAt).toLocaleString()}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowAttest(true)}
+              className="w-full bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center justify-between text-left hover:border-amber-400"
+            >
+              <div className="flex items-start gap-2 min-w-0">
+                <AlertTriangle className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-amber-800">Sign roster attestation</p>
+                  <p className="text-xs text-amber-700/80">
+                    Required before tip-off — confirms your roster + waivers are accurate.
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-amber-700 flex-shrink-0" />
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Bulk action + counter */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <p className="text-text-muted text-sm">
@@ -334,6 +395,14 @@ function CheckinInner() {
                   <p className="text-navy font-semibold truncate">{p.name}</p>
                   <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                     <EligibilityChip result={p.eligibility} size="xs" />
+                    {p.priorDayCheckin && !p.checkedIn && (
+                      <span
+                        title="Was checked in on a prior tournament day — tap to confirm presence today"
+                        className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 text-[10px] px-1.5 py-0.5 font-semibold"
+                      >
+                        Day 2 · re-check
+                      </span>
+                    )}
                     {!p.waiverOnFile && (
                       <span
                         title="Waiver not on file — sign before play"
@@ -375,10 +444,27 @@ function CheckinInner() {
         )}
       </ul>
 
-      {/* Walk-in (admin only) */}
-      {canWalkin && (
-        <div className="mt-5">
-          {showWalkin ? (
+      {/* NFC scan — Chrome on Android only. Hidden when unsupported. */}
+      <NfcScanButton tournamentId={ctx.tournament.id} onScanned={async (msg) => {
+        setFeedback(msg);
+        await load();
+      }} />
+
+      {/* Walk-in (admin only) + Substitute (coach + admin) */}
+      <div className="mt-5 space-y-3">
+        {(ctx.role === "coach" || canWalkin) && (
+          <SubstitutePicker
+            tournamentId={ctx.tournament.id}
+            hostTeamId={ctx.team.id}
+            isStaff={canWalkin}
+            onAdded={async (msg) => {
+              setFeedback(msg);
+              await load();
+            }}
+          />
+        )}
+        {canWalkin && (
+          showWalkin ? (
             <WalkinForm
               tournamentId={ctx.tournament.id}
               teamName={ctx.team.name}
@@ -399,9 +485,9 @@ function CheckinInner() {
               <UserPlus className="w-4 h-4" aria-hidden="true" />
               Add walk-in player
             </button>
-          )}
-        </div>
-      )}
+          )
+        )}
+      </div>
 
       {/* Footer link to history */}
       <div className="mt-5 text-center">
@@ -412,6 +498,21 @@ function CheckinInner() {
           ← Back to portal
         </Link>
       </div>
+
+      {showAttest && ctx && (
+        <AttestModal
+          tournamentId={ctx.tournament.id}
+          teamId={ctx.team.id}
+          teamName={ctx.team.name}
+          rosterCount={ctx.roster.length}
+          onClose={() => setShowAttest(false)}
+          onSigned={(att) => {
+            setAttestation(att);
+            setShowAttest(false);
+            setFeedback("Attestation recorded — thanks coach.");
+          }}
+        />
+      )}
     </CheckinShell>
   );
 }
@@ -610,5 +711,354 @@ function WalkinForm({
         Add + check in
       </button>
     </form>
+  );
+}
+
+// ── NFC scan button ────────────────────────────────────────────────
+type NDEFScanEvent = { serialNumber?: string };
+type NDEFReaderInstance = {
+  scan: () => Promise<void>;
+  addEventListener: (
+    type: "reading" | "readingerror",
+    handler: (event: NDEFScanEvent) => void,
+  ) => void;
+};
+type NDEFReaderConstructor = new () => NDEFReaderInstance;
+
+function NfcScanButton({
+  tournamentId,
+  onScanned,
+}: {
+  tournamentId: number;
+  onScanned: (msg: string) => void;
+}) {
+  const [supported, setSupported] = useState(false);
+  const [scanning, setScanning] = useState(false);
+
+  useEffect(() => {
+    setSupported(typeof window !== "undefined" && "NDEFReader" in window);
+  }, []);
+
+  if (!supported) return null;
+
+  async function startScan() {
+    setScanning(true);
+    try {
+      const Ctor = (window as unknown as { NDEFReader: NDEFReaderConstructor }).NDEFReader;
+      const reader = new Ctor();
+      await reader.scan();
+      reader.addEventListener("reading", async (event: NDEFScanEvent) => {
+        const uid = event.serialNumber || "";
+        if (!uid) {
+          onScanned("Tag scanned but no UID returned");
+          return;
+        }
+        const res = await fetch("/api/checkin/nfc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nfcUid: uid, tournamentId }),
+        });
+        const d = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          onScanned(d.error || `Tag ${uid}: failed`);
+          return;
+        }
+        onScanned(
+          d.alreadyCheckedIn
+            ? `${d.player?.name || "Player"} already checked in`
+            : `${d.player?.name || "Player"} checked in via NFC`,
+        );
+      });
+      reader.addEventListener("readingerror", () => {
+        onScanned("Tag read failed — try tapping again");
+      });
+    } catch (err) {
+      onScanned(`NFC permission denied: ${(err as Error).message}`);
+    } finally {
+      // Don't drop the reader — the scan loop is event-driven.
+      setScanning(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => void startScan()}
+      disabled={scanning}
+      className="w-full inline-flex items-center justify-center gap-2 mt-3 border border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-50 rounded-xl py-3 text-sm font-semibold text-blue-700"
+    >
+      {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+      Tap NFC wristband to check in
+    </button>
+  );
+}
+
+// ── Substitute picker ──────────────────────────────────────────────
+function SubstitutePicker({
+  tournamentId,
+  hostTeamId,
+  isStaff,
+  onAdded,
+}: {
+  tournamentId: number;
+  hostTeamId: number;
+  isStaff: boolean;
+  onAdded: (msg: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const [results, setResults] = useState<
+    Array<{
+      id: number;
+      name: string;
+      jerseyNumber: string | null;
+      division: string | null;
+      sourceTeamName: string | null;
+    }>
+  >([]);
+  const [loading, setLoading] = useState(false);
+  const [busyId, setBusyId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handle = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({ hostTeamId: String(hostTeamId) });
+        if (q.trim().length >= 2) params.set("q", q.trim());
+        const res = await fetch(`/api/checkin/substitute?${params}`);
+        if (res.ok) {
+          const d = await res.json();
+          setResults(d.candidates || []);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }, 250);
+    return () => clearTimeout(handle);
+  }, [q, hostTeamId, open]);
+
+  async function pick(playerId: number, name: string) {
+    setBusyId(playerId);
+    try {
+      const res = await fetch("/api/checkin/substitute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sourcePlayerId: playerId, hostTeamId, tournamentId }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        onAdded(`${name}: ${d.error || "failed"}`);
+        return;
+      }
+      onAdded(
+        d.status === "approved"
+          ? `${name} pulled in as substitute + checked in`
+          : `${name} sub request sent to admin`,
+      );
+      setOpen(false);
+      setQ("");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="w-full inline-flex items-center justify-center gap-2 border border-dashed border-border hover:border-navy/40 rounded-xl py-3 text-sm font-semibold text-text-muted hover:text-navy transition-colors"
+      >
+        <Users className="w-4 h-4" aria-hidden="true" />
+        Pull a substitute {isStaff ? "" : "(needs admin approval)"}
+      </button>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-border rounded-xl p-3">
+      <div className="flex items-center justify-between mb-2">
+        <p className="font-bold text-navy text-sm">Substitute</p>
+        <button type="button" onClick={() => setOpen(false)} className="text-text-muted text-xs">
+          Cancel
+        </button>
+      </div>
+      <input
+        type="text"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Search by name or jersey #"
+        className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red"
+      />
+      <div className="mt-2 max-h-64 overflow-y-auto divide-y divide-border">
+        {loading ? (
+          <div className="text-text-muted text-xs py-4 text-center inline-flex items-center gap-2 justify-center w-full">
+            <Loader2 className="w-3 h-3 animate-spin" /> Searching…
+          </div>
+        ) : results.length === 0 ? (
+          <p className="text-text-muted text-xs py-4 text-center">
+            {q.length >= 2 ? "No matches." : "Type 2+ characters to search."}
+          </p>
+        ) : (
+          results.map((r) => (
+            <div key={r.id} className="py-2 flex items-center gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-navy truncate">
+                  {r.name}
+                  {r.jerseyNumber && <span className="text-text-muted font-normal"> · #{r.jerseyNumber}</span>}
+                </p>
+                <p className="text-text-muted text-[11px] truncate">
+                  from {r.sourceTeamName || "unknown team"}
+                  {r.division ? ` · ${r.division}` : ""}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => void pick(r.id, r.name)}
+                disabled={busyId === r.id}
+                className="px-3 py-1.5 rounded-lg bg-red hover:bg-red-hover text-white text-xs font-bold uppercase tracking-wider disabled:opacity-50"
+              >
+                {busyId === r.id ? <Loader2 className="w-3 h-3 animate-spin" /> : "Pull in"}
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Coach attestation modal ────────────────────────────────────────
+function AttestModal({
+  tournamentId,
+  teamId,
+  teamName,
+  rosterCount,
+  onClose,
+  onSigned,
+}: {
+  tournamentId: number;
+  teamId: number;
+  teamName: string;
+  rosterCount: number;
+  onClose: () => void;
+  onSigned: (att: { id: number; signedByName: string; attestedAt: string }) => void;
+}) {
+  const [name, setName] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const sigRef = useRef<SignaturePadHandle>(null);
+
+  async function submit() {
+    if (!agreed) {
+      setErr("Please confirm by checking the box");
+      return;
+    }
+    if (!name.trim()) {
+      setErr("Type your name");
+      return;
+    }
+    setBusy(true);
+    setErr(null);
+    try {
+      const sig = sigRef.current?.toDataUrl() || null;
+      const res = await fetch("/api/checkin/attestation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tournamentId,
+          teamId,
+          signedByName: name.trim(),
+          signatureDataUrl: sig,
+        }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setErr(d.error || `Failed (${res.status})`);
+        return;
+      }
+      onSigned({
+        id: d.id,
+        signedByName: d.signedByName,
+        attestedAt: d.attestedAt,
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[80] bg-black/60 flex items-center justify-center p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="bg-white rounded-xl w-full max-w-md p-5 max-h-[92vh] overflow-y-auto">
+        <h2 className="text-navy text-lg font-bold">Coach Attestation</h2>
+        <p className="text-text-muted text-xs mt-1">
+          {teamName} · {rosterCount} player{rosterCount === 1 ? "" : "s"}
+        </p>
+        <div className="mt-4 bg-off-white border border-border rounded-lg p-3 text-xs text-navy/80 leading-relaxed">
+          By signing, I confirm that the roster on file is accurate, every
+          listed player is age-eligible for this division, and a signed
+          waiver is on file for each. I accept responsibility for any
+          discrepancy discovered during play.
+        </div>
+        <label className="flex items-start gap-2 mt-3 text-xs text-navy">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-0.5 w-4 h-4 accent-red"
+          />
+          I agree to the statement above.
+        </label>
+        <div className="mt-4">
+          <label className="block text-text-muted text-[10px] uppercase tracking-wider font-bold mb-1">
+            Type your full name
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red"
+          />
+        </div>
+        <div className="mt-4">
+          <label className="block text-text-muted text-[10px] uppercase tracking-wider font-bold mb-1">
+            Signature (optional but encouraged)
+          </label>
+          <div className="border border-border rounded-lg overflow-hidden">
+            <SignaturePad ref={sigRef} height={140} />
+          </div>
+        </div>
+        {err && (
+          <p className="mt-2 text-xs text-red flex items-center gap-1">
+            <AlertTriangle className="w-3 h-3" /> {err}
+          </p>
+        )}
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-3 py-2 text-sm text-text-muted hover:text-navy"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => void submit()}
+            disabled={busy}
+            className="inline-flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-bold"
+          >
+            {busy && <Loader2 className="w-4 h-4 animate-spin" />}
+            Sign + Lock
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

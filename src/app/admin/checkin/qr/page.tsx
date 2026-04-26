@@ -136,6 +136,14 @@ export default function CheckinQRPage() {
                 {t.playerCount > 0 && (
                   <p className="text-text-muted text-[11px]">{t.playerCount} players</p>
                 )}
+                {t.tournamentId && t.teamId && (
+                  <a
+                    href={`/api/checkin/wallet-pass?t=${t.tournamentId}&team=${t.teamId}&platform=apple`}
+                    className="no-print mt-2 text-[10px] uppercase tracking-wider font-bold text-navy hover:text-red"
+                  >
+                    + Wallet pass
+                  </a>
+                )}
               </article>
             );
           })}

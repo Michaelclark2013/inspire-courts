@@ -14,10 +14,14 @@ import {
   tournaments,
   tournamentRegistrations,
   games,
+  pushSubscriptions,
+  users,
 } from "@/lib/db/schema";
-import { and, eq, gte, lte, sql } from "drizzle-orm";
+import { and, eq, gte, lte, sql, inArray } from "drizzle-orm";
 import { checkEligibility } from "@/lib/eligibility";
 import { logger } from "@/lib/logger";
+import { sendPushNotification, isVapidConfigured } from "@/lib/push-notifications";
+import { sendSms } from "@/lib/sms";
 
 export type CheckinSource = "qr" | "coach" | "admin" | "kiosk";
 
@@ -51,28 +55,82 @@ export type CheckinError = {
 /**
  * Was this team already checked in for this tournament today?
  * Idempotent guard — repeat scans don't double-write.
+ *
+ * Multi-day tournament behavior: if a tournamentId is supplied, we
+ * scope the lookup to (a) same tournament AND (b) same calendar day
+ * in Phoenix time. That way day-2 of a weekend tournament generates
+ * a fresh check-in row but day-1's repeat scan dedupes.
  */
 async function findExistingCheckin(opts: {
   playerName: string;
   teamName: string;
   tournamentId: number | null;
   withinHoursBack: number;
-}): Promise<{ id: number } | null> {
-  const since = new Date(Date.now() - opts.withinHoursBack * 60 * 60 * 1000).toISOString();
-  const conditions = [
-    sql`lower(${checkins.playerName}) = ${opts.playerName.toLowerCase()}`,
-    sql`lower(${checkins.teamName}) = ${opts.teamName.toLowerCase()}`,
-    gte(checkins.timestamp, since),
-  ];
+}): Promise<{ id: number; sameDayTournament: boolean } | null> {
   if (opts.tournamentId != null) {
-    conditions.push(eq(checkins.tournamentId, opts.tournamentId));
+    // Day-scoped tournament dedupe.
+    const startOfDayPhx = phoenixDayStart(new Date());
+    const conditions = [
+      sql`lower(${checkins.playerName}) = ${opts.playerName.toLowerCase()}`,
+      eq(checkins.tournamentId, opts.tournamentId),
+      gte(checkins.timestamp, startOfDayPhx),
+    ];
+    const [row] = await db
+      .select({ id: checkins.id })
+      .from(checkins)
+      .where(and(...conditions))
+      .limit(1);
+    return row ? { id: row.id, sameDayTournament: true } : null;
   }
+  // Legacy fallback — name+team within N hours.
+  const since = new Date(Date.now() - opts.withinHoursBack * 60 * 60 * 1000).toISOString();
   const [row] = await db
     .select({ id: checkins.id })
     .from(checkins)
-    .where(and(...conditions))
+    .where(
+      and(
+        sql`lower(${checkins.playerName}) = ${opts.playerName.toLowerCase()}`,
+        sql`lower(${checkins.teamName}) = ${opts.teamName.toLowerCase()}`,
+        gte(checkins.timestamp, since),
+      ),
+    )
     .limit(1);
-  return row || null;
+  return row ? { id: row.id, sameDayTournament: false } : null;
+}
+
+/** Start-of-today in Phoenix time as ISO. AZ doesn't observe DST so
+ *  the offset is always -07:00. */
+function phoenixDayStart(now: Date): string {
+  const phxTzOffsetMs = -7 * 60 * 60 * 1000;
+  const utcMs = now.getTime();
+  const phxNow = new Date(utcMs + phxTzOffsetMs);
+  // Floor to start of day, then map back to UTC.
+  phxNow.setUTCHours(0, 0, 0, 0);
+  return new Date(phxNow.getTime() - phxTzOffsetMs).toISOString();
+}
+
+/**
+ * Returns true if the player already has a *prior-day* check-in for
+ * this tournament (multi-day weekend events). Used by the UI to show
+ * "Already checked in yesterday — tap to confirm presence today".
+ */
+export async function hasPriorTournamentCheckin(
+  playerId: number,
+  tournamentId: number,
+): Promise<boolean> {
+  const startOfTodayPhx = phoenixDayStart(new Date());
+  const [row] = await db
+    .select({ id: checkins.id })
+    .from(checkins)
+    .where(
+      and(
+        eq(checkins.playerId, playerId),
+        eq(checkins.tournamentId, tournamentId),
+        sql`${checkins.timestamp} < ${startOfTodayPhx}`,
+      ),
+    )
+    .limit(1);
+  return !!row;
 }
 
 /**
@@ -230,10 +288,154 @@ export async function recordCheckin(input: CheckinInput): Promise<CheckinResult 
       }
     }
 
+    // Fire-and-forget: notify the parent on a fresh check-in. Skip
+    // for walk-ins where the player has no parent FK yet.
+    if (player?.parentUserId) {
+      notifyParentCheckin({
+        parentUserId: player.parentUserId,
+        playerName,
+        teamName,
+        tournamentId: input.tournamentId ?? null,
+        isLate,
+      }).catch((e) => logger.warn("parent notify failed", { err: String(e) }));
+    }
+
     return { ok: true, checkinId: row.id, isLate, eligibility };
   } catch (err) {
     logger.error("checkin write failed", { err: String(err) });
     return { ok: false, code: "db_error", message: "Failed to record check-in" };
+  }
+}
+
+/**
+ * Tell the parent their player just checked in. Web push first
+ * (free, instant), SMS fallback (or in addition) when the parent
+ * has a phone on file. Reads next-game info from `games` so the
+ * message can include "Court 3, 9:15".
+ *
+ * Honors the same notification prefs the announcement push uses.
+ * Best-effort — no thrown errors.
+ */
+async function notifyParentCheckin(opts: {
+  parentUserId: number;
+  playerName: string;
+  teamName: string;
+  tournamentId: number | null;
+  isLate: boolean;
+}): Promise<void> {
+  // Pull the parent's contact + prefs.
+  const [parent] = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      phone: users.phone,
+      prefsJson: users.notificationPrefsJson,
+    })
+    .from(users)
+    .where(eq(users.id, opts.parentUserId))
+    .limit(1);
+  if (!parent) return;
+
+  // Optional opt-out — push.checkins (or fallback push.announcements)
+  // false means we don't send.
+  let pushOk = true;
+  let smsOk = true;
+  if (parent.prefsJson) {
+    try {
+      const p = JSON.parse(parent.prefsJson) as {
+        push?: { announcements?: boolean; checkins?: boolean };
+        sms?: { checkins?: boolean };
+      };
+      if (p?.push?.checkins === false) pushOk = false;
+      else if (p?.push?.announcements === false && p?.push?.checkins === undefined) pushOk = false;
+      if (p?.sms?.checkins === false) smsOk = false;
+    } catch {
+      /* ignore malformed prefs */
+    }
+  }
+
+  // Compose message — include next-game info if we can find it.
+  let nextLine = "";
+  if (opts.tournamentId) {
+    try {
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
+      const dayGames = await db
+        .select({
+          home: games.homeTeam,
+          away: games.awayTeam,
+          court: games.court,
+          scheduled: games.scheduledTime,
+        })
+        .from(games)
+        .where(
+          and(
+            gte(games.scheduledTime, startOfDay.toISOString()),
+            lte(games.scheduledTime, endOfDay.toISOString()),
+          ),
+        )
+        .limit(50);
+      const t = opts.teamName.toLowerCase();
+      const upcoming = dayGames
+        .filter((g) => (g.home || "").toLowerCase() === t || (g.away || "").toLowerCase() === t)
+        .map((g) => ({
+          ...g,
+          ms: new Date(g.scheduled || "").getTime(),
+        }))
+        .filter((g) => Number.isFinite(g.ms) && g.ms >= Date.now())
+        .sort((a, b) => a.ms - b.ms)[0];
+      if (upcoming) {
+        const time = new Date(upcoming.ms).toLocaleTimeString("en-US", {
+          timeZone: "America/Phoenix",
+          hour: "numeric",
+          minute: "2-digit",
+        });
+        nextLine = upcoming.court ? ` Court ${upcoming.court}, ${time}.` : ` Game at ${time}.`;
+      }
+    } catch {
+      /* games lookup is best-effort */
+    }
+  }
+
+  const lateSuffix = opts.isLate ? " (late)" : "";
+  const baseMsg = `${opts.playerName} is checked in${lateSuffix}.${nextLine}`;
+  const title = `Inspire Courts · ${opts.teamName}`;
+
+  // Web push to all of this user's subscribed devices.
+  if (pushOk && isVapidConfigured()) {
+    try {
+      const subs = await db
+        .select()
+        .from(pushSubscriptions)
+        .where(eq(pushSubscriptions.userId, String(parent.id)));
+      for (const s of subs) {
+        try {
+          await sendPushNotification(
+            { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
+            { title, body: baseMsg, url: `/portal` },
+          );
+        } catch (err) {
+          logger.warn("checkin push failed", { err: String(err), subId: s.id });
+        }
+      }
+    } catch (err) {
+      logger.warn("checkin push lookup failed", { err: String(err) });
+    }
+  }
+
+  // SMS fallback / parallel — sends to the parent's phone if present
+  // and they haven't opted out. Doesn't block on push success.
+  if (smsOk && parent.phone) {
+    try {
+      await sendSms({
+        to: parent.phone,
+        body: baseMsg,
+        userId: parent.id,
+      });
+    } catch (err) {
+      logger.warn("checkin sms failed", { err: String(err) });
+    }
   }
 }
 

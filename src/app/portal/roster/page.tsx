@@ -45,6 +45,15 @@ type RosterConflict = {
   playerIds: number[];
 };
 
+type LockState = {
+  tournamentId: number;
+  tournamentName: string;
+  startDate: string;
+  lockHoursBefore: number;
+  hoursUntilLock: number | null;
+  locked: boolean;
+};
+
 type Team = {
   id: number;
   name: string;
@@ -67,6 +76,8 @@ export default function RosterPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [conflicts, setConflicts] = useState<RosterConflict[]>([]);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [lockState, setLockState] = useState<LockState | null>(null);
+  const [requestOpen, setRequestOpen] = useState<null | { kind: "add" | "remove" | "edit"; playerId?: number; playerName?: string }>(null);
   const { confirm, modalProps } = useConfirm();
   const [sortField, setSortField] = useState<SortField>("name");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -92,6 +103,7 @@ export default function RosterPage() {
         setTeam(data.team);
         setRoster(data.players);
         setConflicts(Array.isArray(data.conflicts) ? data.conflicts : []);
+        setLockState(data.lockState ?? null);
         // Fetch logo for this team (also guarded by signal so unmount aborts it)
         if (data.team?.name) {
           fetch(`/api/teams/logo?teamName=${encodeURIComponent(data.team.name)}`, { signal })
@@ -237,11 +249,18 @@ export default function RosterPage() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-shrink-0">
               <ImportRosterButton onImported={fetchRoster} setFeedback={setFeedback} />
               <button
-                onClick={() => setShowAdd(!showAdd)}
+                onClick={() => {
+                  if (lockState?.locked) {
+                    setRequestOpen({ kind: "add" });
+                  } else {
+                    setShowAdd(!showAdd);
+                  }
+                }}
+                title={lockState?.locked ? "Roster locked — request a change instead" : undefined}
                 className="flex items-center gap-2 bg-red hover:bg-red-hover text-white px-4 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors"
               >
                 <Plus className="w-4 h-4" aria-hidden="true" />
-                Add Player
+                {lockState?.locked ? "Request Add" : "Add Player"}
               </button>
             </div>
           )}
@@ -261,6 +280,49 @@ export default function RosterPage() {
             <XCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           )}
           {feedback.message}
+        </div>
+      )}
+
+      {/* Roster lock banner */}
+      {lockState && (
+        <div
+          className={
+            "mb-4 rounded-xl p-4 flex items-start gap-3 " +
+            (lockState.locked
+              ? "bg-red/10 border border-red/30 text-red"
+              : (lockState.hoursUntilLock ?? 99) < 6
+              ? "bg-amber-50 border border-amber-200 text-amber-800"
+              : "bg-blue-50 border border-blue-200 text-blue-800")
+          }
+        >
+          <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold">
+              {lockState.locked ? "Roster locked" : "Roster lock"}
+              {": "}
+              {lockState.tournamentName}
+            </p>
+            {lockState.locked ? (
+              <p className="text-xs mt-0.5">
+                Edits now require admin approval — file a change request below.
+              </p>
+            ) : (
+              <p className="text-xs mt-0.5">
+                Locks {lockState.hoursUntilLock != null ? `in ${formatHours(lockState.hoursUntilLock)}` : "soon"} ·
+                {" "}
+                {lockState.lockHoursBefore}h before tip-off
+              </p>
+            )}
+          </div>
+          {lockState.locked && (
+            <button
+              type="button"
+              onClick={() => setRequestOpen({ kind: "add" })}
+              className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg bg-red text-white hover:bg-red-hover"
+            >
+              Request change
+            </button>
+          )}
         </div>
       )}
 
@@ -494,6 +556,22 @@ export default function RosterPage() {
             fetchRoster();
           }}
           onError={(msg) => setFeedback({ type: "error", message: msg })}
+        />
+      )}
+
+      {requestOpen && lockState && (
+        <ChangeRequestModal
+          kind={requestOpen.kind}
+          tournamentId={lockState.tournamentId}
+          tournamentName={lockState.tournamentName}
+          playerId={requestOpen.playerId}
+          playerName={requestOpen.playerName}
+          onClose={() => setRequestOpen(null)}
+          onSubmitted={() => {
+            setRequestOpen(null);
+            setFeedback({ type: "success", message: "Change request sent to admin" });
+          }}
+          onError={(m) => setFeedback({ type: "error", message: m })}
         />
       )}
 
@@ -731,6 +809,172 @@ function EditPlayerModal({
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />}
               Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Roster lock helpers + change-request modal ─────────────────────
+function formatHours(h: number): string {
+  if (h <= 0) return "now";
+  if (h < 1) return `${Math.round(h * 60)}m`;
+  if (h < 24) return `${Math.round(h)}h`;
+  return `${Math.round(h / 24)}d`;
+}
+
+function ChangeRequestModal({
+  kind,
+  tournamentId,
+  tournamentName,
+  playerId,
+  playerName,
+  onClose,
+  onSubmitted,
+  onError,
+}: {
+  kind: "add" | "remove" | "edit";
+  tournamentId: number;
+  tournamentName: string;
+  playerId?: number;
+  playerName?: string;
+  onClose: () => void;
+  onSubmitted: () => void;
+  onError: (msg: string) => void;
+}) {
+  const [name, setName] = useState(playerName || "");
+  const [jersey, setJersey] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [grade, setGrade] = useState("");
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!reason.trim() || reason.trim().length < 5) {
+      onError("Please include a short reason (e.g. 'starter injured day-of')");
+      return;
+    }
+    setBusy(true);
+    try {
+      const payload: Record<string, unknown> = {};
+      if (kind === "add") {
+        if (!name.trim()) {
+          onError("Name required");
+          setBusy(false);
+          return;
+        }
+        payload.name = name.trim();
+        if (jersey) payload.jerseyNumber = jersey;
+        if (birthDate) payload.birthDate = birthDate;
+        if (grade) payload.grade = grade;
+      } else if (kind === "remove" && playerId) {
+        payload.playerId = playerId;
+        payload.name = playerName;
+      } else if (kind === "edit" && playerId) {
+        payload.playerId = playerId;
+        if (name) payload.name = name;
+        if (jersey) payload.jerseyNumber = jersey;
+        if (birthDate) payload.birthDate = birthDate;
+        if (grade) payload.grade = grade;
+      }
+      const res = await fetch("/api/portal/roster-change-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind, tournamentId, payload, reason: reason.trim() }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        onError(d.error || `Failed (${res.status})`);
+        return;
+      }
+      onSubmitted();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[80] bg-black/50 flex items-center justify-center p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="bg-white rounded-xl w-full max-w-md p-5">
+        <h2 className="text-navy text-lg font-bold">Request roster change</h2>
+        <p className="text-text-muted text-xs mt-1">
+          For <span className="font-semibold">{tournamentName}</span>. Admin will review + approve.
+        </p>
+        <form onSubmit={submit} className="space-y-3 mt-4">
+          {kind !== "remove" && (
+            <>
+              <div>
+                <label className="block text-text-muted text-[10px] uppercase tracking-wider font-bold mb-1">Player Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required={kind === "add"}
+                  className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-text-muted text-[10px] uppercase tracking-wider font-bold mb-1">Jersey #</label>
+                  <input
+                    type="text"
+                    value={jersey}
+                    onChange={(e) => setJersey(e.target.value)}
+                    className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red"
+                  />
+                </div>
+                <div>
+                  <label className="block text-text-muted text-[10px] uppercase tracking-wider font-bold mb-1">Grade</label>
+                  <input
+                    type="text"
+                    value={grade}
+                    onChange={(e) => setGrade(e.target.value)}
+                    className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-text-muted text-[10px] uppercase tracking-wider font-bold mb-1">Birth Date</label>
+                <input
+                  type="date"
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
+                  className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red"
+                />
+              </div>
+            </>
+          )}
+          <div>
+            <label className="block text-text-muted text-[10px] uppercase tracking-wider font-bold mb-1">Reason (required)</label>
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              rows={3}
+              maxLength={500}
+              required
+              placeholder="e.g. Starter twisted ankle in warmups, need to swap in #15"
+              className="w-full bg-off-white border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red"
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-1">
+            <button type="button" onClick={onClose} className="px-3 py-2 text-sm text-text-muted hover:text-navy">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={busy}
+              className="inline-flex items-center gap-2 bg-red hover:bg-red-hover disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-bold"
+            >
+              {busy && <Loader2 className="w-4 h-4 animate-spin" />}
+              Send request
             </button>
           </div>
         </form>

@@ -47,6 +47,17 @@ export default function CheckInHeader({
         >
           <Tv className="w-3.5 h-3.5" aria-hidden="true" /> Lobby Board
         </Link>
+        {/* Staff war-room — denser, DB-driven, shows conflicts +
+            late flags + live feed. Distinct from Lobby Board (which
+            is the parent-facing wall display). */}
+        <Link
+          href="/admin/checkin/warroom"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 bg-navy/80 hover:bg-navy text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 min-h-[44px] rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 focus-visible:outline-none"
+        >
+          <Tv className="w-3.5 h-3.5" aria-hidden="true" /> War Room
+        </Link>
         <a
           href="https://receptive-garage-315.notion.site/a9ade37afede4d299b43707e3f4f97b5?v=a4e7fb8f098e4388b2d69e228cd110ee"
           target="_blank"

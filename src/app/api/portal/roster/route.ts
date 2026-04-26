@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { players, teams, waivers } from "@/lib/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { players, teams, waivers, tournaments, tournamentRegistrations } from "@/lib/db/schema";
+import { eq, and, sql, desc, gte } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { checkEligibility } from "@/lib/eligibility";
-import { findIntraTeamConflicts } from "@/lib/roster-conflicts";
+import { findIntraTeamConflicts, isRosterLocked, hoursUntilRosterLock } from "@/lib/roster-conflicts";
 
 // Sanity caps — coach UI prevents these but the API needs its own
 // belt-and-braces in case someone POSTs raw JSON.
@@ -15,6 +15,39 @@ const NAME_MAX = 100;
 const JERSEY_MAX = 10;
 const GRADE_MAX = 20;
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Block edits when the soonest tournament is inside the lock window.
+ * Routes the coach to the change-request flow instead. Returns null
+ * when not locked. */
+async function rosterLockedFor(teamName: string): Promise<{ locked: true; reason: string } | null> {
+  const nowIso = new Date().toISOString();
+  const upcoming = await db
+    .select({
+      startDate: tournaments.startDate,
+      lockHoursBefore: tournaments.rosterLockHoursBefore,
+      tournamentName: tournaments.name,
+    })
+    .from(tournamentRegistrations)
+    .innerJoin(tournaments, eq(tournaments.id, tournamentRegistrations.tournamentId))
+    .where(
+      and(
+        sql`lower(${tournamentRegistrations.teamName}) = ${teamName.toLowerCase()}`,
+        gte(tournaments.startDate, nowIso),
+      ),
+    )
+    .orderBy(tournaments.startDate)
+    .limit(1);
+  if (upcoming.length === 0) return null;
+  const u = upcoming[0];
+  if (isRosterLocked(u.startDate, u.lockHoursBefore || 24)) {
+    return {
+      locked: true,
+      reason: `Roster locked for ${u.tournamentName}. File a change request from /portal/roster.`,
+    };
+  }
+  return null;
+}
 
 // GET /api/portal/roster — get roster for coach's team
 export async function GET() {
@@ -74,8 +107,53 @@ export async function GET() {
 
     const conflicts = await findIntraTeamConflicts(team.id);
 
+    // Find the soonest upcoming tournament this team is registered
+    // for. Used by the UI to show "Roster locks in X hours" + disable
+    // edits once we're inside the lock window.
+    let lockState: {
+      tournamentId: number;
+      tournamentName: string;
+      startDate: string;
+      lockHoursBefore: number;
+      hoursUntilLock: number | null;
+      locked: boolean;
+    } | null = null;
+    try {
+      const nowIso = new Date().toISOString();
+      const upcoming = await db
+        .select({
+          tournamentId: tournaments.id,
+          tournamentName: tournaments.name,
+          startDate: tournaments.startDate,
+          lockHoursBefore: tournaments.rosterLockHoursBefore,
+        })
+        .from(tournamentRegistrations)
+        .innerJoin(tournaments, eq(tournaments.id, tournamentRegistrations.tournamentId))
+        .where(
+          and(
+            sql`lower(${tournamentRegistrations.teamName}) = ${team.name.toLowerCase()}`,
+            gte(tournaments.startDate, nowIso),
+          ),
+        )
+        .orderBy(tournaments.startDate)
+        .limit(1);
+      if (upcoming.length > 0) {
+        const u = upcoming[0];
+        lockState = {
+          tournamentId: u.tournamentId,
+          tournamentName: u.tournamentName,
+          startDate: u.startDate,
+          lockHoursBefore: u.lockHoursBefore || 24,
+          hoursUntilLock: hoursUntilRosterLock(u.startDate, u.lockHoursBefore || 24),
+          locked: isRosterLocked(u.startDate, u.lockHoursBefore || 24),
+        };
+      }
+    } catch {
+      /* lock state is best-effort */
+    }
+
     return NextResponse.json(
-      { team, players: enriched, conflicts },
+      { team, players: enriched, conflicts, lockState },
       {
         headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=60" },
       }
@@ -109,6 +187,13 @@ export async function POST(request: NextRequest) {
       { error: "No team assigned. Contact admin." },
       { status: 404 }
     );
+  }
+
+  // Lock window enforcement — coach edits inside the window must
+  // route through /api/portal/roster-change-requests.
+  const lock = await rosterLockedFor(team.name);
+  if (lock) {
+    return NextResponse.json({ error: lock.reason, locked: true }, { status: 423 });
   }
 
   let body: Record<string, unknown>;
@@ -238,6 +323,11 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "No team assigned" }, { status: 404 });
   }
 
+  const lock = await rosterLockedFor(team.name);
+  if (lock) {
+    return NextResponse.json({ error: lock.reason, locked: true }, { status: 423 });
+  }
+
   const [existing] = await db
     .select()
     .from(players)
@@ -337,6 +427,11 @@ export async function DELETE(request: NextRequest) {
 
   if (!team) {
     return NextResponse.json({ error: "No team assigned" }, { status: 404 });
+  }
+
+  const lock = await rosterLockedFor(team.name);
+  if (lock) {
+    return NextResponse.json({ error: lock.reason, locked: true }, { status: 423 });
   }
 
   try {

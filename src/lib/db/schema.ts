@@ -115,6 +115,10 @@ export const players = sqliteTable("players", {
   // where age fraud has consequences. Stored as a base64 data URL
   // (capped client-side ~150KB) OR external https:// URL.
   photoUrl: text("photo_url"),
+  // NFC tag UID — assigned to a wristband/lanyard for tap-to-check-in.
+  // Unique so a tag can only be bound to one player at a time. Web
+  // NFC reads the UID; we look up the player and write a check-in.
+  nfcUid: text("nfc_uid").unique(),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
@@ -2282,6 +2286,106 @@ export const inquiryNotes = sqliteTable("inquiry_notes", {
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 }, (table) => [
   index("inquiry_notes_inquiry_idx").on(table.inquiryId),
+]);
+
+// ── Roster attestations (coach signs the roster at check-in) ─────────
+// Coach taps "I confirm this roster is accurate, all players are
+// eligible, all waivers are signed" before their first game. Captures
+// a typed name + optional drawn signature (reuses the waiver pad).
+// Locks the roster for that tournament + creates league-grade legal
+// evidence.
+export const rosterAttestations = sqliteTable("roster_attestations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  tournamentId: integer("tournament_id")
+    .notNull()
+    .references(() => tournaments.id, { onDelete: "cascade" }),
+  teamId: integer("team_id")
+    .notNull()
+    .references(() => teams.id, { onDelete: "cascade" }),
+  coachUserId: integer("coach_user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  signedByName: text("signed_by_name").notNull(),
+  signatureDataUrl: text("signature_data_url"),
+  // Snapshot of the roster IDs at attestation time so a later edit
+  // can be reconciled against what was sworn to.
+  rosterSnapshotJson: text("roster_snapshot_json"),
+  attestedAt: text("attested_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("attestations_tournament_team_idx").on(table.tournamentId, table.teamId),
+]);
+
+// ── Roster substitutes (game-day fill-in pulled from another team) ───
+// Different from walk-in (which creates a fresh player row). A
+// substitute is a player who already exists on a different team's
+// roster — coach pulls them in for one tournament. Tracked separately
+// so it doesn't pollute the source team's stats / history.
+export const rosterSubstitutes = sqliteTable("roster_substitutes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  sourcePlayerId: integer("source_player_id")
+    .notNull()
+    .references(() => players.id, { onDelete: "cascade" }),
+  hostTeamId: integer("host_team_id")
+    .notNull()
+    .references(() => teams.id, { onDelete: "cascade" }),
+  tournamentId: integer("tournament_id").references(() => tournaments.id, {
+    onDelete: "set null",
+  }),
+  addedBy: integer("added_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  approvedBy: integer("approved_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  approvedAt: text("approved_at"),
+  status: text("status", { enum: ["pending", "approved", "rejected"] })
+    .notNull()
+    .default("pending"),
+  notes: text("notes"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("substitutes_host_idx").on(table.hostTeamId, table.tournamentId),
+  index("substitutes_source_idx").on(table.sourcePlayerId),
+]);
+
+// ── Roster change requests (after lock window) ───────────────────────
+// Once the roster lock window passes, coach edits route through here:
+// they request the change, admin approves/rejects. Payload stores the
+// proposed mutation so admin sees exactly what they're approving.
+export const rosterChangeRequests = sqliteTable("roster_change_requests", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  teamId: integer("team_id")
+    .notNull()
+    .references(() => teams.id, { onDelete: "cascade" }),
+  tournamentId: integer("tournament_id").references(() => tournaments.id, {
+    onDelete: "set null",
+  }),
+  requestedBy: integer("requested_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  // What's being changed: "add", "remove", "edit", "substitute".
+  kind: text("kind", { enum: ["add", "remove", "edit", "substitute"] }).notNull(),
+  // Free-form JSON payload — fields depend on `kind`.
+  payloadJson: text("payload_json"),
+  reason: text("reason"),
+  status: text("status", { enum: ["pending", "approved", "rejected"] })
+    .notNull()
+    .default("pending"),
+  decidedBy: integer("decided_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  decidedAt: text("decided_at"),
+  decisionNote: text("decision_note"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("change_requests_team_idx").on(table.teamId, table.status),
+  index("change_requests_tournament_idx").on(table.tournamentId, table.status),
 ]);
 
 // ── Short links / redirects (#5 marketing) ───────────────────────────

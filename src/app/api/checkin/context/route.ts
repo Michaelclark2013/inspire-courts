@@ -59,23 +59,41 @@ export async function GET(req: NextRequest) {
     rosterRows = rosterRows.filter((p) => p.parentUserId === userId);
   }
 
-  // Already checked in for this tournament — we mark green chips per
-  // player so the bulk action knows what to skip.
+  // Already checked in for this tournament — scoped to TODAY (Phoenix
+  // time) so multi-day weekend events show day-2 as "tap to recheck"
+  // not "already checked in yesterday so we're done".
   const playerIds = rosterRows.map((p) => p.id).filter((id) => id != null);
-  let alreadyCheckedIn = new Set<number>();
+  const todayStart = (() => {
+    const phx = -7 * 60 * 60 * 1000;
+    const d = new Date(Date.now() + phx);
+    d.setUTCHours(0, 0, 0, 0);
+    return new Date(d.getTime() - phx).toISOString();
+  })();
+  let alreadyToday = new Set<number>();
+  let priorDay = new Set<number>();
   if (playerIds.length > 0) {
-    const since = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
-    const rows = await db
+    const todayRows = await db
       .select({ playerId: checkins.playerId })
       .from(checkins)
       .where(
         and(
           eq(checkins.tournamentId, tournamentId),
           inArray(checkins.playerId, playerIds),
-          gte(checkins.timestamp, since),
+          gte(checkins.timestamp, todayStart),
         ),
       );
-    alreadyCheckedIn = new Set(rows.map((r) => r.playerId).filter((id): id is number => id != null));
+    alreadyToday = new Set(todayRows.map((r) => r.playerId).filter((id): id is number => id != null));
+    const priorRows = await db
+      .select({ playerId: checkins.playerId })
+      .from(checkins)
+      .where(
+        and(
+          eq(checkins.tournamentId, tournamentId),
+          inArray(checkins.playerId, playerIds),
+          sql`${checkins.timestamp} < ${todayStart}`,
+        ),
+      );
+    priorDay = new Set(priorRows.map((r) => r.playerId).filter((id): id is number => id != null));
   }
 
   const enrichedRoster = rosterRows.map((p) => ({
@@ -85,7 +103,8 @@ export async function GET(req: NextRequest) {
       division: p.division || ctx.team.division,
       seasonStart: ctx.tournament.startDate,
     }),
-    checkedIn: p.id != null && alreadyCheckedIn.has(p.id),
+    checkedIn: p.id != null && alreadyToday.has(p.id),
+    priorDayCheckin: p.id != null && priorDay.has(p.id) && !alreadyToday.has(p.id),
   }));
 
   // Wayfinding — find the team's next game today.

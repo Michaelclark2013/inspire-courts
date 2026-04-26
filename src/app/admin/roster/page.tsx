@@ -129,7 +129,7 @@ export default function RosterPage() {
               front_desk exists + is approved, the staff_profile row is
               created from the user-detail screen. */}
           <a
-            href="/admin/users?role=staff"
+            href="/admin/users?role=staff&new=1"
             className="bg-red hover:bg-red-hover text-white font-bold uppercase tracking-wider px-3 py-2 rounded-md text-sm flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-2"
             title="Create or invite a new staff member"
           >

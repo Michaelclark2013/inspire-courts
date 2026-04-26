@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   UserPlus,
@@ -72,6 +73,19 @@ export default function UsersPage() {
   // Search & filter
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+
+  // Honor `?role=staff&new=1` deep-links from the staff roster's
+  // "+ Add Staff" button — pre-seed the filter and pop the create form
+  // so the rep lands one click away from creating the account they came
+  // here for, instead of staring at an unfiltered list.
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const r = searchParams.get("role");
+    if (r) setRoleFilter(r);
+    if (searchParams.get("new") === "1") setShowForm(true);
+    // Run once on mount only; subsequent param edits should not retoggle.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Derived: apply role + search filter. Memoized so we don't re-scan
   // userList on unrelated state changes (copied-email flash, confirmDelete

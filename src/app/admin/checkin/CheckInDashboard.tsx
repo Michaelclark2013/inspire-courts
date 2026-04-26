@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
-import { Users } from "lucide-react";
+import { Users, Undo2, X } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type {
   CheckInDashboardProps,
@@ -44,6 +44,34 @@ export default function CheckInDashboard({
   // Prefill state for quick check-in from team card
   const [prefillTeam, setPrefillTeam] = useState("");
   const [prefillDivision, setPrefillDivision] = useState("");
+
+  // Undo snackbar state — shown for ~8s after each successful check-in.
+  // Stores the DB row id so the Undo button can DELETE it. We only
+  // track the most recent check-in; an earlier undo'able row is auto-
+  // cleared when a new one comes in.
+  const [undoTarget, setUndoTarget] = useState<{ id: number; name: string; team: string } | null>(null);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+  }, []);
+  const showUndo = useCallback((row: { id: number; name: string; team: string }) => {
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    setUndoTarget(row);
+    undoTimerRef.current = setTimeout(() => setUndoTarget(null), 8000);
+  }, []);
+  const performUndo = useCallback(async () => {
+    if (!undoTarget) return;
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    const target = undoTarget;
+    setUndoTarget(null);
+    try {
+      await fetch(`/api/admin/checkin?id=${target.id}`, { method: "DELETE" });
+      // Soft-refresh the team list so the row's effect on team status flips back.
+      handleRefresh();
+    } catch {
+      /* ignore — front desk can re-check-in if undo fails */
+    }
+  }, [undoTarget]);
 
   // ---------- debounced search ----------
   const debouncedSearch = useDebounce(searchQuery, 200);
@@ -184,7 +212,10 @@ export default function CheckInDashboard({
           handleCheckInUpdate({ ...optimistic, id, pending: false, name: `❌ ${playerLabel} — ${data.error || "failed"}` });
           return;
         }
+        const json = await res.json().catch(() => null);
+        const dbId = json?.checkin?.id as number | undefined;
         handleCheckInUpdate({ ...optimistic, pending: false });
+        if (dbId) showUndo({ id: dbId, name: playerLabel, team: team.teamName });
         // Trigger a fresh fetch of teams so this team's status flips
         // to "checked in" without a full page reload.
         await handleRefresh();
@@ -192,7 +223,7 @@ export default function CheckInDashboard({
         setBulkTeamId(null);
       }
     },
-    [bulkTeamId, handleCheckInUpdate, handleRefresh]
+    [bulkTeamId, handleCheckInUpdate, handleRefresh, showUndo]
   );
 
   // ---------- empty state message ----------
@@ -263,10 +294,42 @@ export default function CheckInDashboard({
             prefillTeam={prefillTeam}
             prefillDivision={prefillDivision}
             onCheckInSuccess={handleCheckInUpdate}
+            onCheckInSaved={showUndo}
           />
           <RecentCheckIns checkins={recentCheckins} />
         </div>
       </div>
+
+      {/* Undo snackbar — bottom-fixed, mobile-safe. Auto-dismisses
+          after 8s; tapping Undo issues DELETE /api/admin/checkin?id=. */}
+      {undoTarget && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed inset-x-0 bottom-0 z-[60] px-3 pb-3 pointer-events-none"
+          style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+        >
+          <div className="pointer-events-auto mx-auto max-w-md bg-navy text-white rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm truncate">Checked in: {undoTarget.name}</p>
+              <p className="text-white/60 text-xs truncate">{undoTarget.team}</p>
+            </div>
+            <button
+              onClick={performUndo}
+              className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              <Undo2 className="w-3.5 h-3.5" /> Undo
+            </button>
+            <button
+              onClick={() => setUndoTarget(null)}
+              aria-label="Dismiss"
+              className="text-white/60 hover:text-white p-1"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Live region for screen readers */}
       <div aria-live="polite" className="sr-only">

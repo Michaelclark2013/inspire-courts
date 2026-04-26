@@ -204,3 +204,47 @@ export async function POST(request: NextRequest) {
   // Return 201 for create consistency with every other admin create endpoint.
   return NextResponse.json(responseBody, { status: 201 });
 }
+
+// DELETE /api/admin/checkin?id=<n>
+//
+// Undo a check-in. Front desk fat-fingers happen — coach was checking
+// in the WRONG team and we marked the wrong roster as here. Without
+// undo, the rep had to wait for an admin to manually delete the row
+// from the DB / sheet.
+//
+// Idempotent: deleting an id that's already gone returns ok with
+// deleted=0 instead of 404 so the snackbar's Undo button can be
+// double-tapped without confusing the user.
+export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.role || !ALLOWED_ROLES.includes(session.user.role)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const sp = request.nextUrl.searchParams;
+  const idStr = sp.get("id");
+  const id = Number(idStr);
+  if (!Number.isInteger(id) || id <= 0) {
+    return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+  }
+
+  // Light per-user rate limit so the undo endpoint can't be looped to
+  // mass-delete rows.
+  const ip = getClientIp(request);
+  if (isRateLimited(`admin-checkin-undo:${session.user.id}:${ip}`, 60, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many undo requests. Slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+
+  try {
+    const removed = await db
+      .delete(checkins)
+      .where(eq(checkins.id, id))
+      .returning();
+    return NextResponse.json({ ok: true, deleted: removed.length });
+  } catch (err) {
+    logger.error("Failed to undo check-in", { error: String(err), id });
+    return NextResponse.json({ error: "Failed to undo" }, { status: 500 });
+  }
+}

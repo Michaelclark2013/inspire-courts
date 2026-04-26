@@ -7,12 +7,18 @@ import type { TeamStatus, RecentCheckin } from "@/types/checkin";
 import { relativeTime } from "@/lib/relative-time";
 import { useOfflineSync } from "@/hooks/useOfflineSync";
 
+/** Callback fired with the persisted DB row id after a successful
+ *  POST so the dashboard can show a snackbar with an Undo button.
+ *  Optional — older callers that don't care about undo can omit it. */
+export type CheckInSaved = { id: number; name: string; team: string };
+
 interface CheckInFormProps {
   teams: TeamStatus[];
   divisions: string[];
   prefillTeam: string;
   prefillDivision: string;
   onCheckInSuccess: (entry: RecentCheckin) => void;
+  onCheckInSaved?: (saved: CheckInSaved) => void;
 }
 
 export default function CheckInForm({
@@ -21,6 +27,7 @@ export default function CheckInForm({
   prefillTeam,
   prefillDivision,
   onCheckInSuccess,
+  onCheckInSaved,
 }: CheckInFormProps) {
   const [playerName, setPlayerName] = useState("");
   const [teamName, setTeamName] = useState("");
@@ -107,6 +114,17 @@ export default function CheckInForm({
           triggerHaptic("light");
           // Confirm optimistic entry
           onCheckInSuccess({ ...optimisticEntry, pending: false });
+          // Hand the dashboard the persisted DB id so it can show
+          // an Undo snackbar tied to the actual row.
+          if (onCheckInSaved) {
+            try {
+              const json = await res.clone().json();
+              const dbId = json?.checkin?.id as number | undefined;
+              if (dbId) {
+                onCheckInSaved({ id: dbId, name: playerName.trim(), team: teamName.trim() });
+              }
+            } catch { /* response wasn't JSON-shaped — skip undo wiring */ }
+          }
           setPlayerName("");
           setSuccess(true);
           setTimeout(() => setSuccess(false), 2000);

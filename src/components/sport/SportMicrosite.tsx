@@ -38,7 +38,16 @@ function buildJsonLd(config: SportConfig): object[] {
       acceptedAnswer: { "@type": "Answer", text: f.a },
     })),
   };
-  return [localBusiness, faq];
+  // Breadcrumb so SERPs can render Home › <Sport>.
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: config.name, item: sportUrl },
+    ],
+  };
+  return [localBusiness, faq, breadcrumb];
 }
 
 // Server-rendered (no "use client") so each sport page is fully

@@ -45,10 +45,27 @@ export default function ClubInterestForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (res.ok) setSubmitted(true);
-      else setFormError(`Something went wrong. Please email ${FACILITY_EMAIL} directly.`);
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        // Status-aware fallback: surface the server's reason if the
+        // body parses as JSON, otherwise pick a copy that matches the
+        // status family so users know whether to retry, slow down, or
+        // give up and email.
+        const body = await res.json().catch(() => null);
+        const fromServer = typeof body?.error === "string" ? body.error : null;
+        if (fromServer) {
+          setFormError(fromServer);
+        } else if (res.status === 429) {
+          setFormError(`Hit a rate limit. Please wait a minute or email ${FACILITY_EMAIL}.`);
+        } else if (res.status >= 500) {
+          setFormError(`Our server hiccuped. Please try again or email ${FACILITY_EMAIL}.`);
+        } else {
+          setFormError(`Something went wrong. Please email ${FACILITY_EMAIL} directly.`);
+        }
+      }
     } catch {
-      setFormError(`Something went wrong. Please email ${FACILITY_EMAIL} directly.`);
+      setFormError(`Network issue. Please try again or email ${FACILITY_EMAIL} directly.`);
     } finally {
       setLoading(false);
     }

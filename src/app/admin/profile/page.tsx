@@ -237,7 +237,7 @@ export default function MyProfilePage() {
                 <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={ipt} />
               </Field>
               <Field label="Phone">
-                <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={ipt} placeholder="(555) 123-4567" />
+                <input type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={ipt} placeholder="(555) 123-4567" />
               </Field>
               <div className="sm:col-span-2">
                 <Field label="Profile Photo URL">
@@ -261,7 +261,7 @@ export default function MyProfilePage() {
                 <input value={form.emergencyContactName} onChange={(e) => setForm({ ...form, emergencyContactName: e.target.value })} className={ipt} />
               </Field>
               <Field label="Phone">
-                <input value={form.emergencyContactPhone} onChange={(e) => setForm({ ...form, emergencyContactPhone: e.target.value })} className={ipt} placeholder="(555) 123-4567" />
+                <input type="tel" inputMode="tel" autoComplete="tel" value={form.emergencyContactPhone} onChange={(e) => setForm({ ...form, emergencyContactPhone: e.target.value })} className={ipt} placeholder="(555) 123-4567" />
               </Field>
             </div>
           </Card>

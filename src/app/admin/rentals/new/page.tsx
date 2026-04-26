@@ -227,7 +227,7 @@ export default function NewRentalPage() {
             </div>
             <div>
               <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Phone</label>
-              <input value={renterPhone} onChange={(e) => setRenterPhone(e.target.value)} className={ipt} />
+              <input type="tel" inputMode="tel" value={renterPhone} onChange={(e) => setRenterPhone(e.target.value)} className={ipt} />
             </div>
             <div>
               <label className="block text-navy text-xs font-bold uppercase tracking-wider mb-1.5">Purpose</label>

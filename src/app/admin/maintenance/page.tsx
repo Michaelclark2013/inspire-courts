@@ -49,6 +49,10 @@ export default function MaintenancePage() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Ticket | null>(null);
+  // Status-change errors — without this, dragging a ticket from "open"
+  // to "in_progress" silently failed when the row had been updated by
+  // another admin (stale id).
+  const [statusError, setStatusError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -68,11 +72,21 @@ export default function MaintenancePage() {
   useEffect(() => { if (status === "authenticated") load(); }, [status, load]);
 
   async function updateStatus(id: number, next: Ticket["status"]) {
-    await fetch("/api/admin/maintenance", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status: next }),
-    });
-    load();
+    setStatusError(null);
+    try {
+      const res = await fetch("/api/admin/maintenance", {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: next }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setStatusError(data.error || `Couldn't update ticket (${res.status}).`);
+        return;
+      }
+      load();
+    } catch {
+      setStatusError("Network error. Try again.");
+    }
   }
 
   if (status === "loading") return null;
@@ -110,6 +124,13 @@ export default function MaintenancePage() {
           </button>
         </div>
       </div>
+
+      {statusError && (
+        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
+          <p className="text-navy text-sm font-semibold">{statusError}</p>
+          <button onClick={() => setStatusError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
+        </div>
+      )}
 
       {loading ? (
         <SkeletonRows count={5} />

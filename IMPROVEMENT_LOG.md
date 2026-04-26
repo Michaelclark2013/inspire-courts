@@ -545,3 +545,36 @@
 
 ### Build Status
 - ✅ PASS — `npm run build` clean (251 pages, 0 TypeScript errors, 0 TS errors)
+
+---
+
+## 2026-04-26 — Automated Improvement Run (silent-mutation + CSV-export sweep)
+
+### Summary
+- 23 issues found, 23 fixed across 22 commits
+
+### Real bugs fixed (not just polish)
+- **Security page audit feed was always empty** — read `data.rows` from an API that returns `data.data`, so the "live feed of permission-related activity" never populated. Wrong response key, fixed both fallback chain and namespace match.
+- **Inquiries bulk-status updates ran sequentially** — `await fetch` in a for-loop made 20+ row transitions feel hung. Switched to `Promise.allSettled` parallel + partial-failure surface.
+- **api-key + webhook DELETE silently no-op'd missing rows** — drizzle returns 0 rows affected without erroring, so the UI got 200 OK and proceeded as if the revoke happened. Now SELECT-first + 404 + cleaner audit log. Same fix to expense + gym-event DELETEs.
+- **CSV exports rendered mojibake on accented chars** — every admin CSV endpoint joined with LF and missed the UTF-8 BOM. Centralized `csvBody` helper in `lib/api-helpers`, migrated 6 endpoints + the client-side `exportCSV`. Excel-compat across the board.
+- **Audit-log API didn't validate before/since timestamps** — bad ISO strings silently returned zero rows instead of 400. Now Number.isNaN'd before pushing into `where`.
+
+### Silent-mutation cleanup (12 surfaces)
+- audit-log, time-off, integrations (api-keys + webhooks), expenses, roster, membership-plans, programs/[id], maintenance, certifications, equipment, availability, workouts — all routed via the new shared `ErrorBanner` component (`src/components/ui/ErrorBanner.tsx`). Net –32 LOC, future use sites are a one-liner.
+- Plus: ViewAs banner exit, profile resend-verification, owner snapshot, launch-status load, billing chargeNow, scheduler applyAll, permissions reset/view-as, inquiries note-save patch.
+
+### New features
+- **Audit-log time chips**: Last hour / Today / Last 24h / Last 7d quick filters (`?since=<ISO>`) for incident triage.
+- **Audit-log click-to-filter**: action / entity / actor cells now clickable; tap actor to see what else they did, tap action to find every other instance.
+- **Inquiries click-to-filter**: kind/sport/source row chips push into search/filter.
+- **Leads source pill** click-to-filter.
+
+### Refactors
+- `csvBody` + `UTF8_BOM` exports + tests in `lib/api-helpers` (RFC 4180 CRLF + BOM).
+- `ErrorBanner` shared component.
+- 7 admin pages migrated from inline duplicated banner JSX → `<ErrorBanner>`.
+
+### Build + Tests
+- ✅ PASS — `npm run build` clean (269 pages, 0 TypeScript errors)
+- ✅ PASS — `npx vitest run` 209 tests across 15 files (added 3 new csvBody tests)

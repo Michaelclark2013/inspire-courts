@@ -122,6 +122,10 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Inspire Courts AZ",
+  // alternateName helps Google reconcile branded queries that use the
+  // shorter form ("Inspire Courts") or drop the "AZ" — both forms show
+  // up in our Search Console queries.
+  alternateName: ["Inspire Courts", "Inspire Athletics"],
   url: SITE_URL,
   logo: `${SITE_URL}/images/inspire-athletics-logo.png`,
   email: FACILITY_EMAIL,

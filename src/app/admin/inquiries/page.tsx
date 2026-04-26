@@ -510,10 +510,84 @@ export default function InquiriesPage() {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-navy font-semibold truncate">
                         {r.name}
-                        <span className="text-text-muted text-xs ml-2 font-normal">{getKindLabel(r.kind)}</span>
+                        {/* Click kind label → filter to just that kind.
+                            Same pattern as audit-log click-to-filter:
+                            span with role=button + stopPropagation so
+                            the row's outer button (open detail) doesn't
+                            also fire. */}
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setFilterKind(r.kind === filterKind ? "" : r.kind);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setFilterKind(r.kind === filterKind ? "" : r.kind);
+                            }
+                          }}
+                          className="text-text-muted text-xs ml-2 font-normal hover:text-navy hover:underline cursor-pointer focus-visible:outline-none focus-visible:underline"
+                          title="Filter to this kind"
+                        >
+                          {getKindLabel(r.kind)}
+                        </span>
                       </p>
                       <p className="text-xs text-text-muted truncate">
-                        {r.phone || r.email || "—"}{r.sports ? ` · ${r.sports}` : ""}{r.source ? ` · ${r.source}` : ""}
+                        {r.phone || r.email || "—"}
+                        {r.sports && (
+                          <>
+                            {" · "}
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setSearch(r.sports || "");
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setSearch(r.sports || "");
+                                }
+                              }}
+                              className="hover:text-navy hover:underline cursor-pointer focus-visible:outline-none focus-visible:underline"
+                              title="Search this sport"
+                            >
+                              {r.sports}
+                            </span>
+                          </>
+                        )}
+                        {r.source && (
+                          <>
+                            {" · "}
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setSearch(r.source || "");
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setSearch(r.source || "");
+                                }
+                              }}
+                              className="hover:text-navy hover:underline cursor-pointer focus-visible:outline-none focus-visible:underline"
+                              title="Search this source"
+                            >
+                              {r.source}
+                            </span>
+                          </>
+                        )}
                       </p>
                     </div>
                     {overdue && (

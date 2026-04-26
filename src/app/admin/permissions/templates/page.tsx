@@ -14,6 +14,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
+import { PAGE_GROUPS as CENTRAL_PAGE_GROUPS } from "@/lib/permissions";
+import { adminFetch } from "@/lib/admin-fetch";
 
 type PageEntry = { page: string; granted: boolean };
 
@@ -28,19 +30,12 @@ type Template = {
 
 type ParsedTemplate = Template & { pages: PageEntry[] };
 
-// Admin page list — mirrors AdminPage in lib/permissions. Duplicated
-// here so this page doesn't import the whole module.
-const PAGE_GROUPS: Array<{ heading: string; keys: string[] }> = [
-  { heading: "Overview", keys: ["overview", "search", "health"] },
-  { heading: "Events", keys: ["tournaments", "teams", "players", "programs"] },
-  { heading: "Game Day", keys: ["score_entry", "scores", "checkin"] },
-  { heading: "Staff", keys: ["roster", "staff_refs", "timeclock", "shifts", "payroll", "certifications", "time_off", "approvals"] },
-  { heading: "Members + Revenue", keys: ["members", "revenue", "leads", "prospects", "sponsors"] },
-  { heading: "Facility", keys: ["resources", "equipment", "maintenance", "schools"] },
-  { heading: "Content & Comms", keys: ["announcements", "content", "files"] },
-  { heading: "Admin", keys: ["users", "audit_log", "analytics", "contacts", "portal"] },
-  { heading: "Personal", keys: ["my_schedule", "my_history"] },
-];
+// Source from lib/permissions so a new page added there appears in
+// templates without a parallel edit. The local fork was missing every
+// cycle 1+2 page (owner/billing/churn/inquiries/workouts/scheduler/
+// inbox/integrations) — templates couldn't grant access to them.
+const PAGE_GROUPS: Array<{ heading: string; keys: string[] }> =
+  CENTRAL_PAGE_GROUPS.map((g) => ({ heading: g.heading, keys: g.pages.slice() }));
 
 function parseTemplate(t: Template): ParsedTemplate {
   let pages: PageEntry[] = [];
@@ -59,12 +54,17 @@ export default function TemplatesPage() {
   const load = useCallback(async () => {
     try {
       setError(null);
-      const res = await fetch("/api/admin/permissions/templates");
-      if (!res.ok) throw new Error(`load ${res.status}`);
+      const res = await adminFetch("/api/admin/permissions/templates");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Couldn't load templates (${res.status})`);
+      }
       const raw: Template[] = await res.json();
       setRows(raw.map(parseTemplate));
     } catch (err) {
-      setError((err as Error).message);
+      if ((err as Error)?.name !== "SessionExpiredError") {
+        setError((err as Error).message);
+      }
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,7 @@ export default function TemplatesPage() {
 
   async function remove(t: ParsedTemplate) {
     if (!confirm(`Delete template "${t.name}"?`)) return;
-    await fetch(`/api/admin/permissions/templates/${t.id}`, { method: "DELETE" });
+    await adminFetch(`/api/admin/permissions/templates/${t.id}`, { method: "DELETE" });
     load();
   }
 

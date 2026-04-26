@@ -274,7 +274,11 @@ export default function AdminSidebar() {
       visibleFinance: FINANCE.filter((item) => allowed(item.page)),
       visibleAdmin: ADMIN_SECTION.filter((item) => allowed(item.page)),
       visiblePersonal: PERSONAL.filter((item) => allowed(item.page)),
-      visibleBottomTabs: BOTTOM_TABS.filter((item) => allowed(item.page)),
+      // Cap at 5 visible tabs + More button — 6+ items at flex-1
+      // squeeze the labels to ellipsis and look broken on phones.
+      // Roles with 5+ accessible BOTTOM_TABS items see everything past
+      // the cap in the More drawer.
+      visibleBottomTabs: BOTTOM_TABS.filter((item) => allowed(item.page)).slice(0, 5),
     };
   }, [role, permOverrides]);
 

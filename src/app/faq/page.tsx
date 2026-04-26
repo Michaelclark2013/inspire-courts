@@ -59,12 +59,25 @@ const faqSchema = {
   })),
 };
 
+const faqBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "FAQ", item: `${SITE_URL}/faq` },
+  ],
+};
+
 export default function FAQPage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqBreadcrumbLd) }}
       />
       <FAQClient />
     </>

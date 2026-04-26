@@ -114,12 +114,25 @@ const RULES = [
   "Not responsible for lost or stolen items",
 ];
 
+const openGymBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Open Gym", item: `${SITE_URL}/open-gym` },
+  ],
+};
+
 export default function OpenGymPage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(openGymSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(openGymBreadcrumbLd) }}
       />
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">

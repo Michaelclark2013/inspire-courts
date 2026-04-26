@@ -74,12 +74,25 @@ const localBusinessJsonLd = {
   ],
 };
 
+const contactBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Contact", item: `${SITE_URL}/contact` },
+  ],
+};
+
 export default function ContactPage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactBreadcrumbLd) }}
       />
       <ContactClient />
     </>

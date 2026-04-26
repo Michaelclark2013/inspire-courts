@@ -52,7 +52,12 @@ export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const id = Number(request.nextUrl.searchParams.get("id"));
-  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  if (!Number.isInteger(id) || id <= 0) return NextResponse.json({ error: "id required" }, { status: 400 });
+  // Confirm the row exists so a typo'd id returns 404 instead of a
+  // silently-successful no-op delete (which used to also pollute the
+  // audit log with a phantom webhook.deleted entry).
+  const [existing] = await db.select({ id: webhookSubscriptions.id, url: webhookSubscriptions.url }).from(webhookSubscriptions).where(eq(webhookSubscriptions.id, id)).limit(1);
+  if (!existing) return NextResponse.json({ error: "Webhook not found" }, { status: 404 });
   await db.delete(webhookSubscriptions).where(eq(webhookSubscriptions.id, id));
   await recordAudit({
     session,
@@ -60,6 +65,7 @@ export async function DELETE(request: NextRequest) {
     action: "webhook.deleted",
     entityType: "webhook_subscription",
     entityId: String(id),
+    before: { url: existing.url },
   });
   return NextResponse.json({ ok: true });
 }

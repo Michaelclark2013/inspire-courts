@@ -73,7 +73,17 @@ export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const id = Number(request.nextUrl.searchParams.get("id"));
-  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  if (!Number.isInteger(id) || id <= 0) return NextResponse.json({ error: "id required" }, { status: 400 });
+  // Look up first so we can 404 vs blind-update no-op (which used to
+  // silently succeed even on a typo'd id) and we don't pollute the
+  // audit log with phantom revocations.
+  const [existing] = await db.select({ id: apiKeys.id, revokedAt: apiKeys.revokedAt }).from(apiKeys).where(eq(apiKeys.id, id)).limit(1);
+  if (!existing) return NextResponse.json({ error: "API key not found" }, { status: 404 });
+  if (existing.revokedAt) {
+    // Already revoked — return 200 so the UI can refresh, but skip
+    // a duplicate audit entry.
+    return NextResponse.json({ ok: true, alreadyRevoked: true });
+  }
   await db.update(apiKeys).set({ revokedAt: new Date().toISOString() }).where(eq(apiKeys.id, id));
   await recordAudit({
     session,

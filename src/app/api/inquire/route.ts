@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { db } from "@/lib/db";
 import { inquiries, inquiryNotes, INQUIRY_KINDS } from "@/lib/db/schema";
 import { logger } from "@/lib/logger";
@@ -98,20 +98,27 @@ export async function POST(request: NextRequest) {
       })
       .returning({ id: inquiries.id });
 
-    // Auto SMS reply (best effort).
+    // Auto SMS reply (best effort, runs after response). Wrapping in
+    // `after()` keeps the Vercel function instance alive long enough
+    // for the network call to complete — fire-and-forget without
+    // `after` is not guaranteed on serverless and was silently
+    // dropping replies under load.
     if (phone) {
       const config = getInquiryConfigByKind(validKind);
       const firstName = name.split(/\s+/)[0] || "there";
       const smsBody = (config?.smsReply || "Got it — we'll be in touch within 30 minutes. — Inspire Courts AZ").replace(/\{firstName\}/g, firstName);
-      sendSms({ to: phone, body: smsBody, threadKey: `inquiry-${row.id}` })
-        .then((r) => {
+      after(async () => {
+        try {
+          const r = await sendSms({ to: phone, body: smsBody, threadKey: `inquiry-${row.id}` });
           if (r.ok) {
-            db.insert(inquiryNotes)
+            await db.insert(inquiryNotes)
               .values({ inquiryId: row.id, body: "Auto SMS reply sent", kind: "sms_sent" })
               .catch(() => {});
           }
-        })
-        .catch((err) => logger.warn("inquiry SMS failed", { error: String(err) }));
+        } catch (err) {
+          logger.warn("inquiry SMS failed", { error: String(err) });
+        }
+      });
     }
 
     // Notify the rep on call.
@@ -136,18 +143,30 @@ export async function POST(request: NextRequest) {
         <p><b>SLA — respond by ${new Date(slaDueAt).toLocaleString()}</b></p>
         <p><a href="${process.env.NEXTAUTH_URL || "https://inspirecourtsaz.com"}/admin/inquiries">Open in admin</a></p>
       `;
-      sendBroadcastEmail({ recipients: [adminEmail], subject, html, text: `New ${config?.title} inquiry from ${name}` }).catch(() => {});
+      after(async () => {
+        try {
+          await sendBroadcastEmail({ recipients: [adminEmail], subject, html, text: `New ${config?.title} inquiry from ${name}` });
+        } catch (err) {
+          logger.warn("inquiry notify email failed", { error: String(err) });
+        }
+      });
     }
 
     // Fire webhook so external integrations get notified.
-    fireWebhookEvent("inquiry.created", { id: row.id, kind: validKind, name, email, phone, sports }).catch(() => {});
+    after(async () => {
+      try {
+        await fireWebhookEvent("inquiry.created", { id: row.id, kind: validKind, name, email, phone, sports });
+      } catch (err) {
+        logger.warn("inquiry webhook failed", { error: String(err) });
+      }
+    });
 
     // Auto-enroll into a "new_lead" journey if one is configured + active.
     // Inquiries don't have a memberId yet (they're pre-member), so we
     // only enroll when we can match an existing member by email/phone.
     // If no match, the journey is skipped — admin can manually enroll
     // after creating a member record from the inquiry.
-    (async () => {
+    after(async () => {
       try {
         const { db: dbInner } = await import("@/lib/db");
         const { journeys, members } = await import("@/lib/db/schema");
@@ -173,7 +192,7 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         logger.warn("inquiry journey enroll failed", { error: String(err) });
       }
-    })();
+    });
 
     return NextResponse.json({ ok: true, id: row.id });
   } catch (err) {

@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
   }
   const sp = request.nextUrl.searchParams;
   const status = sp.get("status");
-  const limit = Math.min(Number(sp.get("limit")) || 50, 200);
+  // Same negative-limit floor as members + games.
+  const limit = Math.max(1, Math.min(Number(sp.get("limit")) || 50, 200));
   try {
     const rows = await db
       .select()

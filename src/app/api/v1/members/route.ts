@@ -23,7 +23,9 @@ export async function GET(request: NextRequest) {
   }
   const sp = request.nextUrl.searchParams;
   const status = sp.get("status");
-  const limit = Math.min(Number(sp.get("limit")) || 100, 1000);
+  // Floor at 1 — Math.min(Number(...), 1000) alone permits negative
+  // values to slip through to the driver and either error or 0-row.
+  const limit = Math.max(1, Math.min(Number(sp.get("limit")) || 100, 1000));
   const includeContact = auth.scopes.includes("write") || auth.scopes.includes("read:contact");
   try {
     const rows = await db

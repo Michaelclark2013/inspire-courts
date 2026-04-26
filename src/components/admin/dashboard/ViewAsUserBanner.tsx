@@ -15,6 +15,7 @@ type ViewAs = {
 // click exit.
 export default function ViewAsUserBanner() {
   const [status, setStatus] = useState<ViewAs>({ active: false });
+  const [exitError, setExitError] = useState<string | null>(null);
   const router = useRouter();
 
   async function refresh() {
@@ -27,15 +28,34 @@ export default function ViewAsUserBanner() {
   useEffect(() => { refresh(); }, []);
 
   async function exit() {
-    await fetch("/api/admin/permissions/view-as", { method: "DELETE" });
-    await refresh();
-    router.refresh();
+    setExitError(null);
+    try {
+      const res = await fetch("/api/admin/permissions/view-as", { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        // Inline message — admin can see what failed; the banner is
+        // already a focal point so an extra red strip below it is
+        // visible without scrolling.
+        setExitError(data.error || `Couldn't exit preview (${res.status}). Refresh and try again.`);
+        return;
+      }
+      await refresh();
+      router.refresh();
+    } catch {
+      setExitError("Network error exiting preview. Refresh and try again.");
+    }
   }
 
   if (!status.active || !status.target) return null;
 
   return (
     <div className="sticky top-0 z-[70] bg-amber-500 text-white text-sm font-semibold shadow-lg">
+      {exitError && (
+        <div className="bg-red text-white text-xs px-4 py-1.5 flex items-center justify-between gap-2">
+          <span>{exitError}</span>
+          <button onClick={() => setExitError(null)} className="opacity-80 hover:opacity-100 underline">Dismiss</button>
+        </div>
+      )}
       <div className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-3">
         <Eye className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
         <div className="flex items-center gap-2 min-w-0 flex-1">

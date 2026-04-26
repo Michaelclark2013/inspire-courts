@@ -61,6 +61,23 @@ const PATH_TO_PAGE: Array<{ prefix: string; page: AdminPage }> = [
   { prefix: "/admin/analytics", page: "analytics" },
   { prefix: "/admin/contacts", page: "contacts" },
   { prefix: "/admin/launch-readiness", page: "users" },
+  { prefix: "/admin/launch-status", page: "users" },
+  { prefix: "/admin/security", page: "users" },
+
+  // Cycle 1+2 ships — these were missing from the path map, so
+  // per-user permission overrides on these pages weren't enforced
+  // by middleware. Admin role still passed (catch-all), but staff /
+  // front_desk could slip past page-level gates because
+  // pageFromAdminPath returned null → role-only check.
+  { prefix: "/admin/owner", page: "owner" },
+  { prefix: "/admin/billing", page: "billing" },
+  { prefix: "/admin/churn", page: "churn" },
+  { prefix: "/admin/inbox", page: "inbox" },
+  { prefix: "/admin/scheduler", page: "scheduler" },
+  { prefix: "/admin/workouts", page: "workouts" },
+  { prefix: "/admin/integrations", page: "integrations" },
+  { prefix: "/admin/inquiries", page: "inquiries" },
+  { prefix: "/admin/search", page: "search" },
 
   // Personal — profile always accessible (every user has their own),
   // mapped to "overview" so the page-gate layer treats it as baseline.

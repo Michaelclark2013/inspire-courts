@@ -527,6 +527,17 @@ export async function POST(request: Request) {
 
     const { message, history, sessionId, pathname } = result.data;
 
+    // Per-session cost cap. The IP limit catches bursts but doesn't
+    // stop a long conversation from steadily burning tokens. 60 turns
+    // per hour per session is plenty for a real chat and keeps a
+    // single session from running up an Anthropic bill.
+    if (sessionId && isRateLimited(`chat:session:${sessionId}`, 60, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { success: false, reply: "We've chatted a lot — please email us at " + FACILITY_EMAIL + " and we'll pick this up there." },
+        { status: 429 }
+      );
+    }
+
     // Block gibberish and pure nonsense before hitting the API (saves tokens)
     const cleaned = message.replace(/[^a-zA-Z]/g, "");
     const isGibberish = cleaned.length > 3 && !/[aeiou]/i.test(cleaned);

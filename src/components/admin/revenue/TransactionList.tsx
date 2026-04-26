@@ -132,7 +132,15 @@ export function TransactionList({ transactions }: Props) {
   }: {
     column: SortKey;
   }) => {
-    if (sortKey !== column) return null;
+    if (sortKey !== column) {
+      // Faded indicator on inactive sortable columns so users know
+      // the header is clickable, not just text.
+      return (
+        <span className="inline-block ml-0.5 text-text-secondary/40" aria-hidden="true">
+          ↕
+        </span>
+      );
+    }
     return sortDir === "asc" ? (
       <ChevronUp className="inline w-3 h-3 ml-0.5 text-red" aria-hidden="true" />
     ) : (

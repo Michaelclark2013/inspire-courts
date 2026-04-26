@@ -151,7 +151,7 @@ export default function CheckinProgressCard() {
             <button
               onClick={() => exportCsv(data)}
               disabled={data.teams.length === 0}
-              className="bg-white border border-border hover:bg-off-white disabled:opacity-40 text-navy text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5"
+              className="bg-white border border-border hover:bg-off-white disabled:opacity-40 text-navy text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1"
               title="Download check-in progress as CSV"
             >
               <Download className="w-3 h-3" /> CSV
@@ -159,13 +159,13 @@ export default function CheckinProgressCard() {
             <button
               onClick={nudgeIncomplete}
               disabled={nudging || (totals.teams - totals.complete) === 0}
-              className="bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5"
+              className="bg-red hover:bg-red-hover disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1"
               title="Email every coach whose team hasn't completed check-in"
             >
               <Send className="w-3 h-3" />
               {nudging ? "Sending…" : "Nudge"}
             </button>
-            <Link href="/admin/checkin" className="text-red text-xs font-semibold hover:text-red-hover flex items-center gap-1">
+            <Link href="/admin/checkin" className="text-red text-xs font-semibold hover:text-red-hover flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 rounded">
               Open check-in <ArrowUpRight className="w-3 h-3" />
             </Link>
           </div>
@@ -218,7 +218,8 @@ export default function CheckinProgressCard() {
               <button
                 key={k}
                 onClick={() => setFilter(k)}
-                className={`text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full whitespace-nowrap transition-colors ${
+                aria-pressed={filter === k}
+                className={`text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 ${
                   filter === k ? "bg-navy text-white" : "bg-off-white text-text-muted hover:bg-border"
                 }`}
               >

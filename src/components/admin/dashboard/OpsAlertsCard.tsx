@@ -226,7 +226,7 @@ function Panel({
             <p className="text-text-muted text-[10px] uppercase tracking-widest">{subtitle}</p>
           </div>
         </div>
-        <Link href={href} className="text-red text-xs font-semibold hover:text-red-hover flex items-center gap-1">
+        <Link href={href} className="text-red text-xs font-semibold hover:text-red-hover flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red focus-visible:ring-offset-1 rounded">
           View <ArrowUpRight className="w-3 h-3" />
         </Link>
       </div>

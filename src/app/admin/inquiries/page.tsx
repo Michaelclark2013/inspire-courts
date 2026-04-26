@@ -107,13 +107,28 @@ export default function InquiriesPage() {
     return params;
   }, [filterStatus, filterKind]);
 
+  const [loadError, setLoadError] = useState<string | null>(null);
   const load = useCallback(
     async (silent = false) => {
       if (!silent) setRefreshing(true);
       try {
-        const res = await fetch(`/api/admin/inquiries?${buildQs()}`, { cache: "no-store" });
-        if (res.ok) setRows((await res.json()).rows || []);
+        // adminFetch auto-redirects on 401. Non-ok non-401 responses
+        // surface a banner instead of silently leaving stale rows.
+        const res = await adminFetch(`/api/admin/inquiries?${buildQs()}`);
+        if (res.ok) {
+          setRows((await res.json()).rows || []);
+          setLoadError(null);
+        } else {
+          const data = await res.json().catch(() => ({}));
+          setLoadError(data.error || `Couldn't load inquiries (${res.status}). Showing last cached data.`);
+        }
         lastLoadRef.current = Date.now();
+      } catch (err) {
+        // SessionExpiredError already redirected; any other throw is
+        // a network blip — show a soft banner, keep the cached rows.
+        if ((err as Error)?.name !== "SessionExpiredError") {
+          setLoadError("Network error. Auto-refresh will retry in 30s.");
+        }
       } finally {
         if (!silent) {
           setRefreshing(false);
@@ -342,6 +357,14 @@ export default function InquiriesPage() {
           </a>
         </div>
       </div>
+
+      {/* Soft error banner — shown when fetch failed but cached rows
+          are still onscreen. Disappears on next successful load. */}
+      {loadError && (
+        <div role="alert" className="mb-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2 text-xs">
+          {loadError}
+        </div>
+      )}
 
       {/* Stat strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">

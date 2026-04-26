@@ -16,6 +16,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { INQUIRY_CONFIGS } from "@/lib/inquiry-forms";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type InquiryRow = {
   id: number;
@@ -73,6 +74,7 @@ function fmtTime(iso: string): string {
 }
 
 export default function InquiriesPage() {
+  useDocumentTitle("Inquiries");
   const [rows, setRows] = useState<InquiryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>("open");

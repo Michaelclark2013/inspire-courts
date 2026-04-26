@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { Users } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type {
   CheckInDashboardProps,
   FilterStatus,
@@ -31,6 +32,7 @@ export default function CheckInDashboard({
   totalPlayerCheckins,
   today,
 }: CheckInDashboardProps) {
+  useDocumentTitle("Check-In");
   // ---------- state ----------
   const [recentCheckins, setRecentCheckins] = useState<RecentCheckin[]>([]);
   const [searchQuery, setSearchQuery] = useState("");

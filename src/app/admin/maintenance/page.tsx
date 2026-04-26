@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Wrench, Plus, AlertTriangle } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Ticket = {
   id: number;
@@ -38,6 +39,7 @@ function fmtDate(iso: string | null): string {
 }
 
 export default function MaintenancePage() {
+  useDocumentTitle("Maintenance");
   const { data: session, status } = useSession();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [staff, setStaff] = useState<StaffLite[]>([]);

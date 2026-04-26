@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import {
   DollarSign,
   Activity,
@@ -51,6 +52,7 @@ function fmtPct(n: number): string {
 }
 
 export default function OwnerPage() {
+  useDocumentTitle("Owner");
   const [data, setData] = useState<Snapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

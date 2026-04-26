@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { DollarSign, AlertCircle, Calendar, Pause, RefreshCw, ArrowLeft } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type Snapshot = {
   mrr: { cents: number };
@@ -42,6 +43,7 @@ const fmtDate = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString([], { month: "short", day: "numeric" }) : "—";
 
 export default function AdminBillingPage() {
+  useDocumentTitle("Billing");
   const [data, setData] = useState<Snapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);

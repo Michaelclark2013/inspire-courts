@@ -18,6 +18,7 @@ import {
   Check,
 } from "lucide-react";
 import LoyaltyBadge from "@/components/ui/LoyaltyBadge";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { formatDate, formatPhone } from "@/lib/utils";
@@ -61,6 +62,7 @@ const ROLE_DESCRIPTIONS: Record<string, string> = {
 };
 
 export default function UsersPage() {
+  useDocumentTitle("Users");
   const [userList, setUserList] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

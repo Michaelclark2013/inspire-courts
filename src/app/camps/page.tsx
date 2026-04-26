@@ -170,6 +170,15 @@ const FAQ_ITEMS = [
   },
 ];
 
+const campsBreadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Camps", item: `${SITE_URL}/camps` },
+  ],
+};
+
 export default function CampsPage() {
   return (
     <>
@@ -177,6 +186,10 @@ export default function CampsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(campsBreadcrumbLd) }}
       />
 
       {/* ─── Hero ─────────────────────────────────────────────────────────────── */}

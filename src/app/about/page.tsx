@@ -74,6 +74,15 @@ const sportsOrgSchema = {
 // admin content edits propagate without rebuilding the whole site.
 export const revalidate = 3600;
 
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "About", item: `${SITE_URL}/about` },
+  ],
+};
+
 export default async function AboutPage() {
   const page = await getPageContent("about");
 
@@ -82,6 +91,10 @@ export default async function AboutPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(sportsOrgSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       {/* Hero */}

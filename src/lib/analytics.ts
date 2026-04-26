@@ -41,19 +41,41 @@ export function trackConversion(
 
   if (typeof window === "undefined") return;
 
-  // Meta standard events for key conversions
+  // Meta + GA4 standard events for key conversions. Without these,
+  // GA4 funnels (view_item → add_to_cart → begin_checkout → purchase)
+  // can't be built and audience targeting is harder on Meta.
   switch (type) {
     case "book_form_submit":
       window.fbq?.("track", "Lead", { content_name: "booking_request" });
+      window.gtag?.("event", "generate_lead", { method: "book_form" });
       break;
     case "contact_form_submit":
       window.fbq?.("track", "Contact");
+      window.gtag?.("event", "generate_lead", { method: "contact_form" });
+      break;
+    case "inquire_form_submit":
+      window.fbq?.("track", "Lead", { content_name: "inquiry" });
+      window.gtag?.("event", "generate_lead", { method: "inquire_form" });
       break;
     case "register_click":
       window.fbq?.("track", "InitiateCheckout");
+      window.gtag?.("event", "begin_checkout");
       break;
     case "newsletter_signup":
       window.fbq?.("track", "Subscribe");
+      window.gtag?.("event", "sign_up", { method: "newsletter" });
+      break;
+    case "book_cta_click":
+      window.gtag?.("event", "select_promotion", { creative_slot: "book_cta" });
+      break;
+    case "inquire_cta_click":
+      window.gtag?.("event", "select_promotion", { creative_slot: "inquire_cta" });
+      break;
+    case "phone_click":
+      window.gtag?.("event", "click", { link_type: "tel" });
+      break;
+    case "email_click":
+      window.gtag?.("event", "click", { link_type: "mailto" });
       break;
   }
 }

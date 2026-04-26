@@ -9,19 +9,26 @@ import CheckInDashboard from "./CheckInDashboard";
 export const revalidate = 60; // refresh every 60s
 
 export default async function CheckInPage() {
+  // Sheets is optional. When unconfigured, render the dashboard with
+  // empty teams + check-ins so front desk can still use the QR self-
+  // serve flow + the manual entry path. The placeholder screen used
+  // to lock the entire page out — bad on tournament morning when the
+  // ops team can't troubleshoot a missing service-account credential
+  // in real time.
   if (!isGoogleConfigured()) {
     return (
-      <div className="p-3 sm:p-6 lg:p-8">
-        <div className="hidden md:block mb-4">
-          <h1 className="text-2xl font-bold uppercase tracking-tight text-navy font-heading mb-1">
-            Game Day Check-In
-          </h1>
-          <p className="text-text-secondary text-sm">Manage player check-ins and roster attendance for game days</p>
-        </div>
-        <div className="bg-white border border-border shadow-sm rounded-xl p-6 text-navy/60 text-sm">
-          Google Sheets not configured. Add your service account credentials to enable check-in.
-        </div>
-      </div>
+      <CheckInDashboard
+        teams={[]}
+        checkedInTeamCount={0}
+        totalTeams={0}
+        totalPlayerCheckins={0}
+        today={new Date().toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          timeZone: "America/Phoenix",
+        })}
+      />
     );
   }
 

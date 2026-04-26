@@ -256,4 +256,11 @@ describe("api-helpers / csvBody — Excel-compat envelope", () => {
     expect(UTF8_BOM).toBe("﻿");
     expect(UTF8_BOM.length).toBe(1);
   });
+
+  it("renders an empty rows array as just the BOM", () => {
+    // Edge case: a CSV export with zero rows (e.g. no entries match
+    // the filter). Should still be a valid empty file Excel can open
+    // — just the BOM, no errant CRLF.
+    expect(csvBody([])).toBe(UTF8_BOM);
+  });
 });

@@ -70,8 +70,16 @@ export const GET = withTiming("admin.audit_log", async (request: NextRequest) =>
     const safe = actorEmailRaw.slice(0, 100).replace(/[\\%_]/g, "\\$&");
     filters.push(like(auditLog.actorEmail, `%${safe}%`));
   }
-  if (before) filters.push(lt(auditLog.createdAt, before));
-  if (since) filters.push(gte(auditLog.createdAt, since));
+  // before/since are stored as ISO strings (text column), so a clean
+  // ISO compares lexicographically. Validate before pushing into the
+  // query — a bare "yesterday" string would still execute and just
+  // return zero rows, which is confusing.
+  if (before && !Number.isNaN(new Date(before).getTime())) {
+    filters.push(lt(auditLog.createdAt, before));
+  }
+  if (since && !Number.isNaN(new Date(since).getTime())) {
+    filters.push(gte(auditLog.createdAt, since));
+  }
 
   const format = sp.get("format");
 

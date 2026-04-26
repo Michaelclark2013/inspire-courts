@@ -62,6 +62,9 @@ export default function ProgramDetailPage() {
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [showRegForm, setShowRegForm] = useState<Session | null>(null);
+  // Mutation feedback (mark-attended toggle). Without this a 5xx
+  // leaves the toggle in its old state with no signal.
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const loadSessions = useCallback(async () => {
     setLoading(true);
@@ -103,6 +106,13 @@ export default function ProgramDetailPage() {
           <Plus className="w-4 h-4" /> New Session
         </button>
       </div>
+
+      {actionError && (
+        <div className="bg-red/5 border border-red/30 rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
+          <p className="text-navy text-sm font-semibold">{actionError}</p>
+          <button onClick={() => setActionError(null)} className="text-xs text-text-secondary hover:text-navy">Dismiss</button>
+        </div>
+      )}
 
       {loading ? (
         <SkeletonRows count={4} />
@@ -173,8 +183,18 @@ export default function ProgramDetailPage() {
                             </td>
                             <td className="text-right">
                               <button onClick={async () => {
-                                await fetch("/api/admin/programs/registrations", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: r.id, status: r.status === "attended" ? "registered" : "attended" }) });
-                                loadRegs(s.id);
+                                setActionError(null);
+                                try {
+                                  const res = await fetch("/api/admin/programs/registrations", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: r.id, status: r.status === "attended" ? "registered" : "attended" }) });
+                                  if (!res.ok) {
+                                    const data = await res.json().catch(() => ({}));
+                                    setActionError(data.error || `Couldn't update attendance (${res.status}).`);
+                                    return;
+                                  }
+                                  loadRegs(s.id);
+                                } catch {
+                                  setActionError("Network error. Try again.");
+                                }
                               }} className="text-[10px] text-navy hover:text-red">
                                 {r.status === "attended" ? "Undo" : "Attended"}
                               </button>

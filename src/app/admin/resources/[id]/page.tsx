@@ -342,8 +342,17 @@ function DamageTab({ vehicleId, rows, onChange }: { vehicleId: number; rows: Dam
   }
 
   async function markRepaired(damageId: number) {
-    await fetch(`/api/admin/fleet/${vehicleId}/damage?damageId=${damageId}`, { method: "PATCH" });
-    onChange();
+    try {
+      const res = await fetch(`/api/admin/fleet/${vehicleId}/damage?damageId=${damageId}`, { method: "PATCH" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || `Couldn't mark damage repaired (${res.status}).`);
+        return;
+      }
+      onChange();
+    } catch {
+      alert("Network error. Try again.");
+    }
   }
 
   return (

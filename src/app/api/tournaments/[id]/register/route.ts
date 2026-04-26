@@ -6,7 +6,7 @@ import {
   tournamentRegistrations,
   tournamentTeams,
 } from "@/lib/db/schema";
-import { eq, and, or, sql } from "drizzle-orm";
+import { eq, and, gte, or, sql } from "drizzle-orm";
 import { createCheckoutLink, isSquareConfigured } from "@/lib/square";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
@@ -106,11 +106,17 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
   }
 
-  // Check capacity per division. Approved registrations and pending-
-  // but-paid registrations both consume a slot, so we count rows that
-  // satisfy either condition in a single query (count(*) keeps the
-  // query plan tight — we never need the row data, just the total).
+  // Check capacity per division. A slot is consumed by:
+  //   - approved or paid registrations (the "real" teams)
+  //   - recently-created pending registrations (within 24h) — these are
+  //     mid-checkout teams whose Square payment is still in flight.
+  //     Counting them prevents the failure mode where N concurrent
+  //     /register POSTs all create pending rows simultaneously, none
+  //     count yet, all complete their Square checkouts, and the
+  //     division ends up overbooked.
+  // Older pending rows are treated as abandoned and excluded.
   if (tournament.maxTeamsPerDivision && division) {
+    const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const [{ count = 0 } = {}] = await db
       .select({ count: sql<number>`count(*)` })
       .from(tournamentRegistrations)
@@ -120,7 +126,11 @@ export async function POST(request: NextRequest, { params }: Params) {
           eq(tournamentRegistrations.division, division),
           or(
             eq(tournamentRegistrations.status, "approved"),
-            eq(tournamentRegistrations.paymentStatus, "paid")
+            eq(tournamentRegistrations.paymentStatus, "paid"),
+            and(
+              eq(tournamentRegistrations.status, "pending"),
+              gte(tournamentRegistrations.createdAt, cutoff)
+            )
           )
         )
       );

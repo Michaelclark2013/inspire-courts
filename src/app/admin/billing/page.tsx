@@ -50,10 +50,22 @@ export default function AdminBillingPage() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
+  const [loadError, setLoadError] = useState<string | null>(null);
   const load = useCallback(async () => {
     try {
       const res = await adminFetch("/api/admin/billing/snapshot", { cache: "no-store" });
-      if (res.ok) setData(await res.json());
+      if (res.ok) {
+        setData(await res.json());
+        setLoadError(null);
+      } else {
+        const j = await res.json().catch(() => ({}));
+        setLoadError(j.error || `Couldn't load billing snapshot (${res.status}).`);
+      }
+    } catch (err) {
+      // SessionExpiredError already redirects; other throws are network blips.
+      if ((err as Error)?.name !== "SessionExpiredError") {
+        setLoadError("Network error loading billing snapshot.");
+      }
     } finally {
       setLoading(false);
     }
@@ -80,7 +92,23 @@ export default function AdminBillingPage() {
     }
   }
 
-  if (loading || !data) return <div className="p-8 text-text-muted">Loading billing…</div>;
+  if (loading) return <div className="p-8 text-text-muted">Loading billing…</div>;
+  if (!data) {
+    return (
+      <div className="p-8 max-w-md mx-auto">
+        <div className="bg-red/5 border border-red/20 text-red rounded-2xl p-6 text-center">
+          <p className="font-bold mb-1">Couldn&apos;t load billing data</p>
+          <p className="text-sm">{loadError || "The snapshot endpoint returned no data."}</p>
+          <button
+            onClick={load}
+            className="mt-3 inline-flex items-center gap-1.5 bg-navy hover:bg-navy/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-3 sm:p-6 lg:p-8 max-w-6xl mx-auto">

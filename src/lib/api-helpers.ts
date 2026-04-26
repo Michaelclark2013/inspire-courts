@@ -1,5 +1,19 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 import type { ZodSchema } from "zod";
+
+// Constant-time string compare. Plain `!==` leaks information about the
+// secret — an attacker who can measure response time across many
+// requests can recover the secret byte-by-byte. Buffers of different
+// length short-circuit because timingSafeEqual would throw, but
+// returning false on mismatched length doesn't help an attacker since
+// the secret length is fixed by config.
+function constantTimeEquals(a: string, b: string): boolean {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ab.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ab, bb);
+}
 
 /**
  * Standard error response helper.
@@ -87,7 +101,7 @@ export function requireCronSecret(request: Request): NextResponse | null {
   const provided = authHeader.startsWith("Bearer ")
     ? authHeader.slice("Bearer ".length)
     : cronHeader;
-  if (provided !== secret) {
+  if (!constantTimeEquals(provided, secret)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   return null;

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { UserCheck, Plus, AlertTriangle, Edit, Archive, MessageSquare } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
@@ -73,12 +73,15 @@ function formatCents(cents: number): string {
 
 export default function RosterPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [rows, setRows] = useState<StaffRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"active" | "on_leave" | "terminated">(
-    "active"
-  );
+  const [statusFilter, setStatusFilter] = useState<"active" | "on_leave" | "terminated">(() => {
+    const v = searchParams.get("status");
+    return v === "on_leave" || v === "terminated" ? v : "active";
+  });
   const [editing, setEditing] = useState<StaffRow | null>(null);
   // Termination errors — silent failure left the staffer visible and
   // active.
@@ -102,6 +105,14 @@ export default function RosterPage() {
   useEffect(() => {
     if (status === "authenticated") load();
   }, [status, load]);
+
+  // Sync status filter into URL — bookmarkable.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (statusFilter !== "active") params.set("status", statusFilter);
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false });
+  }, [statusFilter, router]);
 
   if (status === "loading") return null;
   if (status === "unauthenticated" || session?.user?.role !== "admin") {

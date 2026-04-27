@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { Calendar, Check, X, Clock } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
@@ -35,7 +35,11 @@ function fmtDate(iso: string): string { try { return new Date(iso).toLocaleDateS
 export default function TimeOffAdminPage() {
   useDocumentTitle("Time off");
   const { data: session, status } = useSession();
-  const [filter, setFilter] = useState("pending");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // Bookmarkable status filter — same pattern as the audit-log /
+  // inquiries / leads / members / roster set.
+  const [filter, setFilter] = useState(() => searchParams.get("status") || "pending");
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<number | null>(null);
@@ -52,6 +56,14 @@ export default function TimeOffAdminPage() {
     } finally { setLoading(false); }
   }, [filter]);
   useEffect(() => { if (status === "authenticated") load(); }, [status, load]);
+
+  // Sync filter into URL.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filter !== "pending") params.set("status", filter);
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false });
+  }, [filter, router]);
 
   async function decide(id: number, next: "approved" | "denied") {
     setBusy(id);

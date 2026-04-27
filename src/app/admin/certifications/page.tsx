@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { IdCard, Plus , CheckCircle2 , ExternalLink } from "lucide-react";
 import { SkeletonRows } from "@/components/ui/SkeletonCard";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
@@ -48,7 +48,12 @@ export default function CertificationsPage() {
   const { data: session, status } = useSession();
   const [certs, setCerts] = useState<Cert[]>([]);
   const [staff, setStaff] = useState<StaffLite[]>([]);
-  const [filter, setFilter] = useState<"all" | "expiring" | "expired">("all");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [filter, setFilter] = useState<"all" | "expiring" | "expired">(() => {
+    const v = searchParams.get("filter");
+    return v === "expiring" || v === "expired" ? v : "all";
+  });
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Cert | null>(null);
@@ -70,6 +75,13 @@ export default function CertificationsPage() {
   }, [filter]);
 
   useEffect(() => { if (status === "authenticated") load(); }, [status, load]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filter !== "all") params.set("filter", filter);
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false });
+  }, [filter, router]);
 
   async function verify(id: number) {
     setVerifyError(null);

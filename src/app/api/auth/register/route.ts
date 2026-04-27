@@ -90,19 +90,43 @@ export async function POST(request: NextRequest) {
     const verifyToken = generateVerifyToken();
     const verifyExpiresAt = verifyTokenExpiryIso();
 
-    await db.insert(users).values({
-      email: sanitizedEmail,
-      name: sanitizedName,
-      passwordHash,
-      role,
-      phone: sanitizedPhone,
-      photoUrl: photoUrl ? photoUrl.slice(0, 500) : null,
-      approved: !needsApproval,
-      // DB stores only the SHA-256 hash; the raw verifyToken still
-      // travels to the user via email below.
-      emailVerifyToken: hashVerifyToken(verifyToken),
-      emailVerifyExpiresAt: verifyExpiresAt,
-    });
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        email: sanitizedEmail,
+        name: sanitizedName,
+        passwordHash,
+        role,
+        phone: sanitizedPhone,
+        photoUrl: photoUrl ? photoUrl.slice(0, 500) : null,
+        approved: !needsApproval,
+        // DB stores only the SHA-256 hash; the raw verifyToken still
+        // travels to the user via email below.
+        emailVerifyToken: hashVerifyToken(verifyToken),
+        emailVerifyExpiresAt: verifyExpiresAt,
+      })
+      .returning({ id: users.id });
+
+    // Auto-link any existing front-desk-only members on the same
+    // email so the parent now sees their gym membership in /portal
+    // without admin re-typing. Best-effort.
+    if (newUser?.id) {
+      try {
+        const { members } = await import("@/lib/db/schema");
+        const { sql, isNull, and } = await import("drizzle-orm");
+        await db
+          .update(members)
+          .set({ userId: newUser.id })
+          .where(
+            and(
+              sql`lower(${members.email}) = ${sanitizedEmail}`,
+              isNull(members.userId),
+            ),
+          );
+      } catch (err) {
+        logger.warn("member auto-link on signup failed", { error: String(err) });
+      }
+    }
 
     // Fire the verification email (non-blocking — if Gmail is down the
     // user can still hit "Resend" from the banner later).

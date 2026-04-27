@@ -135,10 +135,29 @@ export const POST = withTiming("admin.members.create", async (request: NextReque
   const b = parsed.data;
   try {
     const createdBy = session.user.id ? Number(session.user.id) : null;
+    // Auto-link to a matching user account by email so the member
+    // sees their gym membership in /portal without an admin
+    // re-typing it. Only fires when caller didn't supply userId.
+    let autoLinkedUserId: number | null = null;
+    const memberEmail = b.email ? b.email.trim().toLowerCase() : null;
+    if (!b.userId && memberEmail) {
+      try {
+        const { users } = await import("@/lib/db/schema");
+        const { sql } = await import("drizzle-orm");
+        const [u] = await db
+          .select({ id: users.id })
+          .from(users)
+          .where(sql`lower(${users.email}) = ${memberEmail}`)
+          .limit(1);
+        if (u) autoLinkedUserId = u.id;
+      } catch (err) {
+        logger.warn("member auto-link to user failed", { error: String(err) });
+      }
+    }
     const [created] = await db
       .insert(members)
       .values({
-        userId: b.userId ?? null,
+        userId: b.userId ?? autoLinkedUserId,
         firstName: b.firstName.trim(),
         lastName: b.lastName.trim(),
         email: b.email ? b.email.trim().toLowerCase() : null,

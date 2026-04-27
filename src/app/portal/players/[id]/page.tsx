@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Clock,
 } from "lucide-react";
+import { ConnectionsCard } from "@/components/admin/ConnectionsCard";
 
 type Player = {
   id: number;
@@ -141,6 +142,10 @@ export default function PlayerHistoryPage({
           <Stat label="Losses" value={data.totals.losses} />
         </div>
       </header>
+
+      {/* Connections card — gives parents + coaches the full picture
+          (parent account, team, recent waivers, all check-ins). */}
+      <ConnectionsCard kind="player" id={p.id} />
 
       {/* Quick info */}
       <div className="grid grid-cols-2 gap-2 mb-5 text-xs">

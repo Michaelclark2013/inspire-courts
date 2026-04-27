@@ -120,6 +120,10 @@ export async function POST(request: NextRequest) {
       phone: parentPhone || null,
     });
     dbWriteOk = true;
+    // Flip players.waiver_on_file for any roster row matching this
+    // name — kills the "no waiver" chip on coach rosters.
+    const { syncWaiverToPlayers } = await import("@/lib/waiver-sync");
+    syncWaiverToPlayers(playerName).catch(() => {});
   } catch (err) {
     logger.warn("Waiver DB insert failed, falling back to Sheets", { error: String(err) });
   }

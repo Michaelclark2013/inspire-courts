@@ -114,6 +114,67 @@ export async function PATCH(
 
     await db.update(inquiries).set(update).where(eq(inquiries.id, id));
 
+    // Auto-promote a "won" inquiry to a member row so the front
+    // desk doesn't re-type the same name/email/phone they already
+    // captured. Idempotent: skips if a member already exists with
+    // this email.
+    if (body.status === "won" && before.status !== "won") {
+      try {
+        const { members } = await import("@/lib/db/schema");
+        const { sql } = await import("drizzle-orm");
+        const inquiryEmail = (before.email || "").trim().toLowerCase();
+        let alreadyExists = false;
+        if (inquiryEmail.includes("@")) {
+          const [existing] = await db
+            .select({ id: members.id })
+            .from(members)
+            .where(sql`lower(${members.email}) = ${inquiryEmail}`)
+            .limit(1);
+          alreadyExists = !!existing;
+        }
+        if (!alreadyExists && before.name) {
+          const parts = before.name.trim().split(/\s+/);
+          const firstName = parts[0] || before.name.trim();
+          const lastName = parts.slice(1).join(" ") || "";
+          // Look for a matching user account to auto-link.
+          let userId: number | null = null;
+          if (inquiryEmail.includes("@")) {
+            const [u] = await db
+              .select({ id: users.id })
+              .from(users)
+              .where(sql`lower(${users.email}) = ${inquiryEmail}`)
+              .limit(1);
+            if (u) userId = u.id;
+          }
+          await db.insert(members).values({
+            userId,
+            firstName: firstName.slice(0, 100),
+            lastName: lastName.slice(0, 100) || "(promoted)",
+            email: inquiryEmail || null,
+            phone: before.phone || null,
+            status: "trial",
+            // members.source enum doesn't include "inquiry" — use
+            // "other" + a notes annotation for the trail.
+            source: "other",
+            joinedAt: now,
+            createdBy: session.user.id ? Number(session.user.id) : null,
+            notes: `Promoted from inquiry #${id} — ${before.kind || "general"}`,
+          });
+          // Note the promotion on the inquiry timeline so admin can
+          // trace it.
+          await db.insert(inquiryNotes).values({
+            inquiryId: id,
+            authorUserId: session.user.id ? Number(session.user.id) : null,
+            body: `Auto-promoted to member · status=trial · source=inquiry`,
+            kind: "status_change",
+          });
+        }
+      } catch (err) {
+        // Promotion is best-effort — don't block the status update.
+        console.warn("inquiry → member promotion failed:", err);
+      }
+    }
+
     if (body.note) {
       await db.insert(inquiryNotes).values({
         inquiryId: id,

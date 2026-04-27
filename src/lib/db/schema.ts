@@ -84,6 +84,30 @@ export const teams = sqliteTable("teams", {
     .$defaultFn(() => new Date().toISOString()),
 });
 
+// Team aliases — handles "Eagles AZ" vs "AZ Eagles" without losing
+// history. Created by lib/team-resolver every time we encounter a
+// new spelling for a team that should map to an existing teams row.
+export const teamAliases = sqliteTable("team_aliases", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  teamId: integer("team_id")
+    .notNull()
+    .references(() => teams.id, { onDelete: "cascade" }),
+  alias: text("alias").notNull(),
+  // Where the alias came from — useful for triage when the resolver
+  // links the wrong rows. "form" = Google Form intake,
+  // "registration" = tournament registration handler,
+  // "manual" = admin-entered.
+  source: text("source", { enum: ["form", "registration", "sheet", "manual"] })
+    .notNull()
+    .default("registration"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  index("team_aliases_alias_idx").on(table.alias),
+  index("team_aliases_team_idx").on(table.teamId),
+]);
+
 // ── Players ─────────────────────────────────────────────────────────────────
 
 export const players = sqliteTable("players", {
@@ -131,6 +155,14 @@ export const players = sqliteTable("players", {
 
 export const games = sqliteTable("games", {
   id: integer("id").primaryKey({ autoIncrement: true }),
+  // Tournament FK — added 2026-04-26. Nullable so legacy ad-hoc
+  // games still work. New game inserts (bracket generation +
+  // tournament-day schedules) stamp this. Late-flag, wayfinding,
+  // and player-history win/loss now join through it instead of
+  // fuzzy date matching.
+  tournamentId: integer("tournament_id").references(() => tournaments.id, {
+    onDelete: "set null",
+  }),
   homeTeam: text("home_team").notNull(),
   awayTeam: text("away_team").notNull(),
   division: text("division"),
@@ -157,6 +189,7 @@ export const games = sqliteTable("games", {
 }, (table) => [
   index("games_status_idx").on(table.status),
   index("games_scheduled_time_idx").on(table.scheduledTime),
+  index("games_tournament_idx").on(table.tournamentId),
 ]);
 
 // ── Password Reset Tokens ───────────────────────────────────────────────────
@@ -285,6 +318,13 @@ export const tournamentRegistrations = sqliteTable("tournament_registrations", {
   tournamentId: integer("tournament_id")
     .notNull()
     .references(() => tournaments.id),
+  // Team FK — added 2026-04-26 to kill the lower(team_name)
+  // string-matching everywhere. Nullable for back-compat; modern
+  // registrations stamp it via lib/team-resolver. Backfill walks old
+  // rows and sets it.
+  teamId: integer("team_id").references(() => teams.id, {
+    onDelete: "set null",
+  }),
   teamName: text("team_name").notNull(),
   coachName: text("coach_name").notNull(),
   coachEmail: text("coach_email").notNull(),

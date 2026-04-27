@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
     .select({
       id: tournamentRegistrations.id,
       tournamentId: tournamentRegistrations.tournamentId,
+      teamId: tournamentRegistrations.teamId,
       teamName: tournamentRegistrations.teamName,
       coachName: tournamentRegistrations.coachName,
       coachEmail: tournamentRegistrations.coachEmail,
@@ -98,7 +99,9 @@ export async function GET(request: NextRequest) {
   let emailed = 0;
   for (const r of regs) {
     if (!r.coachEmail) continue;
-    const teamId = teamIdByName.get(r.teamName.toLowerCase());
+    // Prefer the FK on the registration; fall back to lower-name
+    // lookup until backfill is fully complete.
+    const teamId = r.teamId ?? teamIdByName.get(r.teamName.toLowerCase());
     const actualSize = teamId != null ? playerCountByTeamId.get(teamId) || 0 : 0;
     const target = r.playerCount ?? 0;
     const needsReminder = actualSize === 0 || (target > 0 && actualSize < target);

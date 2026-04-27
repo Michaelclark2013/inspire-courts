@@ -157,6 +157,9 @@ export const POST = withTiming("admin.waivers.sign", async (request: NextRequest
         signedAt: waivers.signedAt,
         expiresAt: waivers.expiresAt,
       });
+    // Flip players.waiver_on_file for matching roster rows.
+    const { syncWaiverToPlayers } = await import("@/lib/waiver-sync");
+    syncWaiverToPlayers(created.playerName).catch(() => {});
     await recordAudit({
       session,
       request,

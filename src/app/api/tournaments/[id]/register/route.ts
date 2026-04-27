@@ -145,11 +145,25 @@ export async function POST(request: NextRequest, { params }: Params) {
   const entryFee = tournament.entryFee ?? 0;
   const needsPayment = tournament.requirePayment && entryFee > 0;
 
+  // Resolve team_id (or create) so downstream joins (war room,
+  // check-in, conflicts, coach reminder cron) work without lower-
+  // case string matches.
+  const { resolveOrCreateTeam } = await import("@/lib/team-resolver");
+  const teamResolved = await resolveOrCreateTeam({
+    teamName,
+    coachEmail,
+    coachName,
+    division: division || null,
+    source: "registration",
+  });
+  const teamIdForReg = teamResolved.ok ? teamResolved.teamId : null;
+
   // Create registration
   const [reg] = await db
     .insert(tournamentRegistrations)
     .values({
       tournamentId,
+      teamId: teamIdForReg,
       teamName,
       coachName,
       coachEmail,

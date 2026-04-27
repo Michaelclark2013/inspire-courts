@@ -208,10 +208,21 @@ export async function POST(request: NextRequest, { params }: Params) {
   const safePaymentStatus = paymentStatus ?? "waived";
 
   try {
+    const { resolveOrCreateTeam } = await import("@/lib/team-resolver");
+    const resolved = await resolveOrCreateTeam({
+      teamName: teamName.trim(),
+      coachEmail: coachEmail || null,
+      coachName: coachName || null,
+      division: division || null,
+      source: "registration",
+    });
+    const teamIdForReg = resolved.ok ? resolved.teamId : null;
+
     const [reg] = await db
       .insert(tournamentRegistrations)
       .values({
         tournamentId,
+        teamId: teamIdForReg,
         teamName: teamName.trim().slice(0, 200),
         coachName: coachName.trim().slice(0, 200),
         coachEmail: coachEmail ? coachEmail.trim().toLowerCase().slice(0, 255) : "",

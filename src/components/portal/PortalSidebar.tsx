@@ -18,7 +18,9 @@ import {
   UserCheck,
   FileCheck,
   ChevronLeft,
-  Eye} from "lucide-react";
+  Eye,
+  MessageSquare,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePortalView } from "@/components/portal/PortalViewContext";
 
@@ -31,6 +33,7 @@ const COACH_NAV: NavItem[] = [
   { href: "/portal/waiver", label: "Waivers", icon: FileCheck },
   { href: "/portal/schedule", label: "Schedule", icon: Calendar },
   { href: "/portal/scores", label: "Scores", icon: Trophy },
+  { href: "/portal/messages", label: "Messages", icon: MessageSquare },
 ];
 
 const PARENT_NAV: NavItem[] = [
@@ -38,6 +41,7 @@ const PARENT_NAV: NavItem[] = [
   { href: "/portal/waiver", label: "Waivers", icon: FileCheck },
   { href: "/portal/schedule", label: "Schedule", icon: Calendar },
   { href: "/portal/scores", label: "Scores", icon: Trophy },
+  { href: "/portal/messages", label: "Messages", icon: MessageSquare },
 ];
 
 const ADMIN_NAV: NavItem[] = [
@@ -47,6 +51,7 @@ const ADMIN_NAV: NavItem[] = [
   { href: "/portal/waiver", label: "Waivers", icon: FileCheck },
   { href: "/portal/schedule", label: "Schedule", icon: Calendar },
   { href: "/portal/scores", label: "Scores", icon: Trophy },
+  { href: "/portal/messages", label: "Messages", icon: MessageSquare },
 ];
 
 export default function PortalSidebar() {
@@ -59,6 +64,7 @@ export default function PortalSidebar() {
   const isAdmin = actualRole === "admin";
   const [announcementCount, setAnnouncementCount] = useState(0);
   const [hasLiveGames, setHasLiveGames] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
 
   // Fetch announcement count + live game status
   useEffect(() => {
@@ -78,6 +84,29 @@ export default function PortalSidebar() {
       .catch((err) => { if (err instanceof DOMException && err.name === "AbortError") return; });
     return () => controller.abort();
   }, []);
+
+  // Poll DM unread count for the Messages badge — same endpoint the
+  // admin sidebar uses; permission is participant-scoped at the API.
+  useEffect(() => {
+    if (!session?.user) return;
+    let cancel = false;
+    async function tick() {
+      try {
+        const res = await fetch("/api/admin/messages/unread-count", { cache: "no-store" });
+        if (!res.ok || cancel) return;
+        const d = await res.json();
+        if (typeof d.count === "number") setUnreadMessages(d.count);
+      } catch {
+        /* silent */
+      }
+    }
+    void tick();
+    const id = setInterval(tick, 30_000);
+    return () => {
+      cancel = true;
+      clearInterval(id);
+    };
+  }, [session?.user]);
 
   // Close mobile drawer on Escape
   useEffect(() => {
@@ -199,6 +228,7 @@ export default function PortalSidebar() {
               const active = item.href === "/portal" ? pathname === "/portal" : pathname.startsWith(item.href);
               const showLiveDot = hasLiveGames && liveIndicatorItems.includes(item.href);
               const showAnnouncementBadge = item.href === "/portal" && announcementCount > 0;
+              const showMessagesBadge = item.href === "/portal/messages" && unreadMessages > 0;
 
               return (
                 <Link
@@ -223,6 +253,11 @@ export default function PortalSidebar() {
                   {showAnnouncementBadge && (
                     <span className="min-w-[18px] h-[18px] bg-red rounded-full flex items-center justify-center text-white text-[10px] font-bold px-1">
                       {announcementCount}
+                    </span>
+                  )}
+                  {showMessagesBadge && (
+                    <span className="min-w-[18px] h-[18px] bg-red rounded-full flex items-center justify-center text-white text-[10px] font-bold px-1">
+                      {unreadMessages > 99 ? "99+" : unreadMessages}
                     </span>
                   )}
                 </Link>

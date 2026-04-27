@@ -51,6 +51,7 @@ export async function GET(request: Request) {
     const regs = await db
       .select({
         id: tournamentRegistrations.id,
+        teamId: tournamentRegistrations.teamId,
         teamName: tournamentRegistrations.teamName,
         division: tournamentRegistrations.division,
         coachName: tournamentRegistrations.coachName,
@@ -68,9 +69,9 @@ export async function GET(request: Request) {
 
     const teamNames = regs.map((r) => r.teamName);
 
-    // Match each registration's teamName to a teams.id so the QR
-    // generator can build /checkin?t=<tid>&team=<teamId> URLs that
-    // route the new self-service check-in flow correctly.
+    // Prefer the FK on tournament_registrations.team_id (post Pass A
+    // refactor). For legacy rows where team_id is null we still fall
+    // back to the lower(name) match — kept until backfill is 100%.
     let teamIdByName: Record<string, number> = {};
     if (teamNames.length > 0) {
       const teamRows = await db
@@ -121,7 +122,8 @@ export async function GET(request: Request) {
         checkedIn >= minPlayers;
       return {
         id: r.id,
-        teamId: teamIdByName[r.teamName.toLowerCase()] ?? null,
+        // Prefer the FK; fall back to legacy name lookup.
+        teamId: r.teamId ?? teamIdByName[r.teamName.toLowerCase()] ?? null,
         tournamentId: tournament!.id,
         teamName: r.teamName,
         division: r.division,

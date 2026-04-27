@@ -50,6 +50,9 @@ export const POST = withTiming("public.waivers.sign", async (request: NextReques
         signedAt: waivers.signedAt,
         expiresAt: waivers.expiresAt,
       });
+    // Flip players.waiver_on_file for matching roster rows.
+    const { syncWaiverToPlayers } = await import("@/lib/waiver-sync");
+    syncWaiverToPlayers(created.playerName).catch(() => {});
     return NextResponse.json(
       { ok: true, waiverId: created.id, signedAt: created.signedAt, expiresAt: created.expiresAt },
       { status: 201 }

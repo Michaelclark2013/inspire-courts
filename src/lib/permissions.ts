@@ -165,10 +165,12 @@ export const PAGE_ACCESS: Record<AdminPage, UserRole[]> = {
   // Inquiries pipeline — admin + front desk (front desk handles first
   // touch on most inquiries; admin sees the funnel).
   inquiries: ["admin", "front_desk"],
-  // In-app DMs. Every admin-side role can use it for staff coordination.
-  // Admin can also message coaches/parents (portal users), so the
-  // recipient picker honors the broader scope at the API layer.
-  messages: ["admin", "staff", "ref", "front_desk"],
+  // In-app DMs. All roles can use it — every conversation row is
+  // participant-scoped at the API layer, so portal users (coach,
+  // parent) only see threads they're already in. Recipient picker
+  // already respects role scoping (admin can DM all roles; non-admin
+  // restricted to admin-side roles by default).
+  messages: ["admin", "staff", "ref", "front_desk", "coach", "parent"],
 };
 
 // All admin pages, in display order. Used by the permissions matrix UI.

@@ -7,6 +7,7 @@ import Link from "next/link";
 import {
   ArrowLeft, Phone, Mail, Calendar, CheckCircle2,
   AlertTriangle, Pause, Users as UsersIcon, LogIn, Plus, UserX } from "lucide-react";
+import { ConnectionsCard } from "@/components/admin/ConnectionsCard";
 
 type Detail = {
   member: {
@@ -124,6 +125,10 @@ export default function MemberDetailPage() {
       <Link href="/admin/members" className="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-navy">
         <ArrowLeft className="w-4 h-4" /> Back to members
       </Link>
+
+      {/* Connections card — shows linked user, children, waivers,
+          invoices, push subs, DM threads in one place. */}
+      <ConnectionsCard kind="member" id={m.id} />
 
       {/* HERO */}
       <div className="bg-white border border-border rounded-xl p-5">
